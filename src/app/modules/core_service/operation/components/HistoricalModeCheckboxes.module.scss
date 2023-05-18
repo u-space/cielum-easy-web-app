@@ -1,0 +1,19 @@
+.dateranges {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	& .date_container * {
+		width: 100%;
+	}
+
+	& .checkbox_container {
+		display: flex;
+
+		width: 100%;
+
+		&:first-child {
+		}
+	}
+}

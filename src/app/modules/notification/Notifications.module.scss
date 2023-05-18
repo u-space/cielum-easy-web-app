@@ -1,0 +1,127 @@
+@import '@yokohama/variables.scss';
+@import '@yokohama/mixins.scss';
+@import '@yokohama/colors.scss';
+
+.notification_center {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+
+	padding: 2rem 0;
+
+	background-color: rgba(var(--yokohama-primary-900-rgb), 0.5);
+
+	& .content {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+
+		height: 100%;
+		max-width: 640px;
+		margin: 0 auto;
+		padding: 1rem;
+
+		background-color: rgba(var(--yokohama-primary-900-rgb), 0.6);
+
+		overflow-x: hidden;
+		overflow-y: scroll;
+
+		& > *:not(:first-child) {
+			margin-top: 1rem;
+		}
+
+		& .notification {
+			padding: 0.5rem;
+
+			border-radius: var(--radius-l);
+
+			transition: all 0.2s;
+
+			& .date {
+				text-align: center;
+			}
+
+			&:hover {
+				transform: translateY(-2px);
+			}
+
+			&:active {
+				transform: translateY(2px);
+			}
+
+			&.INFO {
+				background-color: var(--yokohama-primary-400);
+
+				& .date {
+					color: var(--yokohama-primary-200);
+				}
+
+				& .text {
+					color: var(--yokohama-mirai-50);
+				}
+			}
+
+			&.DANGER {
+				background-color: var(--yokohama-ramen-500);
+
+				& .date {
+					color: var(--yokohama-ramen-200);
+				}
+
+				& .text {
+					color: var(--yokohama-mirai-50);
+				}
+			}
+		}
+	}
+}
+
+.top_notification {
+	position: absolute;
+	top: 0;
+	z-index: var(--z-index-notification);
+
+	min-width: 20%;
+	max-width: 80%;
+	min-height: 2rem;
+	margin: 0.5rem auto;
+	padding: 0.5rem 1rem 1rem;
+	box-sizing: border-box;
+
+	border-radius: var(--radius-m);
+
+	box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+		rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+
+	cursor: pointer;
+
+	overflow: visible;
+
+	&.info {
+		background-color: var(--yokohama-primary-400);
+
+		& .date {
+			color: var(--yokohama-primary-200);
+			text-align: center;
+		}
+
+		& .text {
+			color: var(--yokohama-mirai-50);
+		}
+	}
+
+	&.danger {
+		background-color: var(--yokohama-ramen-500);
+
+		& .date {
+			color: var(--yokohama-ramen-200);
+			text-align: center;
+		}
+
+		& .text {
+			color: var(--yokohama-mirai-50);
+		}
+	}
+}

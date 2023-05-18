@@ -1,0 +1,46 @@
+@import '@yokohama/colors.scss';
+@import '@yokohama/variables.scss';
+@import '@yokohama/mixins.scss';
+
+.simple_screen {
+  display: flex;
+  gap: 4rem;
+  justify-content: space-between;
+
+  margin: auto auto;
+  padding: var(--spacing-3);
+
+  color: var(--yokohama-mirai-50);
+  font-size: 1rem;
+
+  border-radius: var(--radius-l);
+
+  //background-color: var(--yokohama-primary-800);
+
+  & .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: var(--spacing-4);
+
+    color: var(--yokohama-ramen-200);
+
+    border-radius: var(--spacing-4);
+
+    background-color: var(--yokohama-ramen-600);
+
+    & * {
+      animation: blink 1s linear 0s infinite alternate;
+    }
+  }
+
+  & .content {
+    & h1 {
+      margin: 0;
+
+      font-size: 5rem;
+      text-align: left;
+    }
+  }
+}

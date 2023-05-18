@@ -1,0 +1,26 @@
+import { Tenant } from '../_types';
+
+const code = 't';
+
+const tenant: Tenant = {
+	code,
+	short_name: 'A sample tenant',
+	assets: {
+		favicon: `/${code}/favicon.ico`,
+		logo: `/${code}/platform.png`,
+		logo_tenant: `/${code}/organization.png`,
+		login_background: `/${code}/bg.jpg`,
+		privacy_policy: {
+			es: `/${code}/privacy/es.md`,
+			en: `/${code}/privacy/en.md`
+		},
+		extra_locales: {
+			ui: {
+				es: `/${code}/locales/ui.es.json`,
+				en: `/${code}/locales/ui.en.json`
+			}
+		}
+	}
+};
+
+export default tenant;

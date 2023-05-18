@@ -1,0 +1,84 @@
+@import '@yokohama/mixins.scss';
+
+.horizontal_usecases {
+	position: relative;
+
+	display: grid;
+	grid-template-rows: 4rem repeat(auto-fill, 9rem);
+	grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+
+	width: 100%;
+	max-width: 400px;
+	margin: auto auto;
+	padding: 0 0 var(--spacing-2);
+
+	color: var(--yokohama-mirai-50);
+
+	border-radius: var(--radius-l);
+
+	background-color: var(--yokohama-primary-800);
+
+	overflow: visible;
+	@include box-shadow-2;
+
+	& > .title {
+		grid-area: 1/1/2/-1;
+
+		width: 100%;
+		padding: var(--padding-s);
+
+		font-size: 1.25rem;
+		text-align: center;
+		text-transform: uppercase;
+
+		background-color: var(--yokohama-primary-900);
+	}
+
+	& > .item {
+		width: 95%;
+		height: 95%;
+		margin: auto auto;
+		padding: var(--padding-s);
+
+		border: solid 1px var(--yokohama-primary-900);
+		border-radius: var(--radius-l);
+
+		background: linear-gradient(
+			0deg,
+			var(--yokohama-primary-900) 20%,
+			var(--yokohama-primary-800) 100%
+		);
+
+		cursor: pointer;
+
+		user-select: none;
+		@include box-shadow-2;
+
+		&:hover {
+			transform: translateY(-2px);
+		}
+
+		&:active {
+			transform: translateY(2px);
+		}
+
+		&:last-child {
+			margin-right: auto;
+		}
+
+		& > * {
+			&:first-child {
+				display: flex;
+				justify-content: center;
+
+				margin-bottom: var(--spacing-4);
+
+				color: var(--yokohama-mirai-400);
+			}
+
+			&:last-child {
+				text-align: center;
+			}
+		}
+	}
+}

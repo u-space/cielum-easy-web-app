@@ -1,0 +1,31 @@
+.small_overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: var(--z-index-small-overlay);
+
+	width: 100%;
+
+	color: var(--yokohama-white-100);
+	text-align: center;
+
+	background-color: var(--yokohama-mirai-500);
+
+	& * {
+		margin: 0;
+	}
+
+	&.success {
+		background-color: var(--yokohama-yamate-600);
+	}
+
+	&.danger {
+		color: var(--yokohama-mirai-900);
+
+		background-color: var(--yokohama-kannai-500);
+	}
+
+	&.error {
+		background-color: var(--yokohama-ramen-500);
+	}
+}

@@ -1,0 +1,28 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"rootDir": ".",
+		"sourceMap": true,
+		"declaration": false,
+		"moduleResolution": "node",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importHelpers": true,
+		"resolveJsonModule": true,
+		"target": "es2017",
+		"module": "esnext",
+		"lib": ["es2017", "dom"],
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@easy-webapp/*": ["easy-webapp/src/*"],
+			"@flight-request-entities/*": ["flight-request-entities/src/lib/*"],
+			"@pcomponents/*": ["pcomponents/src/*"],
+			"@tokyo/*": ["tokyo/src/*"],
+			"@utm-entities/*": ["utm-entities/src/lib/*"],
+			"@yokohama/*": ["yokohama/src/*"]
+		}
+	},
+	"exclude": ["node_modules", "tmp"]
+}

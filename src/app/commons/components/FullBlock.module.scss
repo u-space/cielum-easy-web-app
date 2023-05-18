@@ -1,0 +1,37 @@
+.full_block {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: var(--z-index-full-block);
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	color: var(--yokohama-white-100);
+
+	& > h1 {
+		font-size: 2rem;
+	}
+
+	& > .buttons {
+		justify-self: flex-end;
+
+		margin-bottom: 2rem;
+	}
+
+	&.error {
+		background-color: rgba(var(--yokohama-ramen-900-rgb), 0.9);
+	}
+
+	&.success {
+		background-color: rgba(var(--yokohama-yamate-900-rgb), 0.9);
+	}
+
+	&.default {
+		background-color: rgba(var(--yokohama-primary-900-rgb), 0.9);
+	}
+}

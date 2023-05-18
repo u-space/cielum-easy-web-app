@@ -1,0 +1,62 @@
+.search {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  text-align: center;
+
+  & .liner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+
+    margin: 0;
+  }
+
+  & select {
+    color: var(--yokohama-white-100);
+    font-family: 'Lexend Deca', sans-serif;
+
+    background: none;
+
+    outline: none;
+
+    box-shadow: none;
+
+    &:active {
+      background-color: var(--yokohama-primary-900);
+    }
+
+    &:hover {
+      background: rgba(var(--yokohama-primary-900-rgb), 0.5);
+    }
+  }
+
+  & .property {
+    text-overflow: ellipsis;
+
+    background: none;
+
+    & > .filterLabel {
+      color: white;
+    }
+
+    & span {
+      color: var(--yokohama-white-100); // default arrows of the select
+    }
+  }
+
+  & > .order {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+
+    text-align: center;
+
+    & * {
+      margin: auto 0;
+
+      text-align: center;
+    }
+  }
+}

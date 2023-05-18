@@ -1,0 +1,316 @@
+import { observer } from 'mobx-react';
+import { useTranslation } from 'react-i18next';
+import PBooleanInput from '@pcomponents/PBooleanInput';
+import PDateInput from '@pcomponents/PDateInput';
+import PInput from '@pcomponents/PInput';
+import POperationStateSelect from '@pcomponents/POperationStateSelect';
+import PTextArea from '@pcomponents/PTextArea';
+import PVehicleSelect from '@pcomponents/PVehicleSelect';
+import styles from '../../../../commons/Pages.module.scss';
+import { OperationEntity } from '@utm-entities/operation';
+import { UseLocalStoreEntity } from '../../../../commons/utils';
+import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
+import { VehicleEntity } from '@utm-entities/vehicle';
+import { useAuthStore } from '../../../auth/store';
+import { useSchemaStore } from '../../../schemas/store';
+import { CSSProperties, FC } from 'react';
+import PNumberInput from '@pcomponents/PNumberInput';
+import env from '../../../../../vendor/environment/env';
+
+interface BaseOperationDetailsProps {
+	ls: UseLocalStoreEntity<OperationEntity>;
+	isEditing: boolean;
+	isCreating: boolean;
+}
+
+const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
+	const { ls, isEditing, isCreating } = props;
+	const { t } = useTranslation('glossary');
+	const flags = { isRequired: true, isDarkVariant: true };
+	return (
+		<>
+			{!isCreating && (
+				<PInput
+					id="gufi"
+					defaultValue={ls.entity.gufi}
+					label={t('operation.gufi')}
+					disabled={true}
+					{...flags}
+					inline
+				/>
+			)}
+			<PInput
+				id="name"
+				defaultValue={ls.entity.name}
+				label={t('operation.name')}
+				disabled={!isEditing}
+				onChange={(value) => (ls.entity.name = value)}
+				inline
+				{...flags}
+			/>
+			{Object.keys(ls.entity).map((prop) => {
+				if (
+					ls.entity.isBasic(prop) &&
+					prop !== 'gufi' &&
+					prop !== 'name' &&
+					prop !== 'state' &&
+					prop !== 'flight_comments' &&
+					prop !== 'aircraft_comments'
+				) {
+					const id = `input-${prop}`;
+					const label = t(`operation.${prop}`);
+					const explanation = t(`operation.${prop}_desc`);
+					return (
+						<PInput
+							key={prop}
+							id={id}
+							defaultValue={ls.entity[prop]}
+							label={label}
+							explanation={explanation}
+							disabled={!isEditing}
+							onChange={(value) => (ls.entity[prop] = value)}
+							{...flags}
+							inline
+						/>
+					);
+				} else {
+					return null;
+				}
+			})}
+		</>
+	);
+};
+
+interface DetailedOperationDetailsProps {
+	ls: UseLocalStoreEntity<OperationEntity>;
+	isEditing: boolean;
+	isAdmin?: boolean;
+}
+
+const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
+	const { t } = useTranslation('glossary');
+	const { ls, isEditing, isAdmin = false } = props;
+
+	const token = useAuthStore((state) => state.token);
+	const schemaVehicles = useSchemaStore((state) => state.vehicles);
+
+	const flags = { isRequired: true, isDarkVariant: true, fill: true };
+	/* const onSelectUser = (_value: UserEntity) => {
+		if (_value.length > 0) {
+			const value = _value[0];
+
+			ls.setInfo('owner', value);
+
+			if (value.fullName) ls.setInfo('contact', value.fullName);
+			if (value.extra_fields?.phone) ls.setInfo('contact_phone', value.extra_fields.phone);
+		} else {
+			ls.setInfo('owner', null);
+		}
+		ls.setInfo('uas_registrations', []);
+		ls.setInfo('contact', '');
+		ls.setInfo('contact_phone', '');
+	}; */
+
+	return (
+		<>
+			<PUserSelectForPilots
+				id="owner"
+				label={t('glossary:operation.owner')}
+				onSelect={(_users) => {
+					return;
+				}}
+				preselected={ls.entity.owner ? [ls.entity.owner.username] : []}
+				fill
+				isRequired
+				disabled
+				isDarkVariant
+			/>
+			<POperationStateSelect
+				id="state"
+				label={t('glossary:operation.state')}
+				defaultValue={ls.entity.state}
+				onChange={(value: string) => ls.setInfo('state', value)}
+				isDarkVariant
+				disabled={!isEditing || !isAdmin}
+				inline={false}
+				fill={false}
+			/>
+
+			<PVehicleSelect
+				label={t('glossary:operation.uas_registrations')}
+				onSelect={(value: VehicleEntity[]) => ls.setInfo('uas_registrations', value)}
+				preselected={ls.entity.uas_registrations}
+				username={ls.entity?.owner?.username}
+				fill
+				isDarkVariant
+				disabled
+				isRequired
+				token={token}
+				schema={schemaVehicles}
+				api={env.core_api}
+			/>
+
+			{/* <PTextArea
+				id="flight_comments"
+				defaultValue={ls.entity.aircraft_comments}
+				label={t('operation.aircraft_comments')}
+				disabled={!isEditing}
+				onChange={(value) => (ls.entity.aircraft_comments = value)}
+				{...flags}
+			/> */}
+			<PTextArea
+				id="flight_comments"
+				defaultValue={ls.entity.flight_comments}
+				label={t('operation.flight_comments')}
+				disabled={!isEditing}
+				onChange={(value) => (ls.entity.flight_comments = value)}
+				{...flags}
+			/>
+		</>
+	);
+};
+
+interface VolumeDetailsProps {
+	ls: UseLocalStoreEntity<OperationEntity>;
+	isEditing: boolean;
+	isAbleToChangeDates: boolean;
+}
+
+const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDates }) => {
+	const { t } = useTranslation('glossary');
+	// TODO: Multiple volumes
+	const volume = ls.entity.operation_volumes[0];
+	const flags = { isRequired: true, isDarkVariant: true, fill: true };
+	return (
+		<>
+			<PDateInput
+				id="effective_time_begin"
+				label={t('volume.effective_time_begin')}
+				defaultValue={volume.effective_time_begin || new Date()}
+				onChange={(value) => (volume.effective_time_begin = value)}
+				disabled={!isEditing || !isAbleToChangeDates}
+				inline
+				isTime
+				{...flags}
+			/>
+			<PDateInput
+				id="effective_time_begin"
+				label={t('volume.effective_time_end')}
+				defaultValue={volume.effective_time_end || new Date()}
+				onChange={(value) => (volume.effective_time_end = value)}
+				disabled={!isEditing || !isAbleToChangeDates}
+				inline
+				isTime
+				{...flags}
+			/>
+			{Object.keys(volume).map((prop) => {
+				if (
+					prop !== 'operation_geography' &&
+					prop !== 'ordinal' &&
+					prop !== 'actual_time_end' &&
+					prop !== 'id' &&
+					prop !== 'beyond_visual_line_of_sight' &&
+					prop !== 'volume_type' &&
+					prop !== 'min_altitude' &&
+					prop !== 'effective_time_begin' &&
+					prop !== 'effective_time_end' &&
+					prop !== 'near_structure'
+				) {
+					const id = `input-${prop}`;
+					const label = t(`volume.${prop}`);
+					const value = volume[prop];
+					if (typeof value === 'number') {
+						return (
+							<PNumberInput
+								key={prop}
+								id={id}
+								defaultValue={value}
+								label={label}
+								onChange={(value) => {
+									// eslint-disable-next-line @typescript-eslint/no-explicit-any
+									(ls.entity.operation_volumes[0][prop] as any) = value;
+								}}
+							/>
+						);
+					} else {
+						return null;
+					}
+				} else {
+					return null;
+				}
+			})}
+			<PBooleanInput
+				id="near_structure"
+				defaultValue={ls.entity.operation_volumes[0].near_structure}
+				label={t('volume.near_structure')}
+				disabled={!isEditing}
+				onChange={(value) => (ls.entity.operation_volumes[0].near_structure = value)}
+				isRequired
+				isDarkVariant
+				inline
+			/>
+			<PBooleanInput
+				id="beyond_visual_line_of_sight"
+				defaultValue={ls.entity.operation_volumes[0].beyond_visual_line_of_sight}
+				label={t('volume.beyond_visual_line_of_sight')}
+				disabled={!isEditing}
+				onChange={(value) =>
+					(ls.entity.operation_volumes[0].beyond_visual_line_of_sight = value)
+				}
+				isRequired
+				isDarkVariant
+				inline
+			/>
+		</>
+	);
+};
+
+export interface ViewAndEditOperationProps {
+	ls: UseLocalStoreEntity<OperationEntity>;
+	isEditing: boolean;
+	isAbleToChangeState?: boolean;
+	isCreating?: boolean;
+	style?: CSSProperties;
+}
+
+const ViewAndEditOperation: FC<ViewAndEditOperationProps> = ({
+	ls,
+	isEditing,
+	isAbleToChangeState = true,
+	isCreating = false,
+	style
+}) => {
+	const { t } = useTranslation();
+	return (
+		<div className={styles.twobytwo} style={style}>
+			<div className={styles.content}>
+				<aside className={styles.summary}>
+					<h2>{t('Operation information')}</h2>
+					{t('Operation information explanation')}
+				</aside>
+				<section className={styles.details}>
+					<BaseOperationDetails isCreating={false} isEditing={isEditing} ls={ls} />
+				</section>
+				<div className={styles.separator} />
+				<aside className={styles.summary} />
+				<section className={styles.details} style={{ gridColumn: '1 / -1' }}>
+					<DetailedOperationDetails
+						isEditing={isEditing}
+						ls={ls}
+						isAdmin={isAbleToChangeState}
+					/>
+				</section>
+				<div className={styles.separator} />
+				<aside className={styles.summary}>
+					<h2>{t('Volume')}</h2>
+					{t('Volume explanation')}
+				</aside>
+				<section className={styles.details}>
+					<VolumeDetails isAbleToChangeDates={false} isEditing={isEditing} ls={ls} />
+				</section>
+			</div>
+		</div>
+	);
+};
+
+export default observer(ViewAndEditOperation);

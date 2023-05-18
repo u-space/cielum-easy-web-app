@@ -1,0 +1,40 @@
+:root {
+	--radius-small: 1px;
+	--radius-medium: 4px;
+	--radius-large: 166px;
+
+	--padding-xs: 0.5rem;
+	--padding-s: 1rem;
+	--padding-m: 2rem;
+	--padding-l: 4rem;
+	--padding-xl: 8rem;
+
+	--radius-s: 1px;
+	--radius-m: 2px;
+	--radius-l: 4px;
+	--radius-xl: 8px;
+
+	--spacing-1: 4px;
+	--spacing-2: 8px;
+	--spacing-3: 12px;
+	--spacing-4: 16px;
+	--spacing-5: 24px;
+	--spacing-6: 32px;
+	--spacing-7: 48px;
+	--spacing-8: 64px;
+	--spacing-9: 96px;
+	--spacing-10: 128px;
+	--spacing-11: 192px;
+	--spacing-12: 256px;
+	--spacing-13: 384px;
+	--spacing-14: 512px;
+	--spacing-15: 640px;
+	--spacing-16: 768px;
+
+	// Z-indexes
+	--z-index-small-overlay: 2;
+	--z-index-full-block: 3;
+	--z-index-bar: 4;
+	--z-index-notification: 5;
+	--z-index-cover-screen: 6;
+}

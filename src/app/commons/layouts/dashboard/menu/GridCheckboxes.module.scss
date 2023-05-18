@@ -1,0 +1,34 @@
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+	gap: var(--padding-xs);
+
+	& > .line {
+		display: flex;
+		gap: var(--spacing-1);
+		justify-content: flex-start;
+		align-items: center;
+
+		width: 100%;
+
+		& .checkbox {
+			margin: 0;
+
+			user-select: none;
+
+			& > :global(.bp4-control-indicator) {
+				&:checked {
+					background: none red;
+				}
+			}
+		}
+
+		& .legend {
+			width: 0.75rem;
+			height: 0.75rem;
+			margin-left: auto;
+
+			background-color: white;
+		}
+	}
+}

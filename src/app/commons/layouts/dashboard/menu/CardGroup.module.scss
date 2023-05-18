@@ -1,0 +1,80 @@
+.card_group {
+  border-radius: var(--radius-m);
+
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+  // CardGroup
+  pointer-events: auto;
+
+  transition: all 2s;
+
+  & .header {
+    padding: var(--spacing-1);
+
+    color: var(--yokohama-primary-100);
+    text-align: center;
+    text-transform: uppercase;
+
+    background-color: var(--yokohama-primary-700);
+  }
+
+  & .expand {
+    cursor: pointer;
+
+    transition: all 0.2s linear;
+
+    &:hover {
+      background-color: var(--yokohama-primary-900);
+
+      box-shadow: rgba(0, 0, 0, 1) 0 3px 8px;
+
+    }
+  }
+
+  & .body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: flex-start;
+
+    padding: var(--padding-xs);
+
+    color:  var(--yokohama-mirai-100);
+
+    background-color: var(--yokohama-primary-900);
+  }
+
+  & .detail_line {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    border-bottom: 1px solid var(--yokohama-primary-900);
+
+    background-color: var(--yokohama-primary-900);
+
+    user-select: text;
+
+    & > .prop {
+      color: var(--yokohama-mirai-200);
+    }
+
+    & > .value {
+    }
+  }
+
+  &.danger {
+    background-color: var(--yokohama-ramen-700);
+
+    & > .header {
+      color: var(--yokohama-ramen-100);
+
+      background-color: var(--yokohama-ramen-600);
+    }
+
+    & > .body {
+      color: var(--yokohama-mirai-50);
+    }
+  }
+}

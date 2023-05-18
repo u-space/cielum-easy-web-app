@@ -1,0 +1,17 @@
+.pick_element {
+  & .header {
+    display: flex;
+    gap: var(--spacing-2);
+    justify-content: flex-start;
+  }
+
+  & .footer {
+    margin-bottom: var(--spacing-4);
+
+    color: var(--yokohama-mirai-700);
+  }
+}
+
+.warning_text {
+  color: var(--yokohama-ramen-400);
+}

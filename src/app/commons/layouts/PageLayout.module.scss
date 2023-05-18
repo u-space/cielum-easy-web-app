@@ -1,0 +1,85 @@
+.page {
+	position: relative;
+
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+
+	max-width: 800px;
+	margin: var(--spacing-2) auto;
+
+	color: var(--yokohama-mirai-900);
+	font-size: 14px;
+
+	border-radius: var(--radius-l);
+	//width: 100%;
+	background-color: var(--yokohama-mirai-100);
+
+	overflow: hidden;
+	// TODO: This style is copy pasted from the card of kanpur, maybe it can be a generic component
+	& > header {
+		position: relative;
+
+		display: flex;
+		justify-content: center;
+	}
+
+	& > .borders {
+		align-items: flex-end;
+
+		height: 3rem;
+		padding: var(--spacing-2);
+
+		color: white;
+		font-weight: 400;
+		font-size: 21px;
+		text-align: center;
+
+		background-color: var(--yokohama-primary-800);
+
+		& > p {
+			display: inline-block;
+
+			margin: auto 0 0;
+
+			vertical-align: bottom;
+		}
+	}
+
+	& > p {
+		padding: var(--spacing-2);
+	}
+
+	& > footer {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		right: 0;
+
+		display: flex;
+		justify-content: flex-end;
+
+		padding: var(--spacing-2);
+
+		background-color: var(--yokohama-mirai-100);
+	}
+
+	& .nav {
+		position: absolute;
+		top: 0;
+		left: 0.5rem;
+		right: 0.5rem;
+
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+
+		height: 3rem;
+
+		& > * {
+			&:not(:last-child) {
+				margin-right: 0.5rem;
+			}
+		}
+	}
+}

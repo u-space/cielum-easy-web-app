@@ -1,0 +1,186 @@
+/*
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▓███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░░░░░░░░░░░░░░░▒█▓░░░░░░░░░░░░░░░░░░▒▒▒▒░░░░░░░░░░▓███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░░░░░░░░░░░░░░░░█▒░░░░░░░░░░░░░░░░░░████▓░▒▒▒███░░▓███▒░░░░░███▓▒░░░░░░░░░░░░░░░░░░░░▒███▓░░░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░░░░░░░░░██▓▓▓▓░█░░░░░░░░░░░░░░░░░░▒█████▓▓▓████▓▓████▓▒▒▒▒▒▓█▓▓▒▓▓▒░░░░░░░█▓░░░░░░▓▓█████▓▓░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░░░░░░░░░██████▒█▒░░░░░░░░░░░▒▓░░░░▒█████▓▓▓████▓▓████▓▒▒▒▒▒███▓▒▓███▒▒▒░░░███▒░▓▓██▓███████░░░░░░░░░░░░░░░░░░░░░░░
+░░░░░░░░░░░▓▒░██████▒█▒▒▓▒░░░░░░░░▒▓░░░░▒█████▓▓▓████▓▓████▓▒▒▓▓▒████▒▓▓▓▓▒███▓▓████░████▓███████░░░░░▒█▒░░░░░░░░░░░░░░░
+░░░░░░░░░▒▓▓▓▓██████▓█▓▓▓▒▒▒▒▒▒▒▒▒▒▓▒▒▒▒▓█████▓▓▓████▓▓█████▒▓▓▓▓███▓▒▓▓▓▓▒▓▓▓▓▓████▒████▓███████▓▓▓▓█████▓▓▓▓▓░░░░░░░░░
+░░░░░░░░░▓▓▓▓███████▓▓▒▒▒░░░░░░░░░▒▓░░░░▒█████▓▓▓████▓██████▒▓▒▒▓████▓████▓████▓████▓████▓█████████████▓██████▓░░░░░░░░░
+░░░░░░▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▓▓▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒░░░░░░
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+                                                    Yokohama v3.A
+                                            Designed by Matt Betancurt
+
+											V3.A
+											- Converted all variables into CSS Variables
+*/
+
+:root {
+	--yokohama-primary-900: hsl(221, 98%, 8.5%);
+	--yokohama-primary-800: hsl(221, 98%, 12.5%);
+	--yokohama-primary-700: hsl(221, 100%, 22.5%);
+	--yokohama-primary-600: hsl(221, 98%, 35%);
+	--yokohama-primary-500: hsl(221, 98%, 51%); /* Base */
+	--yokohama-primary-400: hsl(221, 98%, 60%);
+	--yokohama-primary-300: hsl(221, 100%, 75%);
+	--yokohama-primary-200: hsl(220, 100%, 80%);
+	--yokohama-primary-100: hsl(219, 100%, 95%);
+	--yokohama-primary-50: hsl(219, 100%, 98%);
+
+	// Shin-Yokohama
+	--shin-900: hsl(5, 100%, 8.5%);
+	--shin-800: hsl(23, 100%, 15.5%);
+	--shin-700: hsl(23, 100%, 35.5%);
+	--shin-600: hsl(23, 100%, 45.5%);
+	--shin-500: hsl(23, 100%, 62%);
+	--shin-300: hsl(23, 100%, 75%);
+	--shin-100: hsl(23, 100%, 95%);
+
+	// Kannai
+	--yokohama-kannai-900: hsl(46, 100%, 10%);
+	--yokohama-kannai-800: hsl(46, 95%, 18%);
+	--yokohama-kannai-700: hsl(46, 90%, 30%);
+	--yokohama-kannai-600: hsl(46, 100%, 40%);
+	--yokohama-kannai-500: hsl(46, 83%, 60%); /* Base */
+	--yokohama-kannai-400: hsl(46, 88%, 68%);
+	--yokohama-kannai-300: hsl(46, 91%, 75%);
+	--yokohama-kannai-200: hsl(46, 91%, 80%);
+	--yokohama-kannai-100: hsl(46, 100%, 90%);
+
+	--yokohama-kannai-900: hsl(046, 100%, 10%);
+	--yokohama-kannai-800: hsl(046, 095%, 18%);
+	--yokohama-kannai-700: hsl(046, 090%, 30%);
+	--yokohama-kannai-600: hsl(046, 100%, 40%);
+	--yokohama-kannai-500: hsl(046, 083%, 60%); // Base
+	--yokohama-kannai-400: hsl(046, 088%, 68%);
+	--yokohama-kannai-300: hsl(046, 091%, 75%);
+	--yokohama-kannai-200: hsl(046, 091%, 80%);
+	--yokohama-kannai-100: hsl(046, 100%, 90%);
+
+	// Mirai
+	--yokohama-mirai-900: hsl(231, 21%, 12%);
+	--yokohama-mirai-800: hsl(231, 12%, 21%);
+	--yokohama-mirai-700: hsl(229, 7%, 31%);
+	--yokohama-mirai-600: hsl(229, 5%, 40%);
+	--yokohama-mirai-500: hsl(228, 4%, 50%); // Base
+	--yokohama-mirai-400: hsl(227, 4%, 59%);
+	--yokohama-mirai-300: hsl(225, 5%, 69%);
+	--yokohama-mirai-200: hsl(225, 7%, 78%);
+	--yokohama-mirai-150: hsl(225, 9%, 85%);
+	--yokohama-mirai-100: hsl(220, 10%, 90%);
+	--yokohama-mirai-50: hsl(220, 37%, 97%);
+
+	// Yamate
+	--yokohama-yamate-900: hsl(145, 100%, 8%);
+	--yokohama-yamate-800: hsl(145, 92%, 15%);
+	--yokohama-yamate-700: hsl(145, 82%, 22%);
+	--yokohama-yamate-600: hsl(145, 74%, 32%);
+	--yokohama-yamate-500: hsl(145, 71%, 47%); // Base
+	--yokohama-yamate-400: hsl(145, 75%, 58%);
+	--yokohama-yamate-300: hsl(145, 80%, 72%);
+	--yokohama-yamate-200: hsl(145, 90%, 85%);
+	--yokohama-yamate-100: hsl(145, 100%, 95%);
+
+	// Ramen: Warm, hot, dangerous, named after the Ramen Museum in Shin
+	--yokohama-ramen-900: hsl(353, 95%, 10%);
+	--yokohama-ramen-800: hsl(353, 90%, 20%);
+	--yokohama-ramen-700: hsl(353, 75%, 29%);
+	--yokohama-ramen-600: hsl(353, 70%, 42%);
+	--yokohama-ramen-500: hsl(353, 56%, 51%); // Base
+	--yokohama-ramen-400: hsl(353, 62%, 59%);
+	--yokohama-ramen-300: hsl(353, 75%, 70%);
+	--yokohama-ramen-200: hsl(353, 85%, 82%);
+	--yokohama-ramen-100: hsl(353, 95%, 93%);
+
+	// White
+	--yokohama-white-100: hsl(0, 0%, 100%);
+
+	// RGB Color Values (for use with rgba(...))
+	--yokohama-primary-900-rgb: 0, 14, 43;
+	--yokohama-primary-800-rgb: 1, 20, 63;
+	--yokohama-primary-700-rgb: 0, 36, 115;
+	--yokohama-primary-600-rgb: 2, 57, 177;
+	--yokohama-primary-500-rgb: 8, 85, 253;
+	--yokohama-primary-400-rgb: 53, 116, 253;
+	--yokohama-primary-300-rgb: 128, 168, 255;
+	--yokohama-primary-200-rgb: 153, 187, 255;
+	--yokohama-primary-100-rgb: 230, 238, 255;
+	--yokohama-primary-50-rgb: 245, 248, 255;
+	--yokohama-ramen-900-rgb: 50, 1, 7;
+	--yokohama-ramen-800-rgb: 97, 5, 16;
+	--yokohama-ramen-700-rgb: 129, 18, 31;
+	--yokohama-ramen-600-rgb: 182, 32, 50;
+	--yokohama-ramen-500-rgb: 200, 60, 76;
+	--yokohama-ramen-400-rgb: 215, 86, 101;
+	--yokohama-ramen-300-rgb: 236, 121, 135;
+	--yokohama-ramen-200-rgb: 248, 170, 179;
+	--yokohama-ramen-100-rgb: 254, 220, 224;
+	--yokohama-yamate-900-rgb: 0, 41, 17;
+	--yokohama-yamate-800-rgb: 3, 73, 32;
+	--yokohama-yamate-700-rgb: 10, 102, 48;
+	--yokohama-yamate-600-rgb: 21, 142, 72;
+	--yokohama-yamate-500-rgb: 35, 205, 106;
+	--yokohama-yamate-400-rgb: 68, 228, 135;
+	--yokohama-yamate-300-rgb: 126, 241, 174;
+	--yokohama-yamate-200-rgb: 182, 251, 211;
+	--yokohama-yamate-100-rgb: 230, 255, 240;
+}
+
+/*
+LEGACY COLORS
+*/
+/* eslint-disable */
+
+$blueprint-bg-color: hsl(206, 23%, 21%);
+/* Lighter */
+$blueprint-bg-color-l1: hsl(206, 23%, 31%);
+$blueprint-bg-color-l2: hsl(206, 23%, 41%);
+$blueprint-bg-color-l3: hsl(206, 23%, 51%);
+$blueprint-bg-color-l4: hsl(206, 23%, 61%);
+$blueprint-bg-color-l5: hsl(206, 23%, 71%);
+$blueprint-bg-color-l6: hsl(206, 23%, 81%);
+/* Darker */
+$blueprint-bg-color-d1: hsl(206, 23%, 16%);
+
+$blueprint-bg-color-c: invert(hsl(206, 23%, 21%));
+
+/* Dronfies Colors */
+$dronfies-color-l-10: hsl(220, 100%, 100%);
+$dronfies-color-l-9: hsl(220, 100%, 95%);
+$dronfies-color-l-8: hsl(220, 100%, 90%);
+$dronfies-color-l-7: hsl(220, 100%, 85%);
+$dronfies-color-l-6: hsl(220, 100%, 80%);
+$dronfies-color-l-5: hsl(220, 100%, 75%);
+$dronfies-color-l-4: hsl(220, 100%, 70%);
+$dronfies-color-l-3: hsl(220, 100%, 65%);
+$dronfies-color-l-2: hsl(220, 100%, 60%);
+$dronfies-color-l-1: hsl(220, 100%, 55%);
+$dronfies-color: hsl(220, 100%, 50%);
+$dronfies-color-d-1: hsl(220, 100%, 45%);
+$dronfies-color-d-2: hsl(220, 100%, 40%);
+$dronfies-color-d-3: hsl(220, 100%, 35%);
+$dronfies-color-d-4: hsl(220, 100%, 30%);
+$dronfies-color-d-5: hsl(220, 100%, 25%);
+$dronfies-color-d-6: hsl(220, 100%, 20%);
+$dronfies-color-d-7: hsl(220, 100%, 15%);
+$dronfies-color-d-8: hsl(220, 100%, 10%);
+$dronfies-color-d-9: hsl(220, 100%, 5%);
+$dronfies-color-d-10: hsl(220, 100%, 0%);
+
+/* Accent color */
+$dronfies-accent: hsl(11, 100%, 50%);
+
+/* Dronfies Colors Secondary */
+$dronfies-secondary: #00f08b;
+
+/* Rotated */
+$dronfies-green: hsl(110, 100%, 50%);
+
+$dronfies-red: hsl(11, 100%, 50%);
+
+/* Complementaries */
+$red-base: hsl(355, 76%, 36%);
+$red-base-d-2: hsl(335, 76%, 31%);

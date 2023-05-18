@@ -1,0 +1,163 @@
+@import '@yokohama/colors.scss';
+@import '@yokohama/variables.scss';
+
+.background {
+	position: absolute;
+
+	width: 100vw;
+	height: calc(100vh + 400px);
+
+	background-color: var(--yokohama-primary-900);
+
+	mix-blend-mode: normal;
+
+	opacity: 0;
+
+	object-fit: cover;
+
+	animation: scaleBackground 60s ease-in-out alternate infinite;
+}
+
+@keyframes scaleBackground {
+	from {
+		transform: translateY(-100px);
+	}
+
+	to {
+		transform: translateY(0px);
+	}
+}
+
+.logo_platform {
+	position: absolute;
+	top: -90px;
+	left: 0;
+	right: 0;
+
+	width: 225px;
+	margin: 0 auto;
+}
+
+.logo_organization {
+	position: absolute;
+	left: 0;
+	bottom: -75px;
+	right: 0;
+
+	width: 150px;
+	margin: 0 auto;
+}
+
+.centered_screen {
+	position: absolute;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+
+	min-width: 250px;
+	max-width: 100%;
+	min-height: 250px;
+	margin: auto;
+	padding: 1rem;
+
+	border-radius: var(--radius-l);
+
+	transition: all 0.2s;
+
+	&.login {
+		background-color: rgba(var(--yokohama-primary-900-rgb), 0.45);
+	}
+
+	&.register {
+		width: auto;
+		max-height: 80%;
+
+		background-color: var(--yokohama-mirai-100);
+	}
+
+	// TODO: Add error colors
+
+	&.verify {
+		width: 50%;
+		max-height: 80%;
+
+		text-align: center;
+
+		background-color: var(--yokohama-mirai-100);
+	}
+
+	& > * {
+		margin-bottom: 1rem;
+	}
+
+	& .line {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+	}
+
+	& .status {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-content: center;
+
+		text-align: center;
+
+		border-radius: var(--radius-l);
+
+		background-color: var(--yokohama-mirai-100);
+
+		&.login {
+			margin: 0;
+
+			color: var(--yokohama-white-100);
+			font-size: 2rem;
+
+			background-color: rgba(var(--yokohama-primary-900-rgb), 0.85);
+		}
+
+		&.error {
+			margin: 0;
+
+			color: var(--yokohama-white-100);
+			font-size: 1rem;
+
+			background-color: rgba(var(--yokohama-ramen-700-rgb), 0.85);
+		}
+
+		&.success {
+			margin: 0;
+
+			color: var(--yokohama-white-100);
+			font-size: 1rem;
+
+			background-color: rgba(var(--yokohama-yamate-700-rgb), 0.85);
+		}
+	}
+
+	& > .actions {
+		display: flex;
+		justify-content: space-between;
+
+		margin-top: auto;
+	}
+}
+
+/*.platform {
+    position: absolute;
+    left: 5vw;
+    bottom: 5vh;
+    height: 5vh;
+    width: 5vw;
+    clip-path: polygon(85% 34%,  30% 97%, 34% 57%, 3% 34%);
+    background-color: white;
+    mix-blend-mode: overlay;
+}*/
