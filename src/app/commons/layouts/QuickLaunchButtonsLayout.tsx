@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import styles from './QuickLaunchButtonsLayout.module.scss';
 import { useTranslation } from 'react-i18next';
 import { Icon, IconName } from '@blueprintjs/core';
@@ -13,18 +13,20 @@ export interface QuickLaunchButton {
 }
 interface QuickLaunchButtonsProps {
 	title: string;
+	subheader?: ReactNode;
 	buttons: QuickLaunchButton[];
 }
 
-const QuickLaunchButtonsLayout: FC<QuickLaunchButtonsProps> = ({ title, buttons }) => {
+const QuickLaunchButtonsLayout: FC<QuickLaunchButtonsProps> = ({ title, subheader, buttons }) => {
 	const { t } = useTranslation();
 	const history = useHistory();
 	const isAdmin = useAuthIsAdmin();
 	return (
 		<div className={styles.horizontal_usecases}>
 			<div className={styles.title}>{t(title) || title}</div>
+			{subheader && <div className={styles.subheader}>{subheader}</div>}
 			{buttons.map((button, index) => {
-				if (button.isAdmin && isAdmin) {
+				if ((button.isAdmin && isAdmin) || !button.isAdmin) {
 					return (
 						<div
 							key={button.label}

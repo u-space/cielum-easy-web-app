@@ -1,4 +1,3 @@
 environment/env.ts
 environment/env.prod.ts
 environment/tenant.ts
-README.md

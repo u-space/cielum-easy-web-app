@@ -8,7 +8,7 @@ export interface PageLayoutProps {
 	headerText?: string;
 	onSubmit?: FormEventHandler<HTMLElement>;
 	extraLeftHeaderButtons?: ReactNode;
-	footer: ReactNode;
+	footer?: ReactNode;
 	onArrowBack?: FormEventHandler<HTMLElement>;
 }
 
@@ -30,7 +30,7 @@ const PageLayout: FC<PageLayoutProps> = ({
 				{extraLeftHeaderButtons}
 			</div>
 			{children}
-			<footer className={styles.borders}>{footer}</footer>
+			{footer && <footer className={styles.borders}>{footer}</footer>}
 		</form>
 	);
 };

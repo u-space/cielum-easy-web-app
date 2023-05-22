@@ -96,7 +96,7 @@
   "Definition Operation": "Una Operación es una solicitud para realizar un vuelo en un volúmen especificado, entre la fecha de comienzo y finalización de cada uno de sus volúmenes, efectuado por uno o varios operadores usando uno o varias aeronaves",
   "Definition RFV": "Un Volumen de Vuelo Restringido (RFV) es una restricción permanente que prohíbe que cualquier operación sea aprobada automáticamente en un área determinada. Se pueden utilizar para restringir los vuelos cerca de aeropuertos, puertos o bases militares.",
   "Definition UVR": "Una reserva de volumen UAS es una restricción temporal que prohíbe que cualquier operación de ser aprobada automáticamente en una zona determinada. Todas las operaciones existentes que se cruzan en el espacio y el tiempo con la NOTAM serán CERRADAS. Se pueden utilizar para restringir los vuelos de baja altitud.",
-  "Select the entity to create": "Seleccione la acción a realizar",
+  "Select the entity to create": "Crear nuevo...",
   "Vehicle": "Aeronave",
   "RFV": "RFV",
   "UVR": "NOTAM",
