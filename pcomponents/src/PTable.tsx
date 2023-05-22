@@ -60,10 +60,10 @@ const PTable: FC<PTableProps> = ({
 	// Styling
 
 	const darkTheme = {
-		accentColor: getCSSVariable('yokohama-primary-500'),
-		accentLight: getCSSVariable('yokohama-mirai-200'),
+		accentColor: getCSSVariable('primary-500'),
+		accentLight: getCSSVariable('mirai-200'),
 
-		textDark: getCSSVariable('yokohama-mirai-900'),
+		textDark: getCSSVariable('mirai-900'),
 		textMedium: '#ffffff',
 		textLight: '#ffffff',
 		textBubble: '#ffffff',
@@ -73,19 +73,19 @@ const PTable: FC<PTableProps> = ({
 		textHeader: '#ffffff',
 		textHeaderSelected: '#ffffff',
 
-		bgCell: getCSSVariable('yokohama-mirai-100'),
-		bgCellMedium: getCSSVariable('yokohama-mirai-100'),
-		bgHeader: getCSSVariable('yokohama-primary-800'),
-		bgHeaderHasFocus: getCSSVariable('yokohama-primary-700'),
-		bgHeaderHovered: getCSSVariable('yokohama-primary-500'),
+		bgCell: getCSSVariable('mirai-100'),
+		bgCellMedium: getCSSVariable('mirai-100'),
+		bgHeader: getCSSVariable('primary-800'),
+		bgHeaderHasFocus: getCSSVariable('primary-700'),
+		bgHeaderHovered: getCSSVariable('primary-500'),
 
 		bgBubble: '#212121',
 		bgBubbleSelected: '#000000',
 
 		bgSearchResult: '#69c515',
 
-		borderColor: getCSSVariable('yokohama-mirai-100'),
-		horizontalBorderColor: getCSSVariable('yokohama-mirai-200'),
+		borderColor: getCSSVariable('mirai-100'),
+		horizontalBorderColor: getCSSVariable('mirai-200'),
 		drilldownBorder: getCSSVariable('dronfies-red'),
 
 		linkColor: '#4F5DFF',

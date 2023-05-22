@@ -1,5 +1,4 @@
 import './app.scss';
-
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthRole, useAuthStore } from './modules/auth/store';
 import { Spinner, SpinnerSize } from '@blueprintjs/core';

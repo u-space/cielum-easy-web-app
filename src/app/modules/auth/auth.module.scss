@@ -7,7 +7,7 @@
 	width: 100vw;
 	height: calc(100vh + 400px);
 
-	background-color: var(--yokohama-primary-900);
+	background-color: var(--primary-900);
 
 	mix-blend-mode: normal;
 
@@ -66,14 +66,14 @@
 	transition: all 0.2s;
 
 	&.login {
-		background-color: rgba(var(--yokohama-primary-900-rgb), 0.45);
+		background-color: rgba(var(--primary-900-rgb), 0.45);
 	}
 
 	&.register {
 		width: auto;
 		max-height: 80%;
 
-		background-color: var(--yokohama-mirai-100);
+		background-color: var(--mirai-100);
 	}
 
 	// TODO: Add error colors
@@ -84,7 +84,7 @@
 
 		text-align: center;
 
-		background-color: var(--yokohama-mirai-100);
+		background-color: var(--mirai-100);
 	}
 
 	& > * {
@@ -113,33 +113,33 @@
 
 		border-radius: var(--radius-l);
 
-		background-color: var(--yokohama-mirai-100);
+		background-color: var(--mirai-100);
 
 		&.login {
 			margin: 0;
 
-			color: var(--yokohama-white-100);
+			color: var(--white-100);
 			font-size: 2rem;
 
-			background-color: rgba(var(--yokohama-primary-900-rgb), 0.85);
+			background-color: rgba(var(--primary-900-rgb), 0.85);
 		}
 
 		&.error {
 			margin: 0;
 
-			color: var(--yokohama-white-100);
+			color: var(--white-100);
 			font-size: 1rem;
 
-			background-color: rgba(var(--yokohama-ramen-700-rgb), 0.85);
+			background-color: rgba(var(--ramen-700-rgb), 0.85);
 		}
 
 		&.success {
 			margin: 0;
 
-			color: var(--yokohama-white-100);
+			color: var(--white-100);
 			font-size: 1rem;
 
-			background-color: rgba(var(--yokohama-yamate-700-rgb), 0.85);
+			background-color: rgba(var(--yamate-700-rgb), 0.85);
 		}
 	}
 

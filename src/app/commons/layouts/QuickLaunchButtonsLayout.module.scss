@@ -12,11 +12,11 @@
 	margin: auto auto;
 	padding: 0 0 var(--spacing-2);
 
-	color: var(--yokohama-mirai-50);
+	color: var(--mirai-50);
 
 	border-radius: var(--radius-l);
 
-	background-color: var(--yokohama-primary-700);
+	background-color: var(--primary-700);
 
 	overflow: visible;
 	@include box-shadow-2;
@@ -31,7 +31,7 @@
 		text-align: center;
 		text-transform: uppercase;
 
-		background-color: var(--yokohama-primary-900);
+		background-color: var(--primary-900);
 	}
 
 	& > .subheader {
@@ -40,7 +40,7 @@
 		width: 100%;
 		padding: var(--padding-s);
 
-		background-color: var(--yokohama-primary-800);
+		background-color: var(--primary-800);
 
 		& > h1 {
 			margin-bottom: 1rem;
@@ -53,7 +53,7 @@
 		& > p {
 			margin-top: 2rem;
 
-			color: var(--yokohama-mirai-300);
+			color: var(--mirai-300);
 			font-size: 0.75rem;
 		}
 	}
@@ -64,14 +64,10 @@
 		margin: auto auto;
 		padding: var(--padding-s);
 
-		border: solid 1px var(--yokohama-primary-900);
+		border: solid 1px var(--primary-900);
 		border-radius: var(--radius-l);
 
-		background: linear-gradient(
-			0deg,
-			var(--yokohama-primary-900) 20%,
-			var(--yokohama-primary-800) 100%
-		);
+		background: linear-gradient(0deg, var(--primary-900) 20%, var(--primary-800) 100%);
 
 		cursor: pointer;
 
@@ -97,7 +93,7 @@
 
 				margin-bottom: var(--spacing-4);
 
-				color: var(--yokohama-mirai-400);
+				color: var(--mirai-400);
 			}
 
 			&:last-child {

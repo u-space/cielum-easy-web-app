@@ -6,6 +6,7 @@ export interface AssetList {
 	dashboard_background: string; // dashboard background image path (relative to /assets/)
 	privacy_policy: InternationalizedAsset; // privacy policy path, in markdown format (relative to /assets/)
 	extra_locales?: LocalesAssets; // extra locales assets
+	override_css?: string; // path to a CSS file to be loaded after the default CSS. Specially useful for overriding CSS variables of the theme
 }
 
 export interface InternationalizedAsset {

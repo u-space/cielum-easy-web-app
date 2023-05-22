@@ -66,11 +66,11 @@ const Home = () => {
 	/*const countVehiclesPending = useQueryPendingVehiclesCount();
 	const countUsersPending = useQueryPendingUsersCount();*/
 
-	// get css var --yokohama-yamate-500
+	// get css var --yamate-500
 	const colors = {
-		success: getCSSVariable('yokohama-yamate-500'),
-		warning: getCSSVariable('yokohama-kannai-500'),
-		danger: getCSSVariable('yokohama-ramen-500')
+		success: getCSSVariable('yamate-500'),
+		warning: getCSSVariable('kannai-500'),
+		danger: getCSSVariable('ramen-500')
 	};
 
 	return (

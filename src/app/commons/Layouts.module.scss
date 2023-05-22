@@ -51,7 +51,7 @@
 		padding-top: var(--padding-xs);
 		padding-bottom: var(--padding-xs);
 
-		background-color: var(--yokohama-primary-900);
+		background-color: var(--primary-900);
 
 		overflow: hidden;
 
@@ -87,20 +87,20 @@
 
 			text-align: right;
 
-			background-color: var(--yokohama-primary-800);
+			background-color: var(--primary-800);
 			@include box-shadow-1;
 
 			&.active {
 				background-color: var(--shin-500);
 
 				& > .icon {
-					color: var(--yokohama-primary-50) !important;
+					color: var(--primary-50) !important;
 				}
 
 				& > p {
 					margin: 0 0 0 auto;
 
-					color: var(--yokohama-primary-50);
+					color: var(--primary-50);
 
 					user-select: none;
 				}
@@ -113,19 +113,19 @@
 			& > p {
 				margin: 0 0 0 auto;
 
-				color: var(--yokohama-primary-50);
+				color: var(--primary-50);
 
 				user-select: none;
 			}
 
 			&:hover {
-				background-color: var(--yokohama-primary-700);
+				background-color: var(--primary-700);
 
 				transform: translateY(-1px);
 			}
 
 			&:active {
-				background-color: var(--yokohama-primary-900);
+				background-color: var(--primary-900);
 
 				transform: translateY(1px);
 			}
@@ -146,7 +146,7 @@
 
 		height: 100%;
 
-		background-color: rgba(var(--yokohama-primary-900-rgb), 0.925);
+		background-color: rgba(var(--primary-900-rgb), 0.925);
 	}
 
 	& > .menu {
@@ -163,7 +163,7 @@
 
 		direction: rtl;
 
-		background-color: var(--yokohama-primary-800);
+		background-color: var(--primary-800);
 
 		overflow: hidden;
 		overflow-y: scroll;
@@ -210,9 +210,9 @@
 			& .autocomplete_results {
 				padding: var(--spacing-2);
 
-				color: var(--yokohama-mirai-50);
+				color: var(--mirai-50);
 
-				background-color: var(--yokohama-primary-700);
+				background-color: var(--primary-700);
 
 				& * {
 					display: flex;
@@ -227,7 +227,7 @@
 		& .full {
 			border-radius: var(--radius-xl);
 
-			background-color: var(--yokohama-mirai-100);
+			background-color: var(--mirai-100);
 		}
 
 		& .item {
@@ -407,7 +407,7 @@
 			width: 100%;
 			height: 100%;
 
-			background-color: rgba(var(--yokohama-primary-900-rgb), 0.35);
+			background-color: rgba(var(--primary-900-rgb), 0.35);
 		}
 
 		& .overlay {
@@ -467,7 +467,7 @@
 
 	border-radius: var(--radius-l);
 
-	background-color: var(--yokohama-mirai-200);
+	background-color: var(--mirai-200);
 
 	overflow: hidden;
 	@include box-shadow-1;
@@ -479,15 +479,15 @@
 		text-transform: uppercase;
 
 		&.error {
-			color: var(--yokohama-ramen-100);
+			color: var(--ramen-100);
 
-			background-color: var(--yokohama-ramen-600);
+			background-color: var(--ramen-600);
 		}
 
 		&.success {
-			color: var(--yokohama-yamate-100);
+			color: var(--yamate-100);
 
-			background-color: var(--yokohama-yamate-600);
+			background-color: var(--yamate-600);
 		}
 	}
 
@@ -536,13 +536,13 @@
 .tooltip {
 	padding: var(--spacing-2);
 
-	color: var(--yokohama-mirai-50);
+	color: var(--mirai-50);
 	font-size: 0.75rem;
 	font-family: 'Lexend Deca', sans-serif;
 
 	border-radius: var(--radius-l);
 
-	background-color: var(--yokohama-primary-900);
+	background-color: var(--primary-900);
 }
 
 .button {
@@ -571,10 +571,10 @@
 
 	height: 5rem;
 
-	color: var(--yokohama-white-100);
+	color: var(--white-100);
 	text-align: left;
 
-	background-color: rgba(var(--yokohama-primary-900-rgb), 0.95);
+	background-color: rgba(var(--primary-900-rgb), 0.95);
 
 	& .playbackTime {
 		display: flex;
@@ -588,17 +588,13 @@
 
 			border-radius: 10px;
 
-			background: linear-gradient(
-				to bottom,
-				var(--yokohama-kannai-500),
-				var(--yokohama-kannai-700)
-			);
+			background: linear-gradient(to bottom, var(--kannai-500), var(--kannai-700));
 
 			&:focus {
 				outline-width: 0;
 
-				-webkit-box-shadow: 0 0 0 1px var(--yokohama-kannai-800);
-				box-shadow: 0 0 0 1px var(--yokohama-kannai-800);
+				-webkit-box-shadow: 0 0 0 1px var(--kannai-800);
+				box-shadow: 0 0 0 1px var(--kannai-800);
 			}
 
 			& > .text {
@@ -608,7 +604,7 @@
 
 				width: 200px;
 
-				color: var(--yokohama-primary-100);
+				color: var(--primary-100);
 
 				user-select: none;
 			}
@@ -621,7 +617,7 @@
 
 			border-radius: 48px;
 
-			background-color: var(--yokohama-primary-600);
+			background-color: var(--primary-600);
 		}
 	}
 }
@@ -651,11 +647,11 @@
 	& .header {
 		padding: var(--spacing-1);
 
-		color: var(--yokohama-primary-100);
+		color: var(--primary-100);
 		text-align: center;
 		text-transform: uppercase;
 
-		background-color: var(--yokohama-primary-700);
+		background-color: var(--primary-700);
 	}
 
 	& .expand {
@@ -664,7 +660,7 @@
 		transition: all 0.2s linear;
 
 		&:hover {
-			background-color: var(--yokohama-primary-900);
+			background-color: var(--primary-900);
 
 			box-shadow: rgba(0, 0, 0, 1) 0 3px 8px;
 		}
@@ -678,9 +674,9 @@
 
 		padding: var(--padding-xs);
 
-		color: var(--yokohama-mirai-100);
+		color: var(--mirai-100);
 
-		background-color: var(--yokohama-primary-900);
+		background-color: var(--primary-900);
 	}
 
 	& .detail_line {
@@ -690,14 +686,14 @@
 		justify-content: flex-start;
 		align-items: flex-start;
 
-		border-bottom: 1px solid var(--yokohama-primary-900);
+		border-bottom: 1px solid var(--primary-900);
 
-		background-color: var(--yokohama-primary-900);
+		background-color: var(--primary-900);
 
 		user-select: text;
 
 		& > .prop {
-			color: var(--yokohama-mirai-200);
+			color: var(--mirai-200);
 		}
 
 		& > .value {
@@ -705,16 +701,16 @@
 	}
 
 	&.danger {
-		background-color: var(--yokohama-ramen-700);
+		background-color: var(--ramen-700);
 
 		& > .header {
-			color: var(--yokohama-ramen-100);
+			color: var(--ramen-100);
 
-			background-color: var(--yokohama-ramen-600);
+			background-color: var(--ramen-600);
 		}
 
 		& > .body {
-			color: var(--yokohama-mirai-50);
+			color: var(--mirai-50);
 		}
 	}
 }

@@ -3,43 +3,43 @@
 @import '@yokohama/mixins.scss';
 
 .home {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 
-  width: 100%;
-  height: 100%;
-  max-width: 800px;
-  margin-right: auto;
-  margin-left: auto;
+	width: 100%;
+	height: 100%;
+	max-width: 800px;
+	margin-right: auto;
+	margin-left: auto;
 
-  border-radius: var(--radius-l);
+	border-radius: var(--radius-l);
 
-  & > * {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+	& > * {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
 
-    margin: var(--spacing-1);
-    padding: var(--spacing-2);
+		margin: var(--spacing-1);
+		padding: var(--spacing-2);
 
-    border-radius: var(--radius-m);
+		border-radius: var(--radius-m);
 
-    background-color: var(--yokohama-mirai-50);
-    @include box-shadow-2;
+		background-color: var(--mirai-50);
+		@include box-shadow-2;
 
-    & > *:first-child {
-      width: 1.5rem;
-      height: 2.5rem;
-      margin: 0 0 0 1rem;
+		& > *:first-child {
+			width: 1.5rem;
+			height: 2.5rem;
+			margin: 0 0 0 1rem;
 
-      font-weight: 200;
-      font-size: 2rem;
-      text-align: center;
-    }
+			font-weight: 200;
+			font-size: 2rem;
+			text-align: center;
+		}
 
-    & > *:last-child {
-      margin-left: auto;
-    }
-  }
+		& > *:last-child {
+			margin-left: auto;
+		}
+	}
 }
