@@ -41,6 +41,54 @@ code {
 	overflow: hidden;
 }
 
+.banner {
+	position: absolute;
+	z-index: var(--z-index-unnecessary-banner);
+
+	display: flex;
+	justify-content: space-between;
+
+	width: 100vw;
+	padding: var(--spacing-1);
+
+	color: var(--white-100);
+	font-size: 1.25rem;
+
+	background-color: var(--primary-500);
+
+	& > p {
+		margin-right: auto;
+		margin-bottom: 0;
+		margin-left: auto;
+
+		& > a {
+			color: var(--kannai-500);
+
+			transition: all 0.5s;
+
+			&:hover {
+				color: var(--kannai-100);
+			}
+
+			&:active {
+				color: var(--kannai-900);
+			}
+		}
+	}
+
+	&.top {
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+
+	&.bottom {
+		left: 0;
+		bottom: 0;
+		right: 0;
+	}
+}
+
 html {
 	--scrollbarBG: var(--primary-800);
 	--thumbBG: var(--primary-500);

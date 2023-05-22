@@ -162,5 +162,11 @@ export interface Tenant {
 		// Extra buttons to be added to the Editor Hub
 		// These will show up in the Editor Hub, but will not be accesible if the user does not have the required roles
 		// These buttons will be added at the end of the Editor Hub, after the default items
+
+		// Banner across all pages
+		banner?: {
+			placement: "top" | "bottom";
+			md: string; // Markdown text, to be parsed by react-markdown
+		};
 	};
 }
