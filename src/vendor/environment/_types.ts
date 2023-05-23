@@ -45,6 +45,10 @@ export enum ImplementationId {
 	// easy-webapp v3.0.x
 	HOME_SCREEN_QUICKLAUNCHBUTTONS = "001",
 	// A home screen with quick launch buttons, based on the one used in the Editors components
+
+	// easy-webapp v3.0.x
+	BAR_ITEMS_MAP_IS_NOT_IMPORTANT = "002",
+	// A bar items arrangement where the map is not the most important use case
 }
 // This enum is used to identify specific implementations of a feature
 // All related specific implementations of components should have the same id, and this id is set as a part of the file extension

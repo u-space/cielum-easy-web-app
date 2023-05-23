@@ -22,12 +22,13 @@ const UserProfile = () => {
 	const history = useHistory();
 
 	const [loadingLogout, setLoadingLogout] = useState(false);
+	const [isEditing, setEditingFlag] = useState(false);
 
 	const username = useAuthStore((state) => state.username);
+	const logout = useAuthStore((state) => state.logout);
 	const query = useQueryUser(username);
 	const { refetch } = query;
 	const updateUser = useUpdateUser();
-	const [isEditing, setEditingFlag] = useState(false);
 
 	const ls = useLs<UserEntity>(new UserEntity({}, {}));
 
@@ -41,7 +42,8 @@ const UserProfile = () => {
 		}
 	}, [query.isSuccess, query.data?.data, ls]);
 
-	const logout = () => {
+	const onLogout = async () => {
+		await logout();
 		const parts = window.location.href.split('/');
 		const base = `${parts[0]}//${parts[2]}`;
 		setLoadingLogout(true);
@@ -98,7 +100,7 @@ const UserProfile = () => {
 							{t('Change language')}
 						</PButton>
 						<PButton icon={isEditing ? 'floppy-disk' : 'edit'} onClick={save} />
-						<PButton style={{ marginLeft: 'auto' }} icon="log-out" onClick={logout}>
+						<PButton style={{ marginLeft: 'auto' }} icon="log-out" onClick={onLogout}>
 							{t('Log out')}
 						</PButton>
 					</>

@@ -54,8 +54,6 @@ export function App() {
 		localStorage.setItem('bannerHidden', isBannerHidden.toString());
 	}, [isBannerHidden]);
 
-	console.log('Banner hidden state: ', localStorage.getItem('bannerHidden'));
-
 	// TODO: Make this nicer
 
 	if (unrecoverableBackendError) {
