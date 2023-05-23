@@ -105,6 +105,7 @@
   "Find a specific flightRequest": "Buscar solicitud de vuelo",
   "Order the results": "Ordenar los resultados",
   "By": "Según",
+  "See more": "Ver mas",
   "in order": "en órden",
   "Filter by type": "Filtrar según tipo",
   "Show only unauthorized": "Mostrar solo usuarios no autorizados",
@@ -481,5 +482,6 @@
   "A new window should have opened. Plase pay to finish your request": "A new window should have opened. Plase pay to finish your request",
   "Success2": "Success",
   "An error ocurred while saving2": "An error ocurred while saving",
-  "Max file size is x MB": "El tamaño máximo es de {{number}}MB"
+  "Max file size is x MB": "El tamaño máximo es de {{number}}MB",
+  "Are you sure you want to go back? All the information will be lost": "¿Está seguro de que quiere volver atrás? Toda la información se perderá"
 }

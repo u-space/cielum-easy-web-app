@@ -1,7 +1,7 @@
 import PButton from '@pcomponents/PButton';
 import { GeographicalZone } from '@flight-request-entities/geographicalZone';
 import { Checkbox, Spinner } from '@blueprintjs/core';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react';
 import PageLayout from '../../../../../commons/layouts/PageLayout';
@@ -11,6 +11,7 @@ import { Polygon } from 'geojson';
 import styles from '../../../../../commons/Pages.module.scss';
 import { SubTotals } from '../../screens/FlightRequestEditor';
 import DashboardLayout from '../../../../../commons/layouts/DashboardLayout';
+import PFullModal from '@pcomponents/PFullModal';
 
 interface FlightRequestCoordinationsStepProps {
 	previousStep: () => void;
@@ -25,6 +26,8 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 	const { t } = useTranslation();
 
 	const { previousStep, nextStep, flightRequest, zonesChecked, setZonesChecked, total } = props;
+
+	const [isShowingExplanation, setShowingExplanation] = useState(false);
 
 	useEffect(() => {
 		if (flightRequest.volumes[0].operation_geography === null) alert('Error occured');
@@ -53,11 +56,31 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 					</PButton>
 				}
 			>
+				<PFullModal
+					title={t('Coordinations')}
+					content={t('Coordinations explanation')}
+					isVisible={isShowingExplanation}
+					primary={{
+						text: t('Close'),
+						onClick: () => setShowingExplanation(false)
+					}}
+				/>
 				<div className={styles.twobytwo}>
 					<div className={styles.content}>
 						<aside className={styles.summary}>
 							<h2>{t('Coordinations')}</h2>
-							{t('Coordinations explanation')}
+							{t('Coordinations explanation').length > 255 && (
+								<>
+									{t('Coordinations explanation').substring(0, 255)}
+									{'...'}
+									<PButton onClick={() => setShowingExplanation(true)}>
+										{t('See more')}
+									</PButton>
+								</>
+							)}
+							{t('Coordinations explanation').length <= 255 && (
+								<>{t('Coordinations explanation')}</>
+							)}
 						</aside>
 						<section className={styles.details}>
 							{isLoading && <Spinner />}

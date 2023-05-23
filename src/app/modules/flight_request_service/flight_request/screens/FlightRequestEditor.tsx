@@ -99,8 +99,8 @@ const FlightRequestEditor = () => {
 				setModalProps({
 					isVisible: true,
 					type: PModalType.ERROR,
-					title: 'Error',
-					content: 'Por favor, dibuje un polígono',
+					title: t('Error'),
+					content: t('Please draw a polygon to continue'),
 					primary: {
 						onClick: resetError
 					}
@@ -111,12 +111,9 @@ const FlightRequestEditor = () => {
 				setModalProps({
 					isVisible: true,
 					type: PModalType.INFORMATION,
-					title: 'Información',
+					title: t('Information'),
 					content: (
-						<p>
-							Ha seleccionado 4 o más días, esto puede incurrir en gastos extra o
-							cambios operacionales.
-						</p>
+						<p>{t('As 4 days or more were selected, extra charges can be charged')}</p>
 					),
 					primary: {
 						onClick: () => {
@@ -142,9 +139,7 @@ const FlightRequestEditor = () => {
 		if (step === FlightRequestEditorStep.COORDINATIONS) {
 			if (
 				// eslint-disable-next-line no-restricted-globals
-				confirm(
-					'¿Está seguro de que desea volver atrás? Perderá toda la información introducida'
-				)
+				confirm(t('Are you sure you want to go back? All the information will be lost'))
 			) {
 				window.location.href = '/editor/flightrequest';
 			}
@@ -159,9 +154,8 @@ const FlightRequestEditor = () => {
 			setModalProps({
 				isVisible: true,
 				type: PModalType.INFORMATION,
-				title: 'Coordinaciones en Zonas Urbanas',
-				content:
-					'¡Aviso! Este tipo de coordinación puede requerir documentación adicional así como incurrir cargos adicionales a los indicados en este proceso de coordinación',
+				title: t('Urban flight'),
+				content: t('Urban flight explanation'),
 				primary: {
 					onClick: () => {
 						resetError();
