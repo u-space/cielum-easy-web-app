@@ -17,6 +17,7 @@ export function getAssetPath(pathFromAssetsFolder: string) {
 
 export function getFeatureOption<T>(feature: keyof Tenant['features'], option: string): T {
 	if (!env.tenant.features[feature].enabled) throw new Error(`Feature ${feature} is not enabled`);
+
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	return env.tenant.features[feature].options[option];

@@ -25,7 +25,7 @@ const defaultTenant: Tenant = {
 		UsersHub: { enabled: true },
 		Operations: { enabled: true, options: { pilotCanCreateOperations: true } },
 		RegularFlights: { enabled: true },
-		Vehicles: { enabled: true },
+		Vehicles: { enabled: true, options: { hideUvin: false } },
 		Uvrs: { enabled: true },
 		Rfvs: { enabled: true },
 		FlightRequests: {

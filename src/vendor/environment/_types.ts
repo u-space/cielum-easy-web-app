@@ -90,7 +90,7 @@ export interface Tenant {
 			| {
 					enabled: true;
 					options: {
-						pilotCanCreateOperations: boolean;
+						pilotCanCreateOperations: boolean; // Whether pilots can create operations
 					};
 			  };
 		// easy-webapp v3.0.x
@@ -106,6 +106,9 @@ export interface Tenant {
 		// Vehicles
 		Vehicles: {
 			enabled: boolean;
+			options?: {
+				hideUvin: boolean; // Whether to hide the UVIN field in the detailed vehicle information
+			};
 		};
 		// easy-webapp v3.0.x
 		// Feature can be disabled entirely
