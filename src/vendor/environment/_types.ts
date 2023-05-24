@@ -24,7 +24,7 @@ export interface LocalesAssets {
 }
 
 export type Url = string; // URL of the page (relative to root, so for instance, url = 'map' will be accesible at https://web/map). Do not include the leading slash or trailing slash
-export type Role = 'PILOT' | 'ADMIN' | 'MONITOR';
+export type Role = "PILOT" | "ADMIN" | "MONITOR";
 
 export interface Page {
 	url: Url;
@@ -43,11 +43,11 @@ export interface EditorHubButtons {
 
 export enum ImplementationId {
 	// easy-webapp v3.0.x
-	HOME_SCREEN_QUICKLAUNCHBUTTONS = '001',
+	HOME_SCREEN_QUICKLAUNCHBUTTONS = "001",
 	// A home screen with quick launch buttons, based on the one used in the Editors components
 
 	// easy-webapp v3.0.x
-	BAR_ITEMS_MAP_IS_NOT_IMPORTANT = '002'
+	BAR_ITEMS_MAP_IS_NOT_IMPORTANT = "002",
 	// A bar items arrangement where the map is not the most important use case
 }
 // This enum is used to identify specific implementations of a feature
@@ -55,7 +55,7 @@ export enum ImplementationId {
 // Example TestScreen.001.tsx, TestScreen.002.tsx, TestScreen.003.tsx, etc are all implementations of the same component
 
 export interface Tenant {
-	code: 'net2fly' | 'dev';
+	code: "net2fly" | "dev";
 	specific_implementations?: ImplementationId[];
 	short_name: string; //Title of the page
 	assets: AssetList;
@@ -66,10 +66,7 @@ export interface Tenant {
 		// for instance, Regular Flights can create operations if the Operations feature is enabled
 		// this would be complicated to implement if the list of features was an array of pages and components
 
-		[key: string]: {
-			enabled: boolean;
-			options?: { [key: string]: boolean | string | string[] };
-		};
+		[key: string]: { enabled: boolean; options?: { [key: string]: boolean | string | string[] } };
 
 		// RealtimeMap
 		RealtimeMap: {
@@ -172,7 +169,7 @@ export interface Tenant {
 
 		// Banner across all pages
 		banner?: {
-			placement: 'top' | 'bottom';
+			placement: "top" | "bottom";
 			md: string; // Markdown text, to be parsed by react-markdown
 		};
 	};

@@ -485,5 +485,14 @@
 	"Success2": "Success",
 	"An error ocurred while saving2": "An error ocurred while saving",
 	"Max file size is x MB": "El tamaño máximo es de {{number}}MB",
-	"Are you sure you want to go back? All the information will be lost": "¿Está seguro de que quiere volver atrás? Toda la información se perderá"
+	"Are you sure you want to go back? All the information will be lost": "¿Está seguro de que quiere volver atrás? Toda la información se perderá",
+	"STEP 1 - Move the map or find the flight location": "PASO 1 - Mueve el mapa o encuentra la ubicación del vuelo",
+	"You can use the search field right on top to move the map to a new location by writing an incomplete address and selecting the most appropiate suggestion": "Puedes usar el campo de búsqueda de arriba para mover el mapa a una nueva ubicación escribiendo una dirección incompleta y seleccionando la sugerencia más apropiada",
+	"STEP 2 - Draw the area where your flight will take place": "PASO 2 - Dibuja el área donde tendrá lugar tu vuelo",
+	"The area will be represented by a polygon. You can draw it by clicking on the map point by point, as well as dragging existing points to change the shape of the polygon. When you are done, press the ENTER key or click on the last point to finish.": "El área se representará mediante un polígono. Puedes dibujarlo haciendo clic en el mapa punto por punto, así como arrastrando los puntos existentes para cambiar la forma del polígono. Cuando hayas terminado, presiona la tecla ENTER o haz clic en el último punto para terminar.",
+	"STEP 3 - Time and height": "PASO 3 - Tiempo y altura",
+	"Now, you can set the dates and times of your flight, as well as the maximum height. You will find this on the right side of the screen.": "Ahora puedes establecer las fechas y horas de tu vuelo, así como la altura máxima. Lo encontrarás en el lado derecho de la pantalla.",
+	"STEP 4 - Details of the request": "PASO 4 - Detalles de la solicitud",
+	"Previous step": "Atras",
+	"Next step": "Siguiente"
 }

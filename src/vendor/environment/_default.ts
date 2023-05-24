@@ -1,24 +1,24 @@
 // DO NOT IMPORT THIS FILE DIRECTLY
 
-import { logCIELUMError, logCIELUMGeneralInfo } from '../../utils';
-import { Tenant } from './_types';
+import { logCIELUMError, logCIELUMGeneralInfo } from "../../utils";
+import { Tenant } from "./_types";
 
-const host = 'localhost';
+const host = "localhost";
 const port = 8228;
 
 const defaultTenant: Tenant = {
-	code: 'dev',
-	short_name: 'CIELUMeasy (DevTenant)',
+	code: "dev",
+	short_name: "CIELUMeasy (DevTenant)",
 	assets: {
-		favicon: '/dev/favicon.ico',
-		logo: '/dev/platform.png',
-		logo_tenant: '/dev/organization.png',
-		login_background: '/dev/bg.jpg',
-		dashboard_background: '/dev/dashboard_background.png',
+		favicon: "/dev/favicon.ico",
+		logo: "/dev/platform.png",
+		logo_tenant: "/dev/organization.png",
+		login_background: "/dev/bg.jpg",
+		dashboard_background: "/dev/dashboard_background.png",
 		privacy_policy: {
-			es: '/dev/privacy/es.md',
-			en: '/dev/privacy/en.md'
-		}
+			es: "/dev/privacy/es.md",
+			en: "/dev/privacy/en.md",
+		},
 	},
 	features: {
 		RealtimeMap: { enabled: true },
@@ -30,11 +30,11 @@ const defaultTenant: Tenant = {
 		Rfvs: { enabled: true },
 		FlightRequests: {
 			enabled: true,
-			options: { liaisons: [], coordinatorTypes: [], defaultOperatorUsername: 'CHANGE_ME' }
+			options: { liaisons: [], coordinatorTypes: [], defaultOperatorUsername: "CHANGE_ME" },
 		},
-		Trackers: { enabled: true }
+		Trackers: { enabled: true },
 	},
-	extras: {}
+	extras: {},
 };
 
 interface Env {
@@ -62,18 +62,18 @@ const config: Env = {
 	core_api: `https://${host}:3000`,
 	flight_request_api: `https://${host}:3002`,
 	dev_server: {
-		port: port
+		port: port,
 	},
 	tenant: defaultTenant,
-	API_keys: {}
+	API_keys: {},
 };
 
 try {
-	const tenantFile = require('./tenant.ts');
+	const tenantFile = require("./tenant.ts");
 	config.tenant = tenantFile.default;
 	logCIELUMGeneralInfo(`Using tenant configuration for ${config.tenant.short_name}.`);
 } catch (e) {
-	logCIELUMError('No tenant configuration found.');
+	logCIELUMError("No tenant configuration found.");
 }
 
 export default config;

@@ -6,6 +6,7 @@ import MenuTools from './map/MenuTools';
 import PFullModal, { PFullModalProps } from '@pcomponents/PFullModal';
 import Contextual from './dashboard/Contextual';
 import NotificationCenter from '../../modules/notification/components/NotificationCenter';
+import FullParentOverlayBlock, { FullBlockType } from '../components/FullParentOverlayBlock';
 
 interface MapLayoutProps {
 	isLoading?: {
@@ -21,13 +22,18 @@ interface MapLayoutProps {
 		text: string;
 		// variant
 	};
+	isBlockingCenter?: boolean;
 	modal?: PFullModalProps;
 }
 const MapLayout: FC<MapLayoutProps> = (props: MapLayoutProps) => {
-	const { isLoading, children, menu, contextual, statusOverlay, modal } = props;
+	const { isLoading, children, menu, isBlockingCenter, contextual, statusOverlay, modal } = props;
 	return (
 		<>
 			<Center isLoading={isLoading?.main}>
+				<FullParentOverlayBlock
+					type={FullBlockType.DEFAULT}
+					isVisible={!!isBlockingCenter}
+				/>
 				<BannerOverlay
 					type={BannerOverlayType.DANGER}
 					text={statusOverlay?.text || ''}

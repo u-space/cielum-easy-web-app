@@ -2,7 +2,7 @@
 import { observer } from 'mobx-react';
 import { useEffect, useMemo, useState } from 'react';
 import { PModalType } from '@pcomponents/PModal';
-import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
+import { FlightCategory, FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { OperationVolume } from '@utm-entities/operation';
 import { GeographicalZone } from '@flight-request-entities/geographicalZone';
 import { Polygon } from 'geojson';
@@ -162,6 +162,9 @@ const FlightRequestEditor = () => {
 					}
 				}
 			});
+			flightRequest.flight_category = FlightCategory.STS_01;
+		} else if (!flightRequest.urban_flight) {
+			flightRequest.flight_category = FlightCategory.OPEN;
 		}
 	}, [flightRequest.urban_flight]);
 
