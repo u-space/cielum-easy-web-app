@@ -351,8 +351,8 @@ const ExtraVehicleDetailsValues = ({
 	const { t } = useTranslation('glossary');
 	const schemaValue = schema[property];
 	const type = schemaValue.type;
-	const label = t(`user.${property}`);
-	const explanation = t([`user.${property}_desc`, '']);
+	const label = t(`vehicle.${property}`);
+	const explanation = t([`vehicle.${property}_desc`, '']);
 	const id = `input-${property}`;
 	const value = ls.entity.extra_fields[property];
 
@@ -566,6 +566,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								api={env.core_api}
 								token={token}
 								schema={schema}
+								single={false}
 								id="operators"
 								onSelect={(selected) => {
 									ls.entity.operators = selected.map((s) => s.username);
@@ -574,7 +575,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								preselected={operators}
 								fill
 								isRequired
-								disabled={!isEditing || !isAdmin || !isCreating}
+								disabled={!isEditing || !isAdmin}
 								isDarkVariant
 							/>
 						)}

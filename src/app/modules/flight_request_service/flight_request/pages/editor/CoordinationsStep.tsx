@@ -47,11 +47,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 			<PageLayout
 				onArrowBack={previousStep}
 				footer={
-					<PButton
-						disabled={totalNumber === 0}
-						style={{ margin: '0 1rem 1rem auto' }}
-						onClick={nextStep}
-					>
+					<PButton disabled={totalNumber === 0} onClick={nextStep}>
 						{t('Continue')}
 					</PButton>
 				}

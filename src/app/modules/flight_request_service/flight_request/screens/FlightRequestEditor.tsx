@@ -88,7 +88,7 @@ const FlightRequestEditor = () => {
 					isVisible: true,
 					type: PModalType.ERROR,
 					title: 'Error',
-					content: errors.join(', '),
+					content: errors,
 					primary: {
 						onClick: resetError
 					}
@@ -217,6 +217,9 @@ function validateFlightRequest(flightRequest: FlightRequestEntity) {
 	}
 	if (flightRequest.volumes.length === 1 && flightRequest.volumes[0].ordinal === -1) {
 		errors.push(i18n.t('No time selected'));
+	}
+	if (flightRequest.name === '') {
+		errors.push(i18n.t('No name selected'));
 	}
 	for (const volume of flightRequest.volumes) {
 		if (volume.ordinal === -1) continue;

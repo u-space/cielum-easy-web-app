@@ -132,6 +132,13 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	return (
 		<>
 			<CardGroup header="Creating a Flight Request">
+				<PInput
+					id={'editor-volume-name'}
+					label={t('glossary:flightRequest.name')}
+					isRequired
+					onChange={(value) => flightRequest.set('name', value)}
+				/>
+
 				<PBooleanInput
 					id={`editor-volume-isDefaultOperator`}
 					defaultValue={isDefaultOperator}

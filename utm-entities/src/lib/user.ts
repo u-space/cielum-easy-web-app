@@ -32,6 +32,7 @@ export class UserEntity implements EntityHasDisplayName {
 	deletedAt: Date | null;
 	settings: unknown;
 	verified: boolean;
+	extra_fields_json: string;
 
 	[key: string]: any;
 
@@ -48,6 +49,7 @@ export class UserEntity implements EntityHasDisplayName {
 		this.deletedAt = user.deletedAt ?? null;
 		this.settings = null;
 		this.verified = false;
+		this.extra_fields_json = user.extra_fields_json ?? '';
 		this._userSchema = Joi.object({
 			//username: Joi.string(),
 			firstName: Joi.string(),
