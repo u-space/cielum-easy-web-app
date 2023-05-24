@@ -24,8 +24,7 @@ export interface PTableProps {
 	rowsQuantity?: number;
 	isResizable?: boolean;
 	isChildVisible?: boolean;
-	onChildGoBack?: () => void;
-	extraNav?: ReactNode;
+	nav?: ReactNode;
 	children?: ReactNode;
 }
 
@@ -37,8 +36,7 @@ const PTable: FC<PTableProps> = ({
 	rowsQuantity,
 	isResizable,
 	isChildVisible,
-	onChildGoBack,
-	extraNav,
+	nav,
 	children
 }) => {
 	// Resize columns on dragging
@@ -159,11 +157,7 @@ const PTable: FC<PTableProps> = ({
 												className={styles.nav}
 												style={{ height: rowHeight }}
 											>
-												<PButton
-													icon="arrow-left"
-													onClick={onChildGoBack}
-												/>
-												{extraNav}
+												{nav}
 											</div>
 										</motion.section>
 									)}

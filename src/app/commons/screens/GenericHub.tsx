@@ -288,8 +288,11 @@ function GenericHub<T extends GenericHubEntityType>(props: GenericHubProps<T>) {
 					rowHeight={rowHeight}
 					getData={getData}
 					columns={columns}
-					extraNav={
+					nav={
 						<>
+							<PButton icon="arrow-left" onClick={onGoBack}>
+								{t('See all entities')}
+							</PButton>
 							{!updateQuery.isLoading && (
 								<>
 									{!isEditing && ls.entity && canEdit(ls.entity) && (
@@ -375,7 +378,6 @@ function GenericHub<T extends GenericHubEntityType>(props: GenericHubProps<T>) {
 					rowsQuantity={store.pageTake}
 					isResizable={false}
 					isChildVisible={selected !== null}
-					onChildGoBack={onGoBack}
 				>
 					{selected && (
 						<>

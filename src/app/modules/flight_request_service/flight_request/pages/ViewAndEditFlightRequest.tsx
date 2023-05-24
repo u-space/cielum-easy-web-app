@@ -8,13 +8,16 @@ import PTextArea from '@pcomponents/PTextArea';
 import PBooleanInput from '@pcomponents/PBooleanInput';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { useHistory } from 'react-router-dom';
-import { CSSProperties, FC, useState } from 'react';
+import { CSSProperties, FC, useEffect, useState } from 'react';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import { FlightCategory, FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { useUpdateCoordination } from '../../coordination/hooks';
 import { CoordinationState } from '@flight-request-entities/coordination';
 import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import { UserEntity } from '@utm-entities/user';
+import { useQueryVehicle } from '../../../core_service/vehicle/hooks';
+import { Spinner } from '@blueprintjs/core';
+import PFullModal from '@pcomponents/PFullModal';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -260,29 +263,52 @@ interface UavsDetailsProps {
 	ls: UseLocalStoreEntity<FlightRequestEntity>;
 }
 
+const UavDetail = (props: { uvin: string }) => {
+	const { t } = useTranslation();
+	const history = useHistory();
+
+	const query = useQueryVehicle(props.uvin);
+	const { vehicle, refetch } = query;
+
+	useEffect(() => {
+		refetch().then();
+	}, [refetch]);
+
+	if (query.isSuccess) {
+		return (
+			<div className={styles.leftbalancedline}>
+				{vehicle.asNiceString}
+				<PButton
+					icon="info-sign"
+					size={PButtonSize.EXTRA_SMALL}
+					variant={PButtonType.SECONDARY}
+					onClick={() => history.push(`/vehicles?id=${vehicle.uvin}`)}
+				/>
+			</div>
+		);
+	} else if (query.isLoading) {
+		return <Spinner />;
+	} else {
+		return <p>{t('Vehicle not found')}</p>;
+	}
+};
+
 const UavsDetails: FC<UavsDetailsProps> = ({ ls }) => {
 	const { t } = useTranslation('glossary');
 	const entity = ls.entity;
-	const history = useHistory();
+
 	if (!entity) {
 		return null;
 	}
+
 	if (!entity.uavs || entity.uavs?.length === 0) {
 		return <h2>{t('flightRequest.noUavs')}</h2>;
 	}
 	return (
 		<>
-			{entity.uavs.map((vehicle) => (
-				<div key={vehicle.uvin} className={styles.leftbalancedline}>
-					{vehicle.vehicleName}
-					<PButton
-						icon="info-sign"
-						size={PButtonSize.EXTRA_SMALL}
-						variant={PButtonType.SECONDARY}
-						onClick={() => history.push(`/vehicles?id=${vehicle.uvin}`)}
-					/>
-				</div>
-			))}
+			{entity.uavs.map((vehicle) => {
+				return <UavDetail key={vehicle.uvin} uvin={vehicle.uvin} />;
+			})}
 		</>
 	);
 };

@@ -24,26 +24,14 @@ export function useQueryVehicle(uvin: VehicleEntity['uvin']) {
 
 	const query = useQuery(['vehicle'], () => getVehicle(uvin), { enabled: false });
 
-	const {
-		isLoading: isLoadingVehicle,
-		isSuccess: isSuccessVehicle,
-		isError: isErrorVehicle,
-		data: response,
-		error: errorVehicle,
-		refetch: refetchVehicle
-	} = query;
+	const { isSuccess: isSuccessVehicle, data: response } = query;
 
 	const data = isSuccessVehicle ? response.data : null;
 	const vehicle = data ? data : null;
 
 	return {
-		vehicle,
-		isLoadingVehicle,
-		isSuccessVehicle,
-		isErrorVehicle,
-		errorVehicle,
-		refetchVehicle,
-		extra: query
+		...query,
+		vehicle
 	};
 }
 
