@@ -12,7 +12,7 @@ import {
 } from '@blueprintjs/core';
 import PButton, { PButtonType, PButtonSize } from './PButton';
 import { useTranslation } from 'react-i18next';
-import { FC, ReactNode, useState } from 'react';
+import { CSSProperties, FC, ReactNode, useState } from 'react';
 import { DocumentEntity } from '@utm-entities/document';
 import PFileInput from './PFileInput';
 import PDateInput from './PDateInput';
@@ -348,7 +348,14 @@ const PDocument = (props: PDocumentProps) => {
 		className: classNames(styles.form, {
 			[styles.dark]: isDarkVariant
 		}),
-		style: { display: 'flex', justifyContent: 'space-between' },
+		style: {
+			display: 'flex',
+			flexDirection: 'column',
+			justifyContent: 'space-between',
+			padding: 0,
+			flex: 1,
+			width: '100%'
+		} as CSSProperties,
 		helperText: explanation,
 		label: label,
 		labelFor: id,
@@ -403,6 +410,7 @@ const PDocument = (props: PDocumentProps) => {
 					<PButton
 						variant={PButtonType.SECONDARY}
 						size={PButtonSize.SMALL}
+						icon={document.hasSomethingToShow ? 'edit' : 'upload'}
 						onClick={() => setShowingEditingModalFlag(true)}
 					>
 						{document.hasSomethingToShow ? t('Edit') : t('Upload')}
@@ -441,6 +449,7 @@ const PDocument = (props: PDocumentProps) => {
 							<PButton
 								variant={PButtonType.SECONDARY}
 								size={PButtonSize.SMALL}
+								icon={'eye-open'}
 								onClick={() => setShowingViewingModalFlag(true)}
 							>
 								{t('View')}
