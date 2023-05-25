@@ -1,28 +1,28 @@
-import MapLayout from '../../../../commons/layouts/MapLayout';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { reactify } from 'svelte-preprocess-react';
+import MapLayout from '../../../../commons/layouts/MapLayout';
 
+import { PFullModalProps } from '@pcomponents/PFullModal';
+import { useTokyo } from '@tokyo/TokyoStore';
+import { PositionEntity } from '@utm-entities/position';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	useQueryOperations,
 	useSelectedOperationAndVolume
 } from '../../../core_service/operation/hooks';
+import { usePositions } from '../../../core_service/position/hooks';
+import useQueryRfvs, { useSelectedRfv } from '../../../core_service/rfv/hooks';
+import useQueryUvrs, { useSelectedUvr } from '../../../core_service/uvr/hooks';
 import {
 	useQueryGeographicalZones,
 	useSelectedGeographicalZone
 } from '../../../flight_request_service/geographical_zone/hooks';
-import useQueryRfvs, { useSelectedRfv } from '../../../core_service/rfv/hooks';
-import useQueryUvrs, { useSelectedUvr } from '../../../core_service/uvr/hooks';
-import { useTokyo } from '@tokyo/TokyoStore';
-import { usePositions } from '../../../core_service/position/hooks';
-import { useEffect, useMemo, useState } from 'react';
-import usePickElements from '../../hooks';
-import { PositionEntity } from '@utm-entities/position';
-import Menu from '../../components/Menu';
 import Contextual from '../../components/Contextual';
+import Menu from '../../components/Menu';
+import usePickElements from '../../hooks';
 import LiveMapViewSvelte from './LiveMapView.svelte';
 import { LiveMapViewProps } from './LiveMapViewProps';
-import { PFullModalProps } from '@pcomponents/PFullModal';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
@@ -45,13 +45,14 @@ const LiveMap = () => {
 	const { gz, selected: gzSelection } = useSelectedGeographicalZone();
 	const { rfv, selected: rfvSelection } = useSelectedRfv();
 	const { uvr, selected: uvrSelection } = useSelectedUvr();
+
 	const selected = useMemo(
 		() => ({ ...operationSelection, ...gzSelection, ...rfvSelection, ...uvrSelection }),
 		[gzSelection, operationSelection, rfvSelection, uvrSelection]
 	);
 	const { positionsAsArray: positions } = usePositions();
 	const { pickModalProps, onPick } = usePickElements();
-	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(false);
+	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
 
 	useEffect(() => {
