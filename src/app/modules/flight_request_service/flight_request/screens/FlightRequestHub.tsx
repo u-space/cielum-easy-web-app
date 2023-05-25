@@ -78,7 +78,7 @@ const FlightRequestHub: FC = () => {
 		{ title: ' ', width: rowHeight * 2 },
 		{ title: t('glossary:flightRequest.name'), width: 2 },
 		{ title: t('glossary:flightRequest.operator'), width: 2 },
-		{ title: t('glossary:flightRequest.flightCategory'), width: 2 },
+		{ title: t('glossary:flightRequest.creator'), width: 2 },
 		{ title: t('glossary:flightRequest.state'), width: 2 }
 	];
 
@@ -99,7 +99,7 @@ const FlightRequestHub: FC = () => {
 			} else if (col === 2) {
 				data = flightRequest.operator ? flightRequest.operator.username : '';
 			} else if (col === 3) {
-				data = flightRequest.flight_category ? flightRequest.flight_category : '';
+				data = flightRequest.creator ? flightRequest.creator.username : '';
 			} else if (col === 4) {
 				data = flightRequest.state
 					? t(`glossary:flightRequest.flight_state.${flightRequest.state}`)
