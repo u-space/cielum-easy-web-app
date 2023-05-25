@@ -16,7 +16,9 @@ import PButton from '@pcomponents/PButton';
 import VehicleDetails from './VehicleDetails';
 import OperationListAndStateFilters from './OperationListAndStateFilters';
 import CardGroup from '../../../commons/layouts/dashboard/menu/CardGroup';
-import { Checkbox } from '@blueprintjs/core';
+import { Checkbox, IconName } from '@blueprintjs/core';
+import { getFeatureOption } from '../../../utils';
+import env from '../../../../vendor/environment/env';
 
 const Menu = ({
 	isShowingGeographicalZones,
@@ -154,7 +156,9 @@ const Menu = ({
 		// Main screen
 		return (
 			<>
-				<OperationListAndStateFilters />
+				{!getFeatureOption('RealtimeMap', 'hideOperationsControls') && (
+					<OperationListAndStateFilters />
+				)}
 				<CardGroup header="Non-realtime information">
 					<Checkbox
 						labelElement={<span>{t('Show geographical zones')}</span>}
@@ -168,6 +172,20 @@ const Menu = ({
 						checked={isShowingUvrs}
 						onChange={() => setShowingUvrsFlag(!isShowingUvrs)}
 					/>
+				</CardGroup>
+				<CardGroup>
+					{env.tenant.extras.realtime_map_buttons &&
+						env.tenant.extras.realtime_map_buttons.map((button) => (
+							<PButton
+								key={button.label}
+								icon={(button.icon as IconName) || undefined}
+								onClick={() => {
+									history.push(button.path);
+								}}
+							>
+								{t(button.label)}
+							</PButton>
+						))}
 				</CardGroup>
 			</>
 		);

@@ -18,6 +18,12 @@ export function getAssetPath(pathFromAssetsFolder: string) {
 export function getFeatureOption<T>(feature: keyof Tenant['features'], option: string): T {
 	if (!env.tenant.features[feature].enabled) throw new Error(`Feature ${feature} is not enabled`);
 
+	if (env.tenant.features[feature].options === undefined)
+		throw new Error(`Feature ${feature} has no options`);
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	if (env.tenant.features[feature].options[option] === undefined)
+		throw new Error(`Option ${option} does not exist`);
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	return env.tenant.features[feature].options[option];

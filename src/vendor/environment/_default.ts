@@ -21,7 +21,7 @@ const defaultTenant: Tenant = {
 		},
 	},
 	features: {
-		RealtimeMap: { enabled: true },
+		RealtimeMap: { enabled: true, options: { hideOperationsControls: false } },
 		UsersHub: { enabled: true },
 		Operations: { enabled: true, options: { pilotCanCreateOperations: true } },
 		RegularFlights: { enabled: true },

@@ -71,6 +71,9 @@ export interface Tenant {
 		// RealtimeMap
 		RealtimeMap: {
 			enabled: boolean;
+			options: {
+				hideOperationsControls: boolean; // Whether to hide filter by state and filter by specific operation in the realtime map
+			};
 		};
 		// easy-webapp v3.0.x
 		// Map can be disabled entirely
@@ -175,5 +178,13 @@ export interface Tenant {
 			placement: "top" | "bottom";
 			md: string; // Markdown text, to be parsed by react-markdown
 		};
+		// easy-webapp v3.0.x
+
+		// Extra buttons in RealtimeMap
+		realtime_map_buttons?: {
+			label: string; // Label of the button, should have corresponding translation in the locales (ui)
+			icon: string | null;
+			path: string; // URL to redirect to when the button is clicked (from root)
+		}[];
 	};
 }
