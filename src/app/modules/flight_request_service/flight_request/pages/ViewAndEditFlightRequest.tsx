@@ -18,6 +18,8 @@ import { UserEntity } from '@utm-entities/user';
 import { useQueryVehicle } from '../../../core_service/vehicle/hooks';
 import { Spinner } from '@blueprintjs/core';
 import PFullModal from '@pcomponents/PFullModal';
+import PNumberInput from '@pcomponents/PNumberInput';
+import PDateInput from '@pcomponents/PDateInput';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -313,6 +315,54 @@ const UavsDetails: FC<UavsDetailsProps> = ({ ls }) => {
 	);
 };
 
+interface VolumeDetailsProps {
+	ls: UseLocalStoreEntity<FlightRequestEntity>;
+	volume: number;
+	isEditing: boolean;
+}
+const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
+	const { t } = useTranslation(['ui', 'glossary']);
+	if (ls.entity.volumes.length >= volume + 1) {
+		return (
+			<div style={{ backgroundColor: 'var(--mirai-150)' }}>
+				<h2>
+					{t('Volume')} {volume + 1}
+				</h2>
+				<PNumberInput
+					id={`editor-flightRequest-volume-${volume}-max_altitude`}
+					defaultValue={ls.entity.volumes[volume].max_altitude}
+					label={t(`glossary:volume.max_altitude`)}
+					onChange={(value) => (ls.entity.volumes[volume].max_altitude = value)}
+					disabled={!isEditing}
+					isDarkVariant
+					inline={false}
+					isRequired={isEditing}
+				/>
+				<PDateInput
+					id={`editor-flightRequest-volume-${volume}-effective_time_begin`}
+					label={t('glossary:volume.effective_time_begin')}
+					disabled={!isEditing}
+					isDarkVariant
+					isTime
+					isRequired={isEditing}
+					onChange={(value) => (ls.entity.volumes[volume].effective_time_begin = value)}
+				/>
+				<PDateInput
+					id={`editor-flightRequest-volume-${volume}-effective_time_end`}
+					label={t('glossary:volume.effective_time_end')}
+					disabled={!isEditing}
+					isDarkVariant
+					isTime
+					isRequired={isEditing}
+					onChange={(value) => (ls.entity.volumes[volume].effective_time_end = value)}
+				/>
+			</div>
+		);
+	} else {
+		return null;
+	}
+};
+
 interface CreatorDetailsProps {
 	ls: UseLocalStoreEntity<FlightRequestEntity>;
 }
@@ -381,6 +431,22 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 				<div className={styles.separator} />
 
 				<aside className={styles.summary}>
+					<h2>{t('Volumes')}</h2>
+				</aside>
+				<section className={styles.details}>
+					{ls.entity.volumes.map((volume, index) => {
+						return (
+							<VolumeDetails
+								key={volume.ordinal}
+								isEditing={isEditing}
+								ls={ls}
+								volume={index}
+							/>
+						);
+					})}
+				</section>
+
+				<aside className={styles.summary}>
 					<h2>{t('Flight Request Operator')}</h2>
 				</aside>
 				<section className={styles.details}>
@@ -402,7 +468,6 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 					<UavsDetails ls={ls} />
 				</section>
 				<div className={styles.separator} />
-
 				<aside className={styles.summary}>
 					<h2>{t('Flight Request coordinations')}</h2>
 				</aside>

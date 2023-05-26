@@ -1,11 +1,11 @@
-import { Classes, FormGroup, NumericInput } from '@blueprintjs/core';
+import { Classes, FormGroup, NumericInput, NumericInputProps } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import styles from './Kanpur.module.scss';
 import classnames from 'classnames';
 import LabelInfo from './form/LabelInfo';
 
-export interface PNumberInputProps {
+export interface PNumberInputProps extends NumericInputProps {
 	id: string;
 	label: string;
 	labelInfo?: string;
