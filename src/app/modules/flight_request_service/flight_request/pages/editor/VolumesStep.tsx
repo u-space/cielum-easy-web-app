@@ -21,6 +21,9 @@ import { EditorMapViewProps } from '../../../../map/screens/editor/EditorMapView
 import { reactify } from 'svelte-preprocess-react';
 import EditorMapViewSvelte from '../../../../map/screens/editor/EditorMapView.svelte';
 import { PFullModalProps } from '@pcomponents/PFullModal';
+import FullParentOverlayBlock, {
+	FullBlockType
+} from '../../../../../commons/components/FullParentOverlayBlock';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -43,6 +46,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 	const { t } = useTranslation();
 
 	const [maxAltitude, setMaxAltitude] = useState<number>(120);
+	const [isBlockingCenter, setBlockingCenterFlag] = useState<boolean>(false);
 
 	const queryGeographicalZones = useQueryGeographicalZones(true);
 	const { pickModalProps, onPick } = usePickElements();
@@ -257,6 +261,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 					queryGeographicalZones.statusMessage ?? ''
 				}`
 			}}
+			isBlockingCenter={isBlockingCenter}
 			contextual={
 				<>
 					{flightRequest.volumes[0] ? (
@@ -344,6 +349,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 						flightRequest,
 						isEditingExisting: false,
 						volumeProps: [],
+						setBlockingCenter: setBlockingCenterFlag,
 						nextStep
 					}}
 				/>

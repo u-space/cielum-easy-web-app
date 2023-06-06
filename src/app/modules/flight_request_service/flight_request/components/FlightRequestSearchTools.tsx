@@ -7,7 +7,7 @@ const FlightRequestSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useFlightRequestStore}
 			entityName={'flightRequest'}
-			queryableProps={['id']}
+			queryableProps={['id', 'name']}
 		/>
 	);
 };

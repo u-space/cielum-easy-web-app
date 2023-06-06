@@ -2,7 +2,7 @@
 import { observer } from 'mobx-react';
 import { useEffect, useMemo, useState } from 'react';
 import { PModalType } from '@pcomponents/PModal';
-import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
+import { FlightCategory, FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { OperationVolume } from '@utm-entities/operation';
 import { GeographicalZone } from '@flight-request-entities/geographicalZone';
 import { Polygon } from 'geojson';
@@ -88,7 +88,7 @@ const FlightRequestEditor = () => {
 					isVisible: true,
 					type: PModalType.ERROR,
 					title: 'Error',
-					content: errors.join(', '),
+					content: errors,
 					primary: {
 						onClick: resetError
 					}
@@ -99,8 +99,8 @@ const FlightRequestEditor = () => {
 				setModalProps({
 					isVisible: true,
 					type: PModalType.ERROR,
-					title: 'Error',
-					content: 'Por favor, dibuje un polígono',
+					title: t('Error'),
+					content: t('Please draw a polygon to continue'),
 					primary: {
 						onClick: resetError
 					}
@@ -111,12 +111,9 @@ const FlightRequestEditor = () => {
 				setModalProps({
 					isVisible: true,
 					type: PModalType.INFORMATION,
-					title: 'Información',
+					title: t('Information'),
 					content: (
-						<p>
-							Ha seleccionado 4 o más días, esto puede incurrir en gastos extra o
-							cambios operacionales.
-						</p>
+						<p>{t('As 4 days or more were selected, extra charges can be charged')}</p>
 					),
 					primary: {
 						onClick: () => {
@@ -142,9 +139,7 @@ const FlightRequestEditor = () => {
 		if (step === FlightRequestEditorStep.COORDINATIONS) {
 			if (
 				// eslint-disable-next-line no-restricted-globals
-				confirm(
-					'¿Está seguro de que desea volver atrás? Perderá toda la información introducida'
-				)
+				confirm(t('Are you sure you want to go back? All the information will be lost'))
 			) {
 				window.location.href = '/editor/flightrequest';
 			}
@@ -159,15 +154,17 @@ const FlightRequestEditor = () => {
 			setModalProps({
 				isVisible: true,
 				type: PModalType.INFORMATION,
-				title: 'Coordinaciones en Zonas Urbanas',
-				content:
-					'¡Aviso! Este tipo de coordinación puede requerir documentación adicional así como incurrir cargos adicionales a los indicados en este proceso de coordinación',
+				title: t('Urban flight'),
+				content: t('Urban flight explanation'),
 				primary: {
 					onClick: () => {
 						resetError();
 					}
 				}
 			});
+			flightRequest.flight_category = FlightCategory.STS_01;
+		} else if (!flightRequest.urban_flight) {
+			flightRequest.flight_category = FlightCategory.OPEN;
 		}
 	}, [flightRequest.urban_flight]);
 
@@ -223,6 +220,9 @@ function validateFlightRequest(flightRequest: FlightRequestEntity) {
 	}
 	if (flightRequest.volumes.length === 1 && flightRequest.volumes[0].ordinal === -1) {
 		errors.push(i18n.t('No time selected'));
+	}
+	if (flightRequest.name === '') {
+		errors.push(i18n.t('No name selected'));
 	}
 	for (const volume of flightRequest.volumes) {
 		if (volume.ordinal === -1) continue;

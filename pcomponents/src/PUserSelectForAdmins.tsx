@@ -150,6 +150,7 @@ const DisplaySelectedUser = (props: DisplaySelectedUserProps) => {
 					onClick={() => remove(username)}
 				/>
 			)}
+			{JSON.stringify(user)}
 			{!!user && user.asNiceString}
 			{!user && username}
 			{isAdmin && (

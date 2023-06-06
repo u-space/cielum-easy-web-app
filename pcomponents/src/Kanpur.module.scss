@@ -33,59 +33,59 @@
 	// Primary
 
 	&.primary {
-		color: var(--yokohama-white-100) !important;
+		color: var(--white-100) !important;
 
-		background: var(--yokohama-primary-500) !important;
+		background: var(--primary-500) !important;
 
 		&:hover {
-			background: var(--yokohama-primary-400) !important;
+			background: var(--primary-400) !important;
 		}
 
 		&:active {
-			background: var(--yokohama-primary-600) !important;
+			background: var(--primary-600) !important;
 		}
 	}
 
 	// Secondary
 
 	&.secondary {
-		color: var(--yokohama-mirai-900) !important;
+		color: var(--mirai-900) !important;
 
-		background: var(--yokohama-mirai-150) !important;
+		background: var(--mirai-150) !important;
 
 		&:hover {
-			background: var(--yokohama-mirai-100) !important;
+			background: var(--mirai-100) !important;
 		}
 
 		&:active {
-			background: var(--yokohama-mirai-200) !important;
+			background: var(--mirai-200) !important;
 		}
 	}
 
 	// Danger
 
 	&.danger {
-		color: var(--yokohama-white-100) !important;
+		color: var(--white-100) !important;
 
-		background: var(--yokohama-ramen-500) !important;
+		background: var(--ramen-500) !important;
 
 		&:hover {
-			background: var(--yokohama-ramen-400) !important;
+			background: var(--ramen-400) !important;
 		}
 
 		&:active {
-			background: var(--yokohama-ramen-600) !important;
+			background: var(--ramen-600) !important;
 		}
 	}
 
 	&.disabled {
-		background: var(--yokohama-mirai-700) !important;
+		background: var(--mirai-700) !important;
 
 		cursor: not-allowed;
 
 		&:hover,
 		&:active {
-			background: var(--yokohama-mirai-700) !important;
+			background: var(--mirai-700) !important;
 		}
 	}
 
@@ -150,7 +150,7 @@
 	width: 100%;
 	margin: 0;
 
-	color: var(--yokohama-primary-100);
+	color: var(--primary-100);
 
 	label {
 		margin: 0 10px 0 0;
@@ -203,17 +203,17 @@
 	}
 
 	&:not(.dark) {
-		color: var(--yokohama-mirai-50);
+		color: var(--mirai-50);
 		font-weight: 400;
 
 		& :global(.bp4-form-helper-text) {
-			color: var(--yokohama-primary-100);
+			color: var(--primary-100);
 			font-weight: 400;
 		}
 	}
 
 	&.dark {
-		color: var(--yokohama-primary-900);
+		color: var(--primary-900);
 		font-weight: 400;
 
 		& input {
@@ -227,7 +227,7 @@
 		}
 
 		& select {
-			color: var(--yokohama-primary-900); // TODO: Change me
+			color: var(--primary-900); // TODO: Change me
 
 			background-color: white !important;
 
@@ -243,7 +243,7 @@
 		}
 
 		& :global(.bp4-form-helper-text) {
-			color: var(--yokohama-mirai-500);
+			color: var(--mirai-500);
 			font-weight: 400;
 		}
 	}
@@ -271,7 +271,7 @@
 		padding: 0 0.5rem;
 
 		&:disabled {
-			color: var(--yokohama-primary-100);
+			color: var(--primary-100);
 
 			background-color: transparent !important;
 
@@ -369,15 +369,15 @@
 
 	padding: 2px;
 
-	color: var(--yokohama-mirai-100);
+	color: var(--mirai-100);
 	text-align: left;
 
-	border-bottom: 0.5px solid var(--yokohama-primary-700);
+	border-bottom: 0.5px solid var(--primary-700);
 
 	&.dark {
-		color: var(--yokohama-mirai-900);
+		color: var(--mirai-900);
 
-		border-bottom: 0.5px solid var(--yokohama-mirai-200);
+		border-bottom: 0.5px solid var(--mirai-200);
 	}
 }
 
@@ -387,17 +387,17 @@
 	gap: 6px;
 	justify-content: flex-end;
 
-	color: var(--yokohama-yamate-400);
+	color: var(--yamate-400);
 
 	&.dark {
-		color: var(--yokohama-yamate-700);
+		color: var(--yamate-700);
 	}
 
 	&.error {
-		color: var(--yokohama-ramen-300);
+		color: var(--ramen-300);
 
 		&.error.dark {
-			color: var(--yokohama-ramen-500);
+			color: var(--ramen-500);
 		}
 	}
 }
@@ -425,10 +425,10 @@
 		height: 100%;
 		margin: 0 auto var(--spacing-4);
 
-		color: var(--yokohama-mirai-900);
+		color: var(--mirai-900);
 		font-size: 14px;
 
-		background-color: var(--yokohama-mirai-100);
+		background-color: var(--mirai-100);
 
 		box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 12px;
 
@@ -446,7 +446,7 @@
 			font-size: 1.5rem;
 			text-align: center;
 
-			background-color: var(--yokohama-primary-800);
+			background-color: var(--primary-800);
 
 			& > p {
 				display: inline-block;
@@ -467,12 +467,12 @@
 			height: 3rem;
 			padding: var(--spacing-2);
 
-			color: var(--yokohama-white-100);
+			color: var(--white-100);
 			font-weight: 400;
 			font-size: 21px;
 			text-align: center;
 
-			background-color: var(--yokohama-primary-800);
+			background-color: var(--primary-800);
 
 			& > p {
 				display: inline-block;
@@ -535,11 +535,11 @@
 	height: 2rem;
 	padding: var(--spacing-2);
 
-	color: var(--yokohama-mirai-50);
+	color: var(--mirai-50);
 
 	border-radius: var(--radius-l);
 
-	background-color: var(--yokohama-primary-800);
+	background-color: var(--primary-800);
 
 	box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 12px;
 }
@@ -563,13 +563,13 @@
 .tooltip {
 	padding: var(--spacing-2);
 
-	color: var(--yokohama-mirai-50);
+	color: var(--mirai-50);
 	font-size: 0.75rem;
 	font-family: 'Lexend Deca', sans-serif;
 
 	border-radius: var(--radius-l);
 
-	background-color: var(--yokohama-primary-900);
+	background-color: var(--primary-900);
 }
 
 .no_background {
@@ -588,7 +588,7 @@
 	justify-content: center;
 	align-items: center;
 
-	background: rgba(var(--yokohama-primary-900-rgb), 0.9);
+	background: rgba(var(--primary-900-rgb), 0.9);
 
 	filter: blur(30px);
 }
@@ -604,11 +604,11 @@
 	min-height: 100px;
 	margin: auto auto;
 
-	color: var(--yokohama-mirai-900);
+	color: var(--mirai-900);
 
 	border-radius: var(--radius-l);
 
-	background-color: var(--yokohama-mirai-200);
+	background-color: var(--mirai-200);
 
 	overflow: hidden;
 	@include box-shadow-1;
@@ -621,21 +621,21 @@
 		text-transform: uppercase;
 
 		&.error {
-			color: var(--yokohama-ramen-100);
+			color: var(--ramen-100);
 
-			background-color: var(--yokohama-ramen-600);
+			background-color: var(--ramen-600);
 		}
 
 		&.success {
-			color: var(--yokohama-yamate-100);
+			color: var(--yamate-100);
 
-			background-color: var(--yokohama-yamate-600);
+			background-color: var(--yamate-600);
 		}
 
 		&.information {
-			color: var(--yokohama-primary-100);
+			color: var(--primary-100);
 
-			background-color: var(--yokohama-primary-600);
+			background-color: var(--primary-600);
 		}
 	}
 
@@ -674,7 +674,7 @@
 }
 
 h2 {
-	color: var(--yokohama-primary-800);
+	color: var(--primary-800);
 }
 
 .seeFile {

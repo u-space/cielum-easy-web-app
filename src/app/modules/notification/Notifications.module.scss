@@ -11,7 +11,7 @@
 
 	padding: 2rem 0;
 
-	background-color: rgba(var(--yokohama-primary-900-rgb), 0.5);
+	background-color: rgba(var(--primary-900-rgb), 0.5);
 
 	& .content {
 		display: flex;
@@ -23,7 +23,7 @@
 		margin: 0 auto;
 		padding: 1rem;
 
-		background-color: rgba(var(--yokohama-primary-900-rgb), 0.6);
+		background-color: rgba(var(--primary-900-rgb), 0.6);
 
 		overflow-x: hidden;
 		overflow-y: scroll;
@@ -52,26 +52,26 @@
 			}
 
 			&.INFO {
-				background-color: var(--yokohama-primary-400);
+				background-color: var(--primary-400);
 
 				& .date {
-					color: var(--yokohama-primary-200);
+					color: var(--primary-200);
 				}
 
 				& .text {
-					color: var(--yokohama-mirai-50);
+					color: var(--mirai-50);
 				}
 			}
 
 			&.DANGER {
-				background-color: var(--yokohama-ramen-500);
+				background-color: var(--ramen-500);
 
 				& .date {
-					color: var(--yokohama-ramen-200);
+					color: var(--ramen-200);
 				}
 
 				& .text {
-					color: var(--yokohama-mirai-50);
+					color: var(--mirai-50);
 				}
 			}
 		}
@@ -100,28 +100,28 @@
 	overflow: visible;
 
 	&.info {
-		background-color: var(--yokohama-primary-400);
+		background-color: var(--primary-400);
 
 		& .date {
-			color: var(--yokohama-primary-200);
+			color: var(--primary-200);
 			text-align: center;
 		}
 
 		& .text {
-			color: var(--yokohama-mirai-50);
+			color: var(--mirai-50);
 		}
 	}
 
 	&.danger {
-		background-color: var(--yokohama-ramen-500);
+		background-color: var(--ramen-500);
 
 		& .date {
-			color: var(--yokohama-ramen-200);
+			color: var(--ramen-200);
 			text-align: center;
 		}
 
 		& .text {
-			color: var(--yokohama-mirai-50);
+			color: var(--mirai-50);
 		}
 	}
 }

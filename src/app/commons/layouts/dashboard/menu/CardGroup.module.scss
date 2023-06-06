@@ -1,80 +1,79 @@
 .card_group {
-  border-radius: var(--radius-m);
+	border-radius: var(--radius-m);
 
-  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
-  // CardGroup
-  pointer-events: auto;
+	box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+	// CardGroup
+	pointer-events: auto;
 
-  transition: all 2s;
+	transition: all 2s;
 
-  & .header {
-    padding: var(--spacing-1);
+	& .header {
+		padding: var(--spacing-1);
 
-    color: var(--yokohama-primary-100);
-    text-align: center;
-    text-transform: uppercase;
+		color: var(--primary-100);
+		text-align: center;
+		text-transform: uppercase;
 
-    background-color: var(--yokohama-primary-700);
-  }
+		background-color: var(--primary-700);
+	}
 
-  & .expand {
-    cursor: pointer;
+	& .expand {
+		cursor: pointer;
 
-    transition: all 0.2s linear;
+		transition: all 0.2s linear;
 
-    &:hover {
-      background-color: var(--yokohama-primary-900);
+		&:hover {
+			background-color: var(--primary-900);
 
-      box-shadow: rgba(0, 0, 0, 1) 0 3px 8px;
+			box-shadow: rgba(0, 0, 0, 1) 0 3px 8px;
+		}
+	}
 
-    }
-  }
+	& .body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		justify-content: flex-start;
 
-  & .body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    justify-content: flex-start;
+		padding: var(--padding-xs);
 
-    padding: var(--padding-xs);
+		color: var(--mirai-100);
 
-    color:  var(--yokohama-mirai-100);
+		background-color: var(--primary-900);
+	}
 
-    background-color: var(--yokohama-primary-900);
-  }
+	& .detail_line {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		justify-content: flex-start;
+		align-items: flex-start;
 
-  & .detail_line {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    justify-content: flex-start;
-    align-items: flex-start;
+		border-bottom: 1px solid var(--primary-900);
 
-    border-bottom: 1px solid var(--yokohama-primary-900);
+		background-color: var(--primary-900);
 
-    background-color: var(--yokohama-primary-900);
+		user-select: text;
 
-    user-select: text;
+		& > .prop {
+			color: var(--mirai-200);
+		}
 
-    & > .prop {
-      color: var(--yokohama-mirai-200);
-    }
+		& > .value {
+		}
+	}
 
-    & > .value {
-    }
-  }
+	&.danger {
+		background-color: var(--ramen-700);
 
-  &.danger {
-    background-color: var(--yokohama-ramen-700);
+		& > .header {
+			color: var(--ramen-100);
 
-    & > .header {
-      color: var(--yokohama-ramen-100);
+			background-color: var(--ramen-600);
+		}
 
-      background-color: var(--yokohama-ramen-600);
-    }
-
-    & > .body {
-      color: var(--yokohama-mirai-50);
-    }
-  }
+		& > .body {
+			color: var(--mirai-50);
+		}
+	}
 }

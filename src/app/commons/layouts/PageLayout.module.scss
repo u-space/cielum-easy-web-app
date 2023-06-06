@@ -8,12 +8,12 @@
 	max-width: 800px;
 	margin: var(--spacing-2) auto;
 
-	color: var(--yokohama-mirai-900);
+	color: var(--mirai-900);
 	font-size: 14px;
 
 	border-radius: var(--radius-l);
 	//width: 100%;
-	background-color: var(--yokohama-mirai-100);
+	background-color: var(--mirai-100);
 
 	overflow: hidden;
 	// TODO: This style is copy pasted from the card of kanpur, maybe it can be a generic component
@@ -35,7 +35,7 @@
 		font-size: 21px;
 		text-align: center;
 
-		background-color: var(--yokohama-primary-800);
+		background-color: var(--primary-800);
 
 		& > p {
 			display: inline-block;
@@ -61,7 +61,7 @@
 
 		padding: var(--spacing-2);
 
-		background-color: var(--yokohama-mirai-100);
+		background-color: var(--mirai-100);
 	}
 
 	& .nav {

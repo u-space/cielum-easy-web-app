@@ -8,13 +8,18 @@ import PTextArea from '@pcomponents/PTextArea';
 import PBooleanInput from '@pcomponents/PBooleanInput';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { useHistory } from 'react-router-dom';
-import { CSSProperties, FC, useState } from 'react';
+import { CSSProperties, FC, useEffect, useState } from 'react';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import { FlightCategory, FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { useUpdateCoordination } from '../../coordination/hooks';
 import { CoordinationState } from '@flight-request-entities/coordination';
 import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import { UserEntity } from '@utm-entities/user';
+import { useQueryVehicle } from '../../../core_service/vehicle/hooks';
+import { Spinner } from '@blueprintjs/core';
+import PFullModal from '@pcomponents/PFullModal';
+import PNumberInput from '@pcomponents/PNumberInput';
+import PDateInput from '@pcomponents/PDateInput';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -260,31 +265,102 @@ interface UavsDetailsProps {
 	ls: UseLocalStoreEntity<FlightRequestEntity>;
 }
 
+const UavDetail = (props: { uvin: string }) => {
+	const { t } = useTranslation();
+	const history = useHistory();
+
+	const query = useQueryVehicle(props.uvin);
+	const { vehicle, refetch } = query;
+
+	useEffect(() => {
+		refetch().then();
+	}, [refetch]);
+
+	if (query.isSuccess) {
+		return (
+			<div className={styles.leftbalancedline}>
+				{vehicle.asNiceString}
+				<PButton
+					icon="info-sign"
+					size={PButtonSize.EXTRA_SMALL}
+					variant={PButtonType.SECONDARY}
+					onClick={() => history.push(`/vehicles?id=${vehicle.uvin}`)}
+				/>
+			</div>
+		);
+	} else if (query.isLoading) {
+		return <Spinner />;
+	} else {
+		return <p>{t('Vehicle not found')}</p>;
+	}
+};
+
 const UavsDetails: FC<UavsDetailsProps> = ({ ls }) => {
 	const { t } = useTranslation('glossary');
 	const entity = ls.entity;
-	const history = useHistory();
+
 	if (!entity) {
 		return null;
 	}
+
 	if (!entity.uavs || entity.uavs?.length === 0) {
 		return <h2>{t('flightRequest.noUavs')}</h2>;
 	}
 	return (
 		<>
-			{entity.uavs.map((vehicle) => (
-				<div key={vehicle.uvin} className={styles.leftbalancedline}>
-					{vehicle.vehicleName}
-					<PButton
-						icon="info-sign"
-						size={PButtonSize.EXTRA_SMALL}
-						variant={PButtonType.SECONDARY}
-						onClick={() => history.push(`/vehicles?id=${vehicle.uvin}`)}
-					/>
-				</div>
-			))}
+			{entity.uavs.map((vehicle) => {
+				return <UavDetail key={vehicle.uvin} uvin={vehicle.uvin} />;
+			})}
 		</>
 	);
+};
+
+interface VolumeDetailsProps {
+	ls: UseLocalStoreEntity<FlightRequestEntity>;
+	volume: number;
+	isEditing: boolean;
+}
+const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
+	const { t } = useTranslation(['ui', 'glossary']);
+	if (ls.entity.volumes.length >= volume + 1) {
+		return (
+			<div style={{ backgroundColor: 'var(--mirai-150)' }}>
+				<h2>
+					{t('Volume')} {volume + 1}
+				</h2>
+				<PNumberInput
+					id={`editor-flightRequest-volume-${volume}-max_altitude`}
+					defaultValue={ls.entity.volumes[volume].max_altitude}
+					label={t(`glossary:volume.max_altitude`)}
+					onChange={(value) => (ls.entity.volumes[volume].max_altitude = value)}
+					disabled={!isEditing}
+					isDarkVariant
+					inline={false}
+					isRequired={isEditing}
+				/>
+				<PDateInput
+					id={`editor-flightRequest-volume-${volume}-effective_time_begin`}
+					label={t('glossary:volume.effective_time_begin')}
+					disabled={!isEditing}
+					isDarkVariant
+					isTime
+					isRequired={isEditing}
+					onChange={(value) => (ls.entity.volumes[volume].effective_time_begin = value)}
+				/>
+				<PDateInput
+					id={`editor-flightRequest-volume-${volume}-effective_time_end`}
+					label={t('glossary:volume.effective_time_end')}
+					disabled={!isEditing}
+					isDarkVariant
+					isTime
+					isRequired={isEditing}
+					onChange={(value) => (ls.entity.volumes[volume].effective_time_end = value)}
+				/>
+			</div>
+		);
+	} else {
+		return null;
+	}
 };
 
 interface CreatorDetailsProps {
@@ -355,6 +431,22 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 				<div className={styles.separator} />
 
 				<aside className={styles.summary}>
+					<h2>{t('Volumes')}</h2>
+				</aside>
+				<section className={styles.details}>
+					{ls.entity.volumes.map((volume, index) => {
+						return (
+							<VolumeDetails
+								key={volume.ordinal}
+								isEditing={isEditing}
+								ls={ls}
+								volume={index}
+							/>
+						);
+					})}
+				</section>
+
+				<aside className={styles.summary}>
 					<h2>{t('Flight Request Operator')}</h2>
 				</aside>
 				<section className={styles.details}>
@@ -376,7 +468,6 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 					<UavsDetails ls={ls} />
 				</section>
 				<div className={styles.separator} />
-
 				<aside className={styles.summary}>
 					<h2>{t('Flight Request coordinations')}</h2>
 				</aside>

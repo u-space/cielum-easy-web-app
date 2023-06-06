@@ -50,7 +50,9 @@ const LoginScreen = () => {
 
 	return (
 		<UnloggedLayout extraClassnames={[styles.login]} onSubmit={onSubmit}>
-			<PInput onChange={ls.setUser} label={t('User')} id={'user'} />
+			<div className={styles.line}>
+				<PInput onChange={ls.setUser} label={t('User')} id={'user'} />
+			</div>
 			<div className={styles.line}>
 				<PInput
 					onChange={ls.setPassword}

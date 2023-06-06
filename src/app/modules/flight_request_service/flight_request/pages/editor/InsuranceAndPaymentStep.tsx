@@ -22,7 +22,7 @@ import PageLayout from '../../../../../commons/layouts/PageLayout';
 import { AxiosError, AxiosResponse } from 'axios';
 import { onOff, onOffMaterializeVariants } from '@pcomponents/anims';
 import DashboardLayout from '../../../../../commons/layouts/DashboardLayout';
-import { PFullModalProps } from '@pcomponents/PFullModal';
+import PFullModal, { PFullModalProps } from '@pcomponents/PFullModal';
 
 interface InsuranceAndPaymentStepProps {
 	previousStep: () => void;
@@ -261,39 +261,8 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 
 	return (
 		<DashboardLayout isLoading={saveFlightRequestMutation.isLoading}>
-			<PageLayout
-				footer={
-					<PButton style={{ margin: '0 1rem 1rem auto' }} onClick={finishAndPay}>
-						{t('Finish and pay')}
-					</PButton>
-				}
-			>
-				{modalProps && (
-					<motion.div
-						className={styles.overlay}
-						initial="off"
-						animate="on"
-						exit="off"
-						transition={{ duration: 0.25 }}
-						variants={onOff}
-					>
-						<motion.div
-							initial="off"
-							animate="on"
-							exit="off"
-							transition={{ duration: 0.25 }}
-							variants={onOffMaterializeVariants}
-						>
-							<PModal
-								type={modalProps.type}
-								title={modalProps.title}
-								content={modalProps.content}
-								primary={modalProps.primary}
-								secondary={modalProps.secondary}
-							/>
-						</motion.div>
-					</motion.div>
-				)}
+			<PageLayout footer={<PButton onClick={finishAndPay}>{t('Finish and pay')}</PButton>}>
+				{modalProps && <PFullModal {...modalProps} />}
 				<MultistepDialog
 					isOpen={isInsuranceFormOpened}
 					onClose={() => setInsuranceFormOpenedFlag(false)}

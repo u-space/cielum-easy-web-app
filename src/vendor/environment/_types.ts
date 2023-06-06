@@ -6,6 +6,7 @@ export interface AssetList {
 	dashboard_background: string; // dashboard background image path (relative to /assets/)
 	privacy_policy: InternationalizedAsset; // privacy policy path, in markdown format (relative to /assets/)
 	extra_locales?: LocalesAssets; // extra locales assets
+	override_css?: string; // path to a CSS file to be loaded after the default CSS. Specially useful for overriding CSS variables of the theme
 }
 
 export interface InternationalizedAsset {
@@ -44,6 +45,10 @@ export enum ImplementationId {
 	// easy-webapp v3.0.x
 	HOME_SCREEN_QUICKLAUNCHBUTTONS = "001",
 	// A home screen with quick launch buttons, based on the one used in the Editors components
+
+	// easy-webapp v3.0.x
+	BAR_ITEMS_MAP_IS_NOT_IMPORTANT = "002",
+	// A bar items arrangement where the map is not the most important use case
 }
 // This enum is used to identify specific implementations of a feature
 // All related specific implementations of components should have the same id, and this id is set as a part of the file extension
@@ -66,6 +71,9 @@ export interface Tenant {
 		// RealtimeMap
 		RealtimeMap: {
 			enabled: boolean;
+			options: {
+				hideOperationsControls: boolean; // Whether to hide filter by state and filter by specific operation in the realtime map
+			};
 		};
 		// easy-webapp v3.0.x
 		// Map can be disabled entirely
@@ -85,7 +93,7 @@ export interface Tenant {
 			| {
 					enabled: true;
 					options: {
-						pilotCanCreateOperations: boolean;
+						pilotCanCreateOperations: boolean; // Whether pilots can create operations
 					};
 			  };
 		// easy-webapp v3.0.x
@@ -101,6 +109,9 @@ export interface Tenant {
 		// Vehicles
 		Vehicles: {
 			enabled: boolean;
+			options?: {
+				hideUvin: boolean; // Whether to hide the UVIN field in the detailed vehicle information
+			};
 		};
 		// easy-webapp v3.0.x
 		// Feature can be disabled entirely
@@ -161,5 +172,19 @@ export interface Tenant {
 		// Extra buttons to be added to the Editor Hub
 		// These will show up in the Editor Hub, but will not be accesible if the user does not have the required roles
 		// These buttons will be added at the end of the Editor Hub, after the default items
+
+		// Banner across all pages
+		banner?: {
+			placement: "top" | "bottom";
+			md: string; // Markdown text, to be parsed by react-markdown
+		};
+		// easy-webapp v3.0.x
+
+		// Extra buttons in RealtimeMap
+		realtime_map_buttons?: {
+			label: string; // Label of the button, should have corresponding translation in the locales (ui)
+			icon: string | null;
+			path: string; // URL to redirect to when the button is clicked (from root)
+		}[];
 	};
 }

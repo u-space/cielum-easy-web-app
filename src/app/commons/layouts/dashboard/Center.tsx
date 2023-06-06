@@ -64,7 +64,7 @@ const Center: FC<CenterProps> = ({
 		<section
 			style={{
 				...style,
-				background: `var(--yokohama-primary-700) url(${getAssetPath(
+				background: `var(--primary-700) url(${getAssetPath(
 					env.tenant.assets.dashboard_background
 				)})`
 			}}

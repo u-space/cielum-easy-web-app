@@ -76,9 +76,9 @@ const FlightRequestHub: FC = () => {
 	const idSelected = queryString.get('id');
 	const columns = [
 		{ title: ' ', width: rowHeight * 2 },
-		{ title: t('glossary:flightRequest.id'), width: 2 },
+		{ title: t('glossary:flightRequest.name'), width: 2 },
 		{ title: t('glossary:flightRequest.operator'), width: 2 },
-		{ title: t('glossary:flightRequest.flightCategory'), width: 2 },
+		{ title: t('glossary:flightRequest.creator'), width: 2 },
 		{ title: t('glossary:flightRequest.state'), width: 2 }
 	];
 
@@ -95,11 +95,11 @@ const FlightRequestHub: FC = () => {
 			let data;
 			let kind = GridCellKind.Text;
 			if (col === 1) {
-				data = flightRequest.id ? flightRequest.id : '';
+				data = flightRequest.name ? flightRequest.name : '';
 			} else if (col === 2) {
 				data = flightRequest.operator ? flightRequest.operator.username : '';
 			} else if (col === 3) {
-				data = flightRequest.flight_category ? flightRequest.flight_category : '';
+				data = flightRequest.creator ? flightRequest.creator.username : '';
 			} else if (col === 4) {
 				data = flightRequest.state
 					? t(`glossary:flightRequest.flight_state.${flightRequest.state}`)
@@ -142,7 +142,7 @@ const FlightRequestHub: FC = () => {
 
 	const onEntitySelected = (flightRequest: FlightRequestEntity) =>
 		history.replace(
-			flightRequest ? `/flightRequests?id=${flightRequest.id}` : '/flightRequests'
+			flightRequest ? `/flight-requests?id=${flightRequest.id}` : '/flight-requests'
 		);
 
 	return (

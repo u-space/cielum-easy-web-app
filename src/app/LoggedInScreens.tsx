@@ -30,6 +30,7 @@ import FlightRequestHub from './modules/flight_request_service/flight_request/sc
 import PlanningMap from './modules/flight_request_service/flight_request/screens/PlanningMap';
 import { getFeatureOption } from './utils';
 import UserProfileScreen from './modules/core_service/user/screens/UserProfileScreen';
+import CoordinationHub from './modules/flight_request_service/coordination/screens/CoordinationHub';
 
 const LoggedInScreens = () => {
 	const { t } = useTranslation();
@@ -178,6 +179,14 @@ const LoggedInScreens = () => {
 						roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
 					>
 						<CoordinatorsHub />
+					</RoleGatedRoute>
+				)}
+				{isFeatureEnabled('FlightRequests') && (
+					<RoleGatedRoute
+						path={'/coordinations'}
+						roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+					>
+						<CoordinationHub />
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('FlightRequests') && (

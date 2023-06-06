@@ -437,6 +437,8 @@
 		}
 	},
 	"flightRequest": {
+		"name": "Nombre de la solicitud",
+		"isDefaultOperator": "¿Desea utilizar el operador por defecto?",
 		"uas_registrations": "Aeronaves a utilizar",
 		"flight_comments": "Comentarios de vuelo",
 		"urban_flight": "¿Es este un vuelo en zona urbana?",

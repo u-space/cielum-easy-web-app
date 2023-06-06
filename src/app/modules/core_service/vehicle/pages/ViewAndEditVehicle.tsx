@@ -29,6 +29,7 @@ import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
 import env from '../../../../../vendor/environment/env';
 import { UserEntity } from '@utm-entities/user';
 import ExtraField from '../../../../commons/components/ExtraField';
+import { getFeatureOption } from '../../../../utils';
 
 export interface BaseVehicleDetailsProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -54,6 +55,8 @@ const BaseVehicleDetails: FC<BaseVehicleDetailsProps> = observer(
 				{Object.entries(ls.entity).map((pair) => {
 					const [prop, value] = pair;
 					const isNotVisible = isCreating && prop === 'uvin';
+					const isUvinAndShouldBeVisible =
+						!getFeatureOption('Vehicles', 'hideUvin') || prop !== 'uvin';
 					if (
 						ls.entity.isBasic(prop) &&
 						prop !== 'operators' &&
@@ -61,7 +64,8 @@ const BaseVehicleDetails: FC<BaseVehicleDetailsProps> = observer(
 						prop !== 'class' &&
 						prop !== 'payload' &&
 						prop !== 'faaNumber' &&
-						prop !== 'owner_id'
+						prop !== 'owner_id' &&
+						isUvinAndShouldBeVisible
 					) {
 						const id = `input-${prop}`;
 						const label = t(`vehicle.${prop}`);
@@ -351,8 +355,8 @@ const ExtraVehicleDetailsValues = ({
 	const { t } = useTranslation('glossary');
 	const schemaValue = schema[property];
 	const type = schemaValue.type;
-	const label = t(`user.${property}`);
-	const explanation = t([`user.${property}_desc`, '']);
+	const label = t(`vehicle.${property}`);
+	const explanation = t([`vehicle.${property}_desc`, '']);
 	const id = `input-${property}`;
 	const value = ls.entity.extra_fields[property];
 
@@ -566,6 +570,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								api={env.core_api}
 								token={token}
 								schema={schema}
+								single={false}
 								id="operators"
 								onSelect={(selected) => {
 									ls.entity.operators = selected.map((s) => s.username);
@@ -574,7 +579,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								preselected={operators}
 								fill
 								isRequired
-								disabled={!isEditing || !isAdmin || !isCreating}
+								disabled={!isEditing || !isAdmin}
 								isDarkVariant
 							/>
 						)}

@@ -28,6 +28,7 @@ export enum FlightCategory {
 
 export class FlightRequestEntity implements EntityHasDisplayName {
 	id?: string;
+	name: string;
 	volumes: Array<OperationVolume>;
 	uavs: Array<VehicleEntity>;
 	state?: FlightRequestState;
@@ -48,6 +49,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 
 	constructor(existing: any = {}) {
 		const {
+			name = '',
 			volumes = [],
 			uavs = [],
 			state = FlightRequestState.REQUIRE_APPROVAL,
@@ -66,6 +68,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 			id
 		} = existing;
 
+		this.name = name;
 		this.id = id;
 		this.volumes = volumes;
 		this.uavs = uavs;
@@ -148,6 +151,16 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 
 	setFlightCategory(flight_category: FlightCategory) {
 		this.flight_category = flight_category;
+	}
+
+	set(
+		property: keyof FlightRequestEntity,
+		value: FlightRequestEntity[keyof FlightRequestEntity]
+	) {
+		if (property === 'displayName') return;
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		this[property] = value;
 	}
 }
 

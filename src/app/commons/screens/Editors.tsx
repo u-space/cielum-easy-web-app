@@ -1,208 +1,119 @@
-import { Icon } from '@blueprintjs/core';
-import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
-import styles from './EditorHub.module.scss';
+import { IconName } from '@blueprintjs/core';
 import DashboardLayout from '../layouts/DashboardLayout';
 import env from '../../../vendor/environment/env';
-import { useAuthIsAdmin, useAuthIsPilot } from '../../modules/auth/store';
-import { BlueprintIcons_16Id } from '@blueprintjs/icons/lib/esnext/generated-icons/16px/blueprint-icons-16';
-import { useAuthStore } from '../../modules/auth/store';
-import { Role } from '../../../vendor/environment/_types';
 import { getFeatureOption } from '../../utils';
+import QuickLaunchButtonsLayout, { QuickLaunchButton } from '../layouts/QuickLaunchButtonsLayout';
+import { isFeatureEnabled } from '../../../utils';
 
-const UserFeatureSetEditors = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-	const isAdmin = useAuthIsAdmin();
+function getUserFeatureSetEditorsButtons(): QuickLaunchButton[] {
+	return [{ label: 'User', icon: 'person', path: '/editor/user', isAdmin: true }];
+}
 
-	if (isAdmin) {
-		return (
-			<div className={styles.item} onClick={() => history.push('/editor/user')}>
-				<div>
-					<Icon icon="person" size={64} />
-				</div>
-				<div>{t('User')}</div>
-			</div>
-		);
+function getVehicleFeatureSetEditorsButtons(): QuickLaunchButton[] {
+	if (isFeatureEnabled('Vehicles')) {
+		return [{ label: 'Vehicle', icon: 'airplane', path: '/editor/vehicle', isAdmin: true }];
 	} else {
-		return null;
+		return [];
 	}
-};
+}
 
-const VehicleFeatureSetEditors = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-
-	return (
-		<div className={styles.item} onClick={() => history.push('/editor/vehicle')}>
-			<div>
-				<Icon icon="airplane" size={64} />
-			</div>
-			<div>{t('Vehicle')}</div>
-		</div>
-	);
-};
-
-const RegularFlightFeatureSetEditors = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-	const isAdmin = useAuthIsAdmin();
-	if (isAdmin) {
-		return (
-			<div className={styles.item} onClick={() => history.push('/editor/regularflight')}>
-				<div>
-					<Icon icon="route" size={64} />
-				</div>
-				<div>{t('Regular Flight')}</div>
-			</div>
-		);
+function getRegularFlightFeatureSetEditorsButtons(): QuickLaunchButton[] {
+	if (isFeatureEnabled('RegularFlights')) {
+		return [
+			{ label: 'Regular Flight', icon: 'route', path: '/editor/regularflight', isAdmin: true }
+		];
 	} else {
-		return null;
+		return [];
 	}
-};
+}
 
-const RfvFeatureSetEditors = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-	const isAdmin = useAuthIsAdmin();
-
-	if (isAdmin) {
-		return (
-			<div className={styles.item} onClick={() => history.push('/editor/rfv')}>
-				<div>
-					<Icon icon="polygon-filter" size={64} />
-				</div>
-				<div>{t('RFV')}</div>
-			</div>
-		);
+function getRfvFeatureSetEditorsButtons(): QuickLaunchButton[] {
+	if (isFeatureEnabled('Rfvs')) {
+		return [{ label: 'RFV', icon: 'polygon-filter', path: '/editor/rfv', isAdmin: true }];
 	} else {
-		return null;
+		return [];
 	}
-};
+}
 
-const UvrFeatureSetEditors = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-	const isAdmin = useAuthIsAdmin();
-	if (isAdmin) {
-		return (
-			<div className={styles.item} onClick={() => history.push('/editor/uvr')}>
-				<div>
-					<Icon icon="graph-remove" size={64} />
-				</div>
-				<div>{t('UVR')}</div>
-			</div>
-		);
+function getUvrFeatureSetEditorsButtons(): QuickLaunchButton[] {
+	if (isFeatureEnabled('Uvrs')) {
+		return [{ label: 'UVR', icon: 'graph-remove', path: '/editor/uvr', isAdmin: true }];
 	} else {
-		return null;
+		return [];
 	}
-};
+}
 
-const TrackerFeatureSetEditors = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-	return (
-		<div className={styles.item} onClick={() => history.push('/editor/tracker')}>
-			<div>
-				<Icon icon="circle" size={64} />
-			</div>
-			<div>{t('Tracker')}</div>
-		</div>
-	);
-};
-const OperationFeatureSetEditors = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-	const isAdmin = useAuthIsAdmin();
-	const isPilot = useAuthIsPilot();
-
-	if (isAdmin || (isPilot && getFeatureOption('Operations', 'pilotCanCreateOperations'))) {
-		return (
-			<div className={styles.item} onClick={() => history.push('/editor/operation')}>
-				<div>
-					<Icon icon="area-of-interest" size={64} />
-				</div>
-				<div>{t('Operation')}</div>
-			</div>
-		);
+function getTrackerFeatureSetEditorsButtons(): QuickLaunchButton[] {
+	if (isFeatureEnabled('Trackers')) {
+		return [{ label: 'Tracker', icon: 'circle', path: '/editor/tracker', isAdmin: false }];
 	} else {
-		return null;
+		return [];
 	}
-};
+}
 
-const FlightRequestFeatureSetEditors = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-	const isAdmin = useAuthIsAdmin();
-	return (
-		<>
-			<div className={styles.item} onClick={() => history.push('/editor/flightrequest')}>
-				<div>
-					<Icon icon="document-open" size={64} />
-				</div>
-				<div>{t('flightRequest')}</div>
-			</div>
-			{isAdmin && (
-				<div className={styles.item} onClick={() => history.push('/editor/coordinator')}>
-					<div>
-						<Icon icon="graph" size={64} />
-					</div>
-					<div>{t('Coordinator')}</div>
-				</div>
-			)}
-		</>
-	);
-};
+function getOperationFeatureSetEditorsButtons(): QuickLaunchButton[] {
+	if (isFeatureEnabled('Operations')) {
+		return [
+			{
+				label: 'Operation',
+				icon: 'area-of-interest',
+				path: '/editor/operation',
+				isAdmin: !getFeatureOption('Operations', 'pilotCanCreateOperations')
+			}
+		];
+	} else {
+		return [];
+	}
+}
 
-const ExtraTenantButtons = () => {
-	const { t } = useTranslation();
-	const history = useHistory();
-	const role = useAuthStore((state) => state.role);
+function getFlightRequestFeatureSetEditorsButtons(): QuickLaunchButton[] {
+	if (isFeatureEnabled('FlightRequests')) {
+		return [
+			{
+				label: 'Flight Request',
+				icon: 'document-open',
+				path: '/editor/flightrequest',
+				isAdmin: false
+			},
+			{ label: 'Coordinator', icon: 'graph', path: '/editor/coordinator', isAdmin: true }
+		];
+	} else {
+		return [];
+	}
+}
 
+function getExtraTenantButtons(): QuickLaunchButton[] {
 	if (env.tenant.extras?.editor_hub_buttons) {
-		return (
-			<>
-				{env.tenant.extras.editor_hub_buttons.map((button, index) => {
-					if (button.roles.includes(role as Role)) {
-						return (
-							<div
-								className={styles.item}
-								onClick={() => history.push(button.url)}
-								key={index}
-							>
-								<div>
-									<Icon icon={button.icon as BlueprintIcons_16Id} size={64} />
-								</div>
-								<div>{t(button.label)}</div>
-							</div>
-						);
-					} else {
-						return null;
-					}
-				})}
-			</>
-		);
+		return env.tenant.extras.editor_hub_buttons.map((button) => {
+			return {
+				label: button.label,
+				icon: button.icon as IconName,
+				path: button.url,
+				isAdmin: button.roles.includes('ADMIN')
+			};
+		});
 	} else {
-		return null;
+		return [];
 	}
-};
+}
 
 const Editors = () => {
-	const { t } = useTranslation();
 	return (
 		<DashboardLayout isLoading={false}>
-			<div className={styles.horizontal_usecases}>
-				<div className={styles.title}>{t('Select the entity to create')}</div>
-				<UserFeatureSetEditors />
-				{env.tenant.features.Operations.enabled && <OperationFeatureSetEditors />}
-				{env.tenant.features.Vehicles.enabled && <VehicleFeatureSetEditors />}
-				{env.tenant.features.RegularFlights.enabled && <RegularFlightFeatureSetEditors />}
-				{env.tenant.features.Rfvs.enabled && <RfvFeatureSetEditors />}
-				{env.tenant.features.Uvrs.enabled && <UvrFeatureSetEditors />}
-				{env.tenant.features.FlightRequests.enabled && <FlightRequestFeatureSetEditors />}
-				{env.tenant.features.Trackers.enabled && <TrackerFeatureSetEditors />}
-				<ExtraTenantButtons />
-			</div>
+			<QuickLaunchButtonsLayout
+				title={'Select the entity to create'}
+				buttons={[
+					...getUserFeatureSetEditorsButtons(),
+					...getVehicleFeatureSetEditorsButtons(),
+					...getOperationFeatureSetEditorsButtons(),
+					...getRegularFlightFeatureSetEditorsButtons(),
+					...getRfvFeatureSetEditorsButtons(),
+					...getUvrFeatureSetEditorsButtons(),
+					...getFlightRequestFeatureSetEditorsButtons(),
+					...getTrackerFeatureSetEditorsButtons(),
+					...getExtraTenantButtons()
+				]}
+			/>
 		</DashboardLayout>
 	);
 };

@@ -51,9 +51,9 @@ const PButton = (props: PButtonProps) => {
 			iconSize = 12;
 	}
 
-	let iconColor = getCSSVariable('yokohama-mirai-100'); // Primary icon color
+	let iconColor = getCSSVariable('mirai-100'); // Primary icon color
 	if (variant === PButtonType.SECONDARY) {
-		iconColor = getCSSVariable('yokohama-primary-500');
+		iconColor = getCSSVariable('primary-500');
 	}
 
 	// Variations flags

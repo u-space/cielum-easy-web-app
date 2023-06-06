@@ -54,9 +54,7 @@ export class VehicleEntity implements EntityHasDisplayName {
 		this.owner_id = vehicle?.owner?.username ?? defaultOwner ?? '';
 		this.owner = vehicle?.owner ?? null;
 		this.operators = observable(
-			(vehicle?.operators ?? []).map(
-				(op: UserEntity) => (op || { username: 'admin' }).username
-			) ?? (defaultOperator ? [defaultOperator] : [])
+			vehicle?.operators ?? (defaultOperator ? [defaultOperator] : [])
 		);
 		this.extra_fields = observable({
 			documents: vehicle?.extra_fields?.documents ?? [],
@@ -314,7 +312,7 @@ export function getVehicleAPIClient(api: string, token: string, schema: ExtraFie
 		saveVehicle: (_vehicle: VehicleEntity, isPilot: boolean, isCreating: boolean) => {
 			const errors = _vehicle.validate();
 			if (errors.length > 0) return Promise.reject(errors);
-			const vehicle = _vehicle.asBackendFormat;
+			const vehicle: any = _vehicle.asBackendFormat;
 
 			if (isPilot) {
 				delete vehicle.owner_id;
@@ -324,6 +322,8 @@ export function getVehicleAPIClient(api: string, token: string, schema: ExtraFie
 			if (isCreating) {
 				delete vehicle.authorized;
 				delete vehicle.owner;
+			} else {
+				vehicle.owner = vehicle.owner?.username || '';
 			}
 			if (vehicle.uvin === '_temp') delete vehicle.uvin;
 

@@ -1,5 +1,4 @@
 import './app.scss';
-
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthRole, useAuthStore } from './modules/auth/store';
 import { Spinner, SpinnerSize } from '@blueprintjs/core';
@@ -14,6 +13,9 @@ import DeadScreen from './modules/auth/screens/DeadScreen';
 import { getFlightRequestServiceAPIClient } from '@flight-request-entities/client';
 import LoggedInScreens from './LoggedInScreens';
 import NotLoggedInScreens from './NotLoggedInScreens';
+import ReactMarkdown from 'react-markdown';
+import classnames from 'classnames';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 
 export function App() {
 	const role = useAuthStore((state) => state.role);
@@ -21,6 +23,9 @@ export function App() {
 
 	const [unrecoverableBackendError, setUnrecoverableBackendError] = useState<string | undefined>(
 		env.maintenance_mode?.description
+	);
+	const [isBannerHidden, setBannerHiddenFlag] = useState<boolean>(
+		localStorage.getItem('bannerHidden') === 'true'
 	);
 
 	const queryClient = new QueryClient();
@@ -43,6 +48,11 @@ export function App() {
 			.then()
 			.catch((err) => setUnrecoverableBackendError(err.message));
 	}, [relogin]);
+
+	// Saves the banner hidden state in local storage
+	useEffect(() => {
+		localStorage.setItem('bannerHidden', isBannerHidden.toString());
+	}, [isBannerHidden]);
 
 	// TODO: Make this nicer
 
@@ -82,6 +92,24 @@ export function App() {
 									{role === AuthRole.NOT_LOGGED_IN && <NotLoggedInScreens />}
 									{role !== AuthRole.NOT_LOGGED_IN && <LoggedInScreens />}
 								</Router>
+								{env.tenant.extras?.banner && !isBannerHidden && (
+									<div
+										className={classnames(
+											'banner',
+											env.tenant.extras.banner.placement
+										)}
+									>
+										<ReactMarkdown>
+											{env.tenant.extras?.banner.md}
+										</ReactMarkdown>
+										<PButton
+											icon={'cross'}
+											onClick={() => setBannerHiddenFlag(true)}
+											size={PButtonSize.SMALL}
+											variant={PButtonType.DANGER}
+										/>
+									</div>
+								)}
 							</div>
 						</Suspense>
 					</FlightRequestAPIContext.Provider>

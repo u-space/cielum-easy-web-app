@@ -1,13 +1,12 @@
 import { Spinner } from '@blueprintjs/core';
-import { PButtonSize, PButtonType } from '@pcomponents/PButton';
-import PButton from '@pcomponents/PButton';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import PDocument from '@pcomponents/PDocument';
 import PDocumentTagSelector from '@pcomponents/PDocumentTagSelector';
 import PInput from '@pcomponents/PInput';
 import PUserRoleSelect from '@pcomponents/PUserRoleSelect';
 import { DocumentEntity } from '@utm-entities/document';
 import { observer, useObserver } from 'mobx-react';
-import { CSSProperties, useEffect, useMemo } from 'react';
+import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import {
@@ -25,6 +24,9 @@ import PasswordChanger from '../components/PasswordChanger';
 import { ExtraFieldSchemas } from '@utm-entities/extraFields';
 import { UserEntity } from '@utm-entities/user';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
+import styled from 'styled-components';
+import PFullModal, { PFullModalProps, undefinedModal } from '@pcomponents/PFullModal';
+import { PModalType } from '@pcomponents/PModal';
 
 interface BaseUserDetailsProps {
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,10 +116,11 @@ interface PDocumentWithSchemaProps {
 
 const PDocumentWithSchema = (props: PDocumentWithSchemaProps) => {
 	const { ls, document, isEditing, index } = props;
-	const { t } = useTranslation('glossary');
+	const { t } = useTranslation(['glossary', 'ui']);
 	const isAdmin = useAuthIsAdmin();
 	const { tag } = document;
-	const label = t(`user.${tag}`);
+	const name = document.name || document.file?.name;
+	const label = name ? `${t('ui:Type')}: ${t(`user.${tag}`)} (${name})` : t(`user.${tag}`);
 	const explanation = t([`user.${tag}_desc`, '']);
 	const id = `input-${tag}-${index}`;
 	const schemaQuery = useDocumentTagSchema('user', tag);
@@ -143,36 +146,55 @@ const PDocumentWithSchema = (props: PDocumentWithSchemaProps) => {
 
 	if (!schemaQuery.isLoading && schemaQuery.data) {
 		return (
-			<PDocument
-				isEditing={isEditing}
-				document={document}
-				id={id}
-				label={label}
-				explanation={explanation}
-				isDarkVariant
-				schema={schemaQuery.data}
-				onSave={(document) => {
-					ls.documents.set(document.id, document);
+			<div
+				style={{
+					backgroundColor: 'var(--mirai-150)',
+					flex: 1
 				}}
-				onClose={() => {
-					if (document.isBeingAdded) {
-						ls.documents.delete(document.id);
+			>
+				<PDocument
+					isEditing={isEditing}
+					document={document}
+					id={id}
+					label={label}
+					explanation={explanation}
+					isDarkVariant
+					schema={schemaQuery.data}
+					onSave={(document) => {
+						ls.documents.set(document.id, document);
+					}}
+					onClose={() => {
+						if (document.isBeingAdded) {
+							ls.documents.delete(document.id);
+						}
+					}}
+					onDelete={
+						ls.documents?.has(document.id)
+							? () => ls.documents.delete(document.id)
+							: undefined
 					}
-				}}
-				onDelete={
-					ls.documents?.has(document.id)
-						? () => ls.documents.delete(document.id)
-						: undefined
-				}
-				onSaveObservation={onSaveObservation}
-				onSaveValidation={onSaveValidation}
-				isAdmin={isAdmin}
-			/>
+					onSaveObservation={onSaveObservation}
+					onSaveValidation={onSaveValidation}
+					isAdmin={isAdmin}
+				/>
+			</div>
 		);
 	} else {
 		return <Spinner size={8} />;
 	}
 };
+
+const DocumentStatusLabel = styled.div`
+	margin: 0 1rem 0 0;
+	font-weight: 600;
+`;
+
+const DocumentContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+`;
 
 interface ExtraUserFilesProps {
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -205,6 +227,23 @@ const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 		updateDocumentValidationMutation.isLoading || updateDocumentObservationMutation.isLoading;
 
 	const documents = ls.documents;
+
+	const defaultModal = {
+		isVisible: false,
+		type: PModalType.INFORMATION,
+		title: t('ui:Warning'),
+		content: t(
+			'ui:There are modified or new documents to be saved, please save the changes to the user to store these changes'
+		),
+		primary: {
+			onClick: () => {
+				setModalProps(defaultModal);
+			}
+		}
+	};
+
+	const [modalProps, setModalProps] = useState<PFullModalProps>(defaultModal);
+
 	return (
 		<div
 			style={{
@@ -214,8 +253,77 @@ const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 				width: '100%'
 			}}
 		>
-			{isEditing && documents && (
+			<PFullModal {...modalProps} />
+			{isLoading && (
+				<div style={{ margin: '0 auto' }}>
+					<Spinner />
+				</div>
+			)}
+			{!isLoading && ls.entity?.extra_fields?.documents && (
 				<>
+					{(ls.entity.extra_fields.documents as DocumentEntity[]).map(
+						(document: DocumentEntity, index: number) => {
+							return (
+								<>
+									<DocumentContainer key={document.id}>
+										<PDocumentWithSchema
+											key={document.id}
+											ls={ls}
+											document={document}
+											isEditing={isEditing}
+											index={index}
+										/>
+									</DocumentContainer>
+									<div
+										style={{
+											width: '100%',
+											height: 1,
+											marginBottom: '1rem',
+											marginTop: '1rem',
+											backgroundColor: 'var(--mirai-200)'
+										}}
+									/>
+								</>
+							);
+						}
+					)}
+				</>
+			)}
+			{!isLoading && ls.documents && Array.from(ls.documents.values()).length > 0 && (
+				<>
+					{Array.from(ls.documents.values()).map((document: DocumentEntity, index) => {
+						if (document.id.indexOf('TEMP_') === 0) {
+							return (
+								<>
+									<DocumentContainer key={document.id}>
+										<DocumentStatusLabel>({t('ui:NEW')})</DocumentStatusLabel>
+										<PDocumentWithSchema
+											key={document.id}
+											ls={ls}
+											document={document}
+											isEditing={isEditing}
+											index={index}
+										/>
+									</DocumentContainer>
+									<div
+										style={{
+											width: '100%',
+											height: 1,
+											marginBottom: '1rem',
+											marginTop: '1rem',
+											backgroundColor: 'var(--mirai-200)'
+										}}
+									/>
+								</>
+							);
+						} else {
+							return null;
+						}
+					})}
+				</>
+			)}
+			{isEditing && documents && (
+				<div style={{ marginLeft: 'auto', marginRight: 'auto' }}>
 					{userDocumentAvailableTagsQuery.isLoading && <Spinner />}
 					{userDocumentAvailableTagsQuery.isSuccess && (
 						<PDocumentTagSelector
@@ -223,7 +331,7 @@ const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 								const tempId = `TEMP_${Math.random()
 									.toString(36)
 									.substring(2, 11)}`;
-								alert('Check this is okay!' + tempId);
+
 								documents.set(
 									tempId,
 									new DocumentEntity({
@@ -232,6 +340,8 @@ const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 										isBeingAdded: true
 									})
 								);
+
+								setModalProps((state) => ({ ...state, isVisible: true }));
 							}}
 							tags={userDocumentAvailableTagsQuery.data.map((tag) => ({
 								label: t(`user.${tag}`),
@@ -239,57 +349,7 @@ const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 							}))}
 						/>
 					)}
-				</>
-			)}
-			{isLoading && (
-				<div style={{ margin: '0 auto' }}>
-					<Spinner />
 				</div>
-			)}
-			{isEditing && !isLoading && <h3>{t('ui:Existing documents')}</h3>}
-			{!isLoading && ls.entity?.extra_fields?.documents && (
-				<>
-					{(ls.entity.extra_fields.documents as DocumentEntity[]).map(
-						(document: DocumentEntity, index: number) => {
-							return (
-								<PDocumentWithSchema
-									key={document.id}
-									ls={ls}
-									document={document}
-									isEditing={isEditing}
-									index={index}
-								/>
-							);
-						}
-					)}
-				</>
-			)}
-			{isEditing && !isLoading && <h3>{t('ui:New documents to be added')}</h3>}
-			{!isLoading && ls.documents && Array.from(ls.documents.values()).length > 0 && (
-				<>
-					{Array.from(ls.documents.values()).map((document: DocumentEntity, index) => {
-						if (document.id.indexOf('TEMP_') === 0) {
-							return (
-								<PDocumentWithSchema
-									key={document.id}
-									ls={ls}
-									document={document}
-									isEditing={isEditing}
-									index={index}
-								/>
-							);
-						} else {
-							return null;
-						}
-					})}
-				</>
-			)}
-			{!isLoading && ls.documents && Array.from(ls.documents.values()).length > 0 && (
-				<h3 style={{ color: 'darkred' }}>
-					{t(
-						'ui:There are modified or new documents to be saved, please save the changes to the user to store these changes'
-					)}
-				</h3>
 			)}
 		</div>
 	);

@@ -11,7 +11,7 @@ export enum FullBlockType {
 }
 export interface FullBlockProps {
 	type: FullBlockType;
-	children: ReactNode;
+	children?: ReactNode;
 	isVisible: boolean;
 	buttons?: ReactNode;
 }

@@ -1,9 +1,11 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import env from './vendor/environment/env';
-
+import packageInfo from '../package.json';
 import App from './app/app';
 import './app/i18n';
+import { getAssetPath } from './app/utils';
+import Helmet from 'react-helmet';
 
 function setFavicons(ico: string) {
 	const head = document.querySelector('head');
@@ -13,15 +15,16 @@ function setFavicons(ico: string) {
 	if (head) head.appendChild(setFavicon);
 }
 
-// Function that changes the title of the document
-function setDocumentTitle(title: string) {
-	document.title = title;
-}
-
 function renderMainApp() {
 	const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 	root.render(
 		<StrictMode>
+			<Helmet>
+				{env.tenant.assets.override_css && (
+					<link rel="stylesheet" href={getAssetPath(env.tenant.assets.override_css)} />
+				)}
+				<title>{`${env.tenant.short_name} (v${packageInfo.version})`}</title>
+			</Helmet>
 			<App />
 		</StrictMode>
 	);
@@ -29,4 +32,3 @@ function renderMainApp() {
 
 renderMainApp();
 setFavicons(`${env.public_url}/vendor/assets/${env.tenant.assets.favicon}`);
-setDocumentTitle(env.tenant.short_name);

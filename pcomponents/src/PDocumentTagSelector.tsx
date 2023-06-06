@@ -2,7 +2,7 @@ import { ItemPredicate, ItemRenderer, Select2 } from '@blueprintjs/select';
 import { MenuItem } from '@blueprintjs/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import PButton, { PButtonType, PButtonSize } from './PButton';
+import PButton, { PButtonSize, PButtonType } from './PButton';
 
 export interface DocumentTagType {
 	label: string;
@@ -65,8 +65,8 @@ const PDocumentTagSelector = (props: PDocumentTagSelectorProps) => {
 			onItemSelect={onItemSelect}
 			popoverProps={{ matchTargetWidth: true }}
 		>
-			<PButton style={{ width: '100%', marginBottom: 10 }} variant={PButtonType.SECONDARY}>
-				{selected ? String(selected) : t('Add new document by tag')}
+			<PButton icon={'plus'} variant={PButtonType.SECONDARY} size={PButtonSize.SMALL}>
+				{selected ? String(selected) : t('Upload new document')}
 			</PButton>
 		</Select2>
 	);

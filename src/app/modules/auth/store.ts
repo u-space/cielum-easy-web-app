@@ -27,7 +27,7 @@ interface AuthState {
 		onError?: (error: string) => void
 	) => void;
 	relogin: () => Promise<void>;
-	logout: () => void;
+	logout: () => Promise<void>;
 }
 
 const axios = Axios.create({
@@ -93,8 +93,7 @@ export const useAuthStore = create<AuthState>()(
 				}
 			},
 			logout: async () => {
-				const response = await axios.post('/auth/clear', {}, { withCredentials: true });
-				// TODO: Do something with response
+				await axios.post('/auth/clear', {}, { withCredentials: true });
 				set({ token: '', username: '', email: '', role: AuthRole.NOT_LOGGED_IN });
 			}
 		}),
