@@ -23,8 +23,17 @@ import Menu from '../../components/Menu';
 import usePickElements from '../../hooks';
 import LiveMapViewSvelte from './LiveMapView.svelte';
 import { LiveMapViewProps } from './LiveMapViewProps';
+import PModal from '@pcomponents/PModal';
+import styled from 'styled-components';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
+
+const PickContainer = styled.div`
+	position: absolute;
+	bottom: 1rem;
+	right: 1rem;
+	z-index: 191919;
+`;
 
 const LiveMap = () => {
 	const { t } = useTranslation();
@@ -79,16 +88,6 @@ const LiveMap = () => {
 		}
 	}, [rfv]);
 
-	const pickFullModalProps = useMemo(() => {
-		const fullModalProps: PFullModalProps = {
-			content: '',
-			title: '',
-			...pickModalProps,
-			isVisible: !!pickModalProps
-		};
-		return fullModalProps;
-	}, [pickModalProps]);
-
 	const onVehicleClick = (vehicle: PositionEntity[]) => {
 		return () => {
 			history.push(`/map?uvin=${vehicle[0].uvin}&gufi=${vehicle[0].gufi}`);
@@ -127,8 +126,12 @@ const LiveMap = () => {
 				/>
 			}
 			contextual={<Contextual />}
-			modal={pickFullModalProps}
 		>
+			{pickModalProps && (
+				<PickContainer>
+					<PModal {...pickModalProps} />
+				</PickContainer>
+			)}
 			<LiveMapView {...liveMapViewProps} />
 		</MapLayout>
 	);

@@ -25,7 +25,7 @@ export const SELECTED_OPERATION_LINE_COLOR = [105, 17, 17, 255];
 export const SELECTED_OPERATION_VOLUME_LINE_COLOR = [219, 35, 35, 255];
 
 // Geographical Zone
-export const GZ_FILL_COLOR: RGBA = [216, 32, 32, 15];
+export const GZ_FILL_COLOR: RGBA = [216, 32, 32, 50];
 export const SELECTED_GZ_FILL_COLOR: RGBA = [216, 32, 32, 100];
 export const GZ_LINE_COLOR: RGBA = [130, 43, 43, 255];
 

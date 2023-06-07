@@ -3,6 +3,7 @@ import BarItem from './BarItem';
 import { AuthRole } from '../../../modules/auth/store';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router-dom';
+import { getAssetPath } from '../../../utils';
 
 const BarItems = () => {
 	const { t } = useTranslation();
@@ -14,13 +15,22 @@ const BarItems = () => {
 	const extraTenantPages = env.tenant.extras?.pages;
 	return (
 		<>
-			<BarItem
+			{/*<BarItem
 				icon="home"
 				label={t('HOME')}
 				isActive={active === ''}
 				onClick={() => history.push('/')}
 				roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
-			/>
+			/>*/}
+			{env.tenant.features.RealtimeMap.enabled && (
+				<BarItem
+					icon="map"
+					label={t('REALTIME MAP')}
+					isActive={active === 'map'}
+					onClick={() => history.push('/map')}
+					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+				/>
+			)}
 			<BarItem
 				icon="user"
 				label={'PERFIL'}
@@ -71,17 +81,8 @@ const BarItems = () => {
 					/>
 				</>
 			)}
-			{env.tenant.features.RealtimeMap.enabled && (
-				<BarItem
-					spaceTop
-					icon="map"
-					label={t('REALTIME MAP')}
-					isActive={active === 'map'}
-					onClick={() => history.push('/map')}
-					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
-				/>
-			)}
-			{extraTenantPages &&
+
+			{/*extraTenantPages &&
 				extraTenantPages.map((page) => (
 					<BarItem
 						key={page.label}
@@ -91,8 +92,8 @@ const BarItems = () => {
 						onClick={() => history.push('/' + page.url)}
 						roles={page.roles}
 					/>
-				))}
-			{env.tenant.features.Operations.enabled && (
+				)) */}
+			{/*env.tenant.features.Operations.enabled && (
 				<BarItem
 					icon="area-of-interest"
 					label={t('OPERATIONS')}
@@ -100,7 +101,7 @@ const BarItems = () => {
 					onClick={() => history.push('/operations')}
 					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
 				/>
-			)}
+			)*/}
 
 			{env.tenant.features.RegularFlights.enabled && (
 				<BarItem
@@ -141,14 +142,14 @@ const BarItems = () => {
 				/>
 			)}
 
-			<BarItem
+			{/*<BarItem
 				spaceTop
 				icon="plus"
 				label={`${t('CREATE NEW')}...`}
 				isActive={active === 'editor'}
 				onClick={() => history.push('/editor')}
 				roles={[AuthRole.ADMIN, AuthRole.PILOT]}
-			/>
+			/>*/}
 		</>
 	);
 };

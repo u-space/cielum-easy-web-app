@@ -6,12 +6,19 @@ import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 
 export function renderGeographicalZones(
 	geographicalZones: GeographicalZone[],
-	idGeographicalZone: string | null
+	idGeographicalZone: string | null,
+	picked: string[]
 ) {
 	if (geographicalZones) {
 		const items = _.cloneDeep(geographicalZones);
-		return items.map((gz) => {
-			return new TokyoGeographicalZone(gz, gz.id === idGeographicalZone);
+		return items.flatMap((gz) => {
+			const isInPickedList =
+				(picked.length > 0 && gz.id && picked.includes(gz.id)) || picked.length === 0;
+			if (isInPickedList) {
+				return new TokyoGeographicalZone(gz, gz.id === idGeographicalZone);
+			} else {
+				return [];
+			}
 		});
 	} else {
 		return [];

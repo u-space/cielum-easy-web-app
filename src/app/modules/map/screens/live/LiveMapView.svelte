@@ -67,10 +67,17 @@
 		}
 	}
 
+ 	let picked = [];
+	function onPick(picks) {
+		picked = picks.map((e) => e.id);
+		if (handlers.pick) handlers.pick(picks);
+	}
+
 	$: operationsLayers = renderOperations(operations, selected.gufi, selected.volume);
 	$: geographicalZonesLayers = renderGeographicalZones(
 		geographicalZones,
-		selected.geographicalZone
+		selected.geographicalZone,
+		picked
 	);
 	$: rfvsLayers = renderRfvs(rfvs);
 	$: uvrsLayers = renderUvrs(uvrs);
@@ -84,4 +91,4 @@
 	];
 </script>
 
-<Tokyo {elements} onPick={handlers.pick} />
+<Tokyo {elements} onPick={onPick} />
