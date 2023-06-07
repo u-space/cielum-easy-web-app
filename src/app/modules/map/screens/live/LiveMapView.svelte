@@ -5,12 +5,11 @@
 	import Tokyo from '@tokyo/Tokyo.svelte';
 	import { TokyoOperation } from '@tokyo/utm_entities/TokyoOperation';
 	import _ from 'lodash';
-	import { TokyoGeographicalZone } from '@tokyo/utm_entities/TokyoGeographicalZone';
 	import { TokyoVehicle } from '@tokyo/utm_entities/TokyoVehicle';
 	import { TokyoRestrictedFlightVolume } from '@tokyo/utm_entities/TokyoRestrictedFlightVolume';
 	import { TokyoUASVolumeReservation } from '@tokyo/utm_entities/TokyoUASVolumeReservation';
 	import { LiveMapViewProps } from './LiveMapViewProps.ts';
-	import { renderGeographicalZones } from './render';
+	import { renderGeographicalZones } from '../../render';
 
 	interface $$Props extends LiveMapViewProps {}
 

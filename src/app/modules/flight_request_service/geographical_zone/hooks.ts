@@ -7,7 +7,7 @@ import { useTokyo } from '@tokyo/TokyoStore';
 import { polygon } from '@turf/helpers';
 import { useGeographicalZoneStore } from './store';
 import { Polygon } from 'geojson';
-
+import { useDebounce } from '@uidotdev/usehooks';
 export function useSelectedGeographicalZone() {
 	const queryString = useQueryString();
 	const {
@@ -72,6 +72,7 @@ export function useQueryGeographicalZones(all = false) {
 	const lng = tokyo?.viewState?.longitude;
 	const lat = tokyo?.viewState?.latitude;
 	const zoom = tokyo?.viewState?.zoom;
+
 	const box = useMemo(() => {
 		return lat && lng && all && zoom && zoom >= MIN_ZOOM_LEVEL_DETAILED_FEATURES
 			? polygon([
@@ -85,6 +86,7 @@ export function useQueryGeographicalZones(all = false) {
 			  ])
 			: null;
 	}, [lng, lat, zoom, all]);
+	const debouncedBox = useDebounce(box, 500);
 
 	const {
 		isLoading,
@@ -103,7 +105,7 @@ export function useQueryGeographicalZones(all = false) {
 			sortingOrder,
 			filterProperty,
 			filterMatchingText,
-			box
+			debouncedBox
 		],
 		() =>
 			getGeographicalZones(
@@ -113,8 +115,8 @@ export function useQueryGeographicalZones(all = false) {
 				sortingOrder,
 				filterProperty,
 				filterMatchingText,
-				all && box
-					? box.geometry
+				all && debouncedBox
+					? debouncedBox.geometry
 					: all
 					? {
 							type: 'Polygon',

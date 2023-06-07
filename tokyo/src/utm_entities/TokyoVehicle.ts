@@ -1,21 +1,20 @@
 import { TokyoIcon } from '../shapes/2d/TokyoIcon';
-import { Position } from '@dronfies/microutm-entities/position';
+import type { PositionEntity } from '@utm-entities/position';
 import tokyoVehicleMarker from '../img/TokyoVehicleMarker.png';
 import {
 	ACTIVE_DRONE_LINE_COLOR,
 	ACTIVE_DRONE_MARKER_COLOR,
 	INACTIVE_DRONE_MARKER_COLOR
 } from '../TokyoDefaults';
-import { TokyoMapElement } from '../TokyoTypes';
-import { Layer } from '@deck.gl/core/typed';
+import type { TokyoMapElement } from '../TokyoTypes';
 import { TokyoLines } from '../shapes/2d/TokyoLines';
 import _ from 'lodash';
 
 export class TokyoVehicle implements TokyoMapElement {
-	readonly positions: Position[];
+	readonly positions: PositionEntity[];
 	readonly onClick: () => void;
 
-	constructor(positions: Position[], onClick: () => void) {
+	constructor(positions: PositionEntity[], onClick: () => void) {
 		this.positions = positions;
 		this.onClick = onClick;
 	}

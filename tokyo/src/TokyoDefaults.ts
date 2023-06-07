@@ -1,4 +1,4 @@
-import { RGB, RGBA } from './TokyoTypes';
+import type { RGB, RGBA } from './TokyoTypes';
 
 export const DEFAULT_FILL_COLOR = [100, 200, 100, 60];
 export const EXISTING_HANDLE_FILL_COLOR = [255, 0, 0, 100];

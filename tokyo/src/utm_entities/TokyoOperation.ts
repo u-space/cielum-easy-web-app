@@ -1,8 +1,8 @@
 // Class that given an Operation returns a TokyoPolygon
-import { Operation } from '@dronfies/microutm-entities/operation';
-import { Polygon } from 'geojson';
+import type { OperationEntity } from '@utm-entities/operation';
+import type { Polygon } from 'geojson';
 import { TokyoMultiPolygon } from '../shapes/2d/TokyoMultiPolygon';
-import { RGBA } from '../TokyoTypes';
+import type { RGBA } from '../TokyoTypes';
 import {
 	DEFAULT_LINE_COLOR,
 	OPERATION_STATE_COLORS,
@@ -10,15 +10,16 @@ import {
 	SELECTED_OPERATION_VOLUME_LINE_COLOR
 } from '../TokyoDefaults';
 import { convertMultipleGeoJsonPolygonsIntoAGeoJsonMultiPolygon } from '../internal/TokyoUtil';
+import type { OperationVolume } from '@utm-entities/operation';
 
-const convertOperationVolumesIntoPolygons = (operation: Operation): Polygon[] => {
-	return operation.operation_volumes.map((volume: Operation['operation_volumes']) => {
+const convertOperationVolumesIntoPolygons = (operation: OperationEntity): Polygon[] => {
+	return operation.operation_volumes.map((volume: OperationVolume) => {
 		return volume.operation_geography;
 	});
 };
 
 export class TokyoOperation extends TokyoMultiPolygon {
-	constructor(operation: Operation, isSelected = false, idVolume = -1) {
+	constructor(operation: OperationEntity, isSelected = false, idVolume = -1) {
 		const polygons = convertOperationVolumesIntoPolygons(operation);
 		const multipolygon = convertMultipleGeoJsonPolygonsIntoAGeoJsonMultiPolygon(polygons);
 		const stateColor = OPERATION_STATE_COLORS[operation.state];
