@@ -10,6 +10,7 @@
 	import { TokyoUASVolumeReservation } from '@tokyo/utm_entities/TokyoUASVolumeReservation';
 	import { LiveMapViewProps } from './LiveMapViewProps.ts';
 	import { renderGeographicalZones } from '../../render';
+	import {deck} from '@tokyo/TokyoStore';
 
 	interface $$Props extends LiveMapViewProps {}
 
@@ -77,7 +78,8 @@
 	$: geographicalZonesLayers = renderGeographicalZones(
 		geographicalZones,
 		selected.geographicalZone,
-		picked
+		picked,
+		handlers.hover
 	);
 	$: rfvsLayers = renderRfvs(rfvs);
 	$: uvrsLayers = renderUvrs(uvrs);

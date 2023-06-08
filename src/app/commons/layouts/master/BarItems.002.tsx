@@ -31,13 +31,7 @@ const BarItems = () => {
 					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
 				/>
 			)}
-			<BarItem
-				icon="user"
-				label={'PERFIL'}
-				isActive={active === 'profile'}
-				onClick={() => history.push('/profile')}
-				roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
-			/>
+
 			{env.tenant.features.UsersHub.enabled && (
 				<BarItem
 					icon="person"
@@ -73,7 +67,7 @@ const BarItems = () => {
 						roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
 					/>
 					<BarItem
-						icon="document-open"
+						icon="polygon-filter"
 						label={t('FLIGHT REQUESTS')}
 						isActive={active === 'flight-requests'}
 						onClick={() => history.push('/flight-requests')}
@@ -141,6 +135,14 @@ const BarItems = () => {
 					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
 				/>
 			)}
+			<BarItem
+				spaceTop
+				icon="user"
+				label={'PERFIL'}
+				isActive={active === 'profile'}
+				onClick={() => history.push('/profile')}
+				roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
+			/>
 
 			{/*<BarItem
 				spaceTop

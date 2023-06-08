@@ -40,6 +40,9 @@ const usePickElements = () => {
 					// Show picking menu
 					setPickElements(elements);
 				}
+			} else {
+				// Nothing was under clicked position
+				setPickElements([]);
 			}
 		},
 		[history]

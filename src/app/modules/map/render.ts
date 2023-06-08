@@ -7,7 +7,8 @@ import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 export function renderGeographicalZones(
 	geographicalZones: GeographicalZone[],
 	idGeographicalZone: string | null,
-	picked: string[]
+	picked: string[],
+	onHover?: TokyoGeographicalZone['onHover']
 ) {
 	if (geographicalZones) {
 		const items = _.cloneDeep(geographicalZones);
@@ -15,7 +16,7 @@ export function renderGeographicalZones(
 			const isInPickedList =
 				(picked.length > 0 && gz.id && picked.includes(gz.id)) || picked.length === 0;
 			if (isInPickedList) {
-				return new TokyoGeographicalZone(gz, gz.id === idGeographicalZone);
+				return new TokyoGeographicalZone(gz, gz.id === idGeographicalZone, onHover);
 			} else {
 				return [];
 			}

@@ -3,7 +3,11 @@ import { GZ_FILL_COLOR, GZ_LINE_COLOR, SELECTED_GZ_FILL_COLOR } from '../TokyoDe
 import type { GeographicalZone } from '@flight-request-entities/geographicalZone';
 
 export class TokyoGeographicalZone extends TokyoPolygon {
-	constructor(geographicalZone: GeographicalZone, isSelected = false) {
+	constructor(
+		geographicalZone: GeographicalZone,
+		isSelected = false,
+		onHover?: TokyoPolygon['onHover']
+	) {
 		let fillColor = GZ_FILL_COLOR;
 		if (isSelected) {
 			fillColor = SELECTED_GZ_FILL_COLOR;
@@ -17,7 +21,8 @@ export class TokyoGeographicalZone extends TokyoPolygon {
 			polygon: geographicalZone.geography,
 			id: `geographical-zone|${geographicalZone.id}|${geographicalZone.name}`,
 			fill: fillColor,
-			getLineColor: () => GZ_LINE_COLOR
+			getLineColor: () => GZ_LINE_COLOR,
+			onHover
 		});
 	}
 }

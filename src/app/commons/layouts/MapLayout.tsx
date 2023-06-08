@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, MouseEventHandler, ReactNode } from 'react';
 import BannerOverlay, { BannerOverlayType } from '../components/BannerOverlay';
 import Center from './dashboard/Center';
 import Menu from './dashboard/Menu';
@@ -24,12 +24,22 @@ interface MapLayoutProps {
 	};
 	isBlockingCenter?: boolean;
 	modal?: PFullModalProps;
+	onMouseMove?: MouseEventHandler<HTMLDivElement>;
 }
 const MapLayout: FC<MapLayoutProps> = (props: MapLayoutProps) => {
-	const { isLoading, children, menu, isBlockingCenter, contextual, statusOverlay, modal } = props;
+	const {
+		isLoading,
+		children,
+		menu,
+		isBlockingCenter,
+		contextual,
+		statusOverlay,
+		modal,
+		onMouseMove
+	} = props;
 	return (
 		<>
-			<Center isLoading={isLoading?.main}>
+			<Center isLoading={isLoading?.main} onMouseMove={onMouseMove}>
 				<FullParentOverlayBlock
 					type={FullBlockType.DEFAULT}
 					isVisible={!!isBlockingCenter}
