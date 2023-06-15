@@ -37,19 +37,19 @@ export class UserEntity implements EntityHasDisplayName {
 	[key: string]: any;
 
 	constructor(user: any, schema: ExtraFieldSchema) {
-		this.username = user.username ?? '';
-		this.firstName = user.firstName ?? '';
-		this.lastName = user.lastName ?? '';
-		this.email = user.email ?? '';
+		this.username = (user && user.username) ?? '';
+		this.firstName = (user && user.firstName) ?? '';
+		this.lastName = (user && user.lastName) ?? '';
+		this.email = (user && user.email) ?? '';
 		this.password = null;
-		this.role = user.role ?? 'pilot';
+		this.role = (user && user.role) ?? 'pilot';
 		this.extra_fields = {};
 		this._password_verification = '';
-		this.status = user.status ?? 'unknown';
-		this.deletedAt = user.deletedAt ?? null;
+		this.status = (user && user.status) ?? 'unknown';
+		this.deletedAt = (user && user.deletedAt) ?? null;
 		this.settings = null;
 		this.verified = false;
-		this.extra_fields_json = user.extra_fields_json ?? '';
+		this.extra_fields_json = (user && user.extra_fields_json) ?? '';
 		this._userSchema = Joi.object({
 			//username: Joi.string(),
 			firstName: Joi.string(),
