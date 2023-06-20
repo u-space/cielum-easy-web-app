@@ -249,11 +249,11 @@ export function getUserAPIClient(api: string, token: string, schema: ExtraFieldS
 				).concat(transformUser(schema))
 			});
 		},
-		verifyUser: (username: string) => {
+		verifyUser: (username: string, validationToken: string) => {
 			return axiosInstance.post('user/updateStatus', {
 				username: username,
 				verified: true,
-				token: token
+				token: validationToken
 			});
 		},
 		changeUserConfirmationStatus: (username: string, verified: boolean) => {
