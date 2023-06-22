@@ -1,6 +1,6 @@
 import { Intent, Spinner, SpinnerSize } from '@blueprintjs/core';
 import i18n from 'i18next';
-import { Component, CSSProperties, ErrorInfo, FC, ReactNode } from 'react';
+import { Component, CSSProperties, ErrorInfo, FC, MouseEventHandler, ReactNode } from 'react';
 import PModal, { PModalType } from '@pcomponents/PModal';
 import styles from '../../Layouts.module.scss';
 import classnames from 'classnames';
@@ -53,12 +53,14 @@ interface CenterProps {
 	style?: CSSProperties;
 	isLoading?: boolean;
 	hasPadding?: boolean;
+	onMouseMove?: MouseEventHandler<HTMLDivElement>;
 }
 const Center: FC<CenterProps> = ({
 	children,
 	style = undefined,
 	isLoading = false,
-	hasPadding
+	hasPadding,
+	onMouseMove
 }) => {
 	return (
 		<section
@@ -70,7 +72,10 @@ const Center: FC<CenterProps> = ({
 			}}
 			className={classnames(styles.center, { [styles.padded]: hasPadding })}
 		>
-			<div className={classnames(styles.full, { [styles.loading]: isLoading })}>
+			<div
+				className={classnames(styles.full, { [styles.loading]: isLoading })}
+				onMouseMove={onMouseMove}
+			>
 				<CenterErrorBoundary>{children}</CenterErrorBoundary>
 			</div>
 			<AnimatePresence>

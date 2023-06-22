@@ -28,6 +28,7 @@ export class TokyoPolygon implements TokyoPickableElement, TokyoPolygonElement {
 		dashArray?: number[];
 		getLineWidth?: (index?: number) => number;
 		getLineColor: (index?: number) => RGBA;
+		onHover?: GeoJsonLayer['onHover'];
 	}) {
 		// Defaults
 		this.fill = [180, 180, 180, 100];
@@ -42,6 +43,7 @@ export class TokyoPolygon implements TokyoPickableElement, TokyoPolygonElement {
 		if (params.getLineWidth) this.getLineWidth = params.getLineWidth;
 		if (params.fillImage) this.fillImage = params.fillImage;
 		if (params.dashArray) this.dashArray = params.dashArray;
+		if (params.onHover) this.onHover = params.onHover;
 	}
 	private _shape: Polygon;
 	private readonly _id: string;
@@ -50,6 +52,7 @@ export class TokyoPolygon implements TokyoPickableElement, TokyoPolygonElement {
 	dashArray?: number[];
 	getLineColor: (index?: number) => RGBA;
 	getLineWidth: (index?: number) => number;
+	onHover?: GeoJsonLayer['onHover'];
 
 	get id(): string {
 		return this._id;
@@ -100,6 +103,12 @@ export class TokyoPolygon implements TokyoPickableElement, TokyoPolygonElement {
 				pickable: true,
 				filled: true,
 				getFillColor: this.fill,
+				autoHighlight: true,
+				onHover: this.onHover
+					? this.onHover
+					: () => {
+							return;
+					  },
 				getLineColor: () => this.getLineColor(),
 				getLineWidth: () => this.getLineWidth(),
 				lineWidthUnits: 'pixels',

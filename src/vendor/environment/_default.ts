@@ -33,6 +33,7 @@ const defaultTenant: Tenant = {
 			options: { liaisons: [], coordinatorTypes: [], defaultOperatorUsername: "CHANGE_ME" },
 		},
 		Trackers: { enabled: true },
+		BarLogo: { enabled: true, options: { collapsedTransform: "" } },
 	},
 	extras: {},
 };

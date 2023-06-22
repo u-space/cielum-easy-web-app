@@ -10,6 +10,7 @@
 	import { TokyoUASVolumeReservation } from '@tokyo/utm_entities/TokyoUASVolumeReservation';
 	import { LiveMapViewProps } from './LiveMapViewProps.ts';
 	import { renderGeographicalZones } from '../../render';
+	import {deck} from '@tokyo/TokyoStore';
 
 	interface $$Props extends LiveMapViewProps {}
 
@@ -20,6 +21,7 @@
 	export let uvrs: $$Props['uvrs'] = [];
 	export let vehicles: $$Props['vehicles'] = [];
 	export let handlers: $$Props['handlers'] = {};
+	export let pickedIds: $$Props['pickedIds'] = [];
 
 	function renderOperations(operations, idOperation, idVolume) {
 		if (operations) {
@@ -70,7 +72,9 @@
 	$: operationsLayers = renderOperations(operations, selected.gufi, selected.volume);
 	$: geographicalZonesLayers = renderGeographicalZones(
 		geographicalZones,
-		selected.geographicalZone
+		selected.geographicalZone,
+		pickedIds,
+		handlers.hover
 	);
 	$: rfvsLayers = renderRfvs(rfvs);
 	$: uvrsLayers = renderUvrs(uvrs);

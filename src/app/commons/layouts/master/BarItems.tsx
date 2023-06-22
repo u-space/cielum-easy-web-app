@@ -23,6 +23,7 @@ const BarItems = () => {
 					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
 				/>
 			)}
+
 			{env.tenant.features.UsersHub.enabled && (
 				<BarItem
 					icon="person"
@@ -32,24 +33,6 @@ const BarItems = () => {
 					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
 				/>
 			)}
-			{env.tenant.features.Operations.enabled && (
-				<BarItem
-					icon="area-of-interest"
-					label={t('OPERATIONS')}
-					isActive={active === 'operations'}
-					onClick={() => history.push('/operations')}
-					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
-				/>
-			)}
-			{env.tenant.features.RegularFlights.enabled && (
-				<BarItem
-					icon="route"
-					label={t('REGULAR FLIGHTS')}
-					isActive={active === 'regularflights'}
-					onClick={() => history.push('/regular-flights')}
-					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
-				/>
-			)}
 			{env.tenant.features.Vehicles.enabled && (
 				<BarItem
 					icon="airplane"
@@ -57,24 +40,6 @@ const BarItems = () => {
 					isActive={active === 'vehicles'}
 					onClick={() => history.push('/vehicles')}
 					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
-				/>
-			)}
-			{env.tenant.features.Uvrs.enabled && (
-				<BarItem
-					icon="graph-remove"
-					label={t('UVRS')}
-					isActive={active === 'uvrs'}
-					onClick={() => history.push('/uvrs')}
-					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
-				/>
-			)}
-			{env.tenant.features.Rfvs.enabled && (
-				<BarItem
-					icon="polygon-filter"
-					label={t('RFVS')}
-					isActive={active === 'rfvs'}
-					onClick={() => history.push('/rfvs')}
-					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
 				/>
 			)}
 			{env.tenant.features.FlightRequests.enabled && (
@@ -94,7 +59,7 @@ const BarItems = () => {
 						roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
 					/>
 					<BarItem
-						icon="document-open"
+						icon="polygon-filter"
 						label={t('FLIGHT REQUESTS')}
 						isActive={active === 'flight-requests'}
 						onClick={() => history.push('/flight-requests')}
@@ -102,6 +67,57 @@ const BarItems = () => {
 					/>
 				</>
 			)}
+
+			{extraTenantPages?.map((page) => (
+				<BarItem
+					key={page.label}
+					icon={page.icon}
+					label={t(page.label)}
+					isActive={active === page.url}
+					onClick={() => history.push('/' + page.url)}
+					roles={page.roles}
+				/>
+			))}
+
+			{env.tenant.features.Operations.enabled && (
+				<BarItem
+					icon="area-of-interest"
+					label={t('OPERATIONS')}
+					isActive={active === 'operations'}
+					onClick={() => history.push('/operations')}
+					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
+				/>
+			)}
+
+			{env.tenant.features.RegularFlights.enabled && (
+				<BarItem
+					icon="route"
+					label={t('REGULAR FLIGHTS')}
+					isActive={active === 'regularflights'}
+					onClick={() => history.push('/regular-flights')}
+					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+				/>
+			)}
+
+			{env.tenant.features.Uvrs.enabled && (
+				<BarItem
+					icon="graph-remove"
+					label={t('UVRS')}
+					isActive={active === 'uvrs'}
+					onClick={() => history.push('/uvrs')}
+					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+				/>
+			)}
+			{env.tenant.features.Rfvs.enabled && (
+				<BarItem
+					icon="polygon-filter"
+					label={t('RFVS')}
+					isActive={active === 'rfvs'}
+					onClick={() => history.push('/rfvs')}
+					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+				/>
+			)}
+
 			{env.tenant.features.Trackers.enabled && (
 				<BarItem
 					icon="circle"
@@ -111,39 +127,23 @@ const BarItems = () => {
 					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
 				/>
 			)}
-			{extraTenantPages &&
-				extraTenantPages.map((page) => (
-					<BarItem
-						key={page.label}
-						icon={page.icon}
-						label={t(page.label)}
-						isActive={active === page.url}
-						onClick={() => history.push('/' + page.url)}
-						roles={page.roles}
-					/>
-				))}
 			<BarItem
 				spaceTop
-				icon="home"
-				label={t('HOME')}
-				isActive={active === ''}
-				onClick={() => history.push('/')}
-				roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
-			/>
-			<BarItem
-				icon="plus"
-				label={`${t('CREATE NEW')}...`}
-				isActive={active === 'editor'}
-				onClick={() => history.push('/editor')}
-				roles={[AuthRole.ADMIN, AuthRole.PILOT]}
-			/>
-			<BarItem
 				icon="user"
 				label={'PERFIL'}
 				isActive={active === 'profile'}
 				onClick={() => history.push('/profile')}
 				roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
 			/>
+
+			{/*<BarItem
+				spaceTop
+				icon="plus"
+				label={`${t('CREATE NEW')}...`}
+				isActive={active === 'editor'}
+				onClick={() => history.push('/editor')}
+				roles={[AuthRole.ADMIN, AuthRole.PILOT]}
+			/>*/}
 		</>
 	);
 };

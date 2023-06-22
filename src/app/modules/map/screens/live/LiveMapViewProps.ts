@@ -4,6 +4,7 @@ import { RfvEntity } from '@utm-entities/rfv';
 import { UvrEntity } from '@utm-entities/uvr';
 import { PositionEntity } from '@utm-entities/position';
 import { TokyoPick } from '@tokyo/TokyoTypes';
+import { TokyoPolygon } from '@tokyo/shapes/2d/TokyoPolygon';
 
 export interface LiveMapViewProps {
 	operations: OperationEntity[];
@@ -19,5 +20,7 @@ export interface LiveMapViewProps {
 	handlers: {
 		vehicleClick?: (vehicle: PositionEntity[]) => void;
 		pick?: (elements: TokyoPick[]) => void;
+		hover?: TokyoPolygon['onHover'];
 	};
+	pickedIds: string[];
 }
