@@ -22,4 +22,5 @@ export interface LiveMapViewProps {
 		pick?: (elements: TokyoPick[]) => void;
 		hover?: TokyoPolygon['onHover'];
 	};
+	pickedIds: string[];
 }

@@ -11,7 +11,7 @@ const usePickElements = () => {
 	const { t } = useTranslation();
 	const [pickElements, setPickElements] = useState<TokyoPick[]>([]);
 	const onClick = () => {
-		setPickElements([]);
+		onPick([]);
 	};
 
 	const content = <PickElements elements={pickElements} onClick={onClick} />;
@@ -20,7 +20,6 @@ const usePickElements = () => {
 		return pickElements.length > 0
 			? {
 					title: t('Many possible elements clicked'),
-
 					primary: {
 						onClick: onClick
 					},
@@ -48,7 +47,9 @@ const usePickElements = () => {
 		[history]
 	);
 
-	return { pickModalProps, onPick };
+	const pickedIds = useMemo(() => pickElements.map((e) => e.id || ''), [pickElements]);
+
+	return { pickModalProps, onPick, pickedIds };
 };
 
 export default usePickElements;

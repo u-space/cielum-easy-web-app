@@ -26,6 +26,7 @@ import { LiveMapViewProps } from './LiveMapViewProps';
 import PModal from '@pcomponents/PModal';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useQueryString } from '../../../../utils';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
@@ -78,6 +79,8 @@ const LiveMap = () => {
 	const { gz, selected: gzSelection } = useSelectedGeographicalZone();
 	const { rfv, selected: rfvSelection } = useSelectedRfv();
 	const { uvr, selected: uvrSelection } = useSelectedUvr();
+	const queryString = useQueryString();
+	const isPrevious = queryString.get('is-previous');
 
 	const [latestHovered, setLatestHovered] = useState<string | null>(null);
 	const [latestHoveredPosition, setLatestHoveredPosition] = useState<[number, number] | null>(
@@ -90,7 +93,7 @@ const LiveMap = () => {
 		[gzSelection, operationSelection, rfvSelection, uvrSelection]
 	);
 	const { positionsAsArray: positions } = usePositions();
-	const { pickModalProps, onPick } = usePickElements();
+	const { pickModalProps, onPick, pickedIds } = usePickElements();
 	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
 
@@ -117,6 +120,12 @@ const LiveMap = () => {
 			tokyo.flyToCenterOfGeometry(rfv.geography);
 		}
 	}, [rfv]);
+
+	useEffect(() => {
+		if (isPrevious) {
+			onPick([]);
+		}
+	}, [isPrevious]);
 
 	const onVehicleClick = (vehicle: PositionEntity[]) => {
 		return () => {
@@ -146,6 +155,7 @@ const LiveMap = () => {
 				return true;
 			}
 		},
+		pickedIds,
 		selected
 	};
 
@@ -188,9 +198,7 @@ const LiveMap = () => {
 			)}
 			{pickModalProps && (
 				<>
-					<PickWarning>
-						Mostrando solo las zonas geográficas bajo el punto clickeado
-					</PickWarning>
+					<PickWarning>{t('Showing only clicked zones')}</PickWarning>
 					<PickContainer>
 						<PModal {...pickModalProps} />
 					</PickContainer>

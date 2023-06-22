@@ -21,6 +21,7 @@
 	export let uvrs: $$Props['uvrs'] = [];
 	export let vehicles: $$Props['vehicles'] = [];
 	export let handlers: $$Props['handlers'] = {};
+	export let pickedIds: $$Props['pickedIds'] = [];
 
 	function renderOperations(operations, idOperation, idVolume) {
 		if (operations) {
@@ -68,17 +69,11 @@
 		}
 	}
 
- 	let picked = [];
-	function onPick(picks) {
-		picked = picks.map((e) => e.id);
-		if (handlers.pick) handlers.pick(picks);
-	}
-
 	$: operationsLayers = renderOperations(operations, selected.gufi, selected.volume);
 	$: geographicalZonesLayers = renderGeographicalZones(
 		geographicalZones,
 		selected.geographicalZone,
-		picked,
+		pickedIds,
 		handlers.hover
 	);
 	$: rfvsLayers = renderRfvs(rfvs);
@@ -93,4 +88,4 @@
 	];
 </script>
 
-<Tokyo {elements} onPick={onPick} />
+<Tokyo {elements} onPick={handlers.pick} />
