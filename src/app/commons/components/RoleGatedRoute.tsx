@@ -2,6 +2,8 @@ import { Component, FC, lazy, ReactElement } from 'react';
 import _ from 'lodash';
 import { useAuthStore } from '../../modules/auth/store';
 import { Route } from 'react-router-dom';
+import SimpleInfoScreen from '../screens/SimpleStaticInformation';
+import { useTranslation } from 'react-i18next';
 
 interface MasterRouteProps {
 	component_path?: string; // Will lazy load a component from the path
@@ -17,6 +19,7 @@ function renderLazyComponent(path: string) {
 
 const RoleGatedRoute: FC<MasterRouteProps> = ({ component_path, roles, path, exact, children }) => {
 	const role = useAuthStore((state) => state.role);
+	const { t } = useTranslation();
 	if (component_path) {
 		const Component = renderLazyComponent(component_path);
 		return <Component />;
@@ -30,12 +33,11 @@ const RoleGatedRoute: FC<MasterRouteProps> = ({ component_path, roles, path, exa
 		} else {
 			return (
 				<Route exact={exact} path={path}>
-					{/*<SimpleInfoScreen
+					<SimpleInfoScreen
 						title={t('Forbidden')}
 						icon="disable"
-						content={t('You do not have permission to see this page')}
-					/>*/}
-					<p>No permission, fix me</p>
+						text={t('You do not have permission to see this page')}
+					/>
 				</Route>
 			);
 		}

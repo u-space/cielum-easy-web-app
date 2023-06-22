@@ -43,7 +43,7 @@ const LoggedInScreens = () => {
 					path={'/'}
 					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
 				>
-					<LiveMap />
+					<Home />
 				</RoleGatedRoute>
 				<RoleGatedRoute
 					path={'/profile'}

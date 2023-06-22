@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import styles from '../Layouts.module.scss';
-import { getAssetPath, getCSSVariable, setCSSVariable } from '../../utils';
+import { getAssetPath, getCSSVariable, getFeatureOption, setCSSVariable } from '../../utils';
 import BarItems from './master/BarItems';
 import env from '../../../vendor/environment/env';
 
@@ -22,6 +22,8 @@ const MasterLayout: FC<MasterLayoutProps> = ({ children }) => {
 		setCSSVariable('bar-width', defaultBarWidth);
 	};
 
+	console.log(getFeatureOption('BarLogo', 'collapsedTransform'), 'collapsedTransform');
+
 	return (
 		<section className={styles.master}>
 			{children}
@@ -32,18 +34,16 @@ const MasterLayout: FC<MasterLayoutProps> = ({ children }) => {
 					resetBarWidth();
 				}}
 			>
-				{!isExtended && (
+				{env.tenant.features.BarLogo.enabled && (
 					<img
 						src={getAssetPath(env.tenant.assets.logo)}
-						alt="logo"
-						style={{ width: 200, transform: 'translateX(-25%) scale(0.75)' }}
-					/>
-				)}
-				{isExtended && (
-					<img
-						src={getAssetPath(env.tenant.assets.logo)}
-						alt="logo"
-						style={{ width: 200 }}
+						alt={env.tenant.short_name}
+						style={{
+							width: 200,
+							...(isExtended
+								? {}
+								: { transform: getFeatureOption('BarLogo', 'collapsedTransform') })
+						}}
 					/>
 				)}
 				<BarItems />
