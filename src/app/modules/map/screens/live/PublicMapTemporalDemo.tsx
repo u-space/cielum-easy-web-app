@@ -30,8 +30,11 @@ import { useQueryString } from '../../../../utils';
 import { useAuthStore } from '../../../auth/store';
 import { selectEntity } from '../../utils';
 import { TokyoPick } from '@tokyo/TokyoTypes';
+import {OperationEntity} from "@utm-entities/operation";
+import OperationInfosSvelte from "./OperationInfos.svelte";
 
 const LiveMapView = reactify(LiveMapViewSvelte);
+const OperationInfos = reactify(OperationInfosSvelte);
 
 const PickContainer = styled.div`
 	position: absolute;
@@ -69,8 +72,31 @@ const OverEverything = styled.div`
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 111111111;
+	z-index: 10;
 `;
+
+const UnderMap = styled.div`
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: black;
+`;
+
+const OperationInfo = styled.div`
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: var(--primary-700);
+	color: var(--white-100);
+`
+
+const VolumeInfo = styled.div`
+	display: flex;
+	flex-direction: column;
+`
 
 const PublicMapTemporalDemo = () => {
 	const { t } = useTranslation();
@@ -93,6 +119,9 @@ const PublicMapTemporalDemo = () => {
 	const { uvr, selected: uvrSelection } = useSelectedUvr();
 	const queryString = useQueryString();
 	const isPrevious = queryString.get('is-previous');
+	const operation = queryString.get('operation');
+
+	console.log('operation', operation);
 
 	const [latestHovered, setLatestHovered] = useState<string | null>(null);
 	const [latestHoveredPosition, setLatestHoveredPosition] = useState<[number, number] | null>(
@@ -168,7 +197,10 @@ const PublicMapTemporalDemo = () => {
 
 	return (
 		<OverEverything>
+			<UnderMap />
 			<LiveMapView {...liveMapViewProps} />
+			{operation&& (<OperationInfos gufi={operation} operations={queryOperations.operations}/>)}
+			}
 		</OverEverything>
 	);
 	/*
