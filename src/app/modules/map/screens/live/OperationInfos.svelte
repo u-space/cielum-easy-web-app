@@ -17,10 +17,7 @@
             <input type="text" id="name" value={operation.name} disabled/>
             <label for="name">Name</label>
             <input type="text" id="name" value={operation.name} disabled/>
-            <label for="name">Name</label>
-            <input type="text" id="name" value={operation.name} disabled/>
-            <label for="name">Name</label>
-            <input type="text" id="name" value={operation.name} disabled/>
+            
             {#each volumes as volume}
                 {@const start = volume.effective_time_begin}
                 {@const sDay = start.getDay()}
@@ -40,7 +37,8 @@
                     <h2>{Number(volume.ordinal) + 1}</h2>
                     <div>
                         <p> {volume.min_altitude} > {volume.max_altitude}</p>
-                        <p> ({sDay} / {sMonth} / {sYear})</p>
+                        <p> ({sDay} / {sMonth} / {sYear}) {sHour}:{sMinute}:{sSecond} -> ({eDay} / {eMonth} / {eYear}
+                            ) {eHour}:{eMinute}:{eSecond} </p>
                     </div>
 
                 </article>
