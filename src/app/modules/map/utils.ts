@@ -5,7 +5,7 @@ export const selectEntity = (pick: TokyoPick, history: RouteComponentProps['hist
 	const prev = history.location.pathname;
 	history.push(
 		pick.volume
-			? `/map?${pick.type}=${pick.id}&volume=${pick.volume}&prev=${prev}`
-			: `/map?${pick.type}=${pick.id}&prev=${prev}`
+			? `${prev}?${pick.type}=${pick.id}&volume=${pick.volume}&prev=${prev}`
+			: `${prev}?${pick.type}=${pick.id}&prev=${prev}`
 	);
 };

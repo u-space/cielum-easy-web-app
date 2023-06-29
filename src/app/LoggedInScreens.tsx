@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import MasterLayout from './commons/layouts/MasterLayout';
-import { Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import RoleGatedRoute from './commons/components/RoleGatedRoute';
 import { AuthRole } from './modules/auth/store';
 import Home from './commons/screens/Home';
@@ -31,6 +31,7 @@ import PlanningMap from './modules/flight_request_service/flight_request/screens
 import { getFeatureOption } from './utils';
 import UserProfileScreen from './modules/core_service/user/screens/UserProfileScreen';
 import CoordinationHub from './modules/flight_request_service/coordination/screens/CoordinationHub';
+import PublicMapTemporalDemo from './modules/map/screens/live/PublicMapTemporalDemo';
 
 const LoggedInScreens = () => {
 	const { t } = useTranslation();
@@ -45,6 +46,9 @@ const LoggedInScreens = () => {
 				>
 					<Home />
 				</RoleGatedRoute>
+				<Route exact path="/public/map">
+					<PublicMapTemporalDemo />
+				</Route>
 				<RoleGatedRoute
 					path={'/profile'}
 					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}

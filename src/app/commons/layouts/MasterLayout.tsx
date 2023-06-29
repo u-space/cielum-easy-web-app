@@ -22,8 +22,6 @@ const MasterLayout: FC<MasterLayoutProps> = ({ children }) => {
 		setCSSVariable('bar-width', defaultBarWidth);
 	};
 
-	console.log(getFeatureOption('BarLogo', 'collapsedTransform'), 'collapsedTransform');
-
 	return (
 		<section className={styles.master}>
 			{children}

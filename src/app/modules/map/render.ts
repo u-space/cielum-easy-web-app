@@ -13,12 +13,16 @@ export function renderGeographicalZones(
 	if (geographicalZones) {
 		const items = _.cloneDeep(geographicalZones);
 		return items.flatMap((gz) => {
-			const isInPickedList =
-				(picked.length > 0 && gz.id && picked.includes(gz.id)) || picked.length === 0;
-			if (isInPickedList) {
-				return new TokyoGeographicalZone(gz, gz.id === idGeographicalZone, onHover);
+			if (!onHover) {
+				return new TokyoGeographicalZone(gz, gz.id === idGeographicalZone);
 			} else {
-				return [];
+				const isInPickedList =
+					(picked.length > 0 && gz.id && picked.includes(gz.id)) || picked.length === 0;
+				if (isInPickedList) {
+					return new TokyoGeographicalZone(gz, gz.id === idGeographicalZone, onHover);
+				} else {
+					return [];
+				}
 			}
 		});
 	} else {

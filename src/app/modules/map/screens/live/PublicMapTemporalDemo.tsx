@@ -27,6 +27,9 @@ import PModal from '@pcomponents/PModal';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useQueryString } from '../../../../utils';
+import { useAuthStore } from '../../../auth/store';
+import { selectEntity } from '../../utils';
+import { TokyoPick } from '@tokyo/TokyoTypes';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
@@ -60,7 +63,16 @@ const PointedAtSummary = styled.div`
 	z-index: 212121;
 `;
 
-const LiveMap = () => {
+const OverEverything = styled.div`
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 111111111;
+`;
+
+const PublicMapTemporalDemo = () => {
 	const { t } = useTranslation();
 	const history = useHistory();
 	const queryOperations = useQueryOperations(true);
@@ -93,7 +105,7 @@ const LiveMap = () => {
 		[gzSelection, operationSelection, rfvSelection, uvrSelection]
 	);
 	const { positionsAsArray: positions } = usePositions();
-	const { pickModalProps, onPick, pickedIds } = usePickElements();
+	const { pickModalProps, pickedIds } = usePickElements();
 	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
 
@@ -133,6 +145,13 @@ const LiveMap = () => {
 			return true;
 		};
 	};
+
+	const onPick = (elements: TokyoPick[]) => {
+		if (elements.length > 0) {
+			selectEntity(elements[0], history);
+		}
+	};
+
 	const liveMapViewProps: LiveMapViewProps = {
 		operations: queryOperations.operations,
 		geographicalZones: isShowingGeographicalZones || gz ? queryGeographicalZones.items : [],
@@ -141,24 +160,18 @@ const LiveMap = () => {
 		vehicles: positions,
 		handlers: {
 			vehicleClick: onVehicleClick,
-			pick: onPick,
-			hover: (info, pickingEvent) => {
-				if (info.layer?.props) {
-					// The name is the last part of the layer id, after the last |
-					const name = info.layer.props.id.split('|').pop();
-					if (name) {
-						setLatestHovered(name);
-						setLatestHoveredPosition([pickingEvent.center.x, pickingEvent.center.y]);
-						setPointerSummaryOpacity(0.5);
-					}
-				}
-				return true;
-			}
+			pick: onPick
 		},
 		pickedIds,
 		selected
 	};
 
+	return (
+		<OverEverything>
+			<LiveMapView {...liveMapViewProps} />
+		</OverEverything>
+	);
+	/*
 	return (
 		<MapLayout
 			isLoading={{ main: queryOperations.isLoading }}
@@ -206,7 +219,7 @@ const LiveMap = () => {
 			)}
 			<LiveMapView {...liveMapViewProps} />
 		</MapLayout>
-	);
+	);*/
 };
 
-export default LiveMap;
+export default PublicMapTemporalDemo;
