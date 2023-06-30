@@ -21,8 +21,7 @@
             <h1>{operation.name}</h1>
             <label for="name">Contacto</label>
             <input type="text" id="name" value={`${operation.contact} (Tel: ${operation.contact_phone})`} disabled/>
-            <label for="flight_comments">Comentarios del vuelo</label>
-            <input type="text" id="flight_comments" value={operation.flight_comments} disabled/>
+            
             <label for="state">Estado</label>
             <input type="text" id="state" value={operation.state} disabled/>
 
@@ -38,7 +37,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 35svh;
+    height: 40svh;
 
     z-index: 9999;
     box-shadow: 0px 0 2px 2px var(--primary-900);

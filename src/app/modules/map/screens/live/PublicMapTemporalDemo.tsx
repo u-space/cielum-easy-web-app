@@ -268,14 +268,14 @@ const PublicMapTemporalDemo = () => {
 					// should be replaced with /public/map?operation=7488c6f5-9c12-4938-8391-671c556be48b&volume=4
 					onPrevious={() =>
 						history.push(
-							`/public/map?operation=${operation}&volume=${
+							`/public/map?operation=${operation.gufi}&volume=${
 								Number(operationSelection.volume) - 1
 							}`
 						)
 					}
 					onNext={() =>
 						history.push(
-							`/public/map?operation=${operation}&volume=${
+							`/public/map?operation=${operation.gufi}&volume=${
 								Number(operationSelection.volume) + 1
 							}`
 						)
