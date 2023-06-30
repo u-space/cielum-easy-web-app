@@ -5,11 +5,10 @@
 
     const dispatch = createEventDispatcher();
 
-    export let gufi: string;
-    export let operations: OperationEntity[];
+    export let operation: OperationEntity;
     export let indexSelectedVolume: number;
 
-    $: operation = operations.find((operation) => operation.gufi === gufi);
+
     // Sort volumes according to ordinal
     $: volumes = (operation?.operation_volumes || [])
 

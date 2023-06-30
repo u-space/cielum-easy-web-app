@@ -80,6 +80,11 @@ export const getPositionAPIClient = (api: string, token: string) => {
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
 				).concat(transformPosition)
 			});
+		},
+		postSimulatedPosition(position: PositionEntity) {
+			return axiosInstance.post('position', position, {
+				headers: { auth: token }
+			});
 		}
 	};
 };

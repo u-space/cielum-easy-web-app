@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { reactify } from 'svelte-preprocess-react';
@@ -11,7 +12,7 @@ import {
 	useQueryOperations,
 	useSelectedOperationAndVolume
 } from '../../../core_service/operation/hooks';
-import { usePositions } from '../../../core_service/position/hooks';
+import { usePositions, useSimulatedPositions } from '../../../core_service/position/hooks';
 import useQueryRfvs, { useSelectedRfv } from '../../../core_service/rfv/hooks';
 import useQueryUvrs, { useSelectedUvr } from '../../../core_service/uvr/hooks';
 import {
@@ -20,6 +21,7 @@ import {
 } from '../../../flight_request_service/geographical_zone/hooks';
 import Contextual from '../../components/Contextual';
 import Menu from '../../components/Menu';
+import turf from 'turf';
 import usePickElements from '../../hooks';
 import LiveMapViewSvelte from './LiveMapView.svelte';
 import { LiveMapViewProps } from './LiveMapViewProps';
@@ -115,13 +117,12 @@ const PublicMapTemporalDemo = () => {
 		queryUvrs.isLoadingUvrs;
 
 	const tokyo = useTokyo();
-	const { volume, selected: operationSelection } = useSelectedOperationAndVolume();
+	const { volume, selected: operationSelection, operation } = useSelectedOperationAndVolume();
 	const { gz, selected: gzSelection } = useSelectedGeographicalZone();
 	const { rfv, selected: rfvSelection } = useSelectedRfv();
 	const { uvr, selected: uvrSelection } = useSelectedUvr();
 	const queryString = useQueryString();
 	const isPrevious = queryString.get('is-previous');
-	const operation = queryString.get('operation');
 
 	const [latestHovered, setLatestHovered] = useState<string | null>(null);
 	const [latestHoveredPosition, setLatestHoveredPosition] = useState<[number, number] | null>(
@@ -138,25 +139,39 @@ const PublicMapTemporalDemo = () => {
 	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(false);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
 
-	const operationStore = useOperationStore();
+	const samplePolygon = [
+		[
+			[0, 0],
+			[0, 1],
+			[1, 1],
+			[1, 0],
+			[0, 0]
+		]
+	];
+
+	const simulatedQuery = useSimulatedPositions(
+		operation?.gufi || '',
+		operation?.uas_registrations[0].uvin || '',
+		turf.center(turf.polygon(volume?.operation_geography?.coordinates || samplePolygon) as any)
+			.geometry.coordinates[1],
+		turf.center(turf.polygon(volume?.operation_geography?.coordinates || samplePolygon) as any)
+			.geometry.coordinates[0]
+	);
 
 	useEffect(() => {
-		const filterShowProposed = operationStore.filterShowProposed;
-		const filterShowAccepted = operationStore.filterShowAccepted;
-		const filterShowNotAccepted = operationStore.filterShowNotAccepted;
-		const filterShowPending = operationStore.filterShowPending;
-		const filterShowActivated = operationStore.filterShowActivated;
-		const filterShowRogue = operationStore.filterShowRogue;
-		const filterShowClosed = operationStore.filterShowClosed;
+		let interval: NodeJS.Timer;
 
-		operationStore.setFilterProposed(false);
-		operationStore.setFilterAccepted(true);
-		operationStore.setFilterNotAccepted(false);
-		operationStore.setFilterPending(false);
-		operationStore.setFilterActivated(true);
-		operationStore.setFilterRogue(false);
-		operationStore.setFilterClosed(false);
-	}, []);
+		if (operation) {
+			interval = setInterval(() => {
+				simulatedQuery.refetch();
+			}, 2000);
+		}
+		return () => {
+			if (interval) {
+				clearInterval(interval);
+			}
+		};
+	}, [simulatedQuery, operation]);
 
 	useEffect(() => {
 		if (volume) {
@@ -245,8 +260,7 @@ const PublicMapTemporalDemo = () => {
 			</div>
 			{operation && (
 				<OperationInfos
-					gufi={operation}
-					operations={queryOperations.operations}
+					operation={operation}
 					indexSelectedVolume={Number(operationSelection.volume)}
 					onClose={() => history.push('/public/map')}
 					// onPrevious, replace current volume in url with previous volume

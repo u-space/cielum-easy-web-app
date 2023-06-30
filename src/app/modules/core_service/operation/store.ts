@@ -46,10 +46,10 @@ export const useOperationStore = create<OperationStoreState>()(
 	devtools(
 		(set, get) => ({
 			...createFilterableAndPaginableSlice<OperationStoreSpecificState>(set, get),
-			filterShowProposed: true,
+			filterShowProposed: false,
 			filterShowAccepted: true,
 			filterShowNotAccepted: false,
-			filterShowPending: true,
+			filterShowPending: false,
 			filterShowActivated: true,
 			filterShowRogue: true,
 			filterShowClosed: false,
