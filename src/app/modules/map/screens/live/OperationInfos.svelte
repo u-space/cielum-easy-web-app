@@ -1,48 +1,34 @@
 <script lang="ts">
     import {OperationEntity} from "@utm-entities/operation";
+    import VolumeInfos from "./VolumeInfos.svelte";
+    import {createEventDispatcher} from "svelte";
+
+    const dispatch = createEventDispatcher();
 
     export let gufi: string;
     export let operations: OperationEntity[];
+    export let indexSelectedVolume: number;
 
     $: operation = operations.find((operation) => operation.gufi === gufi);
     // Sort volumes according to ordinal
-    $: volumes = (operation?.operation_volumes || []).sort((a, b) => Number(a.ordinal) - Number(b.ordinal));
+    $: volumes = (operation?.operation_volumes || [])
+
 </script>
 
 {#if operation}
     <div id="wrapper">
+        <button on:click={() => dispatch('close')}>X</button>
         <section>
             <h1>{operation.name}</h1>
-            <label for="name">Name</label>
-            <input type="text" id="name" value={operation.name} disabled/>
-            <label for="name">Name</label>
-            <input type="text" id="name" value={operation.name} disabled/>
-            
-            {#each volumes as volume}
-                {@const start = volume.effective_time_begin}
-                {@const sDay = start.getDay()}
-                {@const sMonth = start.getMonth()}
-                {@const sYear = start.getFullYear()}
-                {@const sHour = start.getHours()}
-                {@const sMinute = start.getMinutes()}
-                {@const sSecond = start.getSeconds()}
-                {@const end = volume.effective_time_end}
-                {@const eDay = end.getDay()}
-                {@const eMonth = end.getMonth()}
-                {@const eYear = end.getFullYear()}
-                {@const eHour = end.getHours()}
-                {@const eMinute = end.getMinutes()}
-                {@const eSecond = end.getSeconds()}
-                <article>
-                    <h2>{Number(volume.ordinal) + 1}</h2>
-                    <div>
-                        <p> {volume.min_altitude} > {volume.max_altitude}</p>
-                        <p> ({sDay} / {sMonth} / {sYear}) {sHour}:{sMinute}:{sSecond} -> ({eDay} / {eMonth} / {eYear}
-                            ) {eHour}:{eMinute}:{eSecond} </p>
-                    </div>
+            <label for="name">Contacto</label>
+            <input type="text" id="name" value={`${operation.contact} (Tel: ${operation.contact_phone})`} disabled/>
+            <label for="flight_comments">Comentarios del vuelo</label>
+            <input type="text" id="flight_comments" value={operation.flight_comments} disabled/>
+            <label for="state">Estado</label>
+            <input type="text" id="state" value={operation.state} disabled/>
 
-                </article>
-            {/each}
+            <VolumeInfos on:previous on:next volume={volumes[indexSelectedVolume]} index={indexSelectedVolume}
+                         volumesLength={volumes.length}/>
         </section>
     </div>
 {/if}
@@ -53,22 +39,24 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 30svh;
+    height: 35svh;
 
     z-index: 9999;
-    padding: 1rem;
     box-shadow: 0px 0 2px 2px var(--primary-900);
 
-    overflow-y: auto;
     background-color: var(--primary-900);
   }
 
   section {
+    position: relative;
     height: 100%;
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
     flex-direction: column;
+
+    padding: 1rem;
+    overflow-y: auto;
   }
 
   h1 {
@@ -77,30 +65,33 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    width: 100%;
+    max-width: 100%;
     margin-bottom: auto;
   }
 
-  article {
-    margin-top: 1rem;
-    width: 100%;
-    background-color: var(--primary-800);
-    padding: 0.25rem;
-    display: flex;
-    justify-content: flex-start;
-    border-radius: 4px;
+  button {
+    position: absolute;
+    height: 2rem;
+    width: 2rem;
+    font-size: 1.25rem;
+    top: 0;
+    right: 1rem;
+    transform: translateY(-50%);
+    border-radius: 100vh;
+    font-weight: bold;
+    border: 1px solid var(--ramen-900);
+    box-shadow: 0px 0 1px 1px var(--ramen-700);
+    outline: none;
+    background-color: var(--ramen-500);
+    color: var(--ramen-200);
 
-    & > h2 {
-      color: var(--mirai-200);
-      font-size: 1.25rem;
-      margin: 0;
-    }
-
-    & > div {
-      background-color: var(--primary-700);
-      color: white;
+    &:active {
+      background-color: var(--ramen-600);
+      color: var(--ramen-100);
+      transform: translateY(-50%) scale(0.95);
     }
   }
+
 
   label {
     color: var(--primary-200);

@@ -44,7 +44,7 @@ export const tokyo = derived(deck, ($deck: any) => ({
 			if ('coordinates' in geometry) {
 				const center = turf.center(turf.polygon(geometry.coordinates as any) as any);
 				const [lng, lat] = center.geometry.coordinates;
-				$deck.setProps(calculateViewStateToGoTo(lng, lat, 15));
+				$deck.setProps(calculateViewStateToGoTo(lng, lat, 10));
 			}
 		}
 	}

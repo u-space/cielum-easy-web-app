@@ -25,13 +25,15 @@ import LiveMapViewSvelte from './LiveMapView.svelte';
 import { LiveMapViewProps } from './LiveMapViewProps';
 import PModal from '@pcomponents/PModal';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useQueryString } from '../../../../utils';
 import { useAuthStore } from '../../../auth/store';
 import { selectEntity } from '../../utils';
 import { TokyoPick } from '@tokyo/TokyoTypes';
-import {OperationEntity} from "@utm-entities/operation";
-import OperationInfosSvelte from "./OperationInfos.svelte";
+import { OperationEntity, OperationVolume } from '@utm-entities/operation';
+import OperationInfosSvelte from './OperationInfos.svelte';
+import { onOff } from '@pcomponents/anims';
+import { useOperationStore } from '../../../core_service/operation/store';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 const OperationInfos = reactify(OperationInfosSvelte);
@@ -91,12 +93,12 @@ const OperationInfo = styled.div`
 	right: 0;
 	background-color: var(--primary-700);
 	color: var(--white-100);
-`
+`;
 
 const VolumeInfo = styled.div`
 	display: flex;
 	flex-direction: column;
-`
+`;
 
 const PublicMapTemporalDemo = () => {
 	const { t } = useTranslation();
@@ -121,8 +123,6 @@ const PublicMapTemporalDemo = () => {
 	const isPrevious = queryString.get('is-previous');
 	const operation = queryString.get('operation');
 
-	console.log('operation', operation);
-
 	const [latestHovered, setLatestHovered] = useState<string | null>(null);
 	const [latestHoveredPosition, setLatestHoveredPosition] = useState<[number, number] | null>(
 		null
@@ -135,8 +135,28 @@ const PublicMapTemporalDemo = () => {
 	);
 	const { positionsAsArray: positions } = usePositions();
 	const { pickModalProps, pickedIds } = usePickElements();
-	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
+	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(false);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
+
+	const operationStore = useOperationStore();
+
+	useEffect(() => {
+		const filterShowProposed = operationStore.filterShowProposed;
+		const filterShowAccepted = operationStore.filterShowAccepted;
+		const filterShowNotAccepted = operationStore.filterShowNotAccepted;
+		const filterShowPending = operationStore.filterShowPending;
+		const filterShowActivated = operationStore.filterShowActivated;
+		const filterShowRogue = operationStore.filterShowRogue;
+		const filterShowClosed = operationStore.filterShowClosed;
+
+		operationStore.setFilterProposed(false);
+		operationStore.setFilterAccepted(true);
+		operationStore.setFilterNotAccepted(false);
+		operationStore.setFilterPending(false);
+		operationStore.setFilterActivated(true);
+		operationStore.setFilterRogue(false);
+		operationStore.setFilterClosed(false);
+	}, []);
 
 	useEffect(() => {
 		if (volume) {
@@ -181,9 +201,25 @@ const PublicMapTemporalDemo = () => {
 		}
 	};
 
+	const operations: OperationEntity[] = useMemo(() => {
+		if (queryOperations.operations) {
+			return queryOperations.operations.map(
+				(operation: OperationEntity) =>
+					new OperationEntity({
+						...operation,
+						// sort operation volumes by ordinal
+						operation_volumes: operation.operation_volumes.sort(
+							(a: OperationVolume, b: OperationVolume) => a.ordinal - b.ordinal
+						)
+					})
+			);
+		}
+		return [];
+	}, [queryOperations.operations]);
+
 	const liveMapViewProps: LiveMapViewProps = {
-		operations: queryOperations.operations,
-		geographicalZones: isShowingGeographicalZones || gz ? queryGeographicalZones.items : [],
+		operations,
+		geographicalZones: isShowingGeographicalZones ? queryGeographicalZones.items : [],
 		rfvs: queryRfvs.rfvs,
 		uvrs: isShowingUvrs ? queryUvrs.uvrs : uvr ? [uvr] : [],
 		vehicles: positions,
@@ -198,9 +234,40 @@ const PublicMapTemporalDemo = () => {
 	return (
 		<OverEverything>
 			<UnderMap />
-			<LiveMapView {...liveMapViewProps} />
-			{operation&& (<OperationInfos gufi={operation} operations={queryOperations.operations}/>)}
-			}
+			<div
+				style={{
+					width: '100%',
+					height: operation ? '65svh' : '100%',
+					transition: 'height 0.1s'
+				}}
+			>
+				<LiveMapView {...liveMapViewProps} />
+			</div>
+			{operation && (
+				<OperationInfos
+					gufi={operation}
+					operations={queryOperations.operations}
+					indexSelectedVolume={Number(operationSelection.volume)}
+					onClose={() => history.push('/public/map')}
+					// onPrevious, replace current volume in url with previous volume
+					// for instance, /public/map?operation=7488c6f5-9c12-4938-8391-671c556be48b&volume=5
+					// should be replaced with /public/map?operation=7488c6f5-9c12-4938-8391-671c556be48b&volume=4
+					onPrevious={() =>
+						history.push(
+							`/public/map?operation=${operation}&volume=${
+								Number(operationSelection.volume) - 1
+							}`
+						)
+					}
+					onNext={() =>
+						history.push(
+							`/public/map?operation=${operation}&volume=${
+								Number(operationSelection.volume) + 1
+							}`
+						)
+					}
+				/>
+			)}
 		</OverEverything>
 	);
 	/*

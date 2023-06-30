@@ -290,9 +290,7 @@ export function useSelectedOperationAndVolume() {
 	const operation = querySelectedOperation?.data?.data;
 	const volume = useMemo(() => {
 		return operation
-			? _.cloneDeep(
-					_.find(operation.operation_volumes, (vol) => vol.ordinal === Number(idVolume))
-			  )
+			? _.cloneDeep(_.find(operation.operation_volumes, (vol) => vol.ordinal === idVolume))
 			: undefined;
 	}, [idVolume, operation]);
 

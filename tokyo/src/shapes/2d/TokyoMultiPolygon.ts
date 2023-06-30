@@ -45,6 +45,7 @@ export class TokyoMultiPolygon implements TokyoPickableElement, TokyoPolygonElem
 				pickable: true,
 				getFillColor: this.fill,
 				getLineWidth: 1,
+				lineWidthUnits: 'pixels',
 				getLineColor: this.getLineColor(index)
 				/*extruded: true, TODO: 3D mode
 			getElevation: 50*/
