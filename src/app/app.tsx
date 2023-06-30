@@ -66,7 +66,6 @@ export function App() {
 			try {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				queryClient.setQueryData('positions', (old: any) => {
-					console.log('new position', info);
 					const oldData = old ?? new Map();
 					const existingPositions = oldData.get(info.gufi) ?? [];
 					return oldData.set(info.gufi, [...existingPositions, info]);

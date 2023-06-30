@@ -4,10 +4,12 @@
     import {TokyoEditMode, TokyoMapElement, TokyoMapProps, TokyoViewMode} from './TokyoTypes';
     import {Polygon} from 'geojson';
 
+
+    // Use latitudes and longitudes of mid uruguay
     const initialViewState = {
-        latitude: 40.407613,
-        longitude: -3.700002,
-        zoom: 11,
+        latitude: -31.730811,
+        longitude: -55.969566,
+        zoom: 7,
         bearing: 0,
         pitch: 0,
         //minZoom: 10,

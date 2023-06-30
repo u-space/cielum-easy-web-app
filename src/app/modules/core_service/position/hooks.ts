@@ -78,8 +78,6 @@ export function usePositions() {
 		enabled: false
 	});
 
-	console.log('positionsquery', query.data);
-
 	const positions = useMemo(() => {
 		if (query.data) {
 			return Array.from(query.data.values());
