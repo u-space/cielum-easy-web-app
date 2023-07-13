@@ -109,8 +109,8 @@ export function App() {
 							fallback={
 								<div
 									style={{
-										height: '100vh',
-										width: '100vw',
+										height: '100dvh',
+										width: '100dvw',
 										display: 'flex',
 										justifyContent: 'center',
 										alignItems: 'center'
