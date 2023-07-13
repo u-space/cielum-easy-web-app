@@ -1,27 +1,41 @@
 <script lang="ts">
     import {OperationEntity} from "@utm-entities/operation";
     import VolumeInfos from "./VolumeInfos.svelte";
-    import {createEventDispatcher} from "svelte";
+    import {createEventDispatcher, onMount} from "svelte";
 
     const dispatch = createEventDispatcher();
+
 
     export let operation: OperationEntity;
     export let indexSelectedVolume: number;
 
+    const caretUp = '<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 256 256"><path fill="white" d="M216.49 199.51a12 12 0 0 1-17 17L128 145l-71.51 71.49a12 12 0 0 1-17-17l80-80a12 12 0 0 1 17 0Zm-160-63L128 65l71.51 71.52a12 12 0 0 0 17-17l-80-80a12 12 0 0 0-17 0l-80 80a12 12 0 0 0 17 17Z"/></svg>'
+    const caretDown = '<svg xmlns="http://www.w3.org/2000/svg"  height="100%" viewBox="0 0 256 256"><path fill="white" d="M216.49 119.51a12 12 0 0 1 0 17l-80 80a12 12 0 0 1-17 0l-80-80a12 12 0 1 1 17-17L128 191l71.51-71.52a12 12 0 0 1 16.98.03Zm-97 17a12 12 0 0 0 17 0l80-80a12 12 0 0 0-17-17L128 111L56.49 39.51a12 12 0 0 0-17 17Z"/></svg>'
+
+    function handleButtonClick() {
+        isVisible = !isVisible;
+        if (isVisible) {
+            dispatch('expand');
+        } else {
+            dispatch('collapse');
+        }
+    }
+
+    let isVisible = false;
 
     // Sort volumes according to ordinal
     $: volumes = (operation?.operation_volumes || [])
-
 </script>
 
-{#if operation}
+<button class:bottom={!isVisible} class:top={isVisible}
+        on:click={handleButtonClick}>{@html isVisible ? caretDown : caretUp}</button>
+{#if operation && isVisible}
     <div id="wrapper">
-        <button on:click={() => dispatch('close')}>X</button>
         <section>
             <h1>{operation.name}</h1>
             <label for="name">Contacto</label>
             <input type="text" id="name" value={`${operation.contact} (Tel: ${operation.contact_phone})`} disabled/>
-            
+
             <label for="state">Estado</label>
             <input type="text" id="state" value={operation.state} disabled/>
 
@@ -39,7 +53,7 @@
     right: 0;
     height: 40svh;
 
-    z-index: 9999;
+
     box-shadow: 0px 0 2px 2px var(--primary-900);
 
     background-color: var(--primary-900);
@@ -70,12 +84,13 @@
   button {
     position: absolute;
     height: 2rem;
-    width: 2rem;
+    width: 4rem;
     font-size: 1.25rem;
-    top: 0;
-    right: 1rem;
-    transform: translateY(-50%);
-    border-radius: 100vh;
+
+    left: 50vw;
+    z-index: 9999999999999999999999;
+    transform: translate(-50%, 50%);
+    border-radius: 0.25rem;
     font-weight: bold;
     border: 1px solid var(--ramen-900);
     box-shadow: 0px 0 1px 1px var(--ramen-700);
@@ -83,10 +98,32 @@
     background-color: var(--ramen-500);
     color: var(--ramen-200);
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     &:active {
       background-color: var(--ramen-600);
       color: var(--ramen-100);
-      transform: translateY(-50%) scale(0.95);
+      transform: translate(-50%, 50%) scale(0.9);
+    }
+
+    &.top {
+      bottom: 40svh;
+      transform: translate(-50%, 50%);
+
+      &:active {
+        transform: translate(-50%, 50%) scale(0.9);
+      }
+    }
+
+    &.bottom {
+      bottom: 1rem;
+      transform: translateX(-50%);
+
+      &:active {
+        transform: translateX(-50%) scale(0.9);
+      }
     }
   }
 

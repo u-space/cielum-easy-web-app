@@ -50,8 +50,8 @@ export const tokyo = derived(deck, ($deck: any) => ({
 				const currentViewState = get(viewState);
 				const viewport = new WebMercatorViewport(currentViewState as any);
 				const boundingBox = turf.bbox(turf.polygon(geometry.coordinates as any) as any);
-				const nw: [number, number] = [boundingBox[0] - 0.025, boundingBox[1] - 0.025];
-				const se: [number, number] = [boundingBox[2] + 0.025, boundingBox[3] + 0.025];
+				const nw: [number, number] = [boundingBox[0] - 0.05, boundingBox[1] - 0.05];
+				const se: [number, number] = [boundingBox[2] + 0.05, boundingBox[3] + 0.05];
 				const newViewport = viewport.fitBounds([nw, se]);
 				$deck.setProps({
 					initialViewState: {

@@ -176,6 +176,7 @@ const PublicMapTemporalDemo = () => {
 	useEffect(() => {
 		if (volume) {
 			tokyo.flyToCenterOfGeometry(volume.operation_geography);
+			setExpanded(false);
 		}
 	}, [volume]);
 
@@ -246,13 +247,15 @@ const PublicMapTemporalDemo = () => {
 		selected
 	};
 
+	const [expanded, setExpanded] = useState(false);
+
 	return (
 		<OverEverything>
 			<UnderMap />
 			<div
 				style={{
 					width: '100%',
-					height: operation ? '65svh' : '100%',
+					height: expanded ? '65svh' : '100%',
 					transition: 'height 0.1s'
 				}}
 			>
@@ -260,9 +263,11 @@ const PublicMapTemporalDemo = () => {
 			</div>
 			{operation && (
 				<OperationInfos
+					key={operation.gufi + operationSelection.volume}
 					operation={operation}
 					indexSelectedVolume={Number(operationSelection.volume)}
-					onClose={() => history.push('/public/map')}
+					onExpand={() => setExpanded(true)}
+					onCollapse={() => setExpanded(false)}
 					// onPrevious, replace current volume in url with previous volume
 					// for instance, /public/map?operation=7488c6f5-9c12-4938-8391-671c556be48b&volume=5
 					// should be replaced with /public/map?operation=7488c6f5-9c12-4938-8391-671c556be48b&volume=4
