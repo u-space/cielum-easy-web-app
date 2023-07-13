@@ -88,7 +88,7 @@
     font-size: 1.25rem;
 
     left: 50vw;
-    z-index: 9999999999999999999999;
+    z-index: 1;
     transform: translate(-50%, 50%);
     border-radius: 0.25rem;
     font-weight: bold;
