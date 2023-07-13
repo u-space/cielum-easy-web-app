@@ -255,7 +255,7 @@ const PublicMapTemporalDemo = () => {
 			<div
 				style={{
 					width: '100%',
-					height: expanded ? '65svh' : '100%',
+					height: expanded ? 'calc(100dvh - 16rem)' : '100%',
 					transition: 'height 0.1s'
 				}}
 			>

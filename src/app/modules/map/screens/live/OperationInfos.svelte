@@ -51,7 +51,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 40svh;
+    height: 16rem;
 
 
     box-shadow: 0px 0 2px 2px var(--primary-900);
@@ -109,7 +109,7 @@
     }
 
     &.top {
-      bottom: 40svh;
+      bottom: 16rem;
       transform: translate(-50%, 50%);
 
       &:active {
