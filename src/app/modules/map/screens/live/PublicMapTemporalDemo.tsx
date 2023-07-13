@@ -149,7 +149,7 @@ const PublicMapTemporalDemo = () => {
 		]
 	];
 
-	const simulatedQuery = useSimulatedPositions(
+	/* const simulatedQuery = useSimulatedPositions(
 		operation?.gufi || '',
 		operation?.uas_registrations[0].uvin || '',
 		turf.center(turf.polygon(volume?.operation_geography?.coordinates || samplePolygon) as any)
@@ -171,7 +171,7 @@ const PublicMapTemporalDemo = () => {
 				clearInterval(interval);
 			}
 		};
-	}, [simulatedQuery, operation]);
+	}, [simulatedQuery, operation]); */
 
 	useEffect(() => {
 		if (volume) {

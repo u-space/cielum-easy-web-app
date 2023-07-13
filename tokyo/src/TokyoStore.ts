@@ -1,8 +1,8 @@
-import { derived, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import { useCallback, useEffect, useState } from 'react';
 import { Geometry } from 'geojson';
 import turf from 'turf';
-import { FlyToInterpolator, MapViewState } from '@deck.gl/core/typed';
+import { FlyToInterpolator, MapViewState, WebMercatorViewport } from '@deck.gl/core/typed';
 import _ from 'lodash';
 
 // General
@@ -33,7 +33,7 @@ function calculateViewStateToGoTo(lng: number, lat: number, zoom: number) {
 // Svelte-land
 export const viewMode = writable('streets');
 export const editMode = writable('INACTIVE');
-export const viewState = writable(null);
+export const viewState = writable<MapViewState | null>(null);
 
 export const tokyo = derived(deck, ($deck: any) => ({
 	flyTo: (lng: number, lat: number, zoom = 15) => {
@@ -41,10 +41,24 @@ export const tokyo = derived(deck, ($deck: any) => ({
 	},
 	flyToCenterOfGeometry: (geometry: Geometry) => {
 		if ($deck) {
-			if ('coordinates' in geometry) {
+			/* if ('coordinates' in geometry) {
 				const center = turf.center(turf.polygon(geometry.coordinates as any) as any);
 				const [lng, lat] = center.geometry.coordinates;
 				$deck.setProps(calculateViewStateToGoTo(lng, lat, 10));
+			} */
+			if ('coordinates' in geometry) {
+				const currentViewState = get(viewState);
+				const viewport = new WebMercatorViewport(currentViewState as any);
+				const boundingBox = turf.bbox(turf.polygon(geometry.coordinates as any) as any);
+				const nw: [number, number] = [boundingBox[0] - 0.025, boundingBox[1] - 0.025];
+				const se: [number, number] = [boundingBox[2] + 0.025, boundingBox[3] + 0.025];
+				const newViewport = viewport.fitBounds([nw, se]);
+				$deck.setProps({
+					initialViewState: {
+						...viewState,
+						...newViewport
+					}
+				});
 			}
 		}
 	}
