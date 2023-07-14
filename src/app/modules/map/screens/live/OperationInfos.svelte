@@ -27,8 +27,8 @@
     $: volumes = (operation?.operation_volumes || [])
 </script>
 
-<button class:bottom={!isVisible} class:top={isVisible}
-        on:click={handleButtonClick}>{@html isVisible ? caretDown : caretUp}</button>
+<button class:collapsed={!isVisible} class:extended={isVisible}
+        on:click={handleButtonClick}>{@html isVisible ? caretUp : caretDown}</button>
 {#if operation && isVisible}
     <div id="wrapper">
         <section>
@@ -48,7 +48,7 @@
 <style lang="scss">
   #wrapper {
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
     right: 0;
     height: 16rem;
@@ -105,20 +105,20 @@
     &:active {
       background-color: var(--ramen-600);
       color: var(--ramen-100);
-      transform: translate(-50%, 50%) scale(0.9);
+      transform: translate(-50%, -50%) scale(0.9);
     }
 
-    &.top {
-      bottom: 16rem;
-      transform: translate(-50%, 50%);
+    &.extended {
+      top: 16rem;
+      transform: translate(-50%, -50%);
 
       &:active {
-        transform: translate(-50%, 50%) scale(0.9);
+        transform: translate(-50%, -50%) scale(0.9);
       }
     }
 
-    &.bottom {
-      bottom: 1rem;
+    &.collapsed {
+      top: 1rem;
       transform: translateX(-50%);
 
       &:active {

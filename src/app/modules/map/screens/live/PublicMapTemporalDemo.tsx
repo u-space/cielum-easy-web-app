@@ -252,15 +252,7 @@ const PublicMapTemporalDemo = () => {
 	return (
 		<OverEverything>
 			<UnderMap />
-			<div
-				style={{
-					width: '100%',
-					height: expanded ? 'calc(100dvh - 16rem)' : '100%',
-					transition: 'height 0.1s'
-				}}
-			>
-				<LiveMapView {...liveMapViewProps} />
-			</div>
+
 			{operation && (
 				<OperationInfos
 					key={operation.gufi + operationSelection.volume}
@@ -287,6 +279,19 @@ const PublicMapTemporalDemo = () => {
 					}
 				/>
 			)}
+			<div
+				style={{
+					position: 'absolute',
+					left: 0,
+					right: 0,
+					width: '100%',
+					top: expanded ? '16rem' : 0,
+					bottom: 0,
+					transition: 'top 0.1s'
+				}}
+			>
+				<LiveMapView {...liveMapViewProps} />
+			</div>
 		</OverEverything>
 	);
 	/*
