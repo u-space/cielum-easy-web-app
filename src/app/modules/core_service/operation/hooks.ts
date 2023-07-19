@@ -7,6 +7,7 @@ import { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 import { GetOperationsParsedResponse, OperationEntity } from '@utm-entities/operation';
 import { AxiosError, AxiosResponse } from 'axios';
+import { UpdateEntityParams } from '@utm-entities/types';
 export function useQueryOperation(gufi: string, enabled: boolean) {
 	const {
 		operation: { getOperation }
@@ -240,26 +241,27 @@ export function useSaveOperation(onSuccess?: () => void, onError?: (error: Error
 		operation: { saveOperation }
 	} = useCoreServiceAPI();
 	const isPilot = useAuthIsPilot();
-	return useMutation<AxiosResponse<void>, AxiosError<{ message?: string }>, OperationEntity>(
-		(entity) => saveOperation(entity, isPilot),
-		{
-			onSuccess: () => {
-				// Invalidate and refetch
-				queryClient.invalidateQueries('operations').then(
-					onSuccess
-						? onSuccess
-						: () => {
-								return;
-						  }
-				);
-			},
-			onError: (error) => {
-				if (onError) {
-					onError(error);
-				}
+	return useMutation<
+		AxiosResponse<OperationEntity>,
+		AxiosError<{ message?: string }>,
+		UpdateEntityParams<OperationEntity>
+	>(({ entity }) => saveOperation(entity, isPilot), {
+		onSuccess: () => {
+			// Invalidate and refetch
+			queryClient.invalidateQueries('operations').then(
+				onSuccess
+					? onSuccess
+					: () => {
+							return;
+					  }
+			);
+		},
+		onError: (error) => {
+			if (onError) {
+				onError(error);
 			}
 		}
-	);
+	});
 }
 
 export function useSelectedOperationAndVolume() {

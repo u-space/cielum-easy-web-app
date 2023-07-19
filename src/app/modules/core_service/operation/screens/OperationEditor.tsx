@@ -121,7 +121,7 @@ const OperationEditor = () => {
 
 	const save: PButtonProps['onClick'] = (evt) => {
 		evt.preventDefault();
-		saveOperationMutation.mutate(operation);
+		saveOperationMutation.mutate({ entity: operation, documents: new Map(), isCreating: !id });
 	};
 
 	const resetError = () => {

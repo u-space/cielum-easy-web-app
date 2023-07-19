@@ -9,7 +9,6 @@ import {
 	useQueryOperations,
 	useSelectedOperationAndVolume
 } from '../../../core_service/operation/hooks';
-import { useSimulatedPositions } from '../../../core_service/position/hooks';
 import useQueryRfvs, { useSelectedRfv } from '../../../core_service/rfv/hooks';
 import useQueryUvrs, { useSelectedUvr } from '../../../core_service/uvr/hooks';
 import {
@@ -33,7 +32,6 @@ import styled from 'styled-components';
 import { useQueryString } from '../../../../utils';
 import env from '../../../../../vendor/environment/env';
 import { TokyoPick } from '@tokyo/types';
-import { center, polygon } from '@turf/turf';
 import { usePositionStore } from '../../../core_service/position/store';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
@@ -190,6 +188,16 @@ const LiveMap = () => {
 		}
 	}, [rfv]);
 
+	const operations = useMemo(() => {
+		const operations = queryOperations.shownOperations;
+		if (operation) {
+			if (!operations.find((op) => op.gufi === operation.gufi)) {
+				operations.push(operation);
+			}
+		}
+		return operations;
+	}, [queryOperations.shownOperations, operation]);
+
 	const onVehicleClick = (vehicle: PositionEntity[]) => {
 		return () => {
 			history.push(`/map?uvin=${vehicle[0].uvin}&gufi=${vehicle[0].gufi}`);
@@ -197,7 +205,7 @@ const LiveMap = () => {
 		};
 	};
 	const liveMapViewProps: LiveMapViewProps = {
-		operations: queryOperations.shownOperations,
+		operations,
 		geographicalZones: isShowingGeographicalZones || gz ? queryGeographicalZones.items : [],
 		rfvs: queryRfvs.rfvs,
 		uvrs: isShowingUvrs ? queryUvrs.uvrs : uvr ? [uvr] : [],
