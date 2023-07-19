@@ -273,9 +273,9 @@
 		"InsuranceDocument": "Seguro de responsabilidad civil"
 	},
 	"volume": {
-		"effective_time_begin": "Fecha y hora de inicio",
+		"effective_time_begin": "Inicio",
 		"effective_time_begin_description": "Momento desde el cual la operación usará el espacio aéreo",
-		"effective_time_end": "Fecha y hora de fin",
+		"effective_time_end": "Fin",
 		"effective_time_end_description": "Momento mas tardío en el cual el drone dejará de usar el espacio aéreo",
 		"min_altitude": "Altura mínima (en metros)",
 		"max_altitude": "Altura máxima (en metros)",
@@ -321,8 +321,8 @@
 		"id": "Id.",
 		"max_altitude": "Altura máxima (en metros)",
 		"min_altitude": "Altura mínima (en metros)",
-		"effective_time_begin": "Fecha y hora de inicio",
-		"effective_time_end": "Fecha y hora de fin",
+		"effective_time_begin": "Inicio",
+		"effective_time_end": "Fin",
 		"selected": "Volúmen de vuelo restringido",
 		"success": {
 			"save": "El RFV se guardó satifactoriamente"
