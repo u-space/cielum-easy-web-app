@@ -14,7 +14,7 @@ import env from '../../../../../vendor/environment/env';
 import { useOperationStore } from '../store';
 import ViewAndEditOperation from '../pages/ViewAndEditOperation';
 import OperationSearchTools from '../components/OperationSearchTools';
-import { OperationEntity } from '@utm-entities/operation';
+import { OPERATION_LOCALES_OPTIONS, OperationEntity } from '@utm-entities/operation';
 
 interface ExtraActionsProps {
 	data: OperationEntity;
@@ -98,11 +98,15 @@ const OperationHub = () => {
 			} else if (col === 4) {
 				data = operation.contact_phone;
 			} else if (col === 5) {
-				data = (
-					operation.operation_volumes[0].effective_time_begin as Date
-				).toLocaleString();
+				data = (operation.operation_volumes[0].effective_time_begin as Date).toLocaleString(
+					[],
+					OPERATION_LOCALES_OPTIONS
+				);
 			} else if (col === 6) {
-				data = (operation.operation_volumes[0].effective_time_end as Date).toLocaleString(); // TODO: Multiple volumes
+				data = (
+					operation.operation_volumes[operation.operation_volumes.length - 1]
+						.effective_time_end as Date
+				).toLocaleString([], OPERATION_LOCALES_OPTIONS);
 			} else if (col === 0) {
 				kind = GridCellKind.Custom;
 			}

@@ -9,6 +9,14 @@ import { VehicleEntity } from './vehicle';
 import { AdesRole, FilteringParameters } from './_util';
 import { Geometry, Point, Polygon } from 'geojson';
 
+export const OPERATION_LOCALES_OPTIONS = {
+	year: 'numeric' as const,
+	month: 'numeric' as const,
+	day: 'numeric' as const,
+	hour: '2-digit' as const,
+	minute: '2-digit' as const
+};
+
 export class OperationVolume {
 	ordinal: number;
 	near_structure: boolean;
