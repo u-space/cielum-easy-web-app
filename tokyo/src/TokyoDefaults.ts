@@ -1,4 +1,4 @@
-import type { RGB, RGBA } from './TokyoTypes';
+import type { RGB, RGBA } from './types';
 
 export const DEFAULT_FILL_COLOR = [100, 200, 100, 60];
 export const EXISTING_HANDLE_FILL_COLOR = [255, 0, 0, 100];
@@ -21,8 +21,9 @@ export const TENTATIVE_FILL_COLOR = [0, 36, 115, 80];
 export const TENTATIVE_LINE_COLOR = [0, 36, 115, 255];
 
 // Selected Operation
-export const SELECTED_OPERATION_LINE_COLOR = [105, 17, 17, 255];
-export const SELECTED_OPERATION_VOLUME_LINE_COLOR = [219, 35, 35, 255];
+export const SELECTED_OPERATION_FILL_COLOR: RGBA = [255, 255, 255, 25];
+export const SELECTED_OPERATION_VOLUME_LINE_COLOR: RGBA = [175, 0, 0, 255];
+export const SELECTED_OPERATION_LINE_COLOR = [0, 0, 0, 255];
 
 // Geographical Zone
 export const GZ_FILL_COLOR: RGBA = [216, 32, 32, 50];

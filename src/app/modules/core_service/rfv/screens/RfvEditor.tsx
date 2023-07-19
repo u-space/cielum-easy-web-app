@@ -6,9 +6,8 @@ import _ from 'lodash';
 import { PModalType } from '@pcomponents/PModal';
 import { translateErrors } from '@utm-entities/_util';
 import { useHistory } from 'react-router-dom';
-import usePickElements from '../../../map/hooks';
 import { useQueryGeographicalZones } from '../../../flight_request_service/geographical_zone/hooks';
-import { useTokyo } from '@tokyo/TokyoStore';
+import { useTokyo } from '@tokyo/store';
 import { useQueryString } from '../../../../utils';
 import { Polygon } from 'geojson';
 import MapLayout from '../../../../commons/layouts/MapLayout';
@@ -16,13 +15,11 @@ import { PButtonProps } from '@pcomponents/PButton';
 import EditorMapViewSvelte from '../../../map/screens/editor/EditorMapView.svelte';
 import { reactify } from 'svelte-preprocess-react';
 import { PFullModalProps } from '@pcomponents/PFullModal';
-import {
-	EditorMapViewProps,
-	SingleVolumeEditorMapViewProps
-} from '../../../map/screens/editor/EditorMapViewProps';
+import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewProps';
 import { useQueryRfv, useUpdateRfv } from '../hooks';
 import { RfvEntity } from '@utm-entities/rfv';
 import InfoRfv from '../components/InfoRfv';
+import { EditMode } from '@tokyo/types';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -39,7 +36,6 @@ const RfvEditor = () => {
 	const queryGeographicalZones = useQueryGeographicalZones(true);
 
 	const [modalProps, setModalProps] = useState<PFullModalProps | undefined>(undefined);
-	const { pickModalProps, onPick } = usePickElements();
 
 	const rfv = useMemo(() => {
 		if (queryRfv.isSuccess) {
@@ -112,14 +108,15 @@ const RfvEditor = () => {
 
 	const props = _.filter(_.keys(rfv), (key) => key !== 'id');
 
-	const editorMapViewProps: SingleVolumeEditorMapViewProps = {
-		handlers: {
-			pick: onPick,
+	const editorMapViewProps: EditorMapViewProps = {
+		/*handlers: {
 			edit: onPolygonsUpdated
-		},
-		editingSingleVolume: true,
+		},*/
 		geographicalZones: queryGeographicalZones.items,
-		defaultPolygons: polygons
+		editOptions: {
+			mode: EditMode.SINGLE,
+			polygons
+		}
 	};
 	return (
 		<MapLayout
@@ -136,13 +133,9 @@ const RfvEditor = () => {
 				/>
 			}
 			statusOverlay={{
-				text: `### ${t('You are in EDITOR MODE')} \n ${
-					queryGeographicalZones.statusMessage ?? ''
-				}`
+				text: `### ${t('You are in EDITOR MODE')} `
 			}}
-			modal={
-				modalProps || (pickModalProps ? { ...pickModalProps, isVisible: true } : undefined)
-			}
+			modal={modalProps}
 		>
 			<EditorMapView {...editorMapViewProps} />
 		</MapLayout>

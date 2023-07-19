@@ -1,149 +1,306 @@
 <script lang="ts" context="module">
-	import {MapView} from '@deck.gl/core/typed';
-	import {Deck} from '@deck.gl/core/typed';
-	import {TokyoEditMode, TokyoMapElement, TokyoMapProps, TokyoViewMode} from './TokyoTypes';
-	import {Polygon} from 'geojson';
-
-	const initialViewState = {
-		latitude: 40.407613,
-		longitude: -3.700002,
-		zoom: 11,
-		bearing: 0,
-		pitch: 0,
-		//minZoom: 10,
-		maxPitch: 0,
-		minPitch: 0
-	};
-	// algo
-
-	const mapView = new MapView({
-		id: 'map-base',
-		repeat: true,
-		controller: {scrollZoom: {smooth: true, speed: 0.025}}
-	});
+    import {Deck} from '@deck.gl/core/typed';
+    import {Polygon} from 'geojson';
+    import {MapEditMode, TokyoMapElement, TokyoMapProps, TokyoViewMode} from './types';
 
 
-	export interface TokyoInternalState extends TokyoMapProps {
-		deck: Deck;
-		view: {
-			mode: TokyoViewMode;
-			elements: TokyoMapElement[];
-		};
-		edit: {
-			mode: TokyoEditMode;
-			single: boolean;
-			selected: number | null;
-			onEdit: (polygons: Polygon[]) => void;
-			onSelect: (polygon: number | null) => void;
-			polygons: Polygon[];
-		};
-	}
+    // algo
+
+    export interface TokyoInternalState extends TokyoMapProps {
+        deck: Deck;
+        view: {
+            mode: TokyoViewMode;
+            elements: TokyoMapElement[];
+        };
+        edit: {
+            mode: MapEditMode;
+            single: boolean;
+            selected: number | null;
+            onEdit: (polygons: Polygon[]) => void;
+            onSelect: (polygon: number | null) => void;
+            polygons: Polygon[];
+        };
+    }
 </script>
 
 <script lang="ts">
-	import {onDestroy, onMount} from 'svelte';
-	import {deck, viewMode, viewState, editMode} from './TokyoStore';
-	import {renderLayers} from './internal/renderLayers';
-	import {setMapOnClick} from './internal/setMapOnClick';
-	import _ from 'lodash';
+    import {deckAction, isDeckMounted} from './deck/action';
+    import {
+        tokyoFlyToPosition,
 
-	export let elements: TokyoMapProps['elements'] = [];
-	export let onPick: TokyoMapProps['onPick'] = null;
-	export let onEdit: TokyoMapProps['onEdit'];
-	export let onEditingPolygonSelect: TokyoMapProps['onEditingPolygonSelect'];
-	export let editingSingleVolume: TokyoMapProps['editingSingleVolume'] = false;
+        tokyoInternalsUpdateHandler,
+        tokyoInternalsDestroyHandler, tokyoViewState
+    } from './store';
+    import type {Layer} from '@deck.gl/core/typed';
+    import {logDebug} from './logger';
+    import type {
+        DeckActionParams,
+        EditHandlers,
+        EditOptions,
+        EditParams, MapOptions,
+        PickHandler,
+        SelectHandler,
+        TokyoDispatchedEvent, TokyoProps
+    } from './types';
+    import {createEventDispatcher, onDestroy, onMount} from 'svelte';
+    import {PButtonType} from '@pcomponents/PButton';
+    import CButton from '@tokyo/gui/CButton.svelte';
+    import {CTooltipPosition} from '@tokyo/gui/CTooltip';
+    import {BackgroundMode} from './types';
+    import CModal from '@tokyo/gui/CModal.svelte';
+    import CInput from '@tokyo/gui/CInput.svelte';
+    import CGeocoder from '@tokyo/gui/CGeocoder.svelte';
+    import {QueryClient, QueryClientProvider} from '@tanstack/svelte-query'
+    import {CButtonSize} from '@tokyo/gui/CButton';
+    import TokyoGenericMapElement from "@tokyo/TokyoGenericMapElement.svelte";
+    import {geolocatorTokyoConverter} from "@tokyo/converters/geolocator";
 
-	let canvas;
-	export let defaultPolygons: TokyoMapProps['defaultPolygons'] = [];
-	let editablePolygons: Polygon[] = [];
-	let selectedEditablePolygon = null;
+    /* Component props */
+    export let editOptions: EditOptions;
+    export let mapOptions: MapOptions = {isPickEnabled: true};
+    export let t: (key: string) => string = (key) => key; // Support for i18n, should be app-provided
 
-	const onEditThrottled = onEdit
-		? _.throttle(onEdit, 1000, {leading: false, trailing: true})
-		: null;
+    const dispatch = createEventDispatcher<TokyoDispatchedEvent>();
 
-	function onInternalEdit(_value) {
-		console.log('onInternalEdit', _value);
-		let value = _value;
-		if (editingSingleVolume && value.length > 1) {
-			value = value.slice(0, 1);
-		}
-		editablePolygons = value;
-		if (onEditThrottled) {
-			onEditThrottled(value);
-		}
-	}
+    // State management via controls
+    let backgroundMode: BackgroundMode = BackgroundMode.Streets;
+    $: backgroundModeSwitchText = backgroundMode === BackgroundMode.Streets ? t('ui:View satellite map') : t('ui:View street map');
+    $: backgroundModeSwitchIcon = backgroundMode === BackgroundMode.Streets ? 'globe-hemisphere-west-duotone' : 'globe-duotone';
 
-	const onInternalEditThrottled = _.throttle(onInternalEdit, 10, {
-		leading: false,
-		trailing: true
-	});
+    function handleBackgroundModeSwitchClick() {
+        if (backgroundMode === BackgroundMode.Streets) {
+            backgroundMode = BackgroundMode.Satellite;
+        } else {
+            backgroundMode = BackgroundMode.Streets;
+        }
+    }
 
-	function onInternalSelect(value) {
-		selectedEditablePolygon = value;
-		if (onEditingPolygonSelect) onEditingPolygonSelect(value);
-	}
+    function flyToGeolocation() {
+        if (geolocation) {
+            const {
+                latitude,
+                longitude
+            } = geolocation.coords;
+            $tokyoFlyToPosition = {
+                ...$tokyoFlyToPosition,
+                latitude,
+                longitude,
+                zoom: 16
+            };
+        } else {
+            geolocationNotEnabledOrError = true;
+        }
+    }
 
-	function createMap(preloadedViewState?) {
-		$deck = new Deck({
-			canvas: canvas,
-			initialViewState: preloadedViewState ?? initialViewState,
-			onViewStateChange: ({viewState: _viewState}) => {
-				$viewState = _viewState;
-			},
-			views: mapView,
-			layerFilter: ({layer, isPicking}) => {
-				return !(layer.id === 'TileLayer' && isPicking); // Don't show TileLayer as an picking option
-			}
-		});
-	}
+    function handleGeolocateClick() {
+        if (!geolocationWatch) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                geolocation = position;
+                flyToGeolocation();
+                geolocationWatch = navigator.geolocation.watchPosition(position => geolocation = position);
+            }, () => {
+                geolocationNotEnabledOrError = true;
+            });
+        } else {
+            flyToGeolocation();
+        }
+    }
 
-	onMount(() => {
-		if (localStorage.getItem('TOKYO_VIEWSTATE')) {
-			const viewState = JSON.parse(localStorage.getItem('TOKYO_VIEWSTATE'));
-			createMap(viewState);
-		} else {
-			createMap();
-		}
-	});
+    // Geolocator logic
+    let geolocation = null;
+    let geolocationWatch = null;
+    let geolocationNotEnabledOrError = false;
 
-	$: {
-		if (defaultPolygons && editablePolygons.length === 0) {
-			onInternalEdit(defaultPolygons);
-		}
-	}
-	onDestroy(() => {
-		localStorage.setItem('TOKYO_VIEWSTATE', JSON.stringify($viewState));
-		$editMode = TokyoEditMode.INACTIVE;
-	});
+    onDestroy(
+        () => {
+            if (geolocationWatch)
+                navigator.geolocation.clearWatch(geolocationWatch);
+        }
+    )
 
-	$: state = {
-		deck: $deck as Deck,
-		onPick: onPick,
-		view: {
-			mode: $viewMode as TokyoViewMode,
-			elements
-		},
-		edit: {
-			mode: $editMode as TokyoEditMode,
-			single: editingSingleVolume,
-			selected: selectedEditablePolygon,
-			onEdit: onInternalEditThrottled,
-			onSelect: onInternalSelect,
-			polygons: editablePolygons
-		}
-	} as TokyoInternalState; // Consume state in called functions directly from here
-	$: renderLayers(state);
-	$: setMapOnClick(state);
-	//$: console.table({ view: state.view, edit: state.edit });
+    // Geocoder visibility state
+    let isGeocoderModalVisible = false;
+
+    // Layer management
+    let allLayersMap = new Map();
+    let pickedLayersMap = new Map();
+    let visibleLayersMap = new Map();
+
+    $: {
+        if (pickedLayersMap.size > 0) {
+            const newVisibleLayersMap = new Map();
+            for (const layer of allLayersMap.values()) {
+                if (pickedLayersMap.get(layer.id)) {
+                    newVisibleLayersMap.set(layer.id, layer.clone());
+                } else {
+                    newVisibleLayersMap.set(layer.id, layer.clone({opacity: 0.1}));
+                }
+            }
+            visibleLayersMap = newVisibleLayersMap;
+        } else {
+            visibleLayersMap = allLayersMap;
+        }
+    }
+
+    let visibleLayersArray = [];
+    $: {
+        // Calculating the visible layers array from the map, sort by priority
+        let lowPriorityLayers = [];
+        let normalPriorityLayers = [];
+        let highPriorityLayers = [];
+        for (const layer of visibleLayersMap.values()) {
+            if (layer.id.split('|')[0] === 'operation') {
+                normalPriorityLayers.push(layer);
+            } else if (layer.id === 'Geolocator' || layer.id.split('|')[0] === 'vehicle') {
+                highPriorityLayers.push(layer);
+            } else {
+                lowPriorityLayers.push(layer);
+            }
+        }
+        visibleLayersArray = [...lowPriorityLayers, ...normalPriorityLayers, ...highPriorityLayers];
+    }
+
+    function updateHandler(layer: Layer) {
+        allLayersMap = allLayersMap.set(layer.id, layer);
+    }
+
+    function destroyHandler(id: string) {
+        allLayersMap.delete(id)
+        allLayersMap = allLayersMap;
+    }
+
+    onMount(() => {
+        $tokyoInternalsUpdateHandler = updateHandler;
+        $tokyoInternalsDestroyHandler = destroyHandler;
+    });
+
+    onDestroy(() => {
+        $tokyoInternalsUpdateHandler = null;
+        $tokyoInternalsDestroyHandler = null;
+    });
+
+
+    // Deck handlers
+    export const pick: PickHandler = (pickings) => {
+        dispatch('pick', pickings);
+        const newPickedLayers = new Map();
+        pickings.forEach((picking) => {
+            newPickedLayers.set(picking.layerId, picking);
+        })
+        pickedLayersMap = newPickedLayers;
+    }
+
+
+    // Edit mode
+    let editPolygons: Polygon[] = editOptions.existing ?? []; // Currently being edited polygons
+    let editIndexSelected: number | null = null; // Currently selected polygon index
+    const editHandlers: EditHandlers = {
+        edit: (polygons) => {
+            logDebug('edit', polygons);
+            editPolygons = polygons;
+            dispatch('edit', polygons);
+        },
+        select: (index) => {
+            logDebug('select', index);
+            editIndexSelected = index;
+            dispatch('select', index);
+        }
+    }
+
+
+    let editParams: EditParams;
+    $: editParams = {
+        ...editOptions,
+        polygons: editPolygons,
+        handlers: editHandlers,
+        indexSelected: editIndexSelected
+    }
+
+
+    $: deckActionParams = {
+        position: $tokyoFlyToPosition,
+        mapParams: {
+            backgroundMode,
+            isPickEnabled: mapOptions.isPickEnabled
+        },
+        layers: visibleLayersArray,
+        handlers: {pick},
+        editParams
+    } as DeckActionParams;
+
+
+    const queryClient = new QueryClient();
 </script>
 
-<div id="tokyo-container" on:contextmenu={(evt) => evt.preventDefault()}>
-	<canvas id="map" bind:this={canvas}/>
-</div>
+<QueryClientProvider client={queryClient}> <!-- TODO: remove this when we have a global query client -->
+    <div id="tokyo-container" on:contextmenu={(evt) => evt.preventDefault()}>
+        <canvas id="tokyo-map"
+                use:deckAction={deckActionParams} on:hover>
+        </canvas>
+        <div id="tokyo-controls">
+            <CButton icon={backgroundModeSwitchIcon}
+                     size={CButtonSize.EXTRA_LARGE}
+                     tooltip={{text: backgroundModeSwitchText, position: CTooltipPosition.Left}}
+                     on:click={handleBackgroundModeSwitchClick}/>
+            <CButton size={CButtonSize.EXTRA_LARGE} icon="crosshair-duotone"
+                     tooltip={{text: t('ui:Geolocate'), position: CTooltipPosition.Left}}
+                     on:click={handleGeolocateClick}
+            />
+            <CButton size={CButtonSize.EXTRA_LARGE} icon="magnifying-glass-duotone"
+                     tooltip={{text: t('ui:Search for a place'), position: CTooltipPosition.Left}}
+                     on:click={() => isGeocoderModalVisible = true}/>
+            {#if mapOptions.geoapifyApiKey}
+                {#if isGeocoderModalVisible}
+                    <CModal title={t('ui:Search for a place')} on:close={() => isGeocoderModalVisible = false}>
+                        <CGeocoder geaopifyApiKey={mapOptions.geoapifyApiKey}
+                                   on:select={() => isGeocoderModalVisible = false}/>
+                    </CModal>
+                {/if}
+            {/if}
+        </div>
+    </div>
+    {#if geolocationNotEnabledOrError}
+        <CModal title={t('ui:Geolocation')}
+                on:close={() => geolocationNotEnabledOrError = false}>
+            <p>{t('ui:Geolocation not enabled or error')}</p>
+        </CModal>
+    {/if}
+    <div id="no-render">
+        {#if geolocation}
+            <TokyoGenericMapElement getLayer={geolocatorTokyoConverter.getConverter(geolocation)}
+                                    id={geolocatorTokyoConverter.getId(geolocation)}/>
+        {/if}
+        <slot/>
+    </div>
+</QueryClientProvider>
+
 
 <style>
-	#map {
-		left: 0;
-	}
+    #tokyo-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    #tokyo-map {
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    #no-render {
+        display: none;
+    }
+
+    #tokyo-controls {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0.3rem;
+        top: 0.3rem;
+        right: 0.3rem;
+        z-index: var(--z-index-controls);
+    }
 </style>
+

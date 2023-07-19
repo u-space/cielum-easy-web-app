@@ -26,6 +26,8 @@ export class UserEntity implements EntityHasDisplayName {
 	password: string | null;
 	role: string;
 	extra_fields: ExtraFields;
+	disabled: boolean;
+	id: string;
 	_userSchema: Joi.ObjectSchema;
 	_password_verification: string;
 	status: string;
@@ -48,7 +50,9 @@ export class UserEntity implements EntityHasDisplayName {
 		this.status = (user && user.status) ?? 'unknown';
 		this.deletedAt = (user && user.deletedAt) ?? null;
 		this.settings = null;
+		this.disabled = (user && user.disabled) ?? false;
 		this.verified = false;
+		this.id = (user && user.id) ?? '';
 		this.extra_fields_json = (user && user.extra_fields_json) ?? '';
 		this._userSchema = Joi.object({
 			//username: Joi.string(),

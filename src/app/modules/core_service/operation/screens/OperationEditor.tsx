@@ -7,9 +7,8 @@ import _ from 'lodash';
 import { PModalType } from '@pcomponents/PModal';
 import { translateErrors } from '@utm-entities/_util';
 import { useHistory } from 'react-router-dom';
-import usePickElements from '../../../map/hooks';
 import { useQueryGeographicalZones } from '../../../flight_request_service/geographical_zone/hooks';
-import { useTokyo } from '@tokyo/TokyoStore';
+import { useTokyo } from '@tokyo/store';
 import { useQueryOperation, useSaveOperation } from '../hooks';
 import { useQueryString } from '../../../../utils';
 import { useSchemaStore } from '../../../schemas/store';
@@ -25,6 +24,7 @@ import EditorMapViewSvelte from '../../../map/screens/editor/EditorMapView.svelt
 import { reactify } from 'svelte-preprocess-react';
 import { PFullModalProps, undefinedModal } from '@pcomponents/PFullModal';
 import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewProps';
+import { EditMode } from '@tokyo/types';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -44,7 +44,6 @@ const OperationEditor = () => {
 
 	const [modalProps, setModalProps] = useState<PFullModalProps>(undefinedModal);
 	const [selectedVolume, setSelectedVolume] = useState<number | null>(null);
-	const { pickModalProps, onPick } = usePickElements();
 
 	const operation = useMemo(() => {
 		if (queryOperation.isSuccess) {
@@ -137,15 +136,17 @@ const OperationEditor = () => {
 	const props = _.filter(_.keys(operation), (key) => key !== 'gufi' && key !== 'state');
 
 	const editorMapViewProps: EditorMapViewProps = {
-		handlers: {
-			pick: onPick,
+		/*handlers: {
 			edit: onPolygonsUpdated,
 			editingPolygonSelect: setSelectedVolume
+		},*/
+		editOptions: {
+			polygons,
+			mode: EditMode.MULTI
 		},
-		editingSingleVolume: false,
-		geographicalZones: queryGeographicalZones.items,
-		defaultPolygons: polygons
+		geographicalZones: queryGeographicalZones.items
 	};
+
 	return (
 		<MapLayout
 			isLoading={{
@@ -181,13 +182,15 @@ const OperationEditor = () => {
 				</>
 			}
 			statusOverlay={{
-				text: `### ${t('You are in EDITOR MODE')} \n ${
-					queryGeographicalZones.statusMessage ?? ''
-				}`
+				text: `### ${t('You are in EDITOR MODE')} `
 			}}
-			modal={modalProps || pickModalProps}
+			modal={modalProps}
 		>
-			<EditorMapView {...editorMapViewProps} />
+			<EditorMapView
+				{...editorMapViewProps}
+				onSelect={(e) => setSelectedVolume((e as CustomEvent<number>).detail)}
+				onEdit={(e) => onPolygonsUpdated((e as CustomEvent<Polygon[]>).detail)}
+			/>
 		</MapLayout>
 	);
 };

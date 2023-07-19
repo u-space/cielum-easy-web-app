@@ -1,7 +1,7 @@
 // Class that represents a polygon shape. When passed a list of coordinates, it returns a SolidMultiPolygonLayer
 import { GeoJsonLayer } from '@deck.gl/layers/typed';
 import type { MultiPolygon } from 'geojson';
-import type { RGBA, TokyoPickableElement, TokyoPolygonElement } from '../../TokyoTypes';
+import type { RGBA, TokyoPickableElement, TokyoPolygonElement } from '../../types';
 
 /**
  * DEPRECATED

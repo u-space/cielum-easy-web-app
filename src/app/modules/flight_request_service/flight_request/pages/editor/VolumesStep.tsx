@@ -11,22 +11,17 @@ import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
-import usePickElements from '../../../../map/hooks';
 import { OperationVolume } from '@utm-entities/operation';
 import MapLayout from '../../../../../commons/layouts/MapLayout';
 import CardGroup from '../../../../../commons/layouts/dashboard/menu/CardGroup';
 import MapViewModeSwitch from '../../../../map/components/MapViewModeSwitch';
 import InfoFlightRequest from '../../components/InfoFlightRequest';
-import { EditorMapViewProps } from '../../../../map/screens/editor/EditorMapViewProps';
 import { reactify } from 'svelte-preprocess-react';
 import EditorMapViewSvelte from '../../../../map/screens/editor/EditorMapView.svelte';
 import { PFullModalProps } from '@pcomponents/PFullModal';
-import FullParentOverlayBlock, {
-	FullBlockType
-} from '../../../../../commons/components/FullParentOverlayBlock';
+import { EditMode, EditOptions } from '@tokyo/types';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
-
 interface VolumesStepProps {
 	nextStep: () => void;
 	flightRequest: FlightRequestEntity;
@@ -49,7 +44,6 @@ const VolumesStep = (props: VolumesStepProps) => {
 	const [isBlockingCenter, setBlockingCenterFlag] = useState<boolean>(false);
 
 	const queryGeographicalZones = useQueryGeographicalZones(true);
-	const { pickModalProps, onPick } = usePickElements();
 
 	const onPolygonsUpdated = useCallback((polygons: Polygon[]) => {
 		setPolygon(polygons[0]);
@@ -247,19 +241,15 @@ const VolumesStep = (props: VolumesStepProps) => {
 		}
 	});
 
-	const editorMapViewProps: EditorMapViewProps = {
-		handlers: { edit: onPolygonsUpdated, pick: onPick },
-		editingSingleVolume: true,
-		defaultPolygons: [],
-		geographicalZones: queryGeographicalZones.items
+	const editOptions: EditOptions = {
+		mode: EditMode.SINGLE,
+		polygons: []
 	};
 
 	return (
 		<MapLayout
 			statusOverlay={{
-				text: `### ${t('You are in EDITOR MODE')} \n ${
-					queryGeographicalZones.statusMessage ?? ''
-				}`
+				text: `### ${t('You are in EDITOR MODE')} `
 			}}
 			isBlockingCenter={isBlockingCenter}
 			contextual={
@@ -354,11 +344,14 @@ const VolumesStep = (props: VolumesStepProps) => {
 					}}
 				/>
 			}
-			modal={
-				modalProps || (pickModalProps ? { ...pickModalProps, isVisible: true } : undefined)
-			}
+			modal={modalProps}
 		>
-			<EditorMapView {...editorMapViewProps} />
+			{/* eslint-disable @typescript-eslint/no-explicit-any */}
+			<EditorMapView
+				editOptions={editOptions}
+				geographicalZones={queryGeographicalZones.items}
+				onEdit={(event: any) => onPolygonsUpdated(event.detail)}
+			/>
 		</MapLayout>
 	);
 };

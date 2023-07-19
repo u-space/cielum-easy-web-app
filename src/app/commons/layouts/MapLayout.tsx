@@ -2,7 +2,6 @@ import { FC, MouseEventHandler, ReactNode } from 'react';
 import BannerOverlay, { BannerOverlayType } from '../components/BannerOverlay';
 import Center from './dashboard/Center';
 import Menu from './dashboard/Menu';
-import MenuTools from './map/MenuTools';
 import PFullModal, { PFullModalProps } from '@pcomponents/PFullModal';
 import Contextual from './dashboard/Contextual';
 import NotificationCenter from '../../modules/notification/components/NotificationCenter';
@@ -53,10 +52,7 @@ const MapLayout: FC<MapLayoutProps> = (props: MapLayoutProps) => {
 				{children}
 				<NotificationCenter />
 			</Center>
-			<Menu isLoading={isLoading?.menu}>
-				<MenuTools />
-				{menu}
-			</Menu>
+			<Menu isLoading={isLoading?.menu}>{menu}</Menu>
 			<Contextual isLoading={isLoading?.contextual}>{contextual}</Contextual>
 		</>
 	);

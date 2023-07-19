@@ -1,0 +1,13 @@
+@mixin no-outline {
+	border: 0;
+
+	outline: 0;
+}
+
+// Remove these duplicated codes
+$dronfies-color-l-2: hsl(220, 100%, 60%);
+
+@mixin box-shadow-1 {
+	-webkit-box-shadow: 5px 5px 2px 0.5 $dronfies-color-l-2;
+	box-shadow: 5px 5px 2px 0.5 $dronfies-color-l-2;
+}

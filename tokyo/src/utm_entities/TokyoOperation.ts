@@ -1,8 +1,6 @@
 // Class that given an Operation returns a TokyoPolygon
-import type { OperationEntity } from '@utm-entities/operation';
+import type { OperationEntity, OperationVolume } from '@utm-entities/operation';
 import type { Polygon } from 'geojson';
-import { TokyoMultiPolygon } from '../shapes/2d/TokyoMultiPolygon';
-import type { RGBA } from '../TokyoTypes';
 import {
 	DEFAULT_LINE_COLOR,
 	OPERATION_STATE_COLORS,
@@ -10,7 +8,8 @@ import {
 	SELECTED_OPERATION_VOLUME_LINE_COLOR
 } from '../TokyoDefaults';
 import { convertMultipleGeoJsonPolygonsIntoAGeoJsonMultiPolygon } from '../internal/TokyoUtil';
-import type { OperationVolume } from '@utm-entities/operation';
+import { TokyoMultiPolygon } from '../shapes/2d/TokyoMultiPolygon';
+import type { RGBA } from '../types';
 
 const convertOperationVolumesIntoPolygons = (operation: OperationEntity): Polygon[] => {
 	return operation.operation_volumes.map((volume: OperationVolume) => {

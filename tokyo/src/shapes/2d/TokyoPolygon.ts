@@ -1,8 +1,8 @@
 // Class that represents a polygon shape. When passed a list of coordinates, it returns a SolidPolygonLayer
+import { FillStyleExtension, PathStyleExtension } from '@deck.gl/extensions/typed';
 import { GeoJsonLayer } from '@deck.gl/layers/typed';
 import type { Polygon } from 'geojson';
-import type { RGBA, TokyoPickableElement, TokyoPolygonElement } from '../../TokyoTypes';
-import { FillStyleExtension, PathStyleExtension } from '@deck.gl/extensions/typed';
+import type { RGBA, TokyoPickableElement, TokyoPolygonElement } from '../../types';
 
 export interface FillImage {
 	atlas: string;

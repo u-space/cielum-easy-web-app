@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTokyo } from '@tokyo/TokyoStore';
+import { useTokyo } from '@tokyo/store';
 import PlanningMapViewSvelte from '../../../map/screens/planning/PlanningMapView.svelte';
 import PButton from '@pcomponents/PButton';
 import { reactify } from 'svelte-preprocess-react';
@@ -10,7 +10,6 @@ import ViewAndEditFlightRequest from '../pages/ViewAndEditFlightRequest';
 import { useLs } from '../../../../commons/utils';
 import { useQueryFlightRequests, useSelectedFlightRequest } from '../hooks';
 import { useQueryGeographicalZones } from '../../geographical_zone/hooks';
-import usePickElements from '../../../map/hooks';
 import MapLayout from '../../../../commons/layouts/MapLayout';
 import { PlanningMapViewProps } from '../../../map/screens/planning/PlanningMapViewProps';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
@@ -34,7 +33,6 @@ const PlanningMap = () => {
 	const tokyo = useTokyo();
 	const { flightRequest, selected } = useSelectedFlightRequest();
 
-	const { pickModalProps, onPick } = usePickElements();
 	const ls = useLs(new FlightRequestEntity());
 
 	useEffect(() => {
@@ -55,12 +53,9 @@ const PlanningMap = () => {
 		return {
 			flightRequests: flightRequest ? [flightRequest] : [],
 			geographicalZones: queryGeographicalZones.items,
-			handlers: {
-				pick: onPick
-			},
 			selected
 		};
-	}, [flightRequest, onPick, queryGeographicalZones.items, selected]);
+	}, [flightRequest, queryGeographicalZones.items, selected]);
 
 	return (
 		<MapLayout
@@ -96,7 +91,6 @@ const PlanningMap = () => {
 					<ViewAndEditFlightRequest isEditing={false} ls={ls} style={{ width: '100%' }} />
 				</div>
 			}
-			modal={{ content: '', title: '', ...pickModalProps, isVisible: !!pickModalProps }}
 		>
 			<PlanningMapView {...planningMapViewProps} />
 		</MapLayout>

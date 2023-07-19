@@ -48,7 +48,11 @@ export class PositionEntity {
 	}
 
 	get displayName() {
-		return this.id;
+		return this.gufi + ' - ' + this.uvin;
+	}
+
+	get uniqueId() {
+		return this.id + ' - ' + this.gufi + ' - ' + this.uvin;
 	}
 }
 
@@ -79,6 +83,11 @@ export const getPositionAPIClient = (api: string, token: string) => {
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
 				).concat(transformPosition)
+			});
+		},
+		postSimulatedPosition(position: PositionEntity) {
+			return axiosInstance.post('position', position, {
+				headers: { auth: token }
 			});
 		}
 	};

@@ -188,16 +188,20 @@ export class OperationEntity {
 				});
 			if (operation.operation_volumes)
 				this.operation_volumes = observable(
-					operation.operation_volumes.map((volume: any) => {
-						return {
-							...volume,
-							min_altitude: parseInt(volume.min_altitude),
-							max_altitude: parseInt(volume.max_altitude),
-							effective_time_begin: new Date(volume.effective_time_begin),
-							effective_time_end: new Date(volume.effective_time_end),
-							operation_geography: volume.operation_geography
-						};
-					})
+					operation.operation_volumes
+						.map((volume: any) => {
+							return {
+								...volume,
+								min_altitude: parseInt(volume.min_altitude),
+								max_altitude: parseInt(volume.max_altitude),
+								effective_time_begin: new Date(volume.effective_time_begin),
+								effective_time_end: new Date(volume.effective_time_end),
+								operation_geography: volume.operation_geography
+							};
+						})
+						.sort((a: any, b: any) => {
+							return a.ordinal - b.ordinal;
+						})
 				);
 		}
 

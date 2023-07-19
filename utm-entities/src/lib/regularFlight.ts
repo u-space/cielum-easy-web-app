@@ -1,4 +1,4 @@
-import turf from 'turf';
+import { bbox, lineString } from '@turf/turf';
 import _ from 'lodash';
 import { makeAutoObservable, toJS } from 'mobx';
 import Axios, { AxiosResponseTransformer } from 'axios';
@@ -131,8 +131,8 @@ export class RegularFlightEntity implements EntityHasDisplayName {
 
 	get bbox() {
 		if (this.length > 0 && this.lastPoint) {
-			return turf.bbox(
-				turf.lineString([
+			return bbox(
+				lineString([
 					...this.path.map((segment) => [segment.start.lng, segment.start.lat]),
 					[this.lastPoint.lng, this.lastPoint.lat]
 				])

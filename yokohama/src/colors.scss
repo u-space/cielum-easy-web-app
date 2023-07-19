@@ -18,7 +18,8 @@
 											- Converted all variables into CSS Variables
 */
 
-:root {
+:root,
+::backdrop {
 	--primary-900: hsl(221, 98%, 8.5%);
 	--primary-800: hsl(221, 98%, 12.5%);
 	--primary-700: hsl(221, 100%, 22.5%);

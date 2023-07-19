@@ -2,16 +2,14 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { reactify } from 'svelte-preprocess-react';
 import MapLayout from '../../../../commons/layouts/MapLayout';
-
-import { PFullModalProps } from '@pcomponents/PFullModal';
-import { useTokyo } from '@tokyo/TokyoStore';
+import { useTokyo } from '@tokyo/store';
 import { PositionEntity } from '@utm-entities/position';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	useQueryOperations,
 	useSelectedOperationAndVolume
 } from '../../../core_service/operation/hooks';
-import { usePositions } from '../../../core_service/position/hooks';
+import { useSimulatedPositions } from '../../../core_service/position/hooks';
 import useQueryRfvs, { useSelectedRfv } from '../../../core_service/rfv/hooks';
 import useQueryUvrs, { useSelectedUvr } from '../../../core_service/uvr/hooks';
 import {
@@ -20,13 +18,23 @@ import {
 } from '../../../flight_request_service/geographical_zone/hooks';
 import Contextual from '../../components/Contextual';
 import Menu from '../../components/Menu';
-import usePickElements from '../../hooks';
+
 import LiveMapViewSvelte from './LiveMapView.svelte';
-import { LiveMapViewProps } from './LiveMapViewProps';
-import PModal from '@pcomponents/PModal';
+import {
+	LiveMapGeographicalZoneSelected,
+	LiveMapOperationSelected,
+	LiveMapRfvSelected,
+	LiveMapSelectableType,
+	LiveMapSelected,
+	LiveMapUvrSelected,
+	LiveMapViewProps
+} from './LiveMapViewProps';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
 import { useQueryString } from '../../../../utils';
+import env from '../../../../../vendor/environment/env';
+import { TokyoPick } from '@tokyo/types';
+import { center, polygon } from '@turf/turf';
+import { usePositionStore } from '../../../core_service/position/store';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
@@ -75,33 +83,94 @@ const LiveMap = () => {
 		queryUvrs.isLoadingUvrs;
 
 	const tokyo = useTokyo();
-	const { volume, selected: operationSelection } = useSelectedOperationAndVolume();
+	const { volume, operation, selected: operationSelection } = useSelectedOperationAndVolume();
 	const { gz, selected: gzSelection } = useSelectedGeographicalZone();
 	const { rfv, selected: rfvSelection } = useSelectedRfv();
 	const { uvr, selected: uvrSelection } = useSelectedUvr();
 	const queryString = useQueryString();
 	const isPrevious = queryString.get('is-previous');
 
-	const [latestHovered, setLatestHovered] = useState<string | null>(null);
-	const [latestHoveredPosition, setLatestHoveredPosition] = useState<[number, number] | null>(
-		null
-	);
-	const [pointerSummaryOpacity, setPointerSummaryOpacity] = useState(0);
-
-	const selected = useMemo(
-		() => ({ ...operationSelection, ...gzSelection, ...rfvSelection, ...uvrSelection }),
-		[gzSelection, operationSelection, rfvSelection, uvrSelection]
-	);
-	const { positionsAsArray: positions } = usePositions();
-	const { pickModalProps, onPick, pickedIds } = usePickElements();
+	const selected: LiveMapSelected = useMemo(() => {
+		if (operation) {
+			return {
+				type: LiveMapSelectableType.OPERATION,
+				gufi: operation.gufi as string,
+				volume: Number(operationSelection.volume)
+			} as LiveMapOperationSelected;
+		} else if (gz) {
+			return {
+				type: LiveMapSelectableType.GEOGRAPHICAL_ZONE,
+				id: gz.id
+			} as LiveMapGeographicalZoneSelected;
+		} else if (rfv) {
+			return {
+				type: LiveMapSelectableType.RFV,
+				id: rfv.id
+			} as LiveMapRfvSelected;
+		} else if (uvr) {
+			return {
+				type: LiveMapSelectableType.UVR,
+				id: uvr.id
+			} as LiveMapUvrSelected;
+		} else {
+			return null;
+		}
+	}, [gzSelection, operationSelection, rfvSelection, uvrSelection]);
+	const positions = usePositionStore((state) => state.positions);
 	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
+
+	const redirectToPicked = useCallback(
+		(pick: TokyoPick) => {
+			const prev = history.location.pathname;
+			history.push(
+				pick.volume !== undefined
+					? `/map?${pick.type}=${pick.id}&volume=${pick.volume}&prev=${prev}`
+					: `/map?${pick.type}=${pick.id}&prev=${prev}`
+			);
+		},
+		[history]
+	);
 
 	useEffect(() => {
 		if (volume) {
 			tokyo.flyToCenterOfGeometry(volume.operation_geography);
 		}
 	}, [volume]);
+
+	const samplePolygon = [
+		[
+			[0, 0],
+			[0, 1],
+			[1, 1],
+			[1, 0],
+			[0, 0]
+		]
+	];
+
+	const simulatedQuery = useSimulatedPositions(
+		operation?.gufi || '',
+		operation?.uas_registrations[0].uvin || '',
+		center(polygon(volume?.operation_geography?.coordinates || samplePolygon) as any).geometry
+			.coordinates[1],
+		center(polygon(volume?.operation_geography?.coordinates || samplePolygon) as any).geometry
+			.coordinates[0]
+	);
+
+	useEffect(() => {
+		let interval: NodeJS.Timer;
+
+		if (operation) {
+			interval = setInterval(() => {
+				simulatedQuery.refetch();
+			}, 2000);
+		}
+		return () => {
+			if (interval) {
+				clearInterval(interval);
+			}
+		};
+	}, [simulatedQuery, operation]);
 
 	useEffect(() => {
 		if (gz) {
@@ -121,12 +190,6 @@ const LiveMap = () => {
 		}
 	}, [rfv]);
 
-	useEffect(() => {
-		if (isPrevious) {
-			onPick([]);
-		}
-	}, [isPrevious]);
-
 	const onVehicleClick = (vehicle: PositionEntity[]) => {
 		return () => {
 			history.push(`/map?uvin=${vehicle[0].uvin}&gufi=${vehicle[0].gufi}`);
@@ -134,77 +197,40 @@ const LiveMap = () => {
 		};
 	};
 	const liveMapViewProps: LiveMapViewProps = {
-		operations: [],
+		operations: queryOperations.shownOperations,
 		geographicalZones: isShowingGeographicalZones || gz ? queryGeographicalZones.items : [],
 		rfvs: queryRfvs.rfvs,
 		uvrs: isShowingUvrs ? queryUvrs.uvrs : uvr ? [uvr] : [],
-		vehicles: positions,
-		handlers: {
-			vehicleClick: onVehicleClick,
-			pick: onPick,
-			hover: (info, pickingEvent) => {
-				if (info.layer?.props) {
-					// The name is the last part of the layer id, after the last |
-					const name = info.layer.props.id.split('|').pop();
-					if (name) {
-						setLatestHovered(name);
-						setLatestHoveredPosition([pickingEvent.center.x, pickingEvent.center.y]);
-						setPointerSummaryOpacity(0.5);
-					}
-				}
-				return true;
-			}
+		vehiclePositions: positions || new Map(),
+		t,
+		mapOptions: {
+			geoapifyApiKey: env.API_keys.geoapify
 		},
-		pickedIds,
+		handlers: {
+			vehicleClick: onVehicleClick
+		},
 		selected
 	};
 
 	return (
 		<MapLayout
 			isLoading={{ main: queryOperations.isLoading }}
-			statusOverlay={
-				isShowingGeographicalZones && queryGeographicalZones.statusMessage
-					? {
-							text: queryGeographicalZones.statusMessage
-					  }
-					: undefined
-			}
 			menu={
-				<Menu
-					setShowingGeographicalZonesFlag={setShowingGeographicalZonesFlag}
-					isShowingGeographicalZones={isShowingGeographicalZones}
-					setShowingUvrsFlag={setShowingUvrsFlag}
-					isShowingUvrs={isShowingUvrs}
-				/>
-			}
-			contextual={<Contextual />}
-			onMouseMove={(event) => {
-				// Calculate the difference between the mouse position and the latest hovered position
-				const diff = [
-					event.clientX - (latestHoveredPosition ? latestHoveredPosition[0] : 0),
-					event.clientY - (latestHoveredPosition ? latestHoveredPosition[1] : 0)
-				];
-				// If the difference is greater than 10px, hide the pointer summary
-				if (pointerSummaryOpacity === 0.5) {
-					const opacity = Math.abs(diff[0]) > 100 || Math.abs(diff[1]) > 100 ? 0 : 0.5;
-					setPointerSummaryOpacity(opacity);
-				}
-			}}
-		>
-			{latestHovered && (
-				<PointedAtSummary style={{ opacity: pointerSummaryOpacity }}>
-					{latestHovered}
-				</PointedAtSummary>
-			)}
-			{pickModalProps && (
 				<>
-					<PickWarning>{t('Showing only clicked zones')}</PickWarning>
-					<PickContainer>
-						<PModal {...pickModalProps} />
-					</PickContainer>
+					<Menu
+						setShowingGeographicalZonesFlag={setShowingGeographicalZonesFlag}
+						isShowingGeographicalZones={isShowingGeographicalZones}
+						setShowingUvrsFlag={setShowingUvrsFlag}
+						isShowingUvrs={isShowingUvrs}
+					/>
+					<Contextual />
 				</>
-			)}
-			<LiveMapView {...liveMapViewProps} />
+			}
+		>
+			<LiveMapView
+				{...liveMapViewProps}
+				onPicked={(e) => redirectToPicked((e as CustomEvent<TokyoPick>).detail)}
+			/>
 		</MapLayout>
 	);
 };

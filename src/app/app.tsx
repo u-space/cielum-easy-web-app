@@ -2,7 +2,7 @@ import './app.scss';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthRole, useAuthStore } from './modules/auth/store';
 import { Spinner, SpinnerSize } from '@blueprintjs/core';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { getUTMClient } from '@utm-entities/client';
 import env from '../vendor/environment/env';
@@ -16,6 +16,9 @@ import NotLoggedInScreens from './NotLoggedInScreens';
 import ReactMarkdown from 'react-markdown';
 import classnames from 'classnames';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
+import 'iconify-icon';
+import io, { Socket } from 'socket.io-client';
+import { usePositionStore } from './modules/core_service/position/store';
 
 export function App() {
 	const role = useAuthStore((state) => state.role);
@@ -35,6 +38,28 @@ export function App() {
 	);
 	const fetchSchemas = useSchemaStore((state) => state.fetch);
 	const relogin = useAuthStore((state) => state.relogin);
+	const addPosition = usePositionStore((state) => state.addPosition);
+
+	// TODO: Improve this, as it is copied verbatim
+	const socket = useRef<typeof Socket>(null);
+	useEffect(() => {
+		// Re-connect to socket io on token change
+
+		if (socket.current) socket.current.disconnect();
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		socket.current = io(env.core_api + '/private?token=' + token);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		socket.current.on('new-position', function (info: any) {
+			addPosition(info);
+		});
+
+		socket.current.connect();
+		return () => {
+			if (socket.current) socket.current.disconnect();
+		};
+	}, [queryClient, token]);
 
 	useEffect(() => {
 		// TODO: Re-fetch schemas when appropiate

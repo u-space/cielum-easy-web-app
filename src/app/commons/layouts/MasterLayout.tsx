@@ -1,8 +1,8 @@
-import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
-import styles from '../Layouts.module.scss';
-import { getAssetPath, getCSSVariable, getFeatureOption, setCSSVariable } from '../../utils';
-import BarItems from './master/BarItems';
+import { FC, ReactNode, useState } from 'react';
 import env from '../../../vendor/environment/env';
+import { getAssetPath, getCSSVariable, getFeatureOption, setCSSVariable } from '../../utils';
+import styles from '../Layouts.module.scss';
+import BarItems from './master/BarItems';
 
 interface MasterLayoutProps {
 	children: ReactNode;
@@ -21,8 +21,6 @@ const MasterLayout: FC<MasterLayoutProps> = ({ children }) => {
 		setExtendedFlag(false);
 		setCSSVariable('bar-width', defaultBarWidth);
 	};
-
-	console.log(getFeatureOption('BarLogo', 'collapsedTransform'), 'collapsedTransform');
 
 	return (
 		<section className={styles.master}>

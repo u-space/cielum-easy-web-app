@@ -1,14 +1,14 @@
-import { TokyoIcon } from '../shapes/2d/TokyoIcon';
 import type { PositionEntity } from '@utm-entities/position';
-import tokyoVehicleMarker from '../img/TokyoVehicleMarker.png';
+import _ from 'lodash';
 import {
 	ACTIVE_DRONE_LINE_COLOR,
 	ACTIVE_DRONE_MARKER_COLOR,
 	INACTIVE_DRONE_MARKER_COLOR
 } from '../TokyoDefaults';
-import type { TokyoMapElement } from '../TokyoTypes';
+import tokyoVehicleMarker from '../img/vehicle_position.png';
+import { TokyoIcon } from '../shapes/2d/TokyoIcon';
 import { TokyoLines } from '../shapes/2d/TokyoLines';
-import _ from 'lodash';
+import type { TokyoMapElement } from '../types';
 
 export class TokyoVehicle implements TokyoMapElement {
 	readonly positions: PositionEntity[];

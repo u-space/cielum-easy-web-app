@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import PInput from '@pcomponents/PInput';
-import { useTokyo } from '@tokyo/TokyoStore';
-import turf from 'turf';
+import { useTokyo } from '@tokyo/store';
+import turf from '@turf/turf';
 import { OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
 import { observer } from 'mobx-react';
 import { useOperationStore } from '../../core_service/operation/store';
@@ -12,6 +12,7 @@ import CardGroup from '../../../commons/layouts/dashboard/menu/CardGroup';
 import GridCheckboxes from '../../../commons/layouts/dashboard/menu/GridCheckboxes';
 import { useQueryOperations } from '../../core_service/operation/hooks';
 import { useMemo } from 'react';
+import { Polygon } from 'geojson';
 
 const OperationListAndStateFilters = () => {
 	const {
@@ -118,27 +119,16 @@ const OperationListAndStateFilters = () => {
 		}
 	);
 
-	const centerOnOperation = (operation: OperationEntity) => () => {
-		const volumes = operation.operation_volumes.flatMap((volume) => {
-			if (volume.operation_geography) {
-				return [turf.polygon(volume.operation_geography.coordinates)];
-			} else {
-				return [];
-			}
-		});
-		const featureCollection = turf.featureCollection(volumes);
-		const center = turf.center(featureCollection);
-		const { coordinates } = center.geometry;
-		tokyo.flyTo(coordinates[0], coordinates[1]);
-	};
-
 	const { operations } = useQueryOperations(true);
 
 	const operationGridItems = useMemo(() => {
 		return operations.map((operation) => ({
 			checked: !hiddenOperations.includes(operation.gufi),
 			onClick: () => {
-				centerOnOperation(operation)();
+				if (operation.operation_volumes.length > 0)
+					tokyo.flyToCenterOfGeometry(
+						operation.operation_volumes[0].operation_geography as Polygon
+					);
 			},
 			onChange: (check: boolean) => {
 				toggleHiddenOperation(operation.gufi);
