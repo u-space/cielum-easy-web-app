@@ -8,6 +8,8 @@ import { useOperationStore } from '../../modules/core_service/operation/store';
 import { shallow } from 'zustand/shallow';
 import styles from './Home.module.scss';
 import { getCSSVariable } from '../../utils';
+import { useEffect } from 'react';
+import { useAuthIsPilot } from '../../modules/auth/store';
 
 const StatNumber = ({ colorDiffThan0, stat }: { colorDiffThan0: string; stat: number }) => {
 	return (
@@ -29,6 +31,7 @@ const StatNumber = ({ colorDiffThan0, stat }: { colorDiffThan0: string; stat: nu
 const Home = () => {
 	const history = useHistory();
 	const { t } = useTranslation();
+	const isPilot = useAuthIsPilot();
 
 	const {
 		setFilterProposed,
@@ -72,6 +75,12 @@ const Home = () => {
 		warning: getCSSVariable('kannai-500'),
 		danger: getCSSVariable('ramen-500')
 	};
+
+	useEffect(() => {
+		if (isPilot) {
+			history.push('/map');
+		}
+	}, [isPilot, history]);
 
 	return (
 		<DashboardLayout isLoading={false}>

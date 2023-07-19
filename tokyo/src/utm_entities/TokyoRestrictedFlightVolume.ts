@@ -1,8 +1,6 @@
-import { GeographicalZone } from '@dronfies/microutm-entities/geographicalZone';
-import { FillImage, TokyoPolygon } from '../shapes/2d/TokyoPolygon';
+import { TokyoPolygon } from '../shapes/2d/TokyoPolygon';
 import { RFV_FILL_COLOR, RFV_LINE_COLOR } from '../TokyoDefaults';
-import { RfvEntity } from '@dronfies/microutm-entities/rfv';
-import TokyoRestrictedFlightVolumeFill from '../img/TokyoRestrictedFlightVolume.png';
+import type { RfvEntity } from '@utm-entities/rfv';
 
 /*const fillImage: FillImage; = {
  atlas: TokyoRestrictedFlightVolumeFill,
@@ -20,13 +18,12 @@ import TokyoRestrictedFlightVolumeFill from '../img/TokyoRestrictedFlightVolume.
 
 export class TokyoRestrictedFlightVolume extends TokyoPolygon {
 	constructor(rfv: RfvEntity) {
-		super(
-			rfv.geography,
-			`rfv|${rfv.id}|${rfv.comments}`,
-			RFV_FILL_COLOR,
-			() => RFV_LINE_COLOR,
-			undefined,
-			[8, 4]
-		);
+		super({
+			polygon: rfv.geography,
+			id: `rfv|${rfv.id}|${rfv.comments}`,
+			fill: RFV_FILL_COLOR,
+			getLineColor: () => RFV_LINE_COLOR,
+			dashArray: [8, 4]
+		});
 	}
 }

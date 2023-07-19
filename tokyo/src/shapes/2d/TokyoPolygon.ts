@@ -1,8 +1,8 @@
 // Class that represents a polygon shape. When passed a list of coordinates, it returns a SolidPolygonLayer
-import { GeoJsonLayer } from '@deck.gl/layers/typed';
-import { Polygon } from 'geojson';
-import { RGBA, TokyoPickableElement, TokyoPolygonElement } from '../../TokyoTypes';
 import { FillStyleExtension, PathStyleExtension } from '@deck.gl/extensions/typed';
+import { GeoJsonLayer } from '@deck.gl/layers/typed';
+import type { Polygon } from 'geojson';
+import type { RGBA, TokyoPickableElement, TokyoPolygonElement } from '../../types';
 
 export interface FillImage {
 	atlas: string;
@@ -20,20 +20,30 @@ export interface FillImage {
 }
 
 export class TokyoPolygon implements TokyoPickableElement, TokyoPolygonElement {
-	constructor(
-		polygon: Polygon,
-		id: string,
-		fill: RGBA = [180, 180, 180, 100],
-		getLineColor: (index?: number) => RGBA = () => [0, 0, 0, 255],
-		fillImage?: FillImage,
-		dashArray?: number[]
-	) {
-		this._shape = polygon;
-		this._id = id;
-		this.fill = fill;
-		this.getLineColor = getLineColor;
-		this.fillImage = fillImage;
-		this.dashArray = dashArray;
+	constructor(params: {
+		polygon: Polygon;
+		id: string;
+		fill: RGBA;
+		fillImage?: FillImage;
+		dashArray?: number[];
+		getLineWidth?: (index?: number) => number;
+		getLineColor: (index?: number) => RGBA;
+		onHover?: GeoJsonLayer['onHover'];
+	}) {
+		// Defaults
+		this.fill = [180, 180, 180, 100];
+		this.getLineColor = () => [0, 0, 0, 255];
+		this.getLineWidth = () => 1;
+
+		// Assign params
+		this._shape = params.polygon;
+		this._id = params.id;
+		this.fill = params.fill;
+		this.getLineColor = params.getLineColor;
+		if (params.getLineWidth) this.getLineWidth = params.getLineWidth;
+		if (params.fillImage) this.fillImage = params.fillImage;
+		if (params.dashArray) this.dashArray = params.dashArray;
+		if (params.onHover) this.onHover = params.onHover;
 	}
 	private _shape: Polygon;
 	private readonly _id: string;
@@ -41,6 +51,8 @@ export class TokyoPolygon implements TokyoPickableElement, TokyoPolygonElement {
 	fillImage?: FillImage;
 	dashArray?: number[];
 	getLineColor: (index?: number) => RGBA;
+	getLineWidth: (index?: number) => number;
+	onHover?: GeoJsonLayer['onHover'];
 
 	get id(): string {
 		return this._id;
@@ -55,23 +67,25 @@ export class TokyoPolygon implements TokyoPickableElement, TokyoPolygonElement {
 	}
 
 	get render(): GeoJsonLayer[] {
-		const fillProps = this.fillImage
-			? {
-					fillPatternAtlas: this.fillImage.atlas,
-					fillPatternMapping: this.fillImage.mapping,
-					fillPatternMask: this.fillImage.patternMask ?? false,
-					getFillPattern: () => 'pattern',
-					getFillPatternScale: this.fillImage.patternScale ?? 1,
-					getFillPatternOffset: this.fillImage.patternOffset ?? [0, 0]
-			  }
-			: {};
-		const lineProps = this.dashArray
-			? {
-					getDashArray: this.dashArray,
-					dashJustified: true,
-					dashGapPickable: true
-			  }
-			: {};
+		let fillProps = {};
+		let lineProps = {};
+		if (this.fillImage) {
+			fillProps = {
+				fillPatternAtlas: this.fillImage.atlas,
+				fillPatternMapping: this.fillImage.mapping,
+				fillPatternMask: this.fillImage.patternMask ?? false,
+				getFillPattern: () => 'pattern',
+				getFillPatternScale: this.fillImage.patternScale ?? 1,
+				getFillPatternOffset: this.fillImage.patternOffset ?? [0, 0]
+			};
+		}
+		if (this.dashArray) {
+			lineProps = {
+				getDashArray: this.dashArray,
+				dashJustified: true,
+				dashGapPickable: true
+			};
+		}
 
 		const extensions = [];
 		if (this.fillImage) {
@@ -89,7 +103,15 @@ export class TokyoPolygon implements TokyoPickableElement, TokyoPolygonElement {
 				pickable: true,
 				filled: true,
 				getFillColor: this.fill,
+				autoHighlight: true,
+				onHover: this.onHover
+					? this.onHover
+					: () => {
+							return;
+					  },
 				getLineColor: () => this.getLineColor(),
+				getLineWidth: () => this.getLineWidth(),
+				lineWidthUnits: 'pixels',
 				...fillProps,
 				...lineProps,
 				extensions

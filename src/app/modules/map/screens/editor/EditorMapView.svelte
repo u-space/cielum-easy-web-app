@@ -1,39 +1,32 @@
-<svelte:options  immutable={true} />
+<svelte:options immutable={true}/>
 
 <script lang="ts">
-	import Tokyo from '@tokyo/Tokyo.svelte';
-	import {renderGeographicalZones} from '../../render';
-	import {onMount} from 'svelte';
-	import {editMode} from '@tokyo/TokyoStore';
-	import {TokyoEditMode} from '@tokyo/TokyoTypes';
-	import {EditorMapViewProps} from './EditorMapViewProps';
+    import Tokyo from '@tokyo/Tokyo.svelte';
+    import {GeographicalZoneDrawingProps, geographicalZoneTokyoConverter} from '@tokyo/converters/fra/geographicalZone';
+    import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
+    import {EditorMapViewProps} from "./EditorMapViewProps";
 
-	export let editingSingleVolume: EditorMapViewProps['editingSingleVolume'] = false
-	export let handlers: EditorMapViewProps['handlers'] = {
-		pick: () => {
-		},
-		edit: () => {
-		},
-		editingPolygonSelect: () => {
-		},
-	}
-	export let defaultPolygons: EditorMapViewProps['defaultPolygons'] = [];
-	export let geographicalZones: EditorMapViewProps['geographicalZones'] = [];
+    export let editOptions: EditorMapViewProps['editOptions'];
+    export let geographicalZones: EditorMapViewProps['geographicalZones'];
 
-	$: geographicalZonesLayers = renderGeographicalZones(geographicalZones, null);
-
-	$: elements = [...geographicalZonesLayers];
-
-	onMount(() => {
-		$editMode = TokyoEditMode.EDITING;
-	});
+    const alphas: GeographicalZoneDrawingProps = {
+        lineAlpha: 255,
+        fillAlpha: 15
+    };
 </script>
 
 <Tokyo
-		{elements}
-		onEdit={handlers.edit}
-		{editingSingleVolume}
-		onEditingPolygonSelect={handlers.editingPolygonSelect}
-		{defaultPolygons}
-		onPick={handlers.pick}
-/>
+        editOptions={editOptions}
+        mapOptions={{ isPickEnabled: false }}
+        on:edit
+        on:select
+        on:pick
+>
+    {#each geographicalZones as geographicalZone (geographicalZone.id)}
+        <TokyoGenericMapElement
+                id={geographicalZoneTokyoConverter.getId(geographicalZone)}
+                getLayer={geographicalZoneTokyoConverter.getConverter(geographicalZone, alphas)}
+        />
+    {/each}
+</Tokyo>
+

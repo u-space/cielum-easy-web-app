@@ -1,4 +1,5 @@
-:root {
+:root,
+::backdrop {
 	--radius-small: 1px;
 	--radius-medium: 4px;
 	--radius-large: 166px;
@@ -36,6 +37,10 @@
 	--z-index-full-block: 3;
 	--z-index-bar: 4;
 	--z-index-notification: 5;
-	--z-index-cover-screen: 6;
+	--z-index-cover-screen: 6; // TODO: Remove, as Modals should use HTML dialogs now
 	--z-index-unnecessary-banner: 10;
+
+	// Map indexes
+	--z-index-controls: 2;
+	--z-index-fries: 3;
 }

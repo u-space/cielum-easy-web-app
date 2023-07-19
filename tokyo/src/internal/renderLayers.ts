@@ -1,6 +1,8 @@
-import { TokyoEditMode, TokyoMapElement, TokyoViewMode } from '../TokyoTypes';
-import { DrawPolygonMode, EditableGeoJsonLayer, ModifyMode, ViewMode } from 'nebula.gl';
+import { PathStyleExtension } from '@deck.gl/extensions/typed';
+import { TileLayer } from '@deck.gl/geo-layers/typed';
+import { BitmapLayer } from '@deck.gl/layers/typed';
 import { Feature, Polygon } from 'geojson';
+import { DrawPolygonMode, EditableGeoJsonLayer, ModifyMode, ViewMode } from 'nebula.gl';
 import {
 	EXISTING_HANDLE_FILL_COLOR,
 	EXISTING_HANDLE_RADIUS,
@@ -14,78 +16,13 @@ import {
 	TENTATIVE_FILL_COLOR,
 	TENTATIVE_LINE_COLOR
 } from '../TokyoDefaults';
-import { TileLayer } from '@deck.gl/geo-layers/typed';
-import { BitmapLayer } from '@deck.gl/layers/typed';
-import { PathStyleExtension } from '@deck.gl/extensions/typed';
+import { MapEditMode, TokyoMapElement, TokyoViewMode } from '../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { TokyoInternalState } from '../Tokyo.svelte';
 
-const devicePixelRatio = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
-
-function renderSatelliteView(state: TokyoInternalState) {
-	return new TileLayer({
-		data: [
-			'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-		],
-		maxRequests: 10,
-		pickable: true,
-		minZoom: 0,
-		maxZoom: 19,
-		tileSize: 256,
-		renderSubLayers: (props) => {
-			const {
-				bbox: { west, south, east, north }
-			} = props.tile as any;
-
-			return [
-				new BitmapLayer(props, {
-					data: null,
-					image: props.data,
-					bounds: [west, south, east, north],
-					tintColor: [180, 180, 195]
-				})
-			];
-		}
-	});
-}
-
-function renderStreetsView(state: TokyoInternalState) {
-	return new TileLayer({
-		// https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers
-		data: [
-			'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-			'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-			'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
-		],
-
-		// Since these OSM tiles support HTTP/2, we can make many concurrent requests
-		// and we aren't limited by the browser to a certain number per domain.
-		maxRequests: 20,
-		pickable: true,
-		// https://wiki.openstreetmap.org/wiki/Zoom_levels
-		minZoom: 0,
-		maxZoom: 19,
-		tileSize: 256 / devicePixelRatio,
-		renderSubLayers: (props) => {
-			const {
-				bbox: { west, south, east, north }
-			} = props.tile as any;
-
-			return [
-				new BitmapLayer(props, {
-					data: null,
-					image: props.data,
-					bounds: [west, south, east, north],
-					tintColor: [180, 180, 195]
-				})
-			];
-		}
-	});
-}
-
 function renderPolygonFeatureCollectionEditable(
-	mode: TokyoEditMode,
+	mode: MapEditMode,
 	selectedPolygon: number | null,
 	onInternalEdit: (polygons: Polygon[]) => void,
 	onSelectPolygon: (polygon: number | null) => void,
@@ -110,7 +47,7 @@ function renderPolygonFeatureCollectionEditable(
 				: []
 		},
 		mode:
-			mode === TokyoEditMode.PAUSED
+			mode === MapEditMode.PAUSED
 				? ViewMode
 				: isAPolygonSelected
 				? ModifyMode
@@ -131,7 +68,7 @@ function renderPolygonFeatureCollectionEditable(
 		},
 		onClick: (e: any) => {
 			if (!e.isGuide && e.featureType === 'polygons') {
-				if (mode === TokyoEditMode.EDITING) {
+				if (mode === MapEditMode.EDITING) {
 					onSelectPolygon(e.index);
 					// Mark event as handled, otherwise map will react to this onClick event
 					return true;
@@ -183,11 +120,11 @@ export function renderLayers(state: TokyoInternalState) {
 		state.view.mode === TokyoViewMode.Streets ? renderStreetsView(state) : null,
 		state.view.mode === TokyoViewMode.Satellite ? renderSatelliteView(state) : null,
 		...state.view.elements.map((element: TokyoMapElement) => element.render),
-		state.edit.mode !== TokyoEditMode.INACTIVE
+		state.edit.mode !== MapEditMode.INACTIVE
 			? renderPolygonFeatureCollectionEditable(
 					state.edit.mode,
 					state.edit.selected,
-					state.edit.onEdit,
+					state.edit.edit,
 					state.edit.onSelect,
 					state.edit.polygons,
 					state.edit.single

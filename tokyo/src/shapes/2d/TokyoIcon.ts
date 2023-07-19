@@ -1,6 +1,6 @@
-import { RGB, TokyoMarkerElement } from '../../TokyoTypes';
-import { Point } from 'geojson';
 import { IconLayer } from '@deck.gl/layers/typed';
+import { Point } from 'geojson';
+import { RGB, TokyoMarkerElement } from '../../types';
 
 export interface IconMapping {
 	x: number;

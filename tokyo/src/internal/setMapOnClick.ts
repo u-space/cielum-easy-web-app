@@ -1,22 +1,22 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { TokyoInternalState } from '../Tokyo.svelte';
 import type { PickingInfo } from '@deck.gl/core/typed/lib/picking/pick-info';
-import { TokyoEditMode } from '../TokyoTypes';
+import { TokyoInternalState } from '../Tokyo.svelte';
+import { MapEditMode } from '../types';
 
 export function setMapOnClick(state: TokyoInternalState) {
 	if (!state.deck) return;
 	const onClick = (info: any, evt: any) => {
 		switch (state.edit.mode) {
-			case TokyoEditMode.EDITING:
+			case MapEditMode.EDITING:
 				if (!state.edit.single) {
 					state.edit.onSelect(null); // Unselect all if I'm editing unless I'm in single volume editor mode
 				}
 				return;
-			case TokyoEditMode.PAUSED:
+			case MapEditMode.PAUSED:
 				state.edit.onSelect(null);
 				break;
-			case TokyoEditMode.INACTIVE:
+			case MapEditMode.INACTIVE:
 				break;
 		}
 

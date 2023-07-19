@@ -26,6 +26,8 @@ export class UserEntity implements EntityHasDisplayName {
 	password: string | null;
 	role: string;
 	extra_fields: ExtraFields;
+	disabled: boolean;
+	id: string;
 	_userSchema: Joi.ObjectSchema;
 	_password_verification: string;
 	status: string;
@@ -37,19 +39,21 @@ export class UserEntity implements EntityHasDisplayName {
 	[key: string]: any;
 
 	constructor(user: any, schema: ExtraFieldSchema) {
-		this.username = user.username ?? '';
-		this.firstName = user.firstName ?? '';
-		this.lastName = user.lastName ?? '';
-		this.email = user.email ?? '';
+		this.username = (user && user.username) ?? '';
+		this.firstName = (user && user.firstName) ?? '';
+		this.lastName = (user && user.lastName) ?? '';
+		this.email = (user && user.email) ?? '';
 		this.password = null;
-		this.role = user.role ?? 'pilot';
+		this.role = (user && user.role) ?? 'pilot';
 		this.extra_fields = {};
 		this._password_verification = '';
-		this.status = user.status ?? 'unknown';
-		this.deletedAt = user.deletedAt ?? null;
+		this.status = (user && user.status) ?? 'unknown';
+		this.deletedAt = (user && user.deletedAt) ?? null;
 		this.settings = null;
+		this.disabled = (user && user.disabled) ?? false;
 		this.verified = false;
-		this.extra_fields_json = user.extra_fields_json ?? '';
+		this.id = (user && user.id) ?? '';
+		this.extra_fields_json = (user && user.extra_fields_json) ?? '';
 		this._userSchema = Joi.object({
 			//username: Joi.string(),
 			firstName: Joi.string(),
@@ -249,11 +253,11 @@ export function getUserAPIClient(api: string, token: string, schema: ExtraFieldS
 				).concat(transformUser(schema))
 			});
 		},
-		verifyUser: (username: string) => {
+		verifyUser: (username: string, validationToken: string) => {
 			return axiosInstance.post('user/updateStatus', {
 				username: username,
 				verified: true,
-				token: token
+				token: validationToken
 			});
 		},
 		changeUserConfirmationStatus: (username: string, verified: boolean) => {

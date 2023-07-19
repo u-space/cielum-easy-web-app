@@ -1,6 +1,6 @@
-import { RGBA, TokyoMapElement } from '../../TokyoTypes';
-import { Point } from 'geojson';
 import { LineLayer } from '@deck.gl/layers/typed';
+import { Point } from 'geojson';
+import { RGBA, TokyoMapElement } from '../../types';
 
 export class TokyoLines implements TokyoMapElement {
 	readonly positions: { from: Point; to: Point }[];

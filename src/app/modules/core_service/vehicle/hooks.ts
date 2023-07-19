@@ -13,7 +13,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { DocumentEntity } from '@utm-entities/document';
 import { NotificationType, useNotificationStore } from '../../notification/store';
 import { useEffect, useMemo } from 'react';
-import { usePositions } from '../position/hooks';
+import { usePositionStore } from '../position/store';
 
 /* Hooks */
 
@@ -76,7 +76,7 @@ export function useGetVehiclesByOperator(username: string) {
 			enabled: !!username
 		}
 	); // TODO: Do show an error in case isErrorVehicles
-	const data = query.isError ? query.data?.data.vehicles : [];
+	const data = query.isError ? query.data?.data.vehiclePositions : [];
 	return { ...query, data };
 }
 export function useSelectedVehicle() {
@@ -111,7 +111,7 @@ export function useSelectedVehicle() {
 		}
 	}, [query]);
 
-	const { positionsAsMap: positions, positionsAsArray } = usePositions();
+	const positions = usePositionStore((state) => state.positions);
 	const latestPosition = useMemo(() => {
 		if (positions && positions.has(idOperation || '')) {
 			const positionsOfOperation = positions.get(idOperation || '');
@@ -120,7 +120,7 @@ export function useSelectedVehicle() {
 		} else {
 			return undefined;
 		}
-	}, [positionsAsArray, idOperation]);
+	}, [idOperation]);
 
 	return { vehicle, latestPosition, selected, query };
 }
@@ -181,7 +181,7 @@ export function useQueryVehicles(all = false) {
 	} = query;
 
 	const data = isSuccessVehicles ? response.data : null;
-	const vehicles = data ? data.vehicles : [];
+	const vehicles = data ? data.vehiclePositions : [];
 	const count = data ? data.count : 0;
 
 	return {

@@ -1,12 +1,14 @@
 import { useQuery } from 'react-query';
 import { useFlightRequestServiceAPI, useQueryString } from '../../../utils';
 import { useEffect, useMemo } from 'react';
-import { MIN_ZOOM_LEVEL_DETAILED_FEATURES } from '@flight-request-entities/consts';
+
 import { useTranslation } from 'react-i18next';
-import { useTokyo } from '@tokyo/TokyoStore';
+import { tokyoViewState, useTokyo } from '@tokyo/store';
 import { polygon } from '@turf/helpers';
 import { useGeographicalZoneStore } from './store';
 import { Polygon } from 'geojson';
+import { useDebounce } from '@uidotdev/usehooks';
+import { WebMercatorViewport } from '@deck.gl/core/typed';
 
 export function useSelectedGeographicalZone() {
 	const queryString = useQueryString();
@@ -69,22 +71,22 @@ export function useQueryGeographicalZones(all = false) {
 	const filterMatchingText = useGeographicalZoneStore((state) => state.filterMatchingText);
 
 	const tokyo = useTokyo();
-	const lng = tokyo?.viewState?.longitude;
-	const lat = tokyo?.viewState?.latitude;
-	const zoom = tokyo?.viewState?.zoom;
 	const box = useMemo(() => {
-		return lat && lng && all && zoom && zoom >= MIN_ZOOM_LEVEL_DETAILED_FEATURES
-			? polygon([
-					[
-						[lng - 0.1, lat - 0.05],
-						[lng + 0.1, lat - 0.05],
-						[lng + 0.1, lat + 0.05],
-						[lng - 0.1, lat + 0.05],
-						[lng - 0.1, lat - 0.05]
-					]
-			  ])
-			: null;
-	}, [lng, lat, zoom, all]);
+		if (tokyo.state.viewState) {
+			const viewport = new WebMercatorViewport(tokyo.state.viewState);
+			const topLeft = viewport.unproject([0, 0]);
+			const topRight = viewport.unproject([viewport.width, 0]);
+			const bottomRight = viewport.unproject([viewport.width, viewport.height]);
+			const bottomLeft = viewport.unproject([0, viewport.height]);
+			return topLeft && topRight && bottomRight && bottomLeft
+				? polygon([[topLeft, topRight, bottomRight, bottomLeft, topLeft]])
+				: null;
+		} else {
+			return null;
+		}
+	}, [tokyo.state.viewState, all]);
+
+	const debouncedBox = useDebounce(box, 500);
 
 	const {
 		isLoading,
@@ -103,7 +105,7 @@ export function useQueryGeographicalZones(all = false) {
 			sortingOrder,
 			filterProperty,
 			filterMatchingText,
-			box
+			debouncedBox
 		],
 		() =>
 			getGeographicalZones(
@@ -113,8 +115,8 @@ export function useQueryGeographicalZones(all = false) {
 				sortingOrder,
 				filterProperty,
 				filterMatchingText,
-				all && box
-					? box.geometry
+				all && debouncedBox
+					? debouncedBox.geometry
 					: all
 					? {
 							type: 'Polygon',
@@ -136,12 +138,6 @@ export function useQueryGeographicalZones(all = false) {
 	const data = isSuccess ? responseGeographicalZones.data : null;
 	const items = isSuccess ? responseGeographicalZones.data.geographicalZones : [];
 	const count = data ? data.count : 0;
-	let statusMessage;
-	if (isLoading) {
-		statusMessage = `**${t('MAP INCOMPLETE')}**:  ${t('Loading information from the server')}`;
-	} else if (tokyo?.viewState?.zoom && tokyo.viewState.zoom < MIN_ZOOM_LEVEL_DETAILED_FEATURES) {
-		statusMessage = `**${t('MAP INCOMPLETE')}**:  ${t('Zoom in to see more information')}`;
-	}
 
 	return {
 		items,
@@ -152,7 +148,6 @@ export function useQueryGeographicalZones(all = false) {
 		isSuccess,
 		isError,
 		isFetching,
-		error,
-		statusMessage
+		error
 	};
 }

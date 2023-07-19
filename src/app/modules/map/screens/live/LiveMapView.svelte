@@ -1,88 +1,144 @@
-/* stylelint-disable */
-<svelte:options immutable={true} />
+<svelte:options immutable={true}/>
 
 <script lang="ts">
-	import Tokyo from '@tokyo/Tokyo.svelte';
-	import { TokyoOperation } from '@tokyo/utm_entities/TokyoOperation';
-	import _ from 'lodash';
-	import { TokyoGeographicalZone } from '@tokyo/utm_entities/TokyoGeographicalZone';
-	import { TokyoVehicle } from '@tokyo/utm_entities/TokyoVehicle';
-	import { TokyoRestrictedFlightVolume } from '@tokyo/utm_entities/TokyoRestrictedFlightVolume';
-	import { TokyoUASVolumeReservation } from '@tokyo/utm_entities/TokyoUASVolumeReservation';
-	import { LiveMapViewProps } from './LiveMapViewProps.ts';
-	import { renderGeographicalZones } from './render';
+    import Tokyo from '@tokyo/Tokyo.svelte';
+    import {LiveMapViewProps} from './LiveMapViewProps.ts';
+    import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
+    import {geographicalZoneTokyoConverter} from '@tokyo/converters/fra/geographicalZone';
+    import {EditMode, TokyoPick} from '@tokyo/types';
+    import CButton from '@tokyo/gui/CButton.svelte';
+    import {CTooltipPosition} from '@tokyo/gui/CTooltip';
+    import {createEventDispatcher} from "svelte";
+    import {CButtonVariant} from "@tokyo/gui/CButton";
+    import {operationTokyoConverter} from "@tokyo/converters/core/operation";
+    import {Layer} from "leaflet";
+    import {
+        vehiclePositionHeadTokyoConverter,
+        vehiclePositionTailTokyoConverter
+    } from "@tokyo/converters/core/position";
 
-	interface $$Props extends LiveMapViewProps {}
+    const dispatch = createEventDispatcher<{
+        'picked': TokyoPick // ID of Picked Entity
+    }>();
 
-	export let operations: $$Props['operations'] = [];
-	export let selected: $$Props['selected'] = {};
-	export let geographicalZones: $$Props['geographicalZones'] = [];
-	export let rfvs: $$Props['rfvs'] = [];
-	export let uvrs: $$Props['uvrs'] = [];
-	export let vehicles: $$Props['vehicles'] = [];
-	export let handlers: $$Props['handlers'] = {};
+    export let t: LiveMapViewProps['t'];
+    export let mapOptions: LiveMapViewProps['mapOptions'];
 
-	function renderOperations(operations, idOperation, idVolume) {
-		if (operations) {
-			return _.cloneDeep(
-				// TODO: Stop cloning deep when we stop using observables
-				operations.map((op) => {
-					return new TokyoOperation(op, op.gufi === idOperation, idVolume);
-				})
-			);
-		} else {
-			return [];
-		}
-	}
+    // Items to render
+    export let geographicalZones: LiveMapViewProps['geographicalZones'] = [];
+    export let operations: LiveMapViewProps['operations'] = [];
+    export let vehiclePositions: LiveMapViewProps['vehiclePositions'] = new Map();
 
-	function renderVehicles(vehicles, onVehicleClick) {
-		if (vehicles && vehicles.length > 0) {
-			const items = _.cloneDeep(vehicles);
-			return items.map((v) => {
-				return new TokyoVehicle(v, onVehicleClick(v));
-			});
-		} else {
-			return [];
-		}
-	}
+    export let selected: LiveMapViewProps['selected'] = null;
 
-	function renderRfvs(rfvs) {
-		if (rfvs) {
-			const items = _.cloneDeep(rfvs);
-			return items.map((rfv) => {
-				return new TokyoRestrictedFlightVolume(rfv);
-			});
-		} else {
-			return [];
-		}
-	}
 
-	function renderUvrs(uvrs) {
-		if (uvrs) {
-			const items = _.cloneDeep(uvrs);
-			return items.map((uvr) => {
-				return new TokyoUASVolumeReservation(uvr);
-			});
-		} else {
-			return [];
-		}
-	}
+    // Picking logic, displayal on side
+    let pickings: TokyoPick[] = [];
+    let tokyo: Tokyo;
 
-	$: operationsLayers = renderOperations(operations, selected.gufi, selected.volume);
-	$: geographicalZonesLayers = renderGeographicalZones(
-		geographicalZones,
-		selected.geographicalZone
-	);
-	$: rfvsLayers = renderRfvs(rfvs);
-	$: uvrsLayers = renderUvrs(uvrs);
-	$: vehiclesLayers = renderVehicles(vehicles, handlers.vehicleClick);
-	$: elements = [
-		...rfvsLayers,
-		...uvrsLayers,
-		...geographicalZonesLayers,
-		...operationsLayers,
-		...vehiclesLayers
-	];
+    $: {
+        // Automatically select first pick if only one pick is available
+        if (pickings.length === 1) {
+            dispatch('picked', pickings[0]);
+            tokyo.pick([]);
+        }
+    }
+
+    // Hover logic
+    let hovered: Layer | null = null;
+
+    $: vehiclePositionsEntries = Array.from(vehiclePositions.entries());
 </script>
 
-<Tokyo {elements} onPick={handlers.pick} />
+<div id="map_with_fries">
+    <Tokyo {t} mapOptions={{...mapOptions, isPickEnabled: true}} editOptions={{mode: EditMode.DISABLED} }
+           on:hover={({detail}) => hovered = detail}
+           on:pick={({detail}) => pickings = detail} bind:this={tokyo}>
+        {#each operations as operation (operation.gufi)}
+            {@const operationDrawingProps = selected && selected.type === 'operation' ? {selected} : undefined }
+            <TokyoGenericMapElement
+                    id={operationTokyoConverter.getId(operation)}
+                    getLayer={operationTokyoConverter.getConverter(operation, operationDrawingProps)}
+
+            />
+        {/each}
+        {#each geographicalZones as geographicalZone (geographicalZone.id)}
+            <TokyoGenericMapElement
+                    id={geographicalZoneTokyoConverter.getId(geographicalZone)}
+                    getLayer={geographicalZoneTokyoConverter.getConverter(geographicalZone)}
+
+            />
+        {/each}
+        {#each vehiclePositionsEntries as [id, positions] (id)}
+            <TokyoGenericMapElement
+                    id={vehiclePositionHeadTokyoConverter.getId(positions[positions.length - 1])}
+                    getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1])}/>
+            {#if positions.length > 1}
+                <TokyoGenericMapElement
+                        id={vehiclePositionTailTokyoConverter.getId(positions)}
+                        getLayer={vehiclePositionTailTokyoConverter.getConverter(positions)}/>
+            {/if}
+        {/each}
+    </Tokyo>
+    <div id='fries' style:width={pickings.length > 0 ? '200px' : '0px'}>
+        <div>
+            <CButton icon="x" variant={CButtonVariant.DANGER} fill on:click={() => tokyo.pick([])}/>
+
+        </div>
+        {#each pickings as pick}
+            {@const subtitle = pick.volume ? `${t(pick.type)} (Vol. ${pick.volume + 1})` : t(pick.type)}
+            <div>
+                <h2>{subtitle}</h2>
+                <CButton on:click={() => dispatch('picked', pick)} fill
+                         tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
+            </div>
+        {/each}
+    </div>
+    {#if hovered}
+        <div id="hovered_info">
+            {hovered.id.split('|')[2] || hovered.id}
+        </div>
+    {/if}
+</div>
+
+<style lang="scss">
+  #map_with_fries {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+
+  #fries {
+    overflow: visible;
+    flex-shrink: 0;
+    background-color: var(--primary-800);
+    transition: width 0.5s;
+    color: var(--white-100);
+    z-index: var(--z-index-fries);
+
+    & > div {
+      margin: 1rem;
+
+
+      & h2 {
+        font-size: 0.75rem;
+        color: var(--mirai-200);
+        text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  #hovered_info {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: var(--primary-800);
+    color: var(--white-100);
+    z-index: var(--z-index-fries);
+  }
+</style>

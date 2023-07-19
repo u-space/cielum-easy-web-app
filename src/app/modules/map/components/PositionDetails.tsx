@@ -4,7 +4,6 @@ import { PositionEntity } from '@utm-entities/position';
 
 const PositionDetails = ({ position }: { position: PositionEntity }) => {
 	const { t } = useTranslation();
-	console.log('position', position);
 	return (
 		<CardGroup header="Position report">
 			<CardGroupDetailLine

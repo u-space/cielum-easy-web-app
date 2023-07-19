@@ -13,7 +13,7 @@ const VerificationScreen = () => {
 	const { t } = useTranslation();
 	const { username } = useParams<{ username: string }>();
 	const location = useLocation();
-	const token = location.search.split('?token=')[1];
+	const validationToken = location.search.split('?token=')[1];
 	const [secondsLeft, setSecondsLeft] = useState(10);
 	const interval = useRef<NodeJS.Timer | null>(null);
 	const {
@@ -21,28 +21,27 @@ const VerificationScreen = () => {
 	} = useContext(CoreAPIContext);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const mutation = useMutation<AxiosResponse<any>, void, { username: string; token: string }>(
-		({ username, token }) => verifyUser(username),
+		({ username, token }) => verifyUser(username, validationToken),
 		{
 			onSuccess: () => {
-				interval.current = setInterval(() => {
-					let shouldKill = false;
-					setSecondsLeft((curr) => {
-						if (curr <= 1) {
-							shouldKill = true;
-						}
-						return curr - 1;
-					});
-					if (shouldKill) {
-						if (interval.current) clearInterval(interval.current);
-						history.push('/');
-					}
-				}, 1000);
+				if (!interval.current) {
+					interval.current = setInterval(() => {
+						setSecondsLeft((curr) => {
+							if (curr <= 1) {
+								if (interval.current) clearInterval(interval.current);
+								history.push('/');
+							}
+
+							return curr - 1;
+						});
+					}, 1000);
+				}
 			}
 		}
 	);
 
 	useEffect(() => {
-		mutation.mutate({ username, token });
+		mutation.mutate({ username, token: validationToken });
 		// TODO: Revise if I need to return something to cancel this query
 	}, []);
 
@@ -53,7 +52,7 @@ const VerificationScreen = () => {
 				{mutation.isError && (
 					<>
 						<h1>{t('An error occurred confirming your user!')}</h1>
-						{!token && <p>{t('Invalid verification link')}</p>}
+						{!validationToken && <p>{t('Invalid verification link')}</p>}
 					</>
 				)}
 				{mutation.isSuccess && (

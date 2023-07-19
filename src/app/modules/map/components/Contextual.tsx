@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useTokyo } from '@tokyo/TokyoStore';
+import { useTokyo } from '@tokyo/store';
 import PButton from '@pcomponents/PButton';
 import { useSelectedOperationAndVolume } from '../../core_service/operation/hooks';
 import CardGroup from '../../../commons/layouts/dashboard/menu/CardGroup';

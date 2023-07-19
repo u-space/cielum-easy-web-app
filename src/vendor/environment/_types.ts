@@ -24,7 +24,7 @@ export interface LocalesAssets {
 }
 
 export type Url = string; // URL of the page (relative to root, so for instance, url = 'map' will be accesible at https://web/map). Do not include the leading slash or trailing slash
-export type Role = "PILOT" | "ADMIN" | "MONITOR";
+export type Role = 'PILOT' | 'ADMIN' | 'MONITOR';
 
 export interface Page {
 	url: Url;
@@ -41,21 +41,13 @@ export interface EditorHubButtons {
 	roles: Role[]; // Roles that can access this button
 }
 
-export enum ImplementationId {
-	// easy-webapp v3.0.x
-	HOME_SCREEN_QUICKLAUNCHBUTTONS = "001",
-	// A home screen with quick launch buttons, based on the one used in the Editors components
-
-	// easy-webapp v3.0.x
-	BAR_ITEMS_MAP_IS_NOT_IMPORTANT = "002",
-	// A bar items arrangement where the map is not the most important use case
-}
+export enum ImplementationId {}
 // This enum is used to identify specific implementations of a feature
 // All related specific implementations of components should have the same id, and this id is set as a part of the file extension
 // Example TestScreen.001.tsx, TestScreen.002.tsx, TestScreen.003.tsx, etc are all implementations of the same component
 
 export interface Tenant {
-	code: "net2fly" | "dev";
+	code: 'net2fly' | 'cielum' | 'dev';
 	specific_implementations?: ImplementationId[];
 	short_name: string; //Title of the page
 	assets: AssetList;
@@ -66,7 +58,10 @@ export interface Tenant {
 		// for instance, Regular Flights can create operations if the Operations feature is enabled
 		// this would be complicated to implement if the list of features was an array of pages and components
 
-		[key: string]: { enabled: boolean; options?: { [key: string]: boolean | string | string[] } };
+		[key: string]: {
+			enabled: boolean;
+			options?: { [key: string]: boolean | string | string[] };
+		};
 
 		// RealtimeMap
 		RealtimeMap: {
@@ -156,6 +151,22 @@ export interface Tenant {
 		// - FlightRequests (editor, hub)
 		// - Coordinators (editor, hub)
 		// - Coordinations (hub)
+
+		// BarLogo
+		BarLogo:
+			| {
+					enabled: false;
+			  }
+			| {
+					enabled: true;
+					options: {
+						collapsedTransform: string;
+					};
+			  };
+		// easy-webapp v3.0.x
+		// Feature can be disabled entirely
+		// Shows the logo of the platform in the top of BarMenu
+		// Allows to set for a transform for the logo for when the bar is collapsed (for instance, scale(0.5)) to show the emblem instead of the full logo
 	};
 	extras: {
 		// Extra Pages
@@ -175,7 +186,7 @@ export interface Tenant {
 
 		// Banner across all pages
 		banner?: {
-			placement: "top" | "bottom";
+			placement: 'top' | 'bottom';
 			md: string; // Markdown text, to be parsed by react-markdown
 		};
 		// easy-webapp v3.0.x
