@@ -138,7 +138,7 @@ const LiveMap = () => {
 		}
 	}, [volume]);
 
-	const samplePolygon = [
+	/* const samplePolygon = [
 		[
 			[0, 0],
 			[0, 1],
@@ -170,7 +170,7 @@ const LiveMap = () => {
 				clearInterval(interval);
 			}
 		};
-	}, [simulatedQuery, operation]);
+	}, [simulatedQuery, operation]); */
 
 	useEffect(() => {
 		if (gz) {
