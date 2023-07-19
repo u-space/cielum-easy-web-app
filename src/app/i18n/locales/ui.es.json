@@ -306,7 +306,7 @@
 	"The operator x has no permission to operate the vehicle y": "El operador {{x}} no tiene permiso para operar la aeronave {{y}}",
 	"The field x must not be left empty": "El campo \"{{x}}\" no puede dejarse vacío",
 	"The UAV selected has not been added to the operators list of the selected operator": "La aeronave seleccionada no ha sido agregada a la lista de aeronaves del operador seleccionado",
-	"Exit": "Volver",
+	"Exit": "Ver mapa completo",
 	"You do not have permission to see this page": "No tienes permiso para ver esta página",
 	"An UVR MUST NOT start before the current time": "Una NOTAM NO DEBE comenzar antes del tiempo actual",
 	"Pre-fill with QR ANAC data": "Autocompletar usando QR",
