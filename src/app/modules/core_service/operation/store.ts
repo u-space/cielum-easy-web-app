@@ -5,11 +5,6 @@ import {
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-const DATE_FROM = new Date();
-//DATE_FROM.setFullYear(DATE_FROM.getFullYear() - 1);
-const DATE_TO = new Date();
-//DATE_TO.setHours(24, 0);
-DATE_TO.setMonth(DATE_FROM.getMonth() + 1);
 export interface OperationStoreSpecificState {
 	filterShowProposed: boolean;
 	filterShowAccepted: boolean;
@@ -46,6 +41,9 @@ export const useOperationStore = create<OperationStoreState>()(
 	devtools(
 		(set, get) => ({
 			...createFilterableAndPaginableSlice<OperationStoreSpecificState>(set, get),
+			sortingProperty: 'name',
+			sortingOrder: 'ASC' as const,
+
 			filterShowProposed: true,
 			filterShowAccepted: true,
 			filterShowNotAccepted: false,
@@ -87,8 +85,8 @@ export const useOperationStore = create<OperationStoreState>()(
 			},
 			// Historical mode
 			isFilteringByDates: false,
-			historicalFromDate: DATE_FROM,
-			historicalToDate: DATE_TO,
+			historicalFromDate: null,
+			historicalToDate: null,
 			setFilteringByDates: (value) => set({ isFilteringByDates: value }),
 			setHistoricalDates: (from, to) =>
 				set({ historicalFromDate: from, historicalToDate: to })
