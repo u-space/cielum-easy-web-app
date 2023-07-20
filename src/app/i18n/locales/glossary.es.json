@@ -63,7 +63,7 @@
 	"operation": {
 		"plural_generic": "Operaciones",
 		"singular_generic": "Operación",
-		"name": "Nombre de la operación",
+		"name": "Nombre",
 		"owner": "Dueño",
 		"owner_editable": "Dueño (nombre de usuario)",
 		"contact": "Contacto",
