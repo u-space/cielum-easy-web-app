@@ -18,6 +18,10 @@ import {
 } from '../TokyoDefaults';
 import { PathStyleExtension } from '@deck.gl/extensions/typed';
 import { createEventDispatcher } from 'svelte';
+import type {
+	EditHandle,
+	EditHandleType
+} from '@nebula.gl/layers/dist-types/mode-handlers/mode-handler';
 
 const devicePixelRatio = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
 
@@ -45,7 +49,8 @@ export function getStreetsLayer() {
 			const { west, south, east, north } = bbox;
 
 			return [
-				new BitmapLayer(props, {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				new (BitmapLayer as any)(props, {
 					data: null,
 					image: props.data,
 					bounds: [west, south, east, north],
@@ -72,7 +77,8 @@ export function getSatelliteLayer() {
 			const { west, south, east, north } = bbox;
 
 			return [
-				new BitmapLayer(props, {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				new (BitmapLayer as any)(props, {
 					data: null,
 					image: props.data,
 					bounds: [west, south, east, north],
@@ -84,7 +90,9 @@ export function getSatelliteLayer() {
 }
 
 // Extracted onEdit of the props passed to EditableGeoJsonLayer
-const onEditableLayerEdit = (params: EditParams) => (e) => {
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const onEditableLayerEdit = (params: EditParams) => (e: any) => {
 	console.log('onEditableLayerEdit', e);
 
 	if (
@@ -117,60 +125,63 @@ const onEditableLayerClick = (params: EditParams) => (e: any) => {
 };
 
 export function getPolygonFeatureCollectionEditable(params: EditParams) {
-	const dispatch = createEventDispatcher();
-
 	// The state of this layer is handled outside (by the component)
-	const isAPolygonSelected =
-		params.indexSelected !== null ||
-		(params.mode === EditMode.SINGLE && params.polygons && params.polygons.length === 1);
 
-	const features = params.polygons.map((polygon) => ({
-		type: 'Feature',
-		geometry: polygon,
-		properties: {}
-	}));
+	if (params.polygons) {
+		const isAPolygonSelected =
+			params.indexSelected !== null ||
+			(params.mode === EditMode.SINGLE && params.polygons && params.polygons.length === 1);
 
-	return new EditableGeoJsonLayer({
-		id: 'EditableGeoJsonLayer',
-		data: {
-			type: 'FeatureCollection',
-			features
-		},
-		mode: isAPolygonSelected ? ModifyMode : DrawPolygonMode,
-		selectedFeatureIndexes: isAPolygonSelected ? [params.indexSelected || 0] : [],
-		onEdit: onEditableLayerEdit(params),
-		onClick: onEditableLayerClick(params),
-		getEditHandlePointOutlineColor: HANDLE_OUTLINE_COLOR,
-		getFillColor: (_feature, isSelected: boolean) =>
-			isSelected ? SELECTED_EDITABLE_FILL_COLOR : NON_SELECTED_EDITABLE_FILL_COLOR,
-		getLineColor: (_feature, isSelected: boolean) =>
-			isSelected ? SELECTED_EDITABLE_LINE_COLOR : NON_SELECTED_EDITABLE_LINE_COLOR,
-		getEditHandlePointColor: (handle) => {
-			if (handle.properties.editHandleType === 'existing') {
-				return EXISTING_HANDLE_FILL_COLOR;
-			} else {
-				return INTERMEDIATE_HANDLE_FILL_COLOR;
-			}
-		},
-		getEditHandlePointRadius: (handle: any) => {
-			if (handle.properties.editHandleType === 'existing') {
-				return EXISTING_HANDLE_RADIUS;
-			} else {
-				return INTERMEDIATE_HANDLE_RADIUS;
-			}
-		},
-		_subLayerProps: {
-			geojson: {
-				getColor: [255, 0, 255, 255]
+		const features = params.polygons.map((polygon) => ({
+			type: 'Feature',
+			geometry: polygon,
+			properties: {}
+		}));
+
+		return new EditableGeoJsonLayer({
+			id: 'EditableGeoJsonLayer',
+			data: {
+				type: 'FeatureCollection',
+				features
 			},
-			guides: {
-				getFillColor: TENTATIVE_FILL_COLOR,
-				getLineColor: TENTATIVE_LINE_COLOR,
-				getDashArray: [3, 2],
-				dashJustified: true,
-				dashGapPickable: true,
-				extensions: [new PathStyleExtension({ dash: true })]
+			mode: isAPolygonSelected ? ModifyMode : DrawPolygonMode,
+			selectedFeatureIndexes: isAPolygonSelected ? [params.indexSelected || 0] : [],
+			onEdit: onEditableLayerEdit(params),
+			onClick: onEditableLayerClick(params),
+			getEditHandlePointOutlineColor: HANDLE_OUTLINE_COLOR,
+			getFillColor: (_feature: Feature, isSelected: boolean) =>
+				isSelected ? SELECTED_EDITABLE_FILL_COLOR : NON_SELECTED_EDITABLE_FILL_COLOR,
+			getLineColor: (_feature: Feature, isSelected: boolean) =>
+				isSelected ? SELECTED_EDITABLE_LINE_COLOR : NON_SELECTED_EDITABLE_LINE_COLOR,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			getEditHandlePointColor: (handle: any) => {
+				if (handle.properties.editHandleType === 'existing') {
+					return EXISTING_HANDLE_FILL_COLOR;
+				} else {
+					return INTERMEDIATE_HANDLE_FILL_COLOR;
+				}
+			},
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			getEditHandlePointRadius: (handle: any) => {
+				if (handle.properties.editHandleType === 'existing') {
+					return EXISTING_HANDLE_RADIUS;
+				} else {
+					return INTERMEDIATE_HANDLE_RADIUS;
+				}
+			},
+			_subLayerProps: {
+				geojson: {
+					getColor: [255, 0, 255, 255]
+				},
+				guides: {
+					getFillColor: TENTATIVE_FILL_COLOR,
+					getLineColor: TENTATIVE_LINE_COLOR,
+					getDashArray: [3, 2],
+					dashJustified: true,
+					dashGapPickable: true,
+					extensions: [new PathStyleExtension({ dash: true })]
+				}
 			}
-		}
-	});
+		});
+	}
 }

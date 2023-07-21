@@ -13,9 +13,22 @@ import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
 import { VehicleEntity } from '@utm-entities/vehicle';
 import { useAuthStore } from '../../../auth/store';
 import { useSchemaStore } from '../../../schemas/store';
-import { CSSProperties, FC } from 'react';
+import { CSSProperties, FC, useEffect } from 'react';
 import PNumberInput from '@pcomponents/PNumberInput';
 import env from '../../../../../vendor/environment/env';
+import { reactify } from 'svelte-preprocess-react';
+import Tokyo from '@tokyo/Tokyo.svelte';
+import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
+import { EditMode, TokyoProps } from '@tokyo/types';
+import { operationTokyoConverter } from '@tokyo/converters/core/operation';
+import { tokyoViewState, useTokyo } from '@tokyo/store';
+import { Polygon } from 'geojson';
+import _ from 'lodash';
+import { isDeckMounted } from '@tokyo/deck/action';
+import { get } from 'svelte/store';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 
 interface BaseOperationDetailsProps {
 	ls: UseLocalStoreEntity<OperationEntity>;
@@ -176,16 +189,71 @@ interface VolumeDetailsProps {
 	isAbleToChangeDates: boolean;
 }
 
+const TokyoSvelte = reactify(Tokyo);
+const TokyoGenericMapElementSvelte = reactify(TokyoGenericMapElement);
+const MapContainer = styled.div`
+	position: relative;
+	height: 500px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+`;
+
 const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDates }) => {
-	const { t } = useTranslation('glossary');
+	const { t } = useTranslation(['ui', 'glossary']);
+	const tokyo = useTokyo();
 	// TODO: Multiple volumes
 	const volume = ls.entity.operation_volumes[0];
 	const flags = { isRequired: true, isDarkVariant: true, fill: true };
+	const tokyoOptions: TokyoProps = {
+		editOptions: {
+			mode: EditMode.DISABLED
+		},
+		mapOptions: {
+			isPickEnabled: false
+		},
+		controlsOptions: {
+			geolocator: {
+				enabled: false
+			},
+			backgroundModeSwitch: {
+				enabled: true
+			},
+			geocoder: {
+				enabled: false
+			}
+		},
+		t
+	};
+
+	const history = useHistory();
+
 	return (
 		<>
+			<MapContainer>
+				<TokyoSvelte {...tokyoOptions}>
+					<TokyoGenericMapElementSvelte
+						id={operationTokyoConverter.getId(ls.entity)}
+						getLayer={operationTokyoConverter.getConverter(ls.entity)}
+						onLoad={() =>
+							tokyo.flyToCenterOfGeometry(volume.operation_geography as Polygon)
+						}
+					/>
+				</TokyoSvelte>
+				<div style={{ flex: 0, position: 'absolute', bottom: 0 }}>
+					<PButton
+						size={PButtonSize.SMALL}
+						icon="eye-open"
+						variant={PButtonType.PRIMARY}
+						onClick={() => history.push(`/map?operation=${ls.entity.gufi}`)}
+					>
+						{t('View complete map')}
+					</PButton>
+				</div>
+			</MapContainer>
 			<PDateInput
 				id="effective_time_begin"
-				label={t('volume.effective_time_begin')}
+				label={t('glossary:volume.effective_time_begin')}
 				defaultValue={volume.effective_time_begin || new Date()}
 				onChange={(value) => (volume.effective_time_begin = value)}
 				disabled={!isEditing || !isAbleToChangeDates}
@@ -195,7 +263,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 			/>
 			<PDateInput
 				id="effective_time_begin"
-				label={t('volume.effective_time_end')}
+				label={t('glossary:volume.effective_time_end')}
 				defaultValue={volume.effective_time_end || new Date()}
 				onChange={(value) => (volume.effective_time_end = value)}
 				disabled={!isEditing || !isAbleToChangeDates}
@@ -211,19 +279,21 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 					prop !== 'id' &&
 					prop !== 'beyond_visual_line_of_sight' &&
 					prop !== 'volume_type' &&
-					prop !== 'min_altitude' &&
 					prop !== 'effective_time_begin' &&
 					prop !== 'effective_time_end' &&
 					prop !== 'near_structure'
 				) {
 					const id = `input-${prop}`;
-					const label = t(`volume.${prop}`);
+					const label = t(`glossary:volume.${prop}`);
 					const value = volume[prop];
 					if (typeof value === 'number') {
 						return (
 							<PNumberInput
 								key={prop}
 								id={id}
+								isDarkVariant
+								disabled={!isEditing}
+								inline
 								defaultValue={value}
 								label={label}
 								onChange={(value) => {
@@ -242,7 +312,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 			<PBooleanInput
 				id="near_structure"
 				defaultValue={ls.entity.operation_volumes[0].near_structure}
-				label={t('volume.near_structure')}
+				label={t('glossary:volume.near_structure')}
 				disabled={!isEditing}
 				onChange={(value) => (ls.entity.operation_volumes[0].near_structure = value)}
 				isRequired
@@ -252,7 +322,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 			<PBooleanInput
 				id="beyond_visual_line_of_sight"
 				defaultValue={ls.entity.operation_volumes[0].beyond_visual_line_of_sight}
-				label={t('volume.beyond_visual_line_of_sight')}
+				label={t('glossary:volume.beyond_visual_line_of_sight')}
 				disabled={!isEditing}
 				onChange={(value) =>
 					(ls.entity.operation_volumes[0].beyond_visual_line_of_sight = value)

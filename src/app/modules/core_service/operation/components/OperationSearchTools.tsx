@@ -86,7 +86,7 @@ const OperationSearchToolsExtra = () => {
 
 	return (
 		<>
-			<CardGroup header="Date range">
+			{/*<CardGroup header="Date range">
 				<HistoricalModeCheckboxes
 					checked={store.isFilteringByDates}
 					onCheck={(isChecked) => {
@@ -96,7 +96,7 @@ const OperationSearchToolsExtra = () => {
 					to={store.historicalToDate}
 					onDateChange={(from, to) => store.setHistoricalDates(from, to)}
 				/>
-			</CardGroup>
+			</CardGroup>*/}
 			<CardGroup header="Filter by state">
 				<GridCheckboxes gridItems={gridItems} />
 			</CardGroup>

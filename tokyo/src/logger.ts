@@ -1,4 +1,5 @@
-export function logDebug(method: string, ...args) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function logDebug(method: string, ...args: any[]) {
 	/*
 	if (process.env.NODE_ENV === 'development') {
 		console.group(

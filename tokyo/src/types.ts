@@ -76,10 +76,31 @@ export interface EditOptions {
 	mode: EditMode;
 	polygons?: Polygon[];
 }
+
 export interface MapOptions {
 	isPickEnabled: boolean;
-	geoapifyApiKey?: string; // Not supplying it disables Geocoder
 }
+
+export interface ControlsOptions {
+	geocoder: {
+		enabled: boolean;
+		geoapifyApiKey?: string; // Not supplying it disables Geocoder
+	};
+	geolocator: {
+		enabled: boolean;
+	};
+	backgroundModeSwitch: {
+		enabled: boolean;
+	};
+}
+
+export interface TokyoProps {
+	editOptions: EditOptions;
+	mapOptions: MapOptions;
+	controlsOptions: ControlsOptions;
+	t: (key: string) => string;
+}
+
 export type PickHandler = (pickings: TokyoPick[]) => void;
 export type SelectHandler = (selected: number | null) => void;
 export interface TokyoDispatchedEvent {

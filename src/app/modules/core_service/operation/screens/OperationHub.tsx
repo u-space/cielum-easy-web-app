@@ -25,14 +25,14 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 	const { t } = useTranslation();
 	return (
 		<>
-			<PTooltip content={t('View in map')}>
+			{/*<PTooltip content={t('View in map')}>
 				<PButton
 					size={PButtonSize.SMALL}
 					icon="eye-open"
 					variant={PButtonType.SECONDARY}
 					onClick={() => history.push(`/map?operation=${data.gufi}`)}
 				/>
-			</PTooltip>
+			</PTooltip>*/}
 			<PTooltip content={t('View past flights')}>
 				<PButton
 					size={PButtonSize.SMALL}
@@ -67,7 +67,7 @@ const OperationHub = () => {
 
 	const idSelected = queryString.get('id');
 	const columns = [
-		{ title: ' ', width: rowHeight * 3 }, // Fixed width
+		{ title: ' ', width: rowHeight * 2 }, // Fixed width
 		{ title: t('glossary:operation.name'), width: 3 }, // Ratios
 		{ title: t('glossary:operation.state'), width: 1 },
 		{ title: t('glossary:operation.contact'), width: 2 },

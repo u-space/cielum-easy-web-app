@@ -211,8 +211,11 @@ const LiveMap = () => {
 		uvrs: isShowingUvrs ? queryUvrs.uvrs : uvr ? [uvr] : [],
 		vehiclePositions: positions || new Map(),
 		t,
-		mapOptions: {
-			geoapifyApiKey: env.API_keys.geoapify
+		controlsOptions: {
+			geocoder: {
+				enabled: true,
+				geoapifyApiKey: env.API_keys.geoapify
+			}
 		},
 		handlers: {
 			vehicleClick: onVehicleClick

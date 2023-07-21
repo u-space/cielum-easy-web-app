@@ -1,64 +1,48 @@
-<script lang="ts" context="module">
-    import {Deck} from '@deck.gl/core/typed';
-    import {Polygon} from 'geojson';
-    import {MapEditMode, TokyoMapElement, TokyoMapProps, TokyoViewMode} from './types';
-
-
-    // algo
-
-    export interface TokyoInternalState extends TokyoMapProps {
-        deck: Deck;
-        view: {
-            mode: TokyoViewMode;
-            elements: TokyoMapElement[];
-        };
-        edit: {
-            mode: MapEditMode;
-            single: boolean;
-            selected: number | null;
-            onEdit: (polygons: Polygon[]) => void;
-            onSelect: (polygon: number | null) => void;
-            polygons: Polygon[];
-        };
-    }
-</script>
-
 <script lang="ts">
     import {deckAction, isDeckMounted} from './deck/action';
     import {
         tokyoFlyToPosition,
-
+        tokyoInternalsDestroyHandler,
         tokyoInternalsUpdateHandler,
-        tokyoInternalsDestroyHandler, tokyoViewState
+        tokyoViewState
     } from './store';
     import type {Layer} from '@deck.gl/core/typed';
     import {logDebug} from './logger';
     import type {
         DeckActionParams,
         EditHandlers,
-        EditOptions,
-        EditParams, MapOptions,
+        EditParams,
         PickHandler,
-        SelectHandler,
-        TokyoDispatchedEvent, TokyoProps
+        TokyoDispatchedEvent,
+        TokyoProps
     } from './types';
+    import {BackgroundMode} from './types';
     import {createEventDispatcher, onDestroy, onMount} from 'svelte';
-    import {PButtonType} from '@pcomponents/PButton';
     import CButton from '@tokyo/gui/CButton.svelte';
     import {CTooltipPosition} from '@tokyo/gui/CTooltip';
-    import {BackgroundMode} from './types';
     import CModal from '@tokyo/gui/CModal.svelte';
-    import CInput from '@tokyo/gui/CInput.svelte';
     import CGeocoder from '@tokyo/gui/CGeocoder.svelte';
     import {QueryClient, QueryClientProvider} from '@tanstack/svelte-query'
     import {CButtonSize} from '@tokyo/gui/CButton';
     import TokyoGenericMapElement from "@tokyo/TokyoGenericMapElement.svelte";
     import {geolocatorTokyoConverter} from "@tokyo/converters/geolocator";
+    import type {Polygon} from "geojson";
 
     /* Component props */
-    export let editOptions: EditOptions;
-    export let mapOptions: MapOptions = {isPickEnabled: true};
-    export let t: (key: string) => string = (key) => key; // Support for i18n, should be app-provided
+    export let editOptions: TokyoProps['editOptions'];
+    export let mapOptions: TokyoProps['mapOptions'] = {isPickEnabled: true};
+    export let controlsOptions: TokyoProps['controlsOptions'] = {
+        geocoder: {
+            enabled: false
+        },
+        geolocator: {
+            enabled: true
+        },
+        backgroundModeSwitch: {
+            enabled: true
+        }
+    };
+    export let t: TokyoProps['t'] = (key: string) => key; // Support for i18n, should be app-provided
 
     const dispatch = createEventDispatcher<TokyoDispatchedEvent>();
 
@@ -160,6 +144,7 @@
         visibleLayersArray = [...lowPriorityLayers, ...normalPriorityLayers, ...highPriorityLayers];
     }
 
+
     function updateHandler(layer: Layer) {
         allLayersMap = allLayersMap.set(layer.id, layer);
     }
@@ -192,7 +177,7 @@
 
 
     // Edit mode
-    let editPolygons: Polygon[] = editOptions.existing ?? []; // Currently being edited polygons
+    let editPolygons: Polygon[] = editOptions.polygons ?? []; // Currently being edited polygons
     let editIndexSelected: number | null = null; // Currently selected polygon index
     const editHandlers: EditHandlers = {
         edit: (polygons) => {
@@ -228,7 +213,6 @@
         editParams
     } as DeckActionParams;
 
-
     const queryClient = new QueryClient();
 </script>
 
@@ -238,21 +222,25 @@
                 use:deckAction={deckActionParams} on:hover>
         </canvas>
         <div id="tokyo-controls">
-            <CButton icon={backgroundModeSwitchIcon}
-                     size={CButtonSize.EXTRA_LARGE}
-                     tooltip={{text: backgroundModeSwitchText, position: CTooltipPosition.Left}}
-                     on:click={handleBackgroundModeSwitchClick}/>
-            <CButton size={CButtonSize.EXTRA_LARGE} icon="crosshair-duotone"
-                     tooltip={{text: t('ui:Geolocate'), position: CTooltipPosition.Left}}
-                     on:click={handleGeolocateClick}
-            />
-            <CButton size={CButtonSize.EXTRA_LARGE} icon="magnifying-glass-duotone"
-                     tooltip={{text: t('ui:Search for a place'), position: CTooltipPosition.Left}}
-                     on:click={() => isGeocoderModalVisible = true}/>
-            {#if mapOptions.geoapifyApiKey}
+            {#if controlsOptions.backgroundModeSwitch.enabled}
+                <CButton icon={backgroundModeSwitchIcon}
+                         size={CButtonSize.EXTRA_LARGE}
+                         tooltip={{text: backgroundModeSwitchText, position: CTooltipPosition.Left}}
+                         on:click={handleBackgroundModeSwitchClick}/>
+            {/if}
+            {#if controlsOptions.geolocator.enabled}
+                <CButton size={CButtonSize.EXTRA_LARGE} icon="crosshair-duotone"
+                         tooltip={{text: t('ui:Geolocate'), position: CTooltipPosition.Left}}
+                         on:click={handleGeolocateClick}
+                />
+            {/if}
+            {#if controlsOptions.geocoder.enabled && !controlsOptions.geocoder.geoapifyApiKey}
+                <CButton size={CButtonSize.EXTRA_LARGE} icon="magnifying-glass-duotone"
+                         tooltip={{text: t('ui:Search for a place'), position: CTooltipPosition.Left}}
+                         on:click={() => isGeocoderModalVisible = true}/>
                 {#if isGeocoderModalVisible}
                     <CModal title={t('ui:Search for a place')} on:close={() => isGeocoderModalVisible = false}>
-                        <CGeocoder geaopifyApiKey={mapOptions.geoapifyApiKey}
+                        <CGeocoder geaopifyApiKey={controlsOptions.geocoder.geoapifyApiKey}
                                    on:select={() => isGeocoderModalVisible = false}/>
                     </CModal>
                 {/if}

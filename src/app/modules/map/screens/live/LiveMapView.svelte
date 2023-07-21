@@ -22,7 +22,7 @@
     }>();
 
     export let t: LiveMapViewProps['t'];
-    export let mapOptions: LiveMapViewProps['mapOptions'];
+    export let controlsOptions: LiveMapViewProps['controlsOptions'];
 
     // Items to render
     export let geographicalZones: LiveMapViewProps['geographicalZones'] = [];
@@ -51,7 +51,9 @@
 </script>
 
 <div id="map_with_fries">
-    <Tokyo {t} mapOptions={{...mapOptions, isPickEnabled: true}} editOptions={{mode: EditMode.DISABLED} }
+    <Tokyo {t} mapOptions={{isPickEnabled: true}}
+           controlsOptions={{...controlsOptions, geolocator: {enabled: true}, backgroundModeSwitch: {enabled: true}}}
+           editOptions={{mode: EditMode.DISABLED} }
            on:hover={({detail}) => hovered = detail}
            on:pick={({detail}) => pickings = detail} bind:this={tokyo}>
         {#each operations as operation (operation.gufi)}

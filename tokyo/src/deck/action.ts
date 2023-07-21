@@ -1,9 +1,10 @@
+import type { PickingInfo } from '@deck.gl/core/typed';
 import {
 	Deck,
 	FlyToInterpolator,
+	type Layer,
 	MapView,
-	type MapViewState,
-	type Layer
+	type MapViewState
 } from '@deck.gl/core/typed';
 import { get, writable } from 'svelte/store';
 import {
@@ -16,7 +17,6 @@ import type { DeckActionParams, FlyToPosition } from '../types';
 import { BackgroundMode, EditMode } from '../types';
 import { logDebug } from '../logger';
 import { getOnClickHandler } from './click';
-import { createEventDispatcher } from 'svelte';
 
 const mapView = new MapView({
 	id: 'base-map',
@@ -55,24 +55,24 @@ function getBaseLayers(params: DeckActionParams): Layer[] {
 function getEditLayers(params: DeckActionParams): Layer[] {
 	const editLayers: Layer[] = [];
 	if (params.editParams.mode !== EditMode.DISABLED) {
-		editLayers.push(getPolygonFeatureCollectionEditable(params.editParams));
+		editLayers.push(getPolygonFeatureCollectionEditable(params.editParams) as Layer);
 	}
 	return editLayers;
 }
 
 /* Deck state keeping logic */
-const lastPositionUpdate = writable<FlyToPosition>(null);
+const lastPositionUpdate = writable<FlyToPosition | null>(null);
 export const isDeckMounted = writable<boolean>(false);
 
 export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 	const lastViewState = localStorage.getItem('Tokyo_v3_ViewState');
+	const initialViewState = calculateViewState(params.position);
 
 	const deck = new Deck({
 		canvas: node,
-		initialViewState: lastViewState
-			? JSON.parse(lastViewState)
-			: calculateViewState(params.position),
+		initialViewState: lastViewState ? JSON.parse(lastViewState) : initialViewState,
 		onViewStateChange: ({ viewState: newViewState }) => {
+			console.log('onViewStateChange', newViewState);
 			localStorage.setItem('Tokyo_v3_ViewState', JSON.stringify(newViewState));
 			tokyoViewState.set(newViewState as MapViewState);
 		},
@@ -87,6 +87,8 @@ export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 		destroy: () => {
 			deck.finalize();
 			isDeckMounted.set(false);
+			lastPositionUpdate.set(null);
+			tokyoViewState.set(null);
 			return null;
 		},
 		update: (params: DeckActionParams) => {
@@ -94,7 +96,7 @@ export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 			const newProps = {
 				layers: [...getBaseLayers(params), ...params.layers, ...getEditLayers(params)],
 				onClick: getOnClickHandler({ deck, params, onClick: () => false }),
-				onHover: (info) =>
+				onHover: (info: PickingInfo) =>
 					node.dispatchEvent(new CustomEvent('hover', { detail: info.layer }))
 			};
 			if (get(lastPositionUpdate) !== params.position) {
