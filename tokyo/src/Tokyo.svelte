@@ -23,10 +23,10 @@
     import CModal from '@tokyo/gui/CModal.svelte';
     import CGeocoder from '@tokyo/gui/CGeocoder.svelte';
     import {QueryClient, QueryClientProvider} from '@tanstack/svelte-query'
-    import {CButtonSize} from '@tokyo/gui/CButton';
     import TokyoGenericMapElement from "@tokyo/TokyoGenericMapElement.svelte";
     import {geolocatorTokyoConverter} from "@tokyo/converters/geolocator";
     import type {Polygon} from "geojson";
+    import {CSize} from "./gui/CSizeWrapper";
 
     /* Component props */
     export let editOptions: TokyoProps['editOptions'];
@@ -244,34 +244,30 @@
         <div id="tokyo-controls">
             {#if controlsOptions.backgroundModeSwitch.enabled}
                 <CButton icon={backgroundModeSwitchIcon}
-                         size={CButtonSize.EXTRA_LARGE}
+                         size={CSize.EXTRA_LARGE}
                          tooltip={{text: backgroundModeSwitchText, position: CTooltipPosition.Left}}
                          on:click={handleBackgroundModeSwitchClick}/>
             {/if}
             {#if controlsOptions.geolocator.enabled}
-                <CButton size={CButtonSize.EXTRA_LARGE} icon="crosshair-duotone"
+                <CButton size={CSize.EXTRA_LARGE} icon="crosshair-duotone"
                          tooltip={{text: t('ui:Geolocate'), position: CTooltipPosition.Left}}
                          on:click={handleGeolocateClick}
                 />
             {/if}
-            {#if controlsOptions.geocoder.enabled && controlsOptions.geocoder.geoapifyApiKey}
-                <CButton size={CButtonSize.EXTRA_LARGE} icon="magnifying-glass-duotone"
-                         tooltip={{text: t('ui:Search for a place'), position: CTooltipPosition.Left}}
-                         on:click={() => isGeocoderModalVisible = true}/>
-                {#if isGeocoderModalVisible}
-                    <CModal title={t('ui:Search for a place')} on:close={() => isGeocoderModalVisible = false}>
-                        <CGeocoder geaopifyApiKey={controlsOptions.geocoder.geoapifyApiKey}
-                                   on:select={() => isGeocoderModalVisible = false}/>
-                    </CModal>
-                {/if}
-            {/if}
+
             {#if controlsOptions.zoom.enabled}
                 <div id="tokyo-zoom">
-                    <CButton size={CButtonSize.EXTRA_SMALL} icon="plus-bold"
+                    <CButton size={CSize.EXTRA_SMALL} icon="plus-bold"
                              tooltip={{text: t('ui:Zoom in'), position: CTooltipPosition.Left}} on:click={zoomIn}/>
-                    <CButton size={CButtonSize.EXTRA_SMALL} icon="minus-bold"
+                    <CButton size={CSize.EXTRA_SMALL} icon="minus-bold"
                              tooltip={{text: t('ui:Zoom out'), position: CTooltipPosition.Left}} on:click={zoomOut}/>
                 </div>
+            {/if}
+        </div>
+        <div id="tokyo-geocoder">
+            {#if controlsOptions.geocoder.enabled && controlsOptions.geocoder.geoapifyApiKey}
+                <CGeocoder geaopifyApiKey={controlsOptions.geocoder.geoapifyApiKey}
+                           on:select={() => isGeocoderModalVisible = false}/>
             {/if}
         </div>
     </div>
@@ -291,43 +287,53 @@
 </QueryClientProvider>
 
 
-<style>
-    #tokyo-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
+<style lang="scss">
+  $gap: 0.3rem;
 
-    #tokyo-map {
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
+  #tokyo-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
 
-    #no-render {
-        display: none;
-    }
+  #tokyo-map {
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
 
-    #tokyo-controls {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 0.3rem;
-        top: 0.3rem;
-        bottom: 0.3rem;
-        right: 0.3rem;
-        z-index: var(--z-index-controls);
-    }
+  #no-render {
+    display: none;
+  }
 
-    #tokyo-zoom {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin-left: auto;
-        margin-top: auto;
-        gap: 0.25rem;
-    }
+  #tokyo-controls {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: $gap;
+    top: $gap;
+    bottom: $gap;
+    right: $gap;
+    z-index: var(--z-index-controls);
+  }
+
+  #tokyo-geocoder {
+    position: absolute;
+    left: $gap;
+    top: $gap;
+    width: 250px;
+  }
+
+  #tokyo-zoom {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: auto;
+    margin-top: auto;
+    gap: 0.5rem;
+    margin-bottom: $gap;
+  }
 </style>
 

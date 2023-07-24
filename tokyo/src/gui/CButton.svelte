@@ -1,20 +1,20 @@
 <script lang="ts">
-    import {CButtonProps, CButtonSize, CButtonVariant} from './CButton';
+    import {CButtonProps, CButtonVariant} from './CButton';
     import CTooltip from '@tokyo/gui/CTooltip.svelte';
+    import CSizeWrapper from "@tokyo/gui/CSizeWrapper.svelte";
+    import {CSize} from './CSizeWrapper';
 
     export let variant: CButtonProps['variant'] = CButtonVariant.PRIMARY;
-    export let size: CButtonProps['size'] = CButtonSize.MEDIUM;
+    export let size: CButtonProps['size'] = CSize.MEDIUM;
     export let icon: CButtonProps['icon'] = undefined;
     export let fill: CButtonProps['fill'] = false;
 
-    export let tooltip: CButtonProps['tooltip'];
+    export let tooltip: CButtonProps['tooltip'] = undefined;
 
     let open = false;
 </script>
 
-<div class:extra_small={size === CButtonSize.EXTRA_SMALL}
-     class:small={size === CButtonSize.SMALL} class:medium={size === CButtonSize.MEDIUM}
-     class:large={size === CButtonSize.LARGE} class:extra_large={size === CButtonSize.EXTRA_LARGE}>
+<CSizeWrapper {size}>
     <button
             on:click
             class:primary={variant === CButtonVariant.PRIMARY} class:secondary={variant === CButtonVariant.SECONDARY}
@@ -36,7 +36,7 @@
             </p>
         {/if}
     </button>
-</div>
+</CSizeWrapper>
 
 <style lang="scss">
   @import './mixins.scss';
@@ -175,23 +175,5 @@
     }
   }
 
-  .extra_small {
-    font-size: 0.75rem;
-  }
 
-  .small {
-    font-size: 0.85rem;
-  }
-
-  .medium {
-    font-size: 1rem;
-  }
-
-  .large {
-    font-size: 1.15rem;
-  }
-
-  .extra_large {
-    font-size: 1.35rem;
-  }
 </style>

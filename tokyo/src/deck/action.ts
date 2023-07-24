@@ -72,7 +72,6 @@ export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 		canvas: node,
 		initialViewState: lastViewState ? JSON.parse(lastViewState) : initialViewState,
 		onViewStateChange: ({ viewState: newViewState }) => {
-			console.log('onViewStateChange', newViewState);
 			localStorage.setItem('Tokyo_v3_ViewState', JSON.stringify(newViewState));
 			tokyoViewState.set(newViewState as MapViewState);
 		},
