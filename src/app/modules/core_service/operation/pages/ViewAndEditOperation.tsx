@@ -213,6 +213,9 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 			isPickEnabled: false
 		},
 		controlsOptions: {
+			zoom: {
+				enabled: true
+			},
 			geolocator: {
 				enabled: false
 			},

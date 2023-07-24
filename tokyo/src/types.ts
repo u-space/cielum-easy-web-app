@@ -92,6 +92,9 @@ export interface ControlsOptions {
 	backgroundModeSwitch: {
 		enabled: boolean;
 	};
+	zoom: {
+		enabled: boolean;
+	};
 }
 
 export interface TokyoProps {

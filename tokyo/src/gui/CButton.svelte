@@ -12,29 +12,31 @@
     let open = false;
 </script>
 
-<button
-        on:click
-        class:primary={variant === CButtonVariant.PRIMARY} class:secondary={variant === CButtonVariant.SECONDARY}
-        class:danger={variant === CButtonVariant.DANGER} class:extra_small={size === CButtonSize.EXTRA_SMALL}
-        class:small={size === CButtonSize.SMALL} class:medium={size === CButtonSize.MEDIUM}
-        class:large={size === CButtonSize.LARGE} class:extra_large={size === CButtonSize.EXTRA_LARGE}
-        class:only_icon={!$$slots.default && icon} class:icon_and_text={$$slots.default && icon}
-        class:icon_or_text={($$slots.default || icon) && !($$slots.default && icon)}
-        class:fill={fill}
-        on:mouseenter={() => open = true} on:mouseleave={() => open = false}
->
-    {#if icon}
-        <iconify-icon height="1.5em" icon={`ph:${icon}`}></iconify-icon>
-    {/if}
-    {#if tooltip}
-        <CTooltip {...{text: '', position: 'bottom', ...tooltip, open}}/>
-    {/if}
-    {#if $$slots.default}
-        <p>
-            <slot></slot>
-        </p>
-    {/if}
-</button>
+<div class:extra_small={size === CButtonSize.EXTRA_SMALL}
+     class:small={size === CButtonSize.SMALL} class:medium={size === CButtonSize.MEDIUM}
+     class:large={size === CButtonSize.LARGE} class:extra_large={size === CButtonSize.EXTRA_LARGE}>
+    <button
+            on:click
+            class:primary={variant === CButtonVariant.PRIMARY} class:secondary={variant === CButtonVariant.SECONDARY}
+            class:danger={variant === CButtonVariant.DANGER}
+            class:only_icon={!$$slots.default && icon} class:icon_and_text={$$slots.default && icon}
+            class:icon_or_text={($$slots.default || icon) && !($$slots.default && icon)}
+            class:fill={fill}
+            on:mouseenter={() => open = true} on:mouseleave={() => open = false}
+    >
+        {#if icon}
+            <iconify-icon height="1.5em" icon={`ph:${icon}`}></iconify-icon>
+        {/if}
+        {#if tooltip}
+            <CTooltip {...{text: '', position: 'bottom', ...tooltip, open}}/>
+        {/if}
+        {#if $$slots.default}
+            <p>
+                <slot></slot>
+            </p>
+        {/if}
+    </button>
+</div>
 
 <style lang="scss">
   @import './mixins.scss';
@@ -55,6 +57,8 @@
 
     font-family: 'Lexend Deca', sans-serif;
     text-align: right;
+
+    font-size: 1em;
 
 
     border-radius: 0.25em;

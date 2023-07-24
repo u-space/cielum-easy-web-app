@@ -52,7 +52,7 @@
 
 <div id="map_with_fries">
     <Tokyo {t} mapOptions={{isPickEnabled: true}}
-           controlsOptions={{...controlsOptions, geolocator: {enabled: true}, backgroundModeSwitch: {enabled: true}}}
+           controlsOptions={{zoom: { enabled: true}, backgroundModeSwitch: {enabled: true}, geocoder: {enabled: false}, geolocator: {enabled: true},...controlsOptions}}
            editOptions={{mode: EditMode.DISABLED} }
            on:hover={({detail}) => hovered = detail}
            on:pick={({detail}) => pickings = detail} bind:this={tokyo}>
@@ -138,7 +138,7 @@
   #hovered_info {
     position: absolute;
     bottom: 1rem;
-    right: 1rem;
+    left: 1rem;
     background-color: var(--primary-800);
     color: var(--white-100);
     z-index: var(--z-index-fries);

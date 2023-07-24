@@ -32,6 +32,9 @@
     export let editOptions: TokyoProps['editOptions'];
     export let mapOptions: TokyoProps['mapOptions'] = {isPickEnabled: true};
     export let controlsOptions: TokyoProps['controlsOptions'] = {
+        zoom: {
+            enabled: true
+        },
         geocoder: {
             enabled: false
         },
@@ -88,6 +91,22 @@
         } else {
             flyToGeolocation();
         }
+    }
+
+    function zoomIn() {
+        $tokyoFlyToPosition = {
+            ...$tokyoViewState,
+            duration: 100,
+            zoom: $tokyoViewState.zoom + 1
+        };
+    }
+
+    function zoomOut() {
+        $tokyoFlyToPosition = {
+            ...$tokyoViewState,
+            duration: 100,
+            zoom: $tokyoViewState.zoom - 1
+        };
     }
 
     // Geolocator logic
@@ -213,6 +232,7 @@
         editParams
     } as DeckActionParams;
 
+
     const queryClient = new QueryClient();
 </script>
 
@@ -234,7 +254,7 @@
                          on:click={handleGeolocateClick}
                 />
             {/if}
-            {#if controlsOptions.geocoder.enabled && !controlsOptions.geocoder.geoapifyApiKey}
+            {#if controlsOptions.geocoder.enabled && controlsOptions.geocoder.geoapifyApiKey}
                 <CButton size={CButtonSize.EXTRA_LARGE} icon="magnifying-glass-duotone"
                          tooltip={{text: t('ui:Search for a place'), position: CTooltipPosition.Left}}
                          on:click={() => isGeocoderModalVisible = true}/>
@@ -244,6 +264,14 @@
                                    on:select={() => isGeocoderModalVisible = false}/>
                     </CModal>
                 {/if}
+            {/if}
+            {#if controlsOptions.zoom.enabled}
+                <div id="tokyo-zoom">
+                    <CButton size={CButtonSize.EXTRA_SMALL} icon="plus-bold"
+                             tooltip={{text: t('ui:Zoom in'), position: CTooltipPosition.Left}} on:click={zoomIn}/>
+                    <CButton size={CButtonSize.EXTRA_SMALL} icon="minus-bold"
+                             tooltip={{text: t('ui:Zoom out'), position: CTooltipPosition.Left}} on:click={zoomOut}/>
+                </div>
             {/if}
         </div>
     </div>
@@ -284,11 +312,22 @@
         position: absolute;
         display: flex;
         flex-direction: column;
+        align-items: center;
         justify-content: flex-start;
         gap: 0.3rem;
         top: 0.3rem;
+        bottom: 0.3rem;
         right: 0.3rem;
         z-index: var(--z-index-controls);
+    }
+
+    #tokyo-zoom {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-left: auto;
+        margin-top: auto;
+        gap: 0.25rem;
     }
 </style>
 
