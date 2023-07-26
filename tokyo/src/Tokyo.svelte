@@ -322,7 +322,7 @@
 
   #tokyo-geocoder {
     position: absolute;
-    left: $gap;
+    left: calc($gap * 2);
     top: $gap;
     width: 250px;
   }
