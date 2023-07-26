@@ -46,7 +46,7 @@ const PVehicleSelect = ({
 
 	const debouncedRefetch = _.debounce(refetch, 500, { trailing: true, leading: false });
 
-	const data = isSuccess ? response.data.vehiclePositions : [];
+	const data = isSuccess ? response.data.vehicles : [];
 
 	const isChoosing = !single || (single && selected.length === 0);
 	const isEditing = !disabled;

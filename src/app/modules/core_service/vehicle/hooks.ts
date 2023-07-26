@@ -76,7 +76,7 @@ export function useGetVehiclesByOperator(username: string) {
 			enabled: !!username
 		}
 	); // TODO: Do show an error in case isErrorVehicles
-	const data = query.isError ? query.data?.data.vehiclePositions : [];
+	const data = query.isError ? query.data?.data.vehicles : [];
 	return { ...query, data };
 }
 export function useSelectedVehicle() {
@@ -181,7 +181,7 @@ export function useQueryVehicles(all = false) {
 	} = query;
 
 	const data = isSuccessVehicles ? response.data : null;
-	const vehicles = data ? data.vehiclePositions : [];
+	const vehicles = data ? data.vehicles : [];
 	const count = data ? data.count : 0;
 
 	return {
