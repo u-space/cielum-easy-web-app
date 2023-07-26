@@ -61,7 +61,7 @@
     font-size: 1em;
 
 
-    border-radius: 0.25em;
+    border-radius: var(--c-radius-s);
     box-shadow: inset 0 0 0 1px rgba(17, 20, 24, 0.2), 0 1px 2px rgba(17, 20, 24, 0.1);
 
     transform: translate3d(

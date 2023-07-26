@@ -254,7 +254,7 @@
                          on:click={handleGeolocateClick}
                 />
             {/if}
-
+            <slot name="extra_controls"/>
             {#if controlsOptions.zoom.enabled}
                 <div id="tokyo-zoom">
                     <CButton size={CSize.EXTRA_SMALL} icon="plus-bold"
@@ -310,13 +310,14 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
     justify-content: flex-start;
     gap: $gap;
     top: $gap;
     bottom: $gap;
     right: $gap;
     z-index: var(--z-index-controls);
+    max-width: 1px;
   }
 
   #tokyo-geocoder {
@@ -330,10 +331,10 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    margin-left: auto;
     margin-top: auto;
     gap: 0.5rem;
     margin-bottom: $gap;
+    right: 0;
   }
 </style>
 

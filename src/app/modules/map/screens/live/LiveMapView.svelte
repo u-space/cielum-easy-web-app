@@ -16,6 +16,11 @@
         vehiclePositionHeadTokyoConverter,
         vehiclePositionTailTokyoConverter
     } from "@tokyo/converters/core/position";
+    import {CSize} from "@tokyo/gui/CSizeWrapper";
+    import CModal from "@tokyo/gui/CModal.svelte";
+    import CPanel from "@tokyo/gui/CPanel.svelte";
+    import CCheckbox from "@tokyo/gui/CCheckbox.svelte";
+    import {CCheckboxCheckedEvent} from "@tokyo/gui/CCheckbox";
 
     const dispatch = createEventDispatcher<{
         'picked': TokyoPick // ID of Picked Entity
@@ -28,6 +33,7 @@
     export let geographicalZones: LiveMapViewProps['geographicalZones'] = [];
     export let operations: LiveMapViewProps['operations'] = [];
     export let vehiclePositions: LiveMapViewProps['vehiclePositions'] = new Map();
+    $: vehiclePositionsEntries = Array.from(vehiclePositions.entries());
 
     export let selected: LiveMapViewProps['selected'] = null;
 
@@ -44,10 +50,35 @@
         }
     }
 
+    // Layer control logic
+    let isShowingLayersPanel = false;
+    let visible = {
+        operations: true,
+        rfvs: true,
+        geographical_zones: true,
+        vehicles: true
+    }
+
+    $: visibleVehiclePositionsEntries = visible.vehicles ? vehiclePositionsEntries : [];
+    $: visibleOperations = visible.operations ? operations : [];
+    $: visibleGeographicalZones = visible.geographical_zones ? geographicalZones : [];
+
+    function toggleLayersPanel() {
+        isShowingLayersPanel = !isShowingLayersPanel
+    }
+
+    const onLayerChecked = ({detail}: CCheckboxCheckedEvent) => {
+        const {id, checked} = detail;
+        const type = id.split('-')[1];
+        visible = {
+            ...visible,
+            [type]: checked
+        }
+    }
+
     // Hover logic
     let hovered: Layer | null = null;
 
-    $: vehiclePositionsEntries = Array.from(vehiclePositions.entries());
 </script>
 
 <div id="map_with_fries">
@@ -56,7 +87,8 @@
            editOptions={{mode: EditMode.DISABLED} }
            on:hover={({detail}) => hovered = detail}
            on:pick={({detail}) => pickings = detail} bind:this={tokyo}>
-        {#each operations as operation (operation.gufi)}
+        <!-- Map Elements -->
+        {#each visibleOperations as operation (operation.gufi)}
             {@const operationDrawingProps = selected && selected.type === 'operation' ? {selected} : undefined }
             <TokyoGenericMapElement
                     id={operationTokyoConverter.getId(operation)}
@@ -64,14 +96,14 @@
 
             />
         {/each}
-        {#each geographicalZones as geographicalZone (geographicalZone.id)}
+        {#each visibleGeographicalZones as geographicalZone (geographicalZone.id)}
             <TokyoGenericMapElement
                     id={geographicalZoneTokyoConverter.getId(geographicalZone)}
                     getLayer={geographicalZoneTokyoConverter.getConverter(geographicalZone)}
 
             />
         {/each}
-        {#each vehiclePositionsEntries as [id, positions] (id)}
+        {#each visibleVehiclePositionsEntries as [id, positions] (id)}
             <TokyoGenericMapElement
                     id={vehiclePositionHeadTokyoConverter.getId(positions[positions.length - 1])}
                     getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1])}/>
@@ -81,6 +113,29 @@
                         getLayer={vehiclePositionTailTokyoConverter.getConverter(positions)}/>
             {/if}
         {/each}
+        <div class="controls" slot="extra_controls">
+
+            {#if isShowingLayersPanel}
+                <CPanel>
+                    <div class="layers-panel">
+                        <CButton icon="x" variant={CButtonVariant.DANGER} size={CSize.EXTRA_SMALL}
+                                 on:click={toggleLayersPanel}/>
+                        <CCheckbox fill id="toggle-operations" label={t('OPERATIONS')} checked={visible.operations}
+                                   on:check={onLayerChecked}/>
+                        <CCheckbox fill id="toggle-rfvs" label={t('RFVS')} checked={visible.rfvs}
+                                   on:check={onLayerChecked}/>
+                        <CCheckbox fill id="toggle-geographical_zones" label={t('GEOGRAPHICAL ZONES')}
+                                   on:check={onLayerChecked}
+                                   checked={visible.geographical_zones}/>
+                        <CCheckbox fill id="toggle-vehicles" label={t('Vehicles')} checked={visible.vehicles}
+                                   on:check={onLayerChecked}/>
+                    </div>
+                </CPanel>
+            {/if}
+            <CButton icon="stack-duotone"
+                     tooltip={{text: t('ui:Layers'), position: CTooltipPosition.Left}} size={CSize.EXTRA_LARGE}
+                     on:click={toggleLayersPanel}/>
+        </div>
     </Tokyo>
     <div id='fries' style:width={pickings.length > 0 ? '200px' : '0px'}>
         <div>
@@ -102,6 +157,7 @@
         </div>
     {/if}
 </div>
+
 
 <style lang="scss">
   #map_with_fries {
@@ -142,5 +198,19 @@
     background-color: var(--primary-800);
     color: var(--white-100);
     z-index: var(--z-index-fries);
+  }
+
+  .layers-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 0.5em;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
   }
 </style>

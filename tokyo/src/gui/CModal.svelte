@@ -1,31 +1,32 @@
 <script lang="ts">
-	import {CModalProps, CModalVariant, CModalWidth} from '@tokyo/gui/CModal';
-	import {onMount} from 'svelte';
-	import CButton from '@tokyo/gui/CButton.svelte';
+    import {CModalProps, CModalVariant, CModalWidth} from '@tokyo/gui/CModal';
+    import {onMount} from 'svelte';
+    import CButton from '@tokyo/gui/CButton.svelte';
 
-	export let title: CModalProps['title'];
-	export let width: CModalProps['width'] = CModalWidth.SMALLEST;
-	export let variant: CModalProps['variant'] = CModalVariant.INFORMATION;
-	let ref;
+    export let title: CModalProps['title'];
+    export let width: CModalProps['width'] = CModalWidth.SMALLEST;
+    export let variant: CModalProps['variant'] = CModalVariant.INFORMATION;
 
-	onMount(() => {
-		ref.showModal();
-	})
+    let ref;
+
+    onMount(() => {
+        ref.showModal();
+    })
 </script>
 
 <dialog bind:this={ref} on:close class:smallest={width === CModalWidth.SMALLEST}
-		class:largest={width === CModalWidth.LARGEST}>
-	{#if title}
-		<h1 class:information={variant === CModalVariant.INFORMATION}>{title}</h1>
-	{/if}
-	<div class="body">
-		{#if $$slots.default}
-			<slot/>
-		{/if}
-		<div class="actions">
-			<CButton on:click={() => ref.close()}>Cancel</CButton>
-		</div>
-	</div>
+        class:largest={width === CModalWidth.LARGEST}>
+    {#if title}
+        <h1 class:information={variant === CModalVariant.INFORMATION}>{title}</h1>
+    {/if}
+    <div class="body">
+        {#if $$slots.default}
+            <slot/>
+        {/if}
+        <div class="actions">
+            <CButton on:click={() => ref.close()}>Cancel</CButton>
+        </div>
+    </div>
 </dialog>
 
 <style lang="scss">
