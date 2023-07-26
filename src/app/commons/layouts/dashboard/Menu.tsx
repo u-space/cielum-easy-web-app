@@ -10,7 +10,9 @@ interface MenuProps {
 const Menu: FC<MenuProps> = ({ isLoading, children }) => {
 	return (
 		<>
-			<aside className={styles.menu}>{children}</aside>
+			<aside className={styles.menu}>
+				<div className={styles.content}>{children}</div>
+			</aside>
 			{isLoading && (
 				<div className={styles.blocking}>
 					<Spinner />

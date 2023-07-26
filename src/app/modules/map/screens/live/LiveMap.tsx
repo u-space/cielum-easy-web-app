@@ -29,10 +29,11 @@ import {
 	LiveMapViewProps
 } from './LiveMapViewProps';
 import styled from 'styled-components';
-import { useQueryString } from '../../../../utils';
+import { setCSSVariable, useQueryString } from '../../../../utils';
 import env from '../../../../../vendor/environment/env';
 import { TokyoPick } from '@tokyo/types';
 import { usePositionStore } from '../../../core_service/position/store';
+import { getCSSVariable } from '@pcomponents/utils';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
@@ -113,7 +114,7 @@ const LiveMap = () => {
 		} else {
 			return null;
 		}
-	}, [gzSelection, operationSelection, rfvSelection, uvrSelection]);
+	}, [gz, operationSelection, operation, rfv, uvr]);
 	const positions = usePositionStore((state) => state.positions);
 	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
@@ -187,6 +188,15 @@ const LiveMap = () => {
 			tokyo.flyToCenterOfGeometry(rfv.geography);
 		}
 	}, [rfv]);
+
+	useEffect(() => {
+		console.log('SELECTED', selected);
+		if (!selected) {
+			setCSSVariable('side-width', '0px');
+		} else {
+			setCSSVariable('side-width', getCSSVariable('side-width-default'));
+		}
+	}, [selected]);
 
 	const operations = useMemo(() => {
 		const operations = queryOperations.shownOperations;
