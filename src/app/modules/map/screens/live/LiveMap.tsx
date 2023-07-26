@@ -190,12 +190,14 @@ const LiveMap = () => {
 	}, [rfv]);
 
 	useEffect(() => {
-		console.log('SELECTED', selected);
 		if (!selected) {
 			setCSSVariable('side-width', '0px');
 		} else {
 			setCSSVariable('side-width', getCSSVariable('side-width-default'));
 		}
+		return () => {
+			setCSSVariable('side-width', getCSSVariable('side-width-default'));
+		};
 	}, [selected]);
 
 	const operations = useMemo(() => {
