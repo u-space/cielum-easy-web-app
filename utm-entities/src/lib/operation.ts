@@ -17,6 +17,13 @@ export const OPERATION_LOCALES_OPTIONS = {
 	minute: '2-digit' as const
 };
 
+interface Subscriber {
+	name?: string;
+	timeZone?: string;
+	mobile?: string;
+	email?: string;
+}
+
 export class OperationVolume {
 	ordinal: number;
 	near_structure: boolean;
@@ -73,6 +80,8 @@ export class OperationEntity {
 	volumes_description: string;
 	discovery_reference: string | null;
 	faa_rule: string;
+	// Temporal field
+	subscribers: Subscriber[] = [];
 
 	operation_volumes: OperationVolume[];
 	controller_location: Geometry;
@@ -168,6 +177,7 @@ export class OperationEntity {
 				valid_time_end: '2019-12-11T20:59:10Z'
 			}
 		];
+		this.subscribers = operation?.subscribers || [];
 		this.negotiation_agreements = [];
 		this.uss_name = null;
 		this.submit_time = new Date();
@@ -226,6 +236,7 @@ export class OperationEntity {
 			controller_location: Joi.object(), // GeoJsonPoint
 			//gcs_location: Joi.object(), // GeoJsonPoint
 			// faa_rule
+			subscribers: Joi.array().items(Joi.object()),
 			operation_volumes: Joi.array(), // BaseOperationVolume
 			uas_registrations: Joi.array().items(Joi.object())
 		});

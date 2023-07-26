@@ -243,7 +243,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 						}
 					/>
 				</TokyoSvelte>
-				<div style={{ flex: 0, position: 'absolute', bottom: 0 }}>
+				<div style={{ flex: 0, position: 'absolute', bottom: 0, left: 0 }}>
 					<PButton
 						size={PButtonSize.SMALL}
 						icon="eye-open"
