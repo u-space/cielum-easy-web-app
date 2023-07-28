@@ -86,6 +86,8 @@
 		&:hover,
 		&:active {
 			background: var(--mirai-700) !important;
+
+			transform: none !important;
 		}
 	}
 

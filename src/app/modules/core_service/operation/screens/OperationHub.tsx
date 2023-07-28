@@ -15,10 +15,23 @@ import { useOperationStore } from '../store';
 import ViewAndEditOperation from '../pages/ViewAndEditOperation';
 import OperationSearchTools from '../components/OperationSearchTools';
 import { OPERATION_LOCALES_OPTIONS, OperationEntity } from '@utm-entities/operation';
+import styled from 'styled-components';
+import { OPERATION_STATE_COLORS, OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
+import { BackgroundColor } from 'chalk';
 
 interface ExtraActionsProps {
 	data: OperationEntity;
 }
+
+const OperationStateCircle = styled.div`
+	height: 1rem;
+	width: 1rem;
+	border-radius: 100%;
+	margin-left: 1rem;
+	border: 1px solid rgb(var(--mirai-900-rgb), 0.25);
+	box-shadow: 0 1px 1px 0 rgba (0, 0, 0, 0.25);
+	filter: saturate(0.75);
+`;
 
 const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 	const history = useHistory();
@@ -47,6 +60,13 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 					}
 				/>
 			</PTooltip>
+			<PTooltip content={t(data.state)}>
+				<OperationStateCircle
+					style={{
+						backgroundColor: OPERATION_STATE_COLORS_CSS[data.state]
+					}}
+				/>
+			</PTooltip>
 		</>
 	);
 };
@@ -67,9 +87,8 @@ const OperationHub = () => {
 
 	const idSelected = queryString.get('id');
 	const columns = [
-		{ title: ' ', width: rowHeight * 2 }, // Fixed width
+		{ title: ' ', width: rowHeight * 3 }, // Fixed width
 		{ title: t('glossary:operation.name'), width: 3 }, // Ratios
-		{ title: t('glossary:operation.state'), width: 1 },
 		{ title: t('glossary:operation.contact'), width: 2 },
 		{ title: t('glossary:operation.contact_phone'), width: 1 },
 		{ title: t('glossary:volume.effective_time_begin'), width: 1 },
@@ -92,17 +111,15 @@ const OperationHub = () => {
 			if (col === 1) {
 				data = operation.name;
 			} else if (col === 2) {
-				data = t(operation.state);
-			} else if (col === 3) {
 				data = operation.contact;
-			} else if (col === 4) {
+			} else if (col === 3) {
 				data = operation.contact_phone;
-			} else if (col === 5) {
+			} else if (col === 4) {
 				data = (operation.operation_volumes[0].effective_time_begin as Date).toLocaleString(
 					[],
 					OPERATION_LOCALES_OPTIONS
 				);
-			} else if (col === 6) {
+			} else if (col === 5) {
 				data = (
 					operation.operation_volumes[operation.operation_volumes.length - 1]
 						.effective_time_end as Date

@@ -52,7 +52,7 @@ export const ACTIVE_DRONE_LINE_COLOR: RGBA = [85, 195, 85, 150];
   Operation Coloring
 */
 export const OPERATION_STATE_COLORS: Record<string, RGB> = {
-	PROPOSED: [0, 23, 50],
+	PROPOSED: [0, 255, 242],
 	ACCEPTED: [0, 26, 255],
 	ACTIVATED: [153, 255, 137],
 	PENDING: [255, 243, 0],
