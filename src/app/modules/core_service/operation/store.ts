@@ -41,8 +41,8 @@ export const useOperationStore = create<OperationStoreState>()(
 	devtools(
 		(set, get) => ({
 			...createFilterableAndPaginableSlice<OperationStoreSpecificState>(set, get),
-			sortingProperty: 'name',
-			sortingOrder: 'ASC' as const,
+			sortingProperty: 'submit_time',
+			sortingOrder: 'DESC' as const,
 
 			filterShowProposed: true,
 			filterShowAccepted: true,

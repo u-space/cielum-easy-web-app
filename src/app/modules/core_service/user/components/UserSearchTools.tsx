@@ -94,7 +94,8 @@ const UserSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useUserStore}
 			entityName={'user'}
-			queryableProps={['username', 'firstName', 'lastName', 'email']}
+			searchableProps={['username', 'firstName', 'lastName', 'email']}
+			orderableProps={['username', 'firstName', 'lastName', 'email']}
 			extra={UserSearchToolsExtras}
 		/>
 	);

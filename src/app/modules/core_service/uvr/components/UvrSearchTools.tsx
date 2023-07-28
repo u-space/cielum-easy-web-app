@@ -7,7 +7,8 @@ const UvrSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useUvrStore}
 			entityName={'uvr'}
-			queryableProps={['reason']}
+			searchableProps={['reason']}
+			orderableProps={['reason']}
 		/>
 	);
 };

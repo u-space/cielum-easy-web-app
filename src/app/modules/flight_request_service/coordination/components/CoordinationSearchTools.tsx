@@ -53,7 +53,8 @@ const CoordinationSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useCoordinationStore}
 			entityName={'coordination'}
-			queryableProps={['reference', 'limit_date']}
+			searchableProps={['reference', 'limit_date']}
+			orderableProps={['reference', 'limit_date']}
 			extra={ExtraCoordinationSearchTools}
 		/>
 	);

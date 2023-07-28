@@ -109,7 +109,8 @@ const OperationSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useOperationStore}
 			entityName={'operation'}
-			queryableProps={['name', 'contact']}
+			searchableProps={['name']}
+			orderableProps={['submit_time']}
 			extra={OperationSearchToolsExtra}
 		/>
 	);

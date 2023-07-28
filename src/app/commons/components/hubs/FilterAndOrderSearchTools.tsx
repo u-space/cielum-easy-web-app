@@ -14,14 +14,16 @@ import { shallow } from 'zustand/shallow';
 interface FilterAndOrderSearchToolsProps {
 	useStore: UseGenericFilterableAndPaginableSliceStoreType;
 	entityName: string;
-	queryableProps: string[];
+	searchableProps: string[];
+	orderableProps: string[];
 	extra?: FunctionComponent;
 }
 
 const FilterAndOrderSearchTools: FC<FilterAndOrderSearchToolsProps> = ({
 	useStore,
 	entityName,
-	queryableProps,
+	searchableProps,
+	orderableProps,
 	extra
 }) => {
 	const { t } = useTranslation();
@@ -95,7 +97,7 @@ const FilterAndOrderSearchTools: FC<FilterAndOrderSearchToolsProps> = ({
 							value={store.filterProperty}
 							onChange={(event) => store.setFilterProperty(event.currentTarget.value)}
 						>
-							{queryableProps.map((prop) => {
+							{searchableProps.map((prop) => {
 								if (prop.includes('date')) {
 									// pass
 								} else {
@@ -122,7 +124,7 @@ const FilterAndOrderSearchTools: FC<FilterAndOrderSearchToolsProps> = ({
 								store.setSortingProperty(event.currentTarget.value)
 							}
 						>
-							{queryableProps.map((prop) => (
+							{orderableProps.map((prop) => (
 								<option key={prop} value={prop}>
 									{t(`glossary:${entityName}.${prop}`)}
 								</option>

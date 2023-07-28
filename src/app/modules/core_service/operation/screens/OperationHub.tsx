@@ -92,7 +92,8 @@ const OperationHub = () => {
 		{ title: t('glossary:operation.contact'), width: 2 },
 		{ title: t('glossary:operation.contact_phone'), width: 1 },
 		{ title: t('glossary:volume.effective_time_begin'), width: 1 },
-		{ title: t('glossary:volume.effective_time_end'), width: 1 }
+		{ title: t('glossary:volume.effective_time_end'), width: 1 },
+		{ title: t('glossary:operation.submit_time'), width: 1 }
 	];
 
 	// Backend
@@ -124,6 +125,11 @@ const OperationHub = () => {
 					operation.operation_volumes[operation.operation_volumes.length - 1]
 						.effective_time_end as Date
 				).toLocaleString([], OPERATION_LOCALES_OPTIONS);
+			} else if (col === 6) {
+				data = (operation.submit_time as Date).toLocaleString(
+					[],
+					OPERATION_LOCALES_OPTIONS
+				);
 			} else if (col === 0) {
 				kind = GridCellKind.Custom;
 			}
