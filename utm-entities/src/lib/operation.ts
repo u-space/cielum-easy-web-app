@@ -435,7 +435,7 @@ export interface GetOperationsParsedResponse {
 export const getOperationAPIClient = (api: string, token: string) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: 15000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
