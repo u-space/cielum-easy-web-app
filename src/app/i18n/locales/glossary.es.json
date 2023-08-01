@@ -68,6 +68,8 @@
 		"owner_editable": "Dueño (nombre de usuario)",
 		"contact": "Contacto",
 		"phone": "Tel. Contacto",
+		"begin": "Inicio",
+		"end": "Fin",
 		"submit_time": "Creada",
 		"update_time": "Última actualización",
 		"flight_comments": "Comentarios de la operación",
