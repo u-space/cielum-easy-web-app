@@ -39,6 +39,16 @@ const RequestOperation = Type.Object(
 
 export type RequestOperation = Static<typeof RequestOperation>;
 
+const ResponseBaseOperation = Type.Object({
+	gufi: Type.String(),
+	name: Type.String(),
+	operation_volumes: Type.Array(ResponseOperationVolume),
+	state: OperationState
+	// TODO: uas_registrations
+});
+
+export type ResponseBaseOperation = Static<typeof ResponseBaseOperation>;
+
 const ResponseOperation = Type.Composite([
 	RequestOperation,
 	Type.Object({
@@ -53,19 +63,49 @@ const ResponseOperation = Type.Composite([
 
 export type ResponseOperation = Static<typeof ResponseOperation>;
 
-export class Operation implements UtmEntity<RequestOperation, { omitOwner: boolean }> {
+export class BaseOperation {
+	// Used for representing public information (i.e. citizen reporting service)
 	gufi: string | null;
+	name: string;
+	operation_volumes: OperationVolume[];
+	state: OperationState;
+
+	constructor(backendOperation?: ResponseBaseOperation) {
+		if (backendOperation) {
+			if (!Value.Check(ResponseBaseOperation, backendOperation)) {
+				console.error(Value.Errors(ResponseBaseOperation, backendOperation));
+				throw new Error(`Backend operation does not match expected schema`);
+			}
+			this.gufi = backendOperation.gufi;
+			this.name = backendOperation.name;
+			this.operation_volumes = backendOperation.operation_volumes.map(
+				(operationVolume) => new OperationVolume(operationVolume)
+			);
+			this.state = backendOperation.state;
+		} else {
+			// Should not be used directly, as BaseOperations should not be created from the frontend
+			// Only by inheriting classes
+			this.gufi = null;
+			this.name = '';
+			this.operation_volumes = [];
+			this.state = OperationState.PROPOSED;
+		}
+	}
+}
+
+export class Operation
+	extends BaseOperation
+	implements UtmEntity<RequestOperation, { omitOwner: boolean }>
+{
 	contact: string;
 	contact_phone: string;
 	creator: NestedUser | null;
-	name: string;
-	operation_volumes: OperationVolume[];
 	owner: NestedUser | null;
-	state: OperationState;
 	submit_time: Date | null;
 	update_time: Date | null;
 
 	constructor(backendOperation?: ResponseOperation) {
+		super(backendOperation);
 		if (backendOperation) {
 			if (!Value.Check(ResponseOperation, backendOperation)) {
 				console.error(Value.Errors(ResponseOperation, backendOperation));
@@ -84,14 +124,10 @@ export class Operation implements UtmEntity<RequestOperation, { omitOwner: boole
 			this.submit_time = new Date(backendOperation.submit_time);
 			this.update_time = new Date(backendOperation.update_time);
 		} else {
-			this.gufi = null;
 			this.contact = '';
 			this.contact_phone = '';
 			this.creator = null;
-			this.name = '';
-			this.operation_volumes = [];
 			this.owner = null;
-			this.state = OperationState.PROPOSED;
 			this.submit_time = null;
 			this.update_time = null;
 		}
