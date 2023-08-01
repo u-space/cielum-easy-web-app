@@ -137,7 +137,8 @@ export function App() {
 
 	useEffect(() => {
 		if (secondsLeftBeforeRedirect <= 0) {
-			window.location.href = env.redirect_small_screens_url;
+			const path = window.location.href.slice(window.location.origin.length);
+			window.location.href = env.redirect_small_screens_url + path || window.location.href;
 		}
 	}, [secondsLeftBeforeRedirect]);
 
