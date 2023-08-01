@@ -19,8 +19,24 @@ import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import 'iconify-icon';
 import io, { Socket } from 'socket.io-client';
 import { usePositionStore } from './modules/core_service/position/store';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
+const ScreenToSmall = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100dvh;
+	width: 100dvw;
+	font-size: 2rem;
+	color: var(--white-100);
+	text-align: center;
+`;
+
+const SECONDS_BEFORE_REDIRECT = 5;
 export function App() {
+	const { t } = useTranslation();
 	const role = useAuthStore((state) => state.role);
 	const token = useAuthStore((state) => state.token);
 
@@ -30,6 +46,9 @@ export function App() {
 	const [isBannerHidden, setBannerHiddenFlag] = useState<boolean>(
 		localStorage.getItem('bannerHidden') === 'true'
 	);
+	const [screenToSmall, setScreenToSmall] = useState<boolean>(false);
+	const [secondsLeftBeforeRedirect, setSecondsLeftBeforeRedirect] =
+		useState<number>(SECONDS_BEFORE_REDIRECT);
 
 	const queryClient = new QueryClient();
 	const schemas = useSchemaStore(
@@ -42,6 +61,7 @@ export function App() {
 
 	// TODO: Improve this, as it is copied verbatim
 	const socket = useRef<typeof Socket>(null);
+
 	useEffect(() => {
 		// Re-connect to socket io on token change
 
@@ -79,9 +99,58 @@ export function App() {
 		localStorage.setItem('bannerHidden', isBannerHidden.toString());
 	}, [isBannerHidden]);
 
+	useEffect(() => {
+		if (!env.redirect_small_screens_url) return;
+		if (window.screen.width <= 1000) {
+			setScreenToSmall(true);
+		}
+		const onResize = () => {
+			if (window.screen.width > 1000) {
+				setScreenToSmall(false);
+			} else {
+				setScreenToSmall(true);
+			}
+		};
+		window.addEventListener('resize', onResize);
+		return () => {
+			window.removeEventListener('resize', onResize);
+		};
+	}, []);
+
+	const interval = useRef<NodeJS.Timer | null>(null);
+
+	useEffect(() => {
+		if (screenToSmall) {
+			interval.current = setInterval(() => {
+				setSecondsLeftBeforeRedirect((current) => current - 1);
+			}, 1000);
+		} else {
+			setSecondsLeftBeforeRedirect(SECONDS_BEFORE_REDIRECT);
+		}
+		return () => {
+			if (interval.current) {
+				clearInterval(interval.current);
+				interval.current = null;
+			}
+		};
+	}, [screenToSmall]);
+
+	useEffect(() => {
+		if (secondsLeftBeforeRedirect <= 0) {
+			window.location.href = env.redirect_small_screens_url;
+		}
+	}, [secondsLeftBeforeRedirect]);
+
 	// TODO: Make this nicer
 
-	if (unrecoverableBackendError) {
+	if (screenToSmall) {
+		return (
+			<ScreenToSmall>
+				<h1>{secondsLeftBeforeRedirect}</h1>
+				{t('You will be redirected to the mobile version')}
+			</ScreenToSmall>
+		);
+	} else if (unrecoverableBackendError) {
 		return (
 			<div className="app">
 				<DeadScreen text={unrecoverableBackendError} />
