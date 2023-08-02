@@ -557,7 +557,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								onSelect={(selected) => {
 									ls.entity.operators = selected;
 								}}
-								preselected={ls.entity.operators}
+								preselected={ls.entity.operators.map((o) => o.username)}
 								fill
 								isRequired
 								disabled={!isEditing || !isAdmin || !isCreating}
