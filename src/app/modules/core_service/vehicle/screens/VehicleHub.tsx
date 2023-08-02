@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import PTooltip from '@pcomponents/PTooltip';
 import GenericHub, { GenericHubProps, rowHeight } from '../../../../commons/screens/GenericHub';
-import { useQueryString } from '../../../../utils';
+import { setCSSVariable, useQueryString } from '../../../../utils';
 import { useQueryVehicles, useUpdateVehicle, useUpdateVehicleAuthorization } from '../hooks';
 import { VehicleAuthorizationStatus, VehicleEntity } from '@utm-entities/vehicle';
 import { useVehicleStore } from '../store';
@@ -15,6 +15,7 @@ import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/stor
 import VehicleSearchTools from '../components/VehicleSearchTools';
 import ViewAndEditVehicle from '../pages/ViewAndEditVehicle';
 import { UseMutationResult } from 'react-query';
+import { getCSSVariable } from '@pcomponents/utils';
 
 const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const { t } = useTranslation();
@@ -71,6 +72,7 @@ const VehicleHub = () => {
 	);
 	const username = useAuthStore((state) => state.username);
 	const isAdmin = useAuthIsAdmin();
+	const isPilot = useAuthIsPilot();
 
 	// Props
 	const idSelected = queryString.get('id');
@@ -143,6 +145,18 @@ const VehicleHub = () => {
 			setFilterByText('PENDING');
 		}
 	}, [shouldShowNonAuthorized]);
+
+	useEffect(() => {
+		// TODO: Re-evaluate whether hiding the sidebar makes sense for pilots.
+		if (isPilot) {
+			setCSSVariable('side-width', '0px');
+		} else {
+			setCSSVariable('side-width', getCSSVariable('side-width-default'));
+		}
+		return () => {
+			setCSSVariable('side-width', getCSSVariable('side-width-default'));
+		};
+	}, [isPilot]);
 
 	return (
 		<GenericHub<VehicleEntity>
