@@ -20,18 +20,11 @@ const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const { t } = useTranslation();
 
 	const isAdmin = useAuthIsAdmin();
-	const isPilot = useAuthIsPilot();
-	const username = useAuthStore((state) => state.username);
 
 	const updateVehicleAuthorization = useUpdateVehicleAuthorization();
 
 	// Pilot users can de-authorize their own vehicles, but not authorize them
-	if (
-		isAdmin ||
-		(isPilot &&
-			data.owner_id === username &&
-			data.authorized !== VehicleAuthorizationStatus.PENDING)
-	) {
+	if (isAdmin) {
 		let newAuthorizationStatus: VehicleAuthorizationStatus;
 		if (isAdmin) {
 			newAuthorizationStatus = data.isAuthorized
