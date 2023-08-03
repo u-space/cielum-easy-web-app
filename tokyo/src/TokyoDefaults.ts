@@ -57,7 +57,7 @@ export const OPERATION_STATE_COLORS: Record<string, RGB> = {
 	ACTIVATED: [153, 255, 137],
 	PENDING: [255, 243, 0],
 	ROGUE: [255, 0, 0],
-	CLOSED: [0, 40, 20],
+	CLOSED: [105, 105, 105],
 	NOT_ACCEPTED: [50, 0, 0]
 };
 
