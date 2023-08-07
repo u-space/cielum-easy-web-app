@@ -14,6 +14,7 @@ import {
 import type { ConvertToLayer, RGBA, RGBnumber } from '../../types';
 import type { OperationEntity } from '@utm-entities/operation';
 import { GeoJsonLayer } from '@deck.gl/layers/typed';
+import type { BaseOperation } from '@utm-entities/v2/model/operation';
 
 export interface OperationDrawingProps {
 	fillAlpha?: RGBnumber; // 0-255
@@ -21,16 +22,16 @@ export interface OperationDrawingProps {
 	selected?: { gufi: string; volume: number };
 }
 
-export const operationTokyoConverter: ConvertToLayer<OperationEntity, OperationDrawingProps> = {
+export const operationTokyoConverter: ConvertToLayer<BaseOperation, OperationDrawingProps> = {
 	getId: getIdFromOperation,
 	getConverter: getConverterFromOperation
 };
 
-function getIdFromOperation(operation: OperationEntity) {
+function getIdFromOperation(operation: BaseOperation) {
 	return getPickableId(PickableType.Operation, operation.gufi || '', operation.name || '');
 }
 
-function getConverterFromOperation(_operation: OperationEntity, options?: OperationDrawingProps) {
+function getConverterFromOperation(_operation: BaseOperation, options?: OperationDrawingProps) {
 	const operation = _.cloneDeep(_operation);
 	const id = getIdFromOperation(operation);
 	const fillAlpha = options?.fillAlpha ?? 100;

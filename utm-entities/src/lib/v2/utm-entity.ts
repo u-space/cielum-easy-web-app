@@ -1,4 +1,4 @@
 export interface UtmEntity<RequestType, BackendFormattingParams = never> {
-	displayName(): string;
+	displayName: string;
 	asBackendFormat(params: BackendFormattingParams): RequestType;
 }

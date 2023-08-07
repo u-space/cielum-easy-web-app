@@ -1,4 +1,4 @@
-import Axios, { AxiosResponseTransformer } from 'axios';
+import Axios, { AxiosResponse, AxiosResponseTransformer } from 'axios';
 import { AdesRole, FilteringParameters } from '../../_util';
 import {
 	BaseOperation,
@@ -15,12 +15,14 @@ interface GetOperationsSpecificParameters {
 	toDate?: Date;
 }
 
-interface GetOperationsResponse<ResponseType> {
+export interface GetOperationsResponse<ResponseType> {
 	ops: ResponseType[];
 	count: number;
 }
 
-export const transformBaseOperations = (data: GetOperationsResponse<ResponseBaseOperation>) => {
+export const transformBaseOperations = (
+	data: GetOperationsResponse<ResponseBaseOperation>
+): GetOperationsResponse<BaseOperation> => {
 	return {
 		ops: data.ops.map(transformBaseOperation),
 		count: data.count
@@ -40,14 +42,32 @@ export const transformOperation = (data: ResponseOperation) => new Operation(dat
 
 // API Calls
 
-export const getOperationAPIClient = (api: string, token: string | null) => {
+export interface OperationAPI {
+	getOperations<T>(
+		role: string,
+		states: string[],
+		take: number,
+		skip: number,
+		orderBy: string,
+		order: string,
+		filterBy: string,
+		filter?: string,
+		fromDate?: Date,
+		toDate?: Date
+	): Promise<AxiosResponse<GetOperationsResponse<T>>>;
+	getOperation(gufi: string): Promise<AxiosResponse<Operation>>;
+	saveOperation(operation: Operation, isPilot: boolean): Promise<AxiosResponse<Operation>>;
+	deleteOperation(gufi: string): Promise<AxiosResponse<void>>;
+}
+
+export function getOperationAPIClient(api: string, token: string | null): OperationAPI {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 15000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
-	function getOperations(
+	function getOperations<T>(
 		role: string,
 		_states: string[],
 		take: number,
@@ -70,9 +90,8 @@ export const getOperationAPIClient = (api: string, token: string | null) => {
 		if (fromDate) parameters.fromDate = fromDate;
 		if (toDate) parameters.toDate = toDate;
 
-		if (_states.length === 0) return Promise.resolve({ data: { ops: [], count: 0 } });
 		if (role === AdesRole.ADMIN || role === AdesRole.MONITOR) {
-			return axiosInstance.get<GetOperationsResponse<Operation>>('operation', {
+			return axiosInstance.get<GetOperationsResponse<T>>('operation', {
 				params: parameters,
 				headers: { auth: token },
 				transformResponse: (
@@ -80,7 +99,7 @@ export const getOperationAPIClient = (api: string, token: string | null) => {
 				).concat(transformOperations)
 			});
 		} else if (role === AdesRole.PILOT) {
-			return axiosInstance.get<GetOperationsResponse<Operation>>('operation/owner', {
+			return axiosInstance.get<GetOperationsResponse<T>>('operation/owner', {
 				params: parameters,
 				headers: { auth: token },
 				transformResponse: (
@@ -88,7 +107,7 @@ export const getOperationAPIClient = (api: string, token: string | null) => {
 				).concat(transformOperations)
 			});
 		} else {
-			return axiosInstance.get<GetOperationsResponse<BaseOperation>>('operation', {
+			return axiosInstance.get<GetOperationsResponse<T>>('operation', {
 				params: parameters,
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
@@ -97,38 +116,30 @@ export const getOperationAPIClient = (api: string, token: string | null) => {
 		}
 	}
 
-	if (!token) {
-		// Unlogged client
-		return {
-			getOperations
-		};
-	} else {
-		// Logged client
-		return {
-			saveOperation(operation: Operation, isPilot = false) {
-				if (isPilot && operation.state === 'CLOSED')
-					throw new Error("You can't edit a closed operation");
+	return {
+		saveOperation(operation: Operation, isPilot = false) {
+			if (isPilot && operation.state === 'CLOSED')
+				throw new Error("You can't edit a closed operation");
 
-				return axiosInstance.post(
-					'operation',
-					operation.asBackendFormat({ omitOwner: isPilot }),
-					{
-						headers: { auth: token }
-					}
-				);
-			},
-			getOperations,
-			getOperation(gufi: string) {
-				return axiosInstance.get(`operation/${gufi}`, {
-					headers: { auth: token },
-					transformResponse: (
-						Axios.defaults.transformResponse as AxiosResponseTransformer[]
-					).concat(transformOperation)
-				});
-			},
-			deleteOperation(gufi: string) {
-				return axiosInstance.delete(`/operation/${gufi}`, { headers: { auth: token } });
-			}
-		};
-	}
-};
+			return axiosInstance.post(
+				'operation',
+				operation.asBackendFormat({ omitOwner: isPilot }),
+				{
+					headers: { auth: token }
+				}
+			);
+		},
+		getOperations,
+		getOperation(gufi: string) {
+			return axiosInstance.get(`operation/${gufi}`, {
+				headers: { auth: token },
+				transformResponse: (
+					Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				).concat(transformOperation)
+			});
+		},
+		deleteOperation(gufi: string) {
+			return axiosInstance.delete(`/operation/${gufi}`, { headers: { auth: token } });
+		}
+	};
+}

@@ -84,7 +84,7 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 		return requestOperationVolume;
 	}
 
-	displayName(): string {
+	get displayName() {
 		return `${
 			this.ordinal
 		} (${this.effective_time_begin?.toLocaleTimeString()} - ${this.effective_time_end?.toLocaleTimeString()})`;

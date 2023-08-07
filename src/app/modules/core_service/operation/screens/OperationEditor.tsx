@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { OperationEntity, OperationVolume } from '@utm-entities/operation';
 import { useQueryClient } from 'react-query';
 import _ from 'lodash';
 import { PModalType } from '@pcomponents/PModal';
@@ -25,6 +24,8 @@ import { reactify } from 'svelte-preprocess-react';
 import { PFullModalProps, undefinedModal } from '@pcomponents/PFullModal';
 import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewProps';
 import { EditMode } from '@tokyo/types';
+import { Operation } from '@utm-entities/v2/model/operation';
+import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -49,7 +50,7 @@ const OperationEditor = () => {
 		if (queryOperation.isSuccess) {
 			return queryOperation.data?.data;
 		} else {
-			return new OperationEntity();
+			return new Operation();
 		}
 	}, [queryOperation.data?.data, queryOperation.isSuccess]);
 
@@ -72,22 +73,20 @@ const OperationEditor = () => {
 
 	const onPolygonsUpdated = useCallback(
 		(polygons: Polygon[]) => {
-			operation.set(
-				'operation_volumes',
-				polygons.map((polygon, index) => {
-					const volume = new OperationVolume(index);
-					volume.effective_time_begin = new Date();
-					volume.effective_time_end = new Date();
-					if (index < operation.operation_volumes.length) {
-						const existingVolume = operation.operation_volumes[index];
-						for (const prop in existingVolume) {
-							volume.set(prop, existingVolume[prop]);
-						}
+			operation.operation_volumes = polygons.map((polygon, index) => {
+				const volume = new OperationVolume();
+				volume.ordinal = index;
+				volume.effective_time_begin = new Date();
+				volume.effective_time_end = new Date();
+				if (index < operation.operation_volumes.length) {
+					const existingVolume = operation.operation_volumes[index];
+					for (const prop in existingVolume) {
+						volume[prop as keyof OperationVolume] = existingVolume[prop];
 					}
-					volume.set('operation_geography', polygon);
-					return volume;
-				})
-			);
+				}
+				volume.operation_geography = polygon;
+				return volume;
+			});
 		},
 		[operation]
 	);

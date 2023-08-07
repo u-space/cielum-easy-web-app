@@ -132,7 +132,7 @@ export interface GetUvrsParsedResponse {
 	count: number;
 }
 
-export const getUvrAPIClient = (api: string, token: string) => {
+export const getUvrAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,

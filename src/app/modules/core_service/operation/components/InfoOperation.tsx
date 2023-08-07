@@ -8,34 +8,27 @@ import PDateInput from '@pcomponents/PDateInput';
 import PBooleanInput from '@pcomponents/PBooleanInput';
 import PTextArea from '@pcomponents/PTextArea';
 import { FC } from 'react';
-import { OperationEntity, OperationState } from '@utm-entities/operation';
+
 import { ExtraFieldSchema } from '@utm-entities/extraFields';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
 import env from '../../../../../vendor/environment/env';
 import { VehicleEntity } from '@utm-entities/vehicle';
 import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
-import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
 import { UserEntity } from '@utm-entities/user';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
+import { Operation } from '@utm-entities/v2/model/operation';
+import { NestedUser } from '@utm-entities/v2/model/user';
+import { OperationState } from '@utm-entities/operation';
 
 interface OperationInfoProps {
-	prop: keyof OperationEntity;
-	entity: OperationEntity;
-	setInfo: (prop: keyof OperationEntity, value: OperationEntity[keyof OperationEntity]) => void;
+	prop: string;
+	entity: Operation;
+	setInfo: (prop: keyof Operation, value: Operation[keyof Operation]) => void;
 }
 
 const OperationInfo: FC<OperationInfoProps> = observer(({ prop, entity, setInfo }) => {
 	const { t } = useTranslation('glossary');
-	if (
-		prop === 'airspace_authorization' ||
-		prop === 'submit_time' ||
-		prop === 'update_time' ||
-		prop === 'aircraft_comments' ||
-		prop === 'volumes_description' ||
-		prop === 'owner' ||
-		prop === 'creator' ||
-		prop === 'faa_rule'
-	)
+	if (prop === 'submit_time' || prop === 'update_time' || prop === 'owner' || prop === 'creator')
 		return null;
 	if (prop === 'flight_comments') {
 		return (
@@ -45,45 +38,32 @@ const OperationInfo: FC<OperationInfoProps> = observer(({ prop, entity, setInfo 
 				id={`editor-operation-${prop}`}
 				defaultValue={entity[prop]}
 				label={t(`glossary:operation.${prop}`)}
-				onChange={(value) => setInfo(prop, value)}
+				onChange={(value) => setInfo(prop as keyof Operation, value)}
 			/>
 		);
 	}
-	if (typeof entity[prop] === 'string') {
+	const value = entity[prop as keyof Operation];
+	if (typeof value === 'string') {
 		return (
 			<PInput
 				key={prop}
 				id={`editor-operation-${prop}`}
-				defaultValue={entity[prop]}
+				defaultValue={value}
 				label={t(`glossary:operation.${prop}`)}
-				onChange={(value) => setInfo(prop, value)}
+				onChange={(value) => setInfo(prop as keyof Operation, value)}
 				isRequired
-				disabled={prop === 'message_id'}
 			/>
 		);
-	} else if (typeof entity[prop] === 'object' && entity[prop] instanceof Date) {
+	} else if (typeof value === 'object' && value instanceof Date) {
 		return (
 			<PDateInput
 				key={prop}
 				id={`editor-volume-${prop}`}
-				defaultValue={entity[prop]}
+				defaultValue={value}
 				label={t(`volume.${prop}`)}
-				onChange={(value) => setInfo(prop, value)}
+				onChange={(value) => setInfo(prop as keyof Operation, value)}
 				isRequired
 				isTime
-			/>
-		);
-	} else if (typeof entity[prop] === 'boolean') {
-		return (
-			<PBooleanInput
-				key={prop}
-				id={`editor-volume-${prop}`}
-				defaultValue={entity[prop]}
-				label={t(`volume.${prop}`)}
-				onChange={(value) => setInfo(prop, value)}
-				isRequired
-				inline
-				fill
 			/>
 		);
 	} else {
@@ -92,7 +72,7 @@ const OperationInfo: FC<OperationInfoProps> = observer(({ prop, entity, setInfo 
 });
 
 interface InfoOperationProps {
-	operation: OperationEntity;
+	operation: Operation;
 	schemaUsers: ExtraFieldSchema;
 	schemaVehicles: ExtraFieldSchema;
 	isEditingExisting: boolean;
@@ -113,29 +93,30 @@ const InfoOperation: FC<InfoOperationProps> = ({
 	const isPilot = useAuthIsPilot();
 	const token = useAuthStore((state) => state.token);
 	const onSelectUser = (_value: UserEntity[]) => {
-		operation.set('contact', '');
-		operation.set('contact_phone', '');
-		operation.set('uas_registrations', []);
+		operation.contact = '';
+		operation.contact_phone = '';
+		// TODO: operation.uas_registrations = [];
 		if (_value.length > 0) {
 			const value = _value[0];
 
-			operation.set('owner', value);
+			operation.owner = new NestedUser(value);
 
-			if (value.fullName) operation.set('contact', value.fullName);
+			if (value.fullName) operation.contact = value.fullName;
 			if (value.extra_fields?.phone) {
-				operation.set('contact_phone', value.extra_fields.phone);
+				operation.contact_phone = String(value.extra_fields.phone);
 			} else {
-				operation.set('contact_phone', t('The user has no known phone'));
+				operation.contact_phone = t('The user has no known phone');
 			}
 		} else {
-			operation.set('owner', null);
+			operation.owner = null;
 		}
 	};
 
+	if (!token) return null;
 	return (
 		<>
 			<CardGroup header="Creating an operation">
-				{isAdmin && (
+				{/*isAdmin && (
 					<PUserSelectForAdmins
 						label={t('glossary:operation.owner')}
 						onSelect={onSelectUser}
@@ -150,7 +131,8 @@ const InfoOperation: FC<InfoOperationProps> = ({
 						api={env.core_api}
 						id={'user-select-admins'}
 					/>
-				)}
+				)*/}
+				{/*
 				<PVehicleSelect
 					api={env.core_api}
 					label={t('glossary:operation.uas_registrations')}
@@ -161,7 +143,7 @@ const InfoOperation: FC<InfoOperationProps> = ({
 					isRequired
 					token={token}
 					schema={schemaVehicles}
-				/>
+				/>*/}
 				{isAdmin && isEditingExisting && (
 					<POperationStateSelect
 						id="editor-state"
@@ -178,10 +160,9 @@ const InfoOperation: FC<InfoOperationProps> = ({
 						key={'0' + prop}
 						entity={operation}
 						prop={prop}
-						setInfo={(
-							prop: keyof OperationEntity,
-							value: OperationEntity[keyof OperationEntity]
-						) => operation.set(prop, value)}
+						setInfo={(prop: keyof Operation, value: Operation[keyof Operation]) =>
+							operation.set(prop, value)
+						}
 					/>
 				))}
 			</CardGroup>

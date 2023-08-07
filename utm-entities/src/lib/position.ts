@@ -62,7 +62,7 @@ const transformPosition = (data: any) => {
 	return data.map((position: any) => new PositionEntity(position));
 };
 
-export const getPositionAPIClient = (api: string, token: string) => {
+export const getPositionAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,

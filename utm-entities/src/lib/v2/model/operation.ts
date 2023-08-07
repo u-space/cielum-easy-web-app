@@ -42,6 +42,8 @@ export type RequestOperation = Static<typeof RequestOperation>;
 const ResponseBaseOperation = Type.Object({
 	gufi: Type.String(),
 	name: Type.String(),
+	contact: Type.String(),
+	contact_phone: Type.String(),
 	operation_volumes: Type.Array(ResponseOperationVolume),
 	state: OperationState
 	// TODO: uas_registrations
@@ -50,14 +52,15 @@ const ResponseBaseOperation = Type.Object({
 export type ResponseBaseOperation = Static<typeof ResponseBaseOperation>;
 
 const ResponseOperation = Type.Composite([
-	RequestOperation,
+	ResponseBaseOperation,
 	Type.Object({
 		gufi: Type.String(),
 		submit_time: Type.String(),
 		update_time: Type.String(),
 		creator: ResponseNestedUser,
 		owner: ResponseNestedUser,
-		operation_volumes: Type.Array(ResponseOperationVolume)
+		operation_volumes: Type.Array(ResponseOperationVolume),
+		flight_comments: Type.String()
 	})
 ]);
 
@@ -69,6 +72,8 @@ export class BaseOperation {
 	name: string;
 	operation_volumes: OperationVolume[];
 	state: OperationState;
+	contact: string; // TODO: backend should prioritize privacy of users, so this shouldn't be sent.
+	contact_phone: string;
 
 	constructor(backendOperation?: ResponseBaseOperation) {
 		if (backendOperation) {
@@ -78,6 +83,8 @@ export class BaseOperation {
 			}
 			this.gufi = backendOperation.gufi;
 			this.name = backendOperation.name;
+			this.contact = backendOperation.contact;
+			this.contact_phone = backendOperation.contact_phone;
 			this.operation_volumes = backendOperation.operation_volumes.map(
 				(operationVolume) => new OperationVolume(operationVolume)
 			);
@@ -87,9 +94,21 @@ export class BaseOperation {
 			// Only by inheriting classes
 			this.gufi = null;
 			this.name = '';
+			this.contact = '';
+			this.contact_phone = '';
 			this.operation_volumes = [];
 			this.state = OperationState.PROPOSED;
 		}
+	}
+
+	get begin() {
+		if (this.operation_volumes.length === 0) return null;
+		return this.operation_volumes[0].effective_time_begin;
+	}
+
+	get end() {
+		if (this.operation_volumes.length === 0) return null;
+		return this.operation_volumes[this.operation_volumes.length - 1].effective_time_end;
 	}
 }
 
@@ -97,12 +116,11 @@ export class Operation
 	extends BaseOperation
 	implements UtmEntity<RequestOperation, { omitOwner: boolean }>
 {
-	contact: string;
-	contact_phone: string;
 	creator: NestedUser | null;
 	owner: NestedUser | null;
 	submit_time: Date | null;
 	update_time: Date | null;
+	flight_comments: string;
 
 	constructor(backendOperation?: ResponseOperation) {
 		super(backendOperation);
@@ -111,25 +129,17 @@ export class Operation
 				console.error(Value.Errors(ResponseOperation, backendOperation));
 				throw new Error(`Backend operation does not match expected schema`);
 			}
-			this.gufi = backendOperation.gufi;
-			this.contact = backendOperation.contact;
-			this.contact_phone = backendOperation.contact_phone;
 			this.creator = new NestedUser(backendOperation.creator);
-			this.name = backendOperation.name;
-			this.operation_volumes = backendOperation.operation_volumes.map(
-				(volume) => new OperationVolume(volume as ResponseOperationVolume)
-			);
 			this.owner = new NestedUser(backendOperation.owner);
-			this.state = backendOperation.state;
 			this.submit_time = new Date(backendOperation.submit_time);
 			this.update_time = new Date(backendOperation.update_time);
+			this.flight_comments = backendOperation.flight_comments;
 		} else {
-			this.contact = '';
-			this.contact_phone = '';
 			this.creator = null;
 			this.owner = null;
 			this.submit_time = null;
 			this.update_time = null;
+			this.flight_comments = '';
 		}
 	}
 
@@ -177,7 +187,15 @@ export class Operation
 		return requestOperation;
 	}
 
-	displayName(): string {
+	set(prop: keyof Operation, value: Operation[keyof Operation]) {
+		if (prop === 'begin' || prop === 'end' || prop === 'displayName')
+			throw new Error('Cannot set begin or end directly');
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		this[prop] = value;
+	}
+
+	get displayName() {
 		return this.name;
 	}
 }

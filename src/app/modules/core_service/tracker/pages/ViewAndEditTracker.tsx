@@ -41,7 +41,7 @@ const BaseTrackerDetails: FC<BaseTrackerDetailsProps> = observer(
 				setUser(null);
 			}
 		};
-
+		if (token === null) return null;
 		if (ls.entity) {
 			return (
 				<>

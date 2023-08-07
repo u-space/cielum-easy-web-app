@@ -336,7 +336,7 @@ const transformRegularFlights = (data: any) => {
 
 const transformRegularFlight = (data: any) => RegularFlightEntity.createFromAPI(data);
 
-export const getRegularFlightAPIClient = (api: string, token: string) => {
+export const getRegularFlightAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,

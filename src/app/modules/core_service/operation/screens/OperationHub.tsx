@@ -2,25 +2,23 @@ import { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PTooltip from '@pcomponents/PTooltip';
-import PButton from '@pcomponents/PButton';
-import { PButtonSize, PButtonType } from '@pcomponents/PButton';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { getFeatureOption, useQueryString } from '../../../../utils';
 import { UseMutationResult, useQueryClient } from 'react-query';
 import GenericHub, { GenericHubProps, rowHeight } from '../../../../commons/screens/GenericHub';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
 import { useDeleteOperation, useQueryOperations, useSaveOperation } from '../hooks';
 import { GridCell, GridCellKind } from '@glideapps/glide-data-grid';
-import env from '../../../../../vendor/environment/env';
 import { useOperationStore } from '../store';
 import ViewAndEditOperation from '../pages/ViewAndEditOperation';
 import OperationSearchTools from '../components/OperationSearchTools';
-import { OPERATION_LOCALES_OPTIONS, OperationEntity } from '@utm-entities/operation';
+import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/operation';
 import styled from 'styled-components';
-import { OPERATION_STATE_COLORS, OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
-import { BackgroundColor } from 'chalk';
+import { OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
+import { Operation } from '@utm-entities/v2/model/operation';
 
 interface ExtraActionsProps {
-	data: OperationEntity;
+	data: Operation;
 }
 
 const OperationStateCircle = styled.div`
@@ -54,7 +52,7 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 					onClick={() =>
 						history.push(
 							`/past-flights?gufi=${data.gufi}&from=${(
-								data.start as Date
+								data.begin as Date
 							).toISOString()}&to=${(data.end as Date).toISOString()}`
 						)
 					}
@@ -63,7 +61,10 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 			<PTooltip content={t(data.state)}>
 				<OperationStateCircle
 					style={{
-						backgroundColor: OPERATION_STATE_COLORS_CSS[data.state]
+						backgroundColor:
+							OPERATION_STATE_COLORS_CSS[
+								data.state as keyof typeof OPERATION_STATE_COLORS_CSS
+							]
 					}}
 				/>
 			</PTooltip>
@@ -98,7 +99,9 @@ const OperationHub = () => {
 
 	// Backend
 	const query = useQueryOperations();
-	const { operations, count } = query;
+	const { count } = query;
+
+	const operations = query.operations as Operation[];
 
 	const updateOperation = useSaveOperation();
 	const deleteOperation = useDeleteOperation();
@@ -158,13 +161,13 @@ const OperationHub = () => {
 			};
 		}
 	}
-	const onEntitySelected = (operation: OperationEntity) =>
+	const onEntitySelected = (operation: Operation) =>
 		history.replace(operation ? `/operations?id=${operation.gufi}` : '/operations');
 
 	return (
-		<GenericHub<OperationEntity>
+		<GenericHub<Operation>
 			idProperty={'gufi'}
-			extraActions={ExtraActions as GenericHubProps<OperationEntity>['extraActions']}
+			extraActions={ExtraActions as GenericHubProps<Operation>['extraActions']}
 			getData={getData}
 			entitySearchTools={OperationSearchTools}
 			entityPage={ViewAndEditOperation}
@@ -182,9 +185,7 @@ const OperationHub = () => {
 				(getFeatureOption<boolean>('Operations', 'pilotCanCreateOperations') && isPilot) ||
 				isAdmin
 			}
-			canEdit={(operation: OperationEntity) =>
-				operation?.owner?.username === username || isAdmin
-			}
+			canEdit={(operation: Operation) => operation?.owner?.username === username || isAdmin}
 		/>
 	);
 };

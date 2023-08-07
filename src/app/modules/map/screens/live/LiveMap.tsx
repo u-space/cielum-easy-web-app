@@ -34,6 +34,7 @@ import env from '../../../../../vendor/environment/env';
 import { TokyoPick } from '@tokyo/types';
 import { usePositionStore } from '../../../core_service/position/store';
 import { getCSSVariable } from '@pcomponents/utils';
+import { Polygon } from 'geojson';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
@@ -133,7 +134,7 @@ const LiveMap = () => {
 
 	useEffect(() => {
 		if (volume) {
-			tokyo.flyToCenterOfGeometry(volume.operation_geography);
+			tokyo.flyToCenterOfGeometry(volume.operation_geography as Polygon); // This is a operation fetched from the backend
 		}
 	}, [volume]);
 

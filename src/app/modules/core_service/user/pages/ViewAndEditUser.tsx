@@ -491,6 +491,7 @@ const ViewAndEditUser = (props: UserPageProps) => {
 	} = props;
 	const token = useAuthStore((state) => state.token);
 	const { t } = useTranslation();
+	if (token === null) return null;
 	return (
 		<div className={styles.twobytwo} style={style}>
 			<div className={styles.content}>

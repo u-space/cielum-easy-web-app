@@ -3,10 +3,14 @@ import VerificationScreen from './modules/auth/screens/VerificationScreen';
 import PasswordResetScreen from './modules/auth/screens/PasswordResetScreen';
 import RegisterScreen from './modules/auth/screens/RegisterScreen';
 import LoginScreen from './modules/auth/screens/LoginScreen';
+import LiveMap from './modules/map/screens/live/LiveMap';
 
 const NotLoggedInScreens = () => {
 	return (
 		<Switch>
+			<Route exact path="/map/">
+				<LiveMap />
+			</Route>
 			<Route exact path="/verify/:username">
 				<VerificationScreen />
 			</Route>

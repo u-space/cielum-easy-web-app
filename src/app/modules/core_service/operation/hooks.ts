@@ -5,15 +5,17 @@ import { QueryOptions, useMutation, useQuery, useQueryClient } from 'react-query
 import { useCoreServiceAPI, useQueryString } from '../../../utils';
 import { useEffect, useMemo } from 'react';
 import _ from 'lodash';
-import { GetOperationsParsedResponse, OperationEntity } from '@utm-entities/operation';
 import { AxiosError, AxiosResponse } from 'axios';
 import { UpdateEntityParams } from '@utm-entities/types';
+import { GetOperationsResponse } from '@utm-entities/v2/api/operation';
+import { BaseOperation, Operation } from '@utm-entities/v2/model/operation';
+
 export function useQueryOperation(gufi: string, enabled: boolean) {
 	const {
 		operation: { getOperation }
 	} = useCoreServiceAPI();
 
-	return useQuery<AxiosResponse<OperationEntity>>(['operation', gufi], () => getOperation(gufi), {
+	return useQuery(['operation', gufi], () => getOperation(gufi), {
 		enabled
 	});
 }
@@ -50,7 +52,10 @@ export function useQueryOperations(all = false) {
 		operation: { getOperations }
 	} = useCoreServiceAPI();
 
-	const query = useQuery<{ data: GetOperationsParsedResponse }, Error>(
+	const query = useQuery<
+		{ data: GetOperationsResponse<Operation> | GetOperationsResponse<BaseOperation> },
+		Error
+	>(
 		[
 			'operations',
 			states,
@@ -107,7 +112,7 @@ export function useQueryOperations(all = false) {
 
 	const shownOperations = useMemo(() => {
 		if (all) {
-			return operations.filter((op) => !hiddenOperations.includes(op.gufi));
+			return operations.filter((op) => !hiddenOperations.includes(op.gufi ?? ''));
 		} else {
 			return operations;
 		}
@@ -152,7 +157,7 @@ export function useQueryOperationsCounts() {
 	} = useCoreServiceAPI();
 
 	const { isSuccess: isSuccessPendingOperations, data: responsePending } = useQuery<
-		{ data: GetOperationsParsedResponse },
+		{ data: GetOperationsResponse<Operation> | GetOperationsResponse<BaseOperation> },
 		Error
 	>(
 		[
@@ -181,7 +186,7 @@ export function useQueryOperationsCounts() {
 		isSuccessPendingOperations && responsePending ? responsePending.data.count : -1;
 
 	const { isSuccess: isSuccessActivatedOperations, data: responseActivated } = useQuery<
-		{ data: GetOperationsParsedResponse },
+		{ data: GetOperationsResponse<Operation> },
 		Error
 	>(
 		[
@@ -210,7 +215,7 @@ export function useQueryOperationsCounts() {
 		isSuccessActivatedOperations && responseActivated ? responseActivated.data.count : -1;
 
 	const { isSuccess: isSuccessRogueOperations, data: responseRogue } = useQuery<
-		{ data: GetOperationsParsedResponse },
+		{ data: GetOperationsResponse<Operation> },
 		Error
 	>(
 		[
@@ -242,9 +247,9 @@ export function useSaveOperation(onSuccess?: () => void, onError?: (error: Error
 	} = useCoreServiceAPI();
 	const isPilot = useAuthIsPilot();
 	return useMutation<
-		AxiosResponse<OperationEntity>,
+		AxiosResponse<Operation>,
 		AxiosError<{ message?: string }>,
-		UpdateEntityParams<OperationEntity>
+		UpdateEntityParams<Operation>
 	>(({ entity }) => saveOperation(entity, isPilot), {
 		onSuccess: () => {
 			// Invalidate and refetch
@@ -308,8 +313,8 @@ export function useDeleteOperation() {
 	const {
 		operation: { deleteOperation }
 	} = useCoreServiceAPI();
-	return useMutation<AxiosResponse<void>, AxiosError<{ message?: string }>, OperationEntity>(
-		(operation) => deleteOperation(operation.gufi),
+	return useMutation<AxiosResponse<void>, AxiosError<{ message?: string }>, Operation>(
+		(operation) => deleteOperation(operation.gufi || ''),
 		{
 			onSuccess: () => {
 				// Invalidate and refetch

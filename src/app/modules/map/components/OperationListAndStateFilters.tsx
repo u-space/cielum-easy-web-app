@@ -123,7 +123,7 @@ const OperationListAndStateFilters = () => {
 
 	const operationGridItems = useMemo(() => {
 		return operations.map((operation) => ({
-			checked: !hiddenOperations.includes(operation.gufi),
+			checked: !hiddenOperations.includes(operation.gufi as string),
 			onClick: () => {
 				if (operation.operation_volumes.length > 0)
 					tokyo.flyToCenterOfGeometry(
@@ -131,7 +131,7 @@ const OperationListAndStateFilters = () => {
 					);
 			},
 			onChange: (check: boolean) => {
-				toggleHiddenOperation(operation.gufi);
+				toggleHiddenOperation(operation.gufi as string);
 			},
 			label: operation.name
 		}));

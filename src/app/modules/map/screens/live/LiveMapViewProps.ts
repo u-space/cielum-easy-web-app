@@ -5,6 +5,7 @@ import { UvrEntity } from '@utm-entities/uvr';
 import { PositionEntity } from '@utm-entities/position';
 import { ControlsOptions, MapOptions, TokyoPick } from '@tokyo/types';
 import { TokyoPolygon } from '@tokyo/shapes/2d/TokyoPolygon';
+import { BaseOperation } from '@utm-entities/v2/model/operation';
 
 export enum LiveMapSelectableType {
 	OPERATION = 'operation',
@@ -49,7 +50,7 @@ export interface LiveMapViewProps {
 		pick?: (elements: TokyoPick[]) => void;
 	};
 	// TODO: new props, remove old
-	operations: OperationEntity[];
+	operations: BaseOperation[];
 	geographicalZones: GeographicalZone[];
 	t: (key: string) => string;
 	controlsOptions: Partial<ControlsOptions>;

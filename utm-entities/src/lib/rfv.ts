@@ -115,7 +115,7 @@ const transformRFV = (data: any) => {
 	return { rfvs: data.rfvs.map((rfv: any) => new RfvEntity(rfv)), count: data.count };
 };
 
-export const getRfvAPIClient = (api: string, token: string) => {
+export const getRfvAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,

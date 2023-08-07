@@ -189,7 +189,7 @@ const transformFlightRequest = (data: any) => {
 	};
 };
 
-export const getFlightRequestAPIClient = (api: string, token: string) => {
+export const getFlightRequestAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 20000,
