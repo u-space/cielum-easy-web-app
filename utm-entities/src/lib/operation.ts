@@ -123,6 +123,8 @@ export class OperationEntity {
 	update_time: Date;
 	state: OperationState;
 	gcs_location: Point | null;
+	begin: Date;
+	end: Date;
 
 	_operationSchema: Joi.ObjectSchema;
 
@@ -184,18 +186,22 @@ export class OperationEntity {
 		this.update_time = new Date();
 		this.state = OperationState.PROPOSED;
 		this.gcs_location = null;
+		this.begin = new Date();
+		this.end = new Date();
 
 		if (operation) {
 			if ((operation as any).union_volume) {
 				delete (operation as any).union_volume;
 			}
 			for (const prop in operation) {
-				this[prop] = operation[prop];
+				if (prop !== 'begin' && prop !== 'end') this[prop] = operation[prop]; // Will be removed when upcoming feature is merged
 			}
 
 			this.owner = new UserEntity(this.owner, {});
 			if (operation.submit_time) this.submit_time = new Date(operation.submit_time);
 			if (operation.update_time) this.update_time = new Date(operation.update_time);
+			if (operation.begin) this.begin = new Date(operation.begin);
+			if (operation.end) this.end = new Date(operation.end);
 			//this.creator = operation.creator?.username;
 			if (operation.uas_registrations)
 				this.uas_registrations = operation.uas_registrations.map((uasr) => {
@@ -249,11 +255,7 @@ export class OperationEntity {
 	}
 
 	get start() {
-		return this.operation_volumes[0].effective_time_begin;
-	}
-
-	get end() {
-		return this.operation_volumes[this.operation_volumes.length - 1].effective_time_end;
+		return this.begin; // TODO: This is a fast hack to make it work with the current UI, current feature branch doesn't have this problem anymore
 	}
 
 	get asBackendFormat() {

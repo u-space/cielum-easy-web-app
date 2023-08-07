@@ -8,7 +8,7 @@ import {
 } from '@utm-entities/vehicle';
 import { useVehicleStore } from './store';
 import { shallow } from 'zustand/shallow';
-import { useAuthIsPilot } from '../../auth/store';
+import { useAuthIsPilot, useAuthStore } from '../../auth/store';
 import { AxiosError, AxiosResponse } from 'axios';
 import { DocumentEntity } from '@utm-entities/document';
 import { NotificationType, useNotificationStore } from '../../notification/store';
