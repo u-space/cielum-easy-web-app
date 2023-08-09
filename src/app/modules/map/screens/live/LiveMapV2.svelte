@@ -4,7 +4,7 @@
 	import env from '../../../../../vendor/environment/env';
 	import {getOperationAPIClient} from '@utm-entities/v2/api/operation';
 	import {createQuery} from '@tanstack/svelte-query';
-	import {OperationStateEnum} from '@utm-entities/v2/model/operation';
+	import {BaseOperation, OperationStateEnum} from '@utm-entities/v2/model/operation';
 
 	export let history: History;
 
@@ -17,14 +17,12 @@
 		OperationStateEnum.PENDING, OperationStateEnum.ROGUE];
 	const query = createQuery({
 		queryKey: ['operations'],
-		queryFn: () => operationAPIClient.getOperations('', states),
+		queryFn: () => operationAPIClient.getOperations<BaseOperation>('', states),
 	});
 
-	$: console.log($query);
 
-
-	const liveMapViewsProps = {
-		operations: [],
+	$: liveMapViewsProps = {
+		operations: $query.isSuccess ? $query.data.ops : [],
 		geographicalZones: [],
 		vehiclePositions: new Map(),
 		t: (key: string) => key,

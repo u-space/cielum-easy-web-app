@@ -6,6 +6,7 @@ import {
 	ResponseBaseOperation,
 	ResponseOperation
 } from '../model/operation';
+import { extractDataFromResponse } from './utils';
 
 // Types
 
@@ -54,7 +55,7 @@ export interface OperationAPI {
 		filter?: string,
 		fromDate?: Date,
 		toDate?: Date
-	): Promise<AxiosResponse<GetOperationsResponse<T>>>;
+	): Promise<GetOperationsResponse<T>>;
 	getOperation(gufi: string): Promise<AxiosResponse<Operation>>;
 	saveOperation(operation: Operation, isPilot: boolean): Promise<AxiosResponse<Operation>>;
 	deleteOperation(gufi: string): Promise<AxiosResponse<void>>;
@@ -91,28 +92,34 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 		if (toDate) parameters.toDate = toDate;
 
 		if (role === AdesRole.ADMIN || role === AdesRole.MONITOR) {
-			return axiosInstance.get<GetOperationsResponse<T>>('operation', {
-				params: parameters,
-				headers: { auth: token },
-				transformResponse: (
-					Axios.defaults.transformResponse as AxiosResponseTransformer[]
-				).concat(transformOperations)
-			});
+			return axiosInstance
+				.get<GetOperationsResponse<T>>('operation', {
+					params: parameters,
+					headers: { auth: token },
+					transformResponse: (
+						Axios.defaults.transformResponse as AxiosResponseTransformer[]
+					).concat(transformOperations)
+				})
+				.then(extractDataFromResponse);
 		} else if (role === AdesRole.PILOT) {
-			return axiosInstance.get<GetOperationsResponse<T>>('operation/owner', {
-				params: parameters,
-				headers: { auth: token },
-				transformResponse: (
-					Axios.defaults.transformResponse as AxiosResponseTransformer[]
-				).concat(transformOperations)
-			});
+			return axiosInstance
+				.get<GetOperationsResponse<T>>('operation/owner', {
+					params: parameters,
+					headers: { auth: token },
+					transformResponse: (
+						Axios.defaults.transformResponse as AxiosResponseTransformer[]
+					).concat(transformOperations)
+				})
+				.then(extractDataFromResponse);
 		} else {
-			return axiosInstance.get<GetOperationsResponse<T>>('operation', {
-				params: parameters,
-				transformResponse: (
-					Axios.defaults.transformResponse as AxiosResponseTransformer[]
-				).concat(transformBaseOperations)
-			});
+			return axiosInstance
+				.get<GetOperationsResponse<T>>('operation', {
+					params: parameters,
+					transformResponse: (
+						Axios.defaults.transformResponse as AxiosResponseTransformer[]
+					).concat(transformBaseOperations)
+				})
+				.then(extractDataFromResponse);
 		}
 	}
 
