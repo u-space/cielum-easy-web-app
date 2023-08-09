@@ -34,7 +34,7 @@ function calculateViewState(position: FlyToPosition) {
 		zoom: zoom,
 		bearing: 0,
 		pitch: 0,
-		maxPitch: 0,
+		maxPitch: 90,
 		minPitch: 0,
 		//minZoom: 10,
 		transitionDuration: duration ?? 500,

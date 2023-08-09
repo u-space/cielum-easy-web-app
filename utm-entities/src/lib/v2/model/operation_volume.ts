@@ -8,7 +8,7 @@ export const RequestOperationVolume = Type.Object({
 	max_altitude: Type.String(), // TODO: Backend should return this as a number
 	min_altitude: Type.String(), // TODO: Backend should return this as a number
 	beyond_visual_line_of_sight: Type.Boolean(),
-	near_structure: Type.Boolean(),
+	//near_structure: Type.Boolean(),
 	effective_time_begin: Type.String(),
 	effective_time_end: Type.String(),
 	ordinal: Type.String(), // TODO: Backend should return this as a number
@@ -43,7 +43,8 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 		if (backendOperationVolume) {
 			this.id = backendOperationVolume.id;
 			this.ordinal = Number(backendOperationVolume.ordinal);
-			this.near_structure = backendOperationVolume.near_structure;
+			//this.near_structure = backendOperationVolume.near_structure;
+			this.near_structure = false;
 			this.effective_time_begin = new Date(backendOperationVolume.effective_time_begin);
 			this.effective_time_end = new Date(backendOperationVolume.effective_time_end);
 			this.min_altitude = Number(backendOperationVolume.min_altitude);
@@ -72,7 +73,7 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 			min_altitude: this.min_altitude.toString(),
 			max_altitude: this.max_altitude.toString(),
 			beyond_visual_line_of_sight: this.beyond_visual_line_of_sight,
-			near_structure: this.near_structure,
+			//near_structure: this.near_structure,
 			operation_geography: this.operation_geography,
 			ordinal: this.ordinal.toString(),
 			effective_time_begin: this.effective_time_begin.toISOString(),

@@ -8,13 +8,13 @@
 
 	export let history: History;
 
-
 	const operationAPIClient = getOperationAPIClient(env.core_api, null); // TODO: move to root of new app
 
 	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
 		OperationStateEnum.NOT_ACCEPTED,
 		OperationStateEnum.ACTIVATED, OperationStateEnum.CLOSED,
 		OperationStateEnum.PENDING, OperationStateEnum.ROGUE];
+
 	const query = createQuery({
 		queryKey: ['operations'],
 		queryFn: () => operationAPIClient.getOperations<BaseOperation>('', states),

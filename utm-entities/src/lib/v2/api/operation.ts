@@ -64,7 +64,7 @@ export interface OperationAPI {
 export function getOperationAPIClient(api: string, token: string | null): OperationAPI {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 15000,
+		timeout: 60000, // TODO: remove this, added for the screenshot
 		headers: { 'Content-Type': 'application/json' }
 	});
 

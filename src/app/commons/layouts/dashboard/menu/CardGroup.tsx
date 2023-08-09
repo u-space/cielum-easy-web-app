@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+// TODO: remove this file, replaced by DashboardCard
 import { useTranslation } from 'react-i18next';
 import styles from './CardGroup.module.scss';
 import classnames from 'classnames';

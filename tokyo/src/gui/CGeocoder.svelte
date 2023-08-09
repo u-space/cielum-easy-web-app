@@ -1,65 +1,66 @@
 <script lang="ts">
-    import CInput from '@tokyo/gui/CInput.svelte';
-    import {getAutocomplete, getSearch} from '@tokyo/gui/CGeocoder';
-    import {createQuery} from '@tanstack/svelte-query';
-    import CButton from '@tokyo/gui/CButton.svelte';
-    import {tokyoFlyToPosition} from '@tokyo/store';
-    import {createEventDispatcher} from 'svelte';
-    import {CSize} from "./CSizeWrapper";
+	import CInput from '@tokyo/gui/CInput.svelte';
+	import {getAutocomplete, getSearch} from '@tokyo/gui/CGeocoder';
+	import {createQuery} from '@tanstack/svelte-query';
+	import CButton from '@tokyo/gui/CButton.svelte';
+	import {tokyoFlyToPosition} from '@tokyo/store';
+	import {createEventDispatcher} from 'svelte';
+	import {CSize} from "./CSizeWrapper";
 
-    const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher();
 
-    export let geaopifyApiKey;
+	export let geaopifyApiKey;
 
-    let searchText = '';
-    let currentSearchText = '';
+	let searchText = '';
+	let currentSearchText = '';
 
-    const queryAutocomplete = createQuery({
-        queryKey: ['geocoder-autocomplete'],
-        queryFn: () => getAutocomplete(geaopifyApiKey)(searchText),
-        enabled: false,
-        retry: false,
-    });
+	const queryAutocomplete = createQuery({
+		queryKey: ['geocoder-autocomplete'],
+		queryFn: () => getAutocomplete(geaopifyApiKey)(searchText),
+		enabled: false,
+		retry: false,
+	});
 
-    let autocompleteTimeout = null;
+	let autocompleteTimeout = null;
 
-    const querySearch = createQuery({
-        queryKey: ['geocoder-search'],
-        queryFn: () => getSearch(geaopifyApiKey)(searchText),
-        enabled: false,
-        retry: false,
-    });
+	const querySearch = createQuery({
+		queryKey: ['geocoder-search'],
+		queryFn: () => getSearch(geaopifyApiKey)(searchText),
+		enabled: false,
+		retry: false,
+	});
 
-    $: {
-        if (searchText.length >= 3 && currentSearchText !== searchText) {
-            if (autocompleteTimeout) {
-                clearTimeout(autocompleteTimeout);
-            }
-            autocompleteTimeout = setTimeout(() => {
-                $queryAutocomplete.refetch();
-            }, 500);
-            currentSearchText = searchText;
-        }
-    }
+	$: {
+		if (searchText.length >= 3 && currentSearchText !== searchText) {
+			if (autocompleteTimeout) {
+				clearTimeout(autocompleteTimeout);
+			}
+			autocompleteTimeout = setTimeout(() => {
+				$queryAutocomplete.refetch();
+			}, 500);
+			currentSearchText = searchText;
+		}
+	}
 </script>
 
-<CInput size={CSize.EXTRA_LARGE} bind:value={searchText}/>
-{#if searchText.length >= 3 && $queryAutocomplete.isSuccess}
-    <div id="results">
-        {#each $queryAutocomplete.data.data as place}
-            <div class="place">
-                <CButton icon="map-pin-fill" size={CSize.EXTRA_SMALL}
-                         on:click={() => {
+{#if false}
+	<CInput size={CSize.EXTRA_LARGE} bind:value={searchText}/>
+	{#if searchText.length >= 3 && $queryAutocomplete.isSuccess}
+		<div id="results">
+			{#each $queryAutocomplete.data.data as place}
+				<div class="place">
+					<CButton icon="map-pin-fill" size={CSize.EXTRA_SMALL}
+							 on:click={() => {
 							 $tokyoFlyToPosition = {...$tokyoFlyToPosition, latitude: place.lat, longitude: place.lon}
 							 dispatch('select', place);
 							 }}/>
-                <p>{place.formatted}</p>
-            </div>
-        {/each}
-    </div>
+					<p>{place.formatted}</p>
+				</div>
+			{/each}
+		</div>
 
+	{/if}
 {/if}
-
 <style lang="scss">
   @import './mixins.scss';
 

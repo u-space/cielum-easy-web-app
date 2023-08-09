@@ -43,11 +43,14 @@ function getConverterFromOperation(_operation: BaseOperation, options?: Operatio
 	};
 
 	const getFillColor = () => {
-		if (options?.selected && options.selected.gufi === operation.gufi) {
-			return SELECTED_OPERATION_FILL_COLOR;
-		} else {
-			return fillColor;
-		}
+		// Commented out 09/08/2023 as an urgent request appeared to make screenshots on our latest stable version
+		// visual changes were requested to this screen as a result of that call
+		// even if this is definitely out of scope of the change
+		//if (options?.selected && options.selected.gufi === operation.gufi) {
+		//	return SELECTED_OPERATION_FILL_COLOR;
+		//} else {
+		return fillColor;
+		//}
 	};
 
 	return () =>
@@ -55,11 +58,16 @@ function getConverterFromOperation(_operation: BaseOperation, options?: Operatio
 			// TODO: Could use loaders.gl format to speed-up loading
 			data: operation.operation_volumes.map((volume, index) => ({
 				type: 'Feature',
-				geometry: volume.operation_geography
+				geometry: volume.operation_geography,
+				properties: {
+					max_altitude: volume.max_altitude
+				}
 			})),
 			id,
 			filled: true,
+			getElevation: (polygon) => polygon.properties?.max_altitude,
 			pickable: true,
+			extruded: true,
 			getFillColor,
 			getLineWidth,
 			lineWidthUnits: 'pixels',
