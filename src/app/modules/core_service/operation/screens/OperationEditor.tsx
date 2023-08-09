@@ -26,6 +26,8 @@ import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewPro
 import { EditMode } from '@tokyo/types';
 import { Operation } from '@utm-entities/v2/model/operation';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { useAuthStore } from '../../../auth/store';
+import { NestedUser } from '@utm-entities/v2/model/user';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -37,6 +39,8 @@ const OperationEditor = () => {
 	const id = queryString.get('id');
 	const queryOperation = useQueryOperation(id || '', !!id);
 	const tokyo = useTokyo();
+
+	const username = useAuthStore((state) => state.username);
 
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
 	const schemaUsers = useSchemaStore((state) => state.users);
@@ -50,9 +54,38 @@ const OperationEditor = () => {
 		if (queryOperation.isSuccess) {
 			return queryOperation.data?.data;
 		} else {
-			return new Operation();
+			const op = new Operation();
+			op.set(
+				'creator',
+				new NestedUser({
+					// TODO: Remove this when creating ExistingOperation, NewOperation
+					username,
+					email: '',
+
+					firstName: '',
+					lastName: '',
+					extra_fields_json: {}
+				})
+			);
+			op.set(
+				'owner',
+				new NestedUser({
+					// TODO: Remove this when creating ExistingOperation, NewOperation
+					username,
+					email: '',
+
+					firstName: '',
+					lastName: '',
+					extra_fields_json: {}
+				})
+			);
+			return op;
 		}
 	}, [queryOperation.data?.data, queryOperation.isSuccess]);
+
+	// @ts-ignore
+	// @ts-ignore
+	window.operation = operation;
 
 	const polygons = useMemo(() => {
 		return queryOperation.isSuccess
@@ -75,16 +108,16 @@ const OperationEditor = () => {
 		(polygons: Polygon[]) => {
 			operation.operation_volumes = polygons.map((polygon, index) => {
 				const volume = new OperationVolume();
-				volume.ordinal = index;
-				volume.effective_time_begin = new Date();
-				volume.effective_time_end = new Date();
+				volume.set('ordinal', index);
+				volume.set('effective_time_begin', new Date());
+				volume.set('effective_time_end', new Date());
 				if (index < operation.operation_volumes.length) {
 					const existingVolume = operation.operation_volumes[index];
 					for (const prop in existingVolume) {
-						volume[prop as keyof OperationVolume] = existingVolume[prop];
+						volume.set(prop, existingVolume.get(prop));
 					}
 				}
-				volume.operation_geography = polygon;
+				volume.set('operation_geography', polygon);
 				return volume;
 			});
 		},

@@ -27,15 +27,15 @@ export const ResponseOperationVolume = Type.Composite([
 export type ResponseOperationVolume = Static<typeof ResponseOperationVolume>;
 
 export class OperationVolume implements UtmEntity<RequestOperationVolume> {
-	id: number | null; // Null if not yet saved
-	ordinal: number;
-	near_structure: boolean;
-	effective_time_begin: Date | null;
-	effective_time_end: Date | null;
-	min_altitude: number;
-	max_altitude: number;
-	beyond_visual_line_of_sight: boolean;
-	operation_geography: Polygon | null;
+	readonly id: number | null; // Null if not yet saved
+	readonly ordinal: number;
+	readonly near_structure: boolean;
+	readonly effective_time_begin: Date | null;
+	readonly effective_time_end: Date | null;
+	readonly min_altitude: number;
+	readonly max_altitude: number;
+	readonly beyond_visual_line_of_sight: boolean;
+	readonly operation_geography: Polygon | null;
 
 	[key: string]: OperationVolume[keyof OperationVolume];
 
@@ -88,5 +88,13 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 		return `${
 			this.ordinal
 		} (${this.effective_time_begin?.toLocaleTimeString()} - ${this.effective_time_end?.toLocaleTimeString()})`;
+	}
+
+	set(prop: string, value: OperationVolume[keyof OperationVolume]) {
+		this[prop] = value;
+	}
+
+	get(prop: string) {
+		return this[prop];
 	}
 }

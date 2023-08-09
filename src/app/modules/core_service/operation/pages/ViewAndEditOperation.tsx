@@ -266,7 +266,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				id="effective_time_begin"
 				label={t('glossary:volume.effective_time_begin')}
 				defaultValue={volume.effective_time_begin || new Date()}
-				onChange={(value) => (volume.effective_time_begin = value)}
+				onChange={(value) => volume.set('effective_time_begin', value)}
 				disabled={!isEditing || !isAbleToChangeDates}
 				inline
 				isTime
@@ -276,7 +276,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				id="effective_time_begin"
 				label={t('glossary:volume.effective_time_end')}
 				defaultValue={volume.effective_time_end || new Date()}
-				onChange={(value) => (volume.effective_time_end = value)}
+				onChange={(value) => volume.set('effective_time_end', value)}
 				disabled={!isEditing || !isAbleToChangeDates}
 				inline
 				isTime
@@ -296,7 +296,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				) {
 					const id = `input-${prop}`;
 					const label = t(`glossary:volume.${prop}`);
-					const value = volume[prop];
+					const value = volume.get(prop);
 					if (typeof value === 'number') {
 						return (
 							<PNumberInput
@@ -309,7 +309,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 								label={label}
 								onChange={(value) => {
 									// eslint-disable-next-line @typescript-eslint/no-explicit-any
-									(ls.entity.operation_volumes[0][prop] as any) = value;
+									ls.entity.operation_volumes[0].set(prop, value);
 								}}
 							/>
 						);
@@ -325,7 +325,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				defaultValue={ls.entity.operation_volumes[0].near_structure}
 				label={t('glossary:volume.near_structure')}
 				disabled={!isEditing}
-				onChange={(value) => (ls.entity.operation_volumes[0].near_structure = value)}
+				onChange={(value) => ls.entity.operation_volumes[0].set('near_structure', value)}
 				isRequired
 				isDarkVariant
 				inline
@@ -336,7 +336,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				label={t('glossary:volume.beyond_visual_line_of_sight')}
 				disabled={!isEditing}
 				onChange={(value) =>
-					(ls.entity.operation_volumes[0].beyond_visual_line_of_sight = value)
+					ls.entity.operation_volumes[0].set('beyond_visual_line_of_sight', value)
 				}
 				isRequired
 				isDarkVariant

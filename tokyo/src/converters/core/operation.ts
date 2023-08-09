@@ -1,18 +1,12 @@
-import type { GeographicalZone } from '@flight-request-entities/geographicalZone';
-import { ClipExtension } from '@deck.gl/extensions/typed';
 import { getPickableId, PickableType } from '../../util';
 import _ from 'lodash';
 import {
-	GZ_FILL_COLOR,
-	GZ_LINE_COLOR,
 	OPERATION_STATE_COLORS,
-	SELECTED_GZ_FILL_COLOR,
 	SELECTED_OPERATION_FILL_COLOR,
 	SELECTED_OPERATION_LINE_COLOR,
 	SELECTED_OPERATION_VOLUME_LINE_COLOR
 } from '../../TokyoDefaults';
 import type { ConvertToLayer, RGBA, RGBnumber } from '../../types';
-import type { OperationEntity } from '@utm-entities/operation';
 import { GeoJsonLayer } from '@deck.gl/layers/typed';
 import type { BaseOperation } from '@utm-entities/v2/model/operation';
 

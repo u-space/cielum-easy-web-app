@@ -6,12 +6,12 @@ import i18n from 'i18next';
 import Joi from 'joi';
 import { buildParametersObject } from './_util';
 import { APIVertiportSchema, Vertiport } from './vertiport';
-import { OperationEntity } from './operation';
 import { EntityHasDisplayName } from './types';
 import {
 	APIThreeDimensionalPointSchema,
 	ThreeDimensionalPoint
 } from './legacy_map_do_not_use/entities/ThreeDimensionalPoint';
+import { Operation } from './v2/model/operation';
 
 export class RegularFlightSegment implements Record<string, number | any> {
 	start: ThreeDimensionalPoint;
@@ -377,7 +377,7 @@ export const getRegularFlightAPIClient = (api: string, token: string | null) => 
 		},
 		createOperationFromRegularFlight(
 			rf: RegularFlightEntity,
-			partial: Partial<OperationEntity>,
+			partial: Partial<Operation>,
 			startingTime: Date
 		) {
 			const newPartial = {
@@ -385,8 +385,6 @@ export const getRegularFlightAPIClient = (api: string, token: string | null) => 
 				owner: partial.owner?.username,
 				uas_registrations: partial.uas_registrations?.map((uas: any) => uas.uvin)
 			};
-			const errors = new OperationEntity(partial).validate(true);
-			if (errors.length > 0) return Promise.reject(errors);
 			const data = {
 				...newPartial,
 				effective_time_begin: startingTime,

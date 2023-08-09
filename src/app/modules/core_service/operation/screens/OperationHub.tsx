@@ -12,10 +12,9 @@ import { GridCell, GridCellKind } from '@glideapps/glide-data-grid';
 import { useOperationStore } from '../store';
 import ViewAndEditOperation from '../pages/ViewAndEditOperation';
 import OperationSearchTools from '../components/OperationSearchTools';
-import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/operation';
 import styled from 'styled-components';
 import { OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
-import { Operation } from '@utm-entities/v2/model/operation';
+import { Operation, OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 
 interface ExtraActionsProps {
 	data: Operation;

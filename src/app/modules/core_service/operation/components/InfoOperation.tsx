@@ -1,24 +1,17 @@
-import PVehicleSelect from '@pcomponents/PVehicleSelect';
 import POperationStateSelect from '@pcomponents/POperationStateSelect';
 import PInput from '@pcomponents/PInput';
 import PButton, { PButtonProps } from '@pcomponents/PButton';
 import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import PDateInput from '@pcomponents/PDateInput';
-import PBooleanInput from '@pcomponents/PBooleanInput';
 import PTextArea from '@pcomponents/PTextArea';
 import { FC } from 'react';
-
 import { ExtraFieldSchema } from '@utm-entities/extraFields';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
-import env from '../../../../../vendor/environment/env';
-import { VehicleEntity } from '@utm-entities/vehicle';
-import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import { UserEntity } from '@utm-entities/user';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
-import { Operation } from '@utm-entities/v2/model/operation';
+import { Operation, OperationState } from '@utm-entities/v2/model/operation';
 import { NestedUser } from '@utm-entities/v2/model/user';
-import { OperationState } from '@utm-entities/operation';
 
 interface OperationInfoProps {
 	prop: string;

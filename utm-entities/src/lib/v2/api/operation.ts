@@ -46,11 +46,11 @@ export interface OperationAPI {
 	getOperations<T>(
 		role: string,
 		states: string[],
-		take: number,
-		skip: number,
-		orderBy: string,
-		order: string,
-		filterBy: string,
+		take?: number,
+		skip?: number,
+		orderBy?: string,
+		order?: string,
+		filterBy?: string,
 		filter?: string,
 		fromDate?: Date,
 		toDate?: Date

@@ -1,10 +1,8 @@
-import { OperationEntity } from '@utm-entities/operation';
 import { GeographicalZone } from '@flight-request-entities/geographicalZone';
 import { RfvEntity } from '@utm-entities/rfv';
 import { UvrEntity } from '@utm-entities/uvr';
 import { PositionEntity } from '@utm-entities/position';
-import { ControlsOptions, MapOptions, TokyoPick } from '@tokyo/types';
-import { TokyoPolygon } from '@tokyo/shapes/2d/TokyoPolygon';
+import { ControlsOptions, TokyoPick } from '@tokyo/types';
 import { BaseOperation } from '@utm-entities/v2/model/operation';
 
 export enum LiveMapSelectableType {

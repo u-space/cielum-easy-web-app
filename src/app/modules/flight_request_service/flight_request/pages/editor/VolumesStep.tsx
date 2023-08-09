@@ -11,7 +11,6 @@ import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
-import { OperationVolume } from '@utm-entities/operation';
 import MapLayout from '../../../../../commons/layouts/MapLayout';
 import CardGroup from '../../../../../commons/layouts/dashboard/menu/CardGroup';
 import MapViewModeSwitch from '../../../../map/components/MapViewModeSwitch';
@@ -20,6 +19,7 @@ import { reactify } from 'svelte-preprocess-react';
 import EditorMapViewSvelte from '../../../../map/screens/editor/EditorMapView.svelte';
 import { PFullModalProps } from '@pcomponents/PFullModal';
 import { EditMode, EditOptions } from '@tokyo/types';
+import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 interface VolumesStepProps {
@@ -105,7 +105,8 @@ const VolumesStep = (props: VolumesStepProps) => {
 				// For each day in the range, create a new volume
 				// with the start and end time
 				getDatesBetween(start.current, end.current).forEach((date) => {
-					const newVolume = new OperationVolume(flightRequest.volumes.length - 1);
+					const newVolume = new OperationVolume();
+					newVolume.set('ordinal', flightRequest.volumes.length - 1);
 					const startDate = setHoursMinutesSeconds(start.current, new Date(date));
 					const endDate = setHoursMinutesSeconds(end.current, new Date(date));
 					newVolume.set('max_altitude', maxAltitude);
@@ -173,7 +174,8 @@ const VolumesStep = (props: VolumesStepProps) => {
 					alert('La fecha de fin debe ser el mismo día que la fecha de inicio');
 					return;
 				}
-				const newVolume = new OperationVolume(flightRequest.volumes.length - 1);
+				const newVolume = new OperationVolume();
+				newVolume.set('ordinal', flightRequest.volumes.length - 1);
 				newVolume.set('max_altitude', maxAltitude);
 				newVolume.set('effective_time_begin', start.current);
 				newVolume.set('effective_time_end', end.current);
