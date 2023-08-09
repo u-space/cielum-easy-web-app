@@ -56,9 +56,9 @@ export interface OperationAPI {
 		fromDate?: Date,
 		toDate?: Date
 	): Promise<GetOperationsResponse<T>>;
-	getOperation(gufi: string): Promise<AxiosResponse<Operation>>;
-	saveOperation(operation: Operation, isPilot: boolean): Promise<AxiosResponse<Operation>>;
-	deleteOperation(gufi: string): Promise<AxiosResponse<void>>;
+	getOperation(gufi: string): Promise<Operation>;
+	saveOperation(operation: Operation, isPilot: boolean): Promise<Operation>;
+	deleteOperation(gufi: string): Promise<void>;
 }
 
 export function getOperationAPIClient(api: string, token: string | null): OperationAPI {
@@ -128,25 +128,27 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 			if (isPilot && operation.state === 'CLOSED')
 				throw new Error("You can't edit a closed operation");
 
-			return axiosInstance.post(
-				'operation',
-				operation.asBackendFormat({ omitOwner: isPilot }),
-				{
+			return axiosInstance
+				.post('operation', operation.asBackendFormat({ omitOwner: isPilot }), {
 					headers: { auth: token }
-				}
-			);
+				})
+				.then(extractDataFromResponse);
 		},
 		getOperations,
 		getOperation(gufi: string) {
-			return axiosInstance.get(`operation/${gufi}`, {
-				headers: { auth: token },
-				transformResponse: (
-					Axios.defaults.transformResponse as AxiosResponseTransformer[]
-				).concat(transformOperation)
-			});
+			return axiosInstance
+				.get(`operation/${gufi}`, {
+					headers: { auth: token },
+					transformResponse: (
+						Axios.defaults.transformResponse as AxiosResponseTransformer[]
+					).concat(transformOperation)
+				})
+				.then(extractDataFromResponse);
 		},
 		deleteOperation(gufi: string) {
-			return axiosInstance.delete(`/operation/${gufi}`, { headers: { auth: token } });
+			return axiosInstance
+				.delete(`/operation/${gufi}`, { headers: { auth: token } })
+				.then(extractDataFromResponse);
 		}
 	};
 }

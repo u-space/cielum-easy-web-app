@@ -52,7 +52,7 @@ const OperationEditor = () => {
 
 	const operation = useMemo(() => {
 		if (queryOperation.isSuccess) {
-			return queryOperation.data?.data;
+			return queryOperation.data;
 		} else {
 			const op = new Operation();
 			op.set(
@@ -81,11 +81,7 @@ const OperationEditor = () => {
 			);
 			return op;
 		}
-	}, [queryOperation.data?.data, queryOperation.isSuccess]);
-
-	// @ts-ignore
-	// @ts-ignore
-	window.operation = operation;
+	}, [queryOperation.data, queryOperation.isSuccess]);
 
 	const polygons = useMemo(() => {
 		return queryOperation.isSuccess
@@ -98,11 +94,11 @@ const OperationEditor = () => {
 	}, [queryOperation.isSuccess, operation.operation_volumes]);
 
 	useEffect(() => {
-		const geography = queryOperation.data?.data?.operation_volumes[0].operation_geography;
+		const geography = queryOperation.data?.operation_volumes[0].operation_geography;
 		if (queryOperation.isSuccess && geography) {
 			tokyo.flyToCenterOfGeometry(geography);
 		}
-	}, [queryOperation.data?.data?.operation_volumes, queryOperation.isSuccess, tokyo]);
+	}, [queryOperation.data?.operation_volumes, queryOperation.isSuccess, tokyo]);
 
 	const onPolygonsUpdated = useCallback(
 		(polygons: Polygon[]) => {
