@@ -27,7 +27,7 @@
 		<slot/>
 		{#if canMenuOpen}
 			<div class="actions">
-				<CButton size={CSize.EXTRA_LARGE} icon="caret-double-right-bold"
+				<CButton size={CSize.LARGE} icon={isMenuOpen ? "caret-double-left-bold" : "caret-double-right-bold"}
 						 on:click={() => isMenuOpen = !isMenuOpen}/>
 			</div>
 		{/if}
@@ -102,6 +102,23 @@
   @media screen and (max-width: 740px) {
     .container {
       flex-direction: column-reverse;
+
+      & main {
+        & .actions {
+          // Move button to the bottom middle
+
+          left: 0;
+          right: 0;
+          bottom: 0.5rem;
+          top: auto;
+
+          flex-direction: row;
+
+          & :global(> *) {
+            transform: rotate(-90deg);
+          }
+        }
+      }
 
       & aside {
         height: var(--dashboard-aside-size);
