@@ -7,22 +7,23 @@
 	import {BaseOperation, OperationStateEnum} from '@utm-entities/v2/model/operation';
 	import * as H from 'history';
 	import {PickableType} from '@tokyo/util';
-	import {TokyoPick} from '@tokyo/types';
+	import {TokyoPick, TokyoPickableElement} from '@tokyo/types';
 	import ViewOperationDetails from '../../../core_service/operation/pages/ViewOperationDetails.svelte';
 	import OperationDetails from '../../../core_service/operation/components/OperationDetails.svelte';
 	import CModal from '@tokyo/gui/CModal.svelte';
 	import CLoading from '@tokyo/gui/CLoading.svelte';
+	import {flyToCenterOfGeometry} from '@tokyo/store';
+	import {feature, featureCollection} from '@turf/helpers';
+	import {bbox, bboxPolygon} from '@turf/turf';
 
 	export let history: H.History;
 
 
 	// Entity selection logic
-	let selected: { type: PickableType, id: string } | null = null;
+	let selected: TokyoPick | null = null;
 
 	function onSelected(pick: TokyoPick) {
-		console.log(pick);
-		if (pick.id)
-			selected = {type: pick.type, id: pick.id};
+		selected = pick;
 	}
 
 	function isSelectedOfType(type: PickableType) {
@@ -31,9 +32,11 @@
 
 	$: selectedOperation = selected?.type === PickableType.Operation ? operations.find(op => op.gufi === selected?.id) : null;
 
+
 	// Loading of entity selection via query strings
 	const params = new URLSearchParams(window.location.search);
 	const idOperation = params.get('operation');
+
 	$: {
 		if (idOperation) {
 			selected = {type: PickableType.Operation, id: idOperation};
