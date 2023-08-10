@@ -9,7 +9,7 @@
 
 
 {#each operation.asPrintableEntries() as propvalue (propvalue.property)}
-	{@const value = propvalue.value || '(Unknown)'}
+	{@const value = propvalue.value || `(${i18n.t('Unknown')})`}
 	<DashboardCard>
 		<svelte:fragment slot="header">{i18n.t('glossary:operation.' + propvalue.property)}</svelte:fragment>
 		{i18n.t(value)}

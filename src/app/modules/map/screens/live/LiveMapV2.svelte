@@ -10,6 +10,8 @@
 	import {TokyoPick} from '@tokyo/types';
 	import ViewOperationDetails from '../../../core_service/operation/pages/ViewOperationDetails.svelte';
 	import OperationDetails from '../../../core_service/operation/components/OperationDetails.svelte';
+	import CModal from '@tokyo/gui/CModal.svelte';
+	import CLoading from '@tokyo/gui/CLoading.svelte';
 
 	export let history: H.History;
 
@@ -31,6 +33,12 @@
 
 	// Loading of entity selection via query strings
 	const params = new URLSearchParams(window.location.search);
+	const idOperation = params.get('operation');
+	$: {
+		if (idOperation) {
+			selected = {type: PickableType.Operation, id: idOperation};
+		}
+	}
 
 
 	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
@@ -71,5 +79,6 @@
 	</slot>
 	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onSelected(event.detail)}/>
 </Dashboard>
-
-
+{#if $query.isLoading || (idOperation && !selectedOperation)}
+	<CLoading/>
+{/if}
