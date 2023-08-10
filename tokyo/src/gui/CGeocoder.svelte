@@ -43,24 +43,23 @@
 	}
 </script>
 
-{#if false}
-	<CInput size={CSize.EXTRA_LARGE} bind:value={searchText}/>
-	{#if searchText.length >= 3 && $queryAutocomplete.isSuccess}
-		<div id="results">
-			{#each $queryAutocomplete.data.data as place}
-				<div class="place">
-					<CButton icon="map-pin-fill" size={CSize.EXTRA_SMALL}
-							 on:click={() => {
+<CInput size={CSize.EXTRA_LARGE} bind:value={searchText}/>
+{#if searchText.length >= 3 && $queryAutocomplete.isSuccess}
+	<div id="results">
+		{#each $queryAutocomplete.data.data as place}
+			<div class="place">
+				<CButton icon="map-pin-fill" size={CSize.EXTRA_SMALL}
+						 on:click={() => {
 							 $tokyoFlyToPosition = {...$tokyoFlyToPosition, latitude: place.lat, longitude: place.lon}
 							 dispatch('select', place);
 							 }}/>
-					<p>{place.formatted}</p>
-				</div>
-			{/each}
-		</div>
+				<p>{place.formatted}</p>
+			</div>
+		{/each}
+	</div>
 
-	{/if}
 {/if}
+
 <style lang="scss">
   @import './mixins.scss';
 

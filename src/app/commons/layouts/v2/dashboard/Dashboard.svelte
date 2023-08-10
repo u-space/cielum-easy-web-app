@@ -1,15 +1,40 @@
-<div class="container">
+<script lang="ts">
+	import CButton from '@tokyo/gui/CButton.svelte';
+	import {CSize} from '@tokyo/gui/CSizeWrapper';
+
+	export let canMenuOpen = false; // Setting this to true will automatically open, but allow for closing (and reopening)
+
+	let isMenuOpen = false;
+	const open = () => isMenuOpen = true;
+	const close = () => isMenuOpen = false;
+
+	$: {
+		if (canMenuOpen) {
+			open(); // Using a function to prevent reactivity on "isMenuOpen"
+		} else {
+			close();
+		}
+	}
+</script>
+
+<div class="container" style:--dashboard-aside-size={isMenuOpen ? '261px': 0}>
 	<aside>
-		<slot name="menu"/>
+		<div class="menu">
+			<slot name="menu"/>
+		</div>
 	</aside>
 	<main>
 		<slot/>
+		{#if canMenuOpen}
+			<div class="actions">
+				<CButton size={CSize.EXTRA_LARGE} icon="caret-double-right-bold"
+						 on:click={() => isMenuOpen = !isMenuOpen}/>
+			</div>
+		{/if}
 	</main>
 </div>
 
 <style lang="scss">
-  $dashboard-aside-size: 261px;
-
   .container {
     position: fixed;
     left: 0;
@@ -23,24 +48,53 @@
     & main {
       flex: 1;
 
-      background-color: purple
+      position: relative;
+
+      & .actions {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        pointer-events: none;
+
+        & :global(> *) {
+          pointer-events: auto;
+        }
+      }
     }
 
     & aside {
-      width: $dashboard-aside-size;
+      width: var(--dashboard-aside-size);
       height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
 
-      display: flex;
-      justify-content: center;
-      flex-direction: row;
-      flex-wrap: wrap;
+      background-color: var(--primary-900);
 
-      background-color: greenyellow;
+      transition: width var(--layout-transition-duration) var(--layout-transition-easing);
 
-      & :global(> *) {
-        flex: 1;
-        min-width: $dashboard-aside-size;
-        background-color: green;
+      & .menu {
+        min-height: 100%;
+        width: var(--dashboard-aside-size);
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(var(--dashboard-aside-size), 1fr));
+        grid-template-rows: repeat(auto-fit, 5rem);
+        gap: 2px;
+
+        & :global(> *) {
+          min-width: var(--dashboard-aside-size);
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
     }
   }
@@ -50,8 +104,12 @@
       flex-direction: column-reverse;
 
       & aside {
-        height: $dashboard-aside-size;
+        height: var(--dashboard-aside-size);
         width: 100%;
+
+        & .menu {
+          width: 100%;
+        }
       }
     }
   }

@@ -5,24 +5,48 @@
 	import {getOperationAPIClient} from '@utm-entities/v2/api/operation';
 	import {createQuery} from '@tanstack/svelte-query';
 	import {BaseOperation, OperationStateEnum} from '@utm-entities/v2/model/operation';
+	import * as H from 'history';
+	import {PickableType} from '@tokyo/util';
+	import {TokyoPick} from '@tokyo/types';
+	import ViewOperationDetails from '../../../core_service/operation/pages/ViewOperationDetails.svelte';
+	import OperationDetails from '../../../core_service/operation/components/OperationDetails.svelte';
 
-	export let history: History;
+	export let history: H.History;
 
-	const operationAPIClient = getOperationAPIClient(env.core_api, null); // TODO: move to root of new app
+
+	// Entity selection logic
+	let selected: { type: PickableType, id: string } | null = null;
+
+	function onSelected(pick: TokyoPick) {
+		console.log(pick);
+		if (pick.id)
+			selected = {type: pick.type, id: pick.id};
+	}
+
+	function isSelectedOfType(type: PickableType) {
+		return selected?.type === type;
+	}
+
+	$: selectedOperation = selected?.type === PickableType.Operation ? operations.find(op => op.gufi === selected?.id) : null;
+
+	// Loading of entity selection via query strings
+	const params = new URLSearchParams(window.location.search);
+
 
 	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
 		OperationStateEnum.NOT_ACCEPTED,
 		OperationStateEnum.ACTIVATED, OperationStateEnum.CLOSED,
 		OperationStateEnum.PENDING, OperationStateEnum.ROGUE];
 
+	const operationAPIClient = getOperationAPIClient(env.core_api, null); // TODO: move to root of new app
 	const query = createQuery({
 		queryKey: ['operations'],
 		queryFn: () => operationAPIClient.getOperations<BaseOperation>('', states),
 	});
 
-
+	$: operations = $query.isSuccess ? $query.data.ops : [];
 	$: liveMapViewsProps = {
-		operations: $query.isSuccess ? $query.data.ops : [],
+		operations,
 		geographicalZones: [],
 		vehiclePositions: new Map(),
 		t: (key: string) => key,
@@ -35,12 +59,17 @@
 	};
 </script>
 
-<Dashboard>
+<Dashboard canMenuOpen={!!selected}>
 	<slot slot="menu">
-		<p>Aside 1</p>
-		<p>Aside 2</p>
+		{#if selected}
+			{#if isSelectedOfType(PickableType.Operation) && selectedOperation}
+				<!-- TODO: Do it how it should be done
+				<ViewOperationDetails gufi={selected.id}/> -->
+				<OperationDetails operation={selectedOperation}/>
+			{/if}
+		{/if}
 	</slot>
-	<LiveMapView {...liveMapViewsProps}/>
+	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onSelected(event.detail)}/>
 </Dashboard>
 
 

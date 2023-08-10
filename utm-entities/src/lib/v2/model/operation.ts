@@ -121,6 +121,15 @@ export class BaseOperation {
 		if (this.operation_volumes.length === 0) return null;
 		return this.operation_volumes[this.operation_volumes.length - 1].effective_time_end;
 	}
+	asPrintableEntries() {
+		const entries: { property: string; value: string }[] = [];
+
+		entries.push({ property: 'name', value: this.name });
+		entries.push({ property: 'state', value: this.state });
+		entries.push({ property: 'contact', value: this.contact });
+		entries.push({ property: 'contact_phone', value: this.contact_phone });
+		return entries;
+	}
 }
 
 export class Operation
@@ -211,6 +220,19 @@ export class Operation
 			);
 		}
 		return requestOperation;
+	}
+
+	asPrintableEntries() {
+		const entries = super.asPrintableEntries();
+		if (this.creator) entries.push({ property: 'creator', value: this.creator.username });
+		if (this.owner) entries.push({ property: 'owner', value: this.owner.username });
+		if (this.submit_time)
+			entries.push({ property: 'submit_time', value: this.submit_time.toLocaleTimeString() });
+		if (this.update_time)
+			entries.push({ property: 'update_time', value: this.update_time.toLocaleTimeString() });
+		if (this.flight_comments)
+			entries.push({ property: 'flight_comments', value: this.flight_comments });
+		return entries;
 	}
 
 	set(prop: keyof Operation, value: Operation[keyof Operation]) {

@@ -10,6 +10,8 @@ export interface FlyToPosition {
 	latitude: number;
 	longitude: number;
 	zoom: number;
+	bearing?: number;
+	pitch?: number;
 	duration?: number; // in milliseconds
 }
 

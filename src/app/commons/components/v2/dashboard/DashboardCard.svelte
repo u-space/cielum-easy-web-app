@@ -13,44 +13,53 @@
 </script>
 
 <div class="card" style:danger="variant === DashboardCardVariant.DANGER">
-	<h1>
-		<slot name="header"/>
-	</h1>
+	{#if $$slots.header}
+		<h1>
+			<slot name="header"/>
+		</h1>
+	{/if}
 	<div class="content">
-		<slot/>
+		<slot>
+			Empty
+		</slot>
 	</div>
 </div>
 
 <style lang="scss">
   .card {
-    border-radius: var(--radius-m);
-
-    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
     pointer-events: auto;
+
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    font-size: 1rem;
 
     transition: all 2s;
 
     & h1 {
       padding: var(--spacing-1);
 
+      font-size: 0.9em;
       color: var(--primary-100);
-      text-align: center;
+      text-align: left;
       text-transform: uppercase;
 
-      background-color: var(--primary-700);
+      background-color: var(--primary-900);
     }
 
     & .content {
+      flex: 1;
+
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      justify-content: flex-start;
+      justify-content: center;
 
       padding: var(--padding-xs);
 
       color: var(--mirai-100);
 
-      background-color: var(--primary-900);
+      background-color: var(--primary-800);
     }
 
     &.danger {
