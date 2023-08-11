@@ -15,6 +15,8 @@
 	import {flyToCenterOfGeometry} from '@tokyo/store';
 	import {feature, featureCollection} from '@turf/helpers';
 	import {bbox, bboxPolygon} from '@turf/turf';
+	import {onMount} from 'svelte';
+	import {Geometry} from 'geojson';
 
 	export let history: H.History;
 
@@ -34,15 +36,42 @@
 
 
 	// Loading of entity selection via query strings
+	// This will only work if the query string is set before the component is loaded
 	const params = new URLSearchParams(window.location.search);
 	const idOperation = params.get('operation');
+	const idVolume: number | undefined = Number(params.get('volume')) ?? undefined;
 
-	$: {
+	onMount(() => {
 		if (idOperation) {
-			selected = {type: PickableType.Operation, id: idOperation};
+			selected = {type: PickableType.Operation, id: idOperation, volume: idVolume};
+		}
+	})
+
+	function centerOnVolume() {
+		if (idVolume === undefined) return;
+		const volume = selectedOperation?.operation_volumes[idVolume];
+		if (volume) {
+			flyToCenterOfGeometry(volume.operation_geography as Geometry);
 		}
 	}
 
+	function centerOnOperationVolumesBbox() {
+		const volumes = selectedOperation?.operation_volumes;
+		if (volumes) {
+			const volumesBbox = bbox(featureCollection(Object.values(volumes).map(volume => feature(volume.operation_geography as Geometry))));
+			flyToCenterOfGeometry(bboxPolygon(volumesBbox).geometry);
+		}
+	}
+
+	$: {
+		if (selectedOperation) {
+			if (idVolume) {
+				centerOnVolume();
+			} else {
+				centerOnOperationVolumesBbox();
+			}
+		}
+	}
 
 	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
 		OperationStateEnum.NOT_ACCEPTED,

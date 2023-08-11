@@ -64,6 +64,10 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 		}
 	}
 
+	asPrintableEntries(): { property: string; value: string }[] {
+		throw new Error('Method not implemented.');
+	}
+
 	asBackendFormat(): RequestOperationVolume {
 		if (!this.operation_geography) throw new Error('Operation volume must have a polygon');
 		if (!this.effective_time_begin) throw new Error('Operation volume must have a start time');
