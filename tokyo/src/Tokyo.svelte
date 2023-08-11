@@ -306,6 +306,27 @@
     position: relative;
     width: 100%;
     height: 100%;
+
+    & :global(.deck-tooltip) {
+
+      & :global(h1) {
+        font-size: 1rem;
+        color: var(--primary-900);
+      }
+
+      & :global(h2) {
+        font-size: 0.8rem;
+        color: var(--primary-800);
+      }
+
+      & :global(p) {
+        color: var(--primary-700);
+
+        & :global(.tooltip-property) {
+          font-weight: 900;
+        }
+      }
+    }
   }
 
   #tokyo-map {

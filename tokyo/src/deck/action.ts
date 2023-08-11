@@ -75,6 +75,13 @@ export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 			localStorage.setItem('Tokyo_v3_ViewState', JSON.stringify(newViewState));
 			tokyoViewState.set(newViewState as MapViewState);
 		},
+		getTooltip: (info: PickingInfo) =>
+			info.object?.properties?.tooltip && {
+				html: info.object.properties.tooltip,
+				style: {
+					background: 'none'
+				}
+			},
 		layers: getBaseLayers(params),
 		views: mapView
 	});
@@ -96,7 +103,9 @@ export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 				layers: [...getBaseLayers(params), ...params.layers, ...getEditLayers(params)],
 				onClick: getOnClickHandler({ deck, params, onClick: () => false }),
 				onHover: (info: PickingInfo) =>
-					node.dispatchEvent(new CustomEvent('hover', { detail: info.layer }))
+					node.dispatchEvent(
+						new CustomEvent('hover', { detail: info.object?.properties?.tooltip })
+					)
 			};
 			if (get(lastPositionUpdate) !== params.position) {
 				lastPositionUpdate.set(params.position);

@@ -17,6 +17,7 @@
 	import {bbox, bboxPolygon} from '@turf/turf';
 	import {onMount} from 'svelte';
 	import {Geometry} from 'geojson';
+	import i18n from '../../../../i18n'
 
 	export let history: H.History;
 
@@ -89,7 +90,7 @@
 		operations,
 		geographicalZones: [],
 		vehiclePositions: new Map(),
-		t: (key: string) => key,
+		t: i18n.t,
 		controlsOptions: {
 			geocoder: {
 				enabled: true,

@@ -65,7 +65,10 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 	}
 
 	asPrintableEntries(): { property: string; value: string }[] {
-		throw new Error('Method not implemented.');
+		const entries: { property: string; value: string }[] = [];
+		entries.push({ property: 'min_altitude', value: this.min_altitude.toString() });
+		entries.push({ property: 'max_altitude', value: this.max_altitude.toString() });
+		return entries;
 	}
 
 	asBackendFormat(): RequestOperationVolume {

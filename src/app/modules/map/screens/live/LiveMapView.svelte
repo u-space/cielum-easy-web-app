@@ -11,7 +11,7 @@
 	import {createEventDispatcher} from "svelte";
 	import {CButtonVariant} from "@tokyo/gui/CButton";
 	import {operationTokyoConverter} from "@tokyo/converters/core/operation";
-	import {Layer} from "leaflet";
+	import {Layer} from "@deck.gl/core/typed";
 	import {
 		vehiclePositionHeadTokyoConverter,
 		vehiclePositionTailTokyoConverter
@@ -77,7 +77,11 @@
 	}
 
 	// Hover logic
-	let hovered: Layer | null = null;
+	let hovered: string | null = null;
+
+	const defaultOperationDrawingProps = {
+		t,
+	}
 
 </script>
 
@@ -92,7 +96,7 @@
 			{@const operationDrawingProps = selected && selected.type === 'operation' ? {selected} : undefined }
 			<TokyoGenericMapElement
 					id={operationTokyoConverter.getId(operation)}
-					getLayer={operationTokyoConverter.getConverter(operation, operationDrawingProps)}
+					getLayer={operationTokyoConverter.getConverter(operation, {...defaultOperationDrawingProps, ...operationDrawingProps})}
 
 			/>
 		{/each}
@@ -153,7 +157,7 @@
 	</div>
 	{#if hovered}
 		<div id="hovered_info">
-			{hovered.id.split('|')[2] || hovered.id}
+			{@html hovered}
 		</div>
 	{/if}
 </div>
@@ -198,6 +202,20 @@
     background-color: var(--primary-800);
     color: var(--white-100);
     z-index: var(--z-index-fries);
+    padding: 0.5rem;
+
+    & :global(h1) {
+      font-size: 1rem;
+    }
+
+    & :global(h2) {
+      color: var(--mirai-100);
+      font-size: 0.95rem;
+    }
+
+    & :global(.tooltip-property) {
+      font-weight: 900;
+    }
   }
 
   .layers-panel {
