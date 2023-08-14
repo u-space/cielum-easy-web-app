@@ -7,10 +7,8 @@
 	import {BaseOperation, OperationStateEnum} from '@utm-entities/v2/model/operation';
 	import * as H from 'history';
 	import {PickableType} from '@tokyo/util';
-	import {TokyoPick, TokyoPickableElement} from '@tokyo/types';
-	import ViewOperationDetails from '../../../core_service/operation/pages/ViewOperationDetails.svelte';
+	import {TokyoPick} from '@tokyo/types';
 	import OperationDetails from '../../../core_service/operation/components/OperationDetails.svelte';
-	import CModal from '@tokyo/gui/CModal.svelte';
 	import CLoading from '@tokyo/gui/CLoading.svelte';
 	import {flyToCenterOfGeometry} from '@tokyo/store';
 	import {feature, featureCollection} from '@turf/helpers';

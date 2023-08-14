@@ -21,6 +21,7 @@
 	import CPanel from "@tokyo/gui/CPanel.svelte";
 	import CCheckbox from "@tokyo/gui/CCheckbox.svelte";
 	import {CCheckboxCheckedEvent} from "@tokyo/gui/CCheckbox";
+	import {isTouchDevice} from '@tokyo/util';
 
 	const dispatch = createEventDispatcher<{
 		'picked': TokyoPick // ID of Picked Entity
@@ -155,7 +156,7 @@
 			</div>
 		{/each}
 	</div>
-	{#if hovered}
+	{#if hovered && isTouchDevice}
 		<div id="hovered_info">
 			{@html hovered}
 		</div>
