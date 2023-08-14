@@ -87,6 +87,21 @@
 </script>
 
 <div id="map_with_fries">
+	<!-- Using isTouchDevice is a temporal fix -->
+	<div id='fries' style:width={pickings.length > 0 ? isTouchDevice ? '100%' : '200px' : '0px'}>
+		<div>
+			<CButton icon="x" variant={CButtonVariant.DANGER} fill on:click={() => tokyo.pick([])}/>
+
+		</div>
+		{#each pickings as pick}
+			{@const subtitle = pick.volume ? `${t(pick.type)} (Vol. ${pick.volume + 1})` : t(pick.type)}
+			<div>
+				<h2>{subtitle}</h2>
+				<CButton on:click={() => dispatch('picked', pick)} fill
+						 tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
+			</div>
+		{/each}
+	</div>
 	<Tokyo {t} mapOptions={{isPickEnabled: true}}
 		   controlsOptions={{zoom: { enabled: true}, backgroundModeSwitch: {enabled: true}, geocoder: {enabled: false}, geolocator: {enabled: true},...controlsOptions}}
 		   editOptions={{mode: EditMode.DISABLED} }
@@ -142,20 +157,6 @@
 					 on:click={toggleLayersPanel}/>
 		</div>
 	</Tokyo>
-	<div id='fries' style:width={pickings.length > 0 ? '200px' : '0px'}>
-		<div>
-			<CButton icon="x" variant={CButtonVariant.DANGER} fill on:click={() => tokyo.pick([])}/>
-
-		</div>
-		{#each pickings as pick}
-			{@const subtitle = pick.volume ? `${t(pick.type)} (Vol. ${pick.volume + 1})` : t(pick.type)}
-			<div>
-				<h2>{subtitle}</h2>
-				<CButton on:click={() => dispatch('picked', pick)} fill
-						 tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
-			</div>
-		{/each}
-	</div>
 	{#if hovered && isTouchDevice}
 		<div id="hovered_info">
 			{@html hovered}
@@ -168,6 +169,7 @@
   #map_with_fries {
     position: relative;
     display: flex;
+    flex-direction: row-reverse;
     width: 100%;
     height: 100%;
   }
