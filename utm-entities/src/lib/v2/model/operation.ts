@@ -7,6 +7,7 @@ import {
 	RequestOperationVolume,
 	ResponseOperationVolume
 } from './operation_volume';
+import { ResponseBaseVehicle, ResponseVehicle, UtmBaseVehicle, UtmVehicle } from './vehicle';
 export const OPERATION_LOCALES_OPTIONS = {
 	year: 'numeric' as const,
 	month: 'numeric' as const,
@@ -40,8 +41,7 @@ const RequestOperation = Type.Object(
 		state: OperationState,
 		submit_time: Type.Optional(Type.String()), // Undefined when creating a new operation, defined when updating an existing operation
 		update_time: Type.Optional(Type.String()), // Undefined when creating a new operation, defined when updating an existing operation
-		// TODO: Add uas_registrations
-		uas_registrations: Type.Array(Type.String())
+		uas_registrations: Type.Array(ResponseBaseVehicle)
 	},
 	{ additionalProperties: false }
 );
@@ -54,8 +54,8 @@ const ResponseBaseOperation = Type.Object({
 	//contact: Type.String(),
 	//contact_phone: Type.String(),
 	operation_volumes: Type.Array(ResponseOperationVolume),
-	state: OperationState
-	// TODO: uas_registrations
+	state: OperationState,
+	uas_registrations: Type.Array(ResponseBaseVehicle)
 });
 
 export type ResponseBaseOperation = Static<typeof ResponseBaseOperation>;
@@ -83,6 +83,7 @@ export class BaseOperation {
 	state: OperationState;
 	contact: string; // TODO: backend should prioritize privacy of users, so this shouldn't be sent.
 	contact_phone: string;
+	uas_registrations: UtmBaseVehicle[];
 
 	constructor(backendOperation?: ResponseBaseOperation) {
 		if (backendOperation) {
@@ -100,6 +101,9 @@ export class BaseOperation {
 				(operationVolume) => new OperationVolume(operationVolume)
 			);
 			this.state = backendOperation.state;
+			this.uas_registrations = backendOperation.uas_registrations.map(
+				(vehicle) => new UtmBaseVehicle(vehicle)
+			);
 		} else {
 			// Should not be used directly, as BaseOperations should not be created from the frontend
 			// Only by inheriting classes
@@ -109,6 +113,7 @@ export class BaseOperation {
 			this.contact_phone = '';
 			this.operation_volumes = [];
 			this.state = OperationState.PROPOSED;
+			this.uas_registrations = [];
 		}
 	}
 
@@ -141,7 +146,7 @@ export class Operation
 	submit_time: Date | null;
 	update_time: Date | null;
 	flight_comments?: string;
-	uas_registrations: string[];
+	uas_registrations: UtmBaseVehicle[];
 
 	constructor(backendOperation?: ResponseOperation) {
 		super(backendOperation);
@@ -158,13 +163,16 @@ export class Operation
 			this.submit_time = new Date(backendOperation.submit_time);
 			this.update_time = new Date(backendOperation.update_time);
 			this.flight_comments = backendOperation.flight_comments;
-			this.uas_registrations = []; // TODO add uas_registrations
+			this.uas_registrations = backendOperation.uas_registrations.map(
+				(vehicle) => new UtmBaseVehicle(vehicle)
+			);
 		} else {
 			this.creator = null;
 			this.owner = null;
 			this.submit_time = null;
 			this.update_time = null;
-			this.uas_registrations = ['65a072bb-49bb-45a5-bae6-a342cc2e66aa'];
+			this.flight_comments = undefined;
+			this.uas_registrations = [];
 		}
 	}
 
@@ -206,7 +214,7 @@ export class Operation
 			state: 'PROPOSED', // TODO: fix this
 			creator: this.creator.username,
 			operation_volumes: this.operation_volumes.map((volume) => volume.asBackendFormat()),
-			uas_registrations: this.uas_registrations
+			uas_registrations: []
 		};
 
 		if (this.gufi) requestOperation.gufi = this.gufi;

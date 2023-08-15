@@ -78,6 +78,8 @@ function getConverterFromOperation(_operation: BaseOperation, options?: Operatio
 				geometry: volume.operation_geography,
 				properties: {
 					max_altitude: volume.max_altitude,
+					volume,
+					operation,
 					tooltip: options?.t
 						? getHTMLTooltip(options.t, operation, volume, index)
 						: undefined
@@ -85,7 +87,7 @@ function getConverterFromOperation(_operation: BaseOperation, options?: Operatio
 			})),
 			id,
 			filled: true,
-			getElevation: (polygon) => polygon.properties?.max_altitude,
+			getElevation: (polygon) => polygon.properties?.volume.max_altitude,
 			pickable: true,
 			extruded: true,
 			getFillColor,

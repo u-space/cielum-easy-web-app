@@ -8,7 +8,7 @@
 	import {EditMode, TokyoPick} from '@tokyo/types';
 	import CButton from '@tokyo/gui/CButton.svelte';
 	import {CTooltipPosition} from '@tokyo/gui/CTooltip';
-	import {createEventDispatcher} from "svelte";
+	import {createEventDispatcher, onMount} from "svelte";
 	import {CButtonVariant} from "@tokyo/gui/CButton";
 	import {operationTokyoConverter} from "@tokyo/converters/core/operation";
 	import {Layer} from "@deck.gl/core/typed";
@@ -22,6 +22,7 @@
 	import CCheckbox from "@tokyo/gui/CCheckbox.svelte";
 	import {CCheckboxCheckedEvent} from "@tokyo/gui/CCheckbox";
 	import {isTouchDevice} from '@tokyo/util';
+	import LiveMapPick from './LiveMapPick.svelte';
 
 	const dispatch = createEventDispatcher<{
 		'picked': TokyoPick // ID of Picked Entity
@@ -84,22 +85,36 @@
 		t,
 	}
 
+	// Resize logic
+	let isMinWidth = false;
+	onMount(() => {
+		const mediaQuery = window.matchMedia('(min-width: 900px)');
+		const updateMinWidth = () => {
+			isMinWidth = mediaQuery.matches;
+		}
+		mediaQuery.addEventListener('change', updateMinWidth);
+		updateMinWidth();
+		return () => mediaQuery.removeEventListener('change', updateMinWidth);
+	})
 </script>
 
 <div id="map_with_fries">
 	<!-- Using isTouchDevice is a temporal fix -->
-	<div id='fries' style:width={pickings.length > 0 ? isTouchDevice ? '100%' : '200px' : '0px'}>
+	<div id='fries' style:width={pickings.length > 0 ? !isMinWidth ? '100%' : '400px' : '0px'}>
 		<div>
 			<CButton icon="x" variant={CButtonVariant.DANGER} fill on:click={() => tokyo.pick([])}/>
 
 		</div>
 		{#each pickings as pick}
-			{@const subtitle = pick.volume ? `${t(pick.type)} (Vol. ${pick.volume + 1})` : t(pick.type)}
-			<div>
-				<h2>{subtitle}</h2>
-				<CButton on:click={() => dispatch('picked', pick)} fill
-						 tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
-			</div>
+			<!--
+				{@const subtitle = pick.volume ? `${t(pick.type)} (Vol. ${pick.volume + 1})` : t(pick.type)}
+				<div>
+					<h2>{subtitle}</h2>
+					<p>{JSON.stringify(pick.properties)}</p>
+					<CButton on:click={() => dispatch('picked', pick)} fill
+							 tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
+				</div> -->
+			<LiveMapPick pick={pick}/>
 		{/each}
 	</div>
 	<Tokyo {t} mapOptions={{isPickEnabled: true}}
@@ -175,7 +190,7 @@
   }
 
   #fries {
-    overflow: visible;
+    overflow: auto;
     flex-shrink: 0;
     background-color: var(--primary-800);
     transition: width 0.5s;
@@ -204,7 +219,7 @@
     left: 1rem;
     background-color: var(--primary-800);
     color: var(--white-100);
-    z-index: var(--z-index-fries);
+    z-index: var(--z-index-hovered);
     padding: 0.5rem;
 
     & :global(h1) {

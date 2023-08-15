@@ -77,7 +77,7 @@
 		"volumes_description": "Descripción de los volumenes",
 		"free_text": "Texto libre",
 		"state": "Estado",
-		"uas_registration": "Aeronaves",
+		"uas_registration": "Aeronave",
 		"uas_registrations": "Aeronaves",
 		"remote_sensor_id": "Registro en sensores remotos",
 		"zero_operations": "No hay operaciones, o no hay operaciones que cumplan los filtros seleccionados.",
