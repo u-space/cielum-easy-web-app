@@ -13,6 +13,7 @@
 	import {operationTokyoConverter} from "@tokyo/converters/core/operation";
 	import {Layer} from "@deck.gl/core/typed";
 	import {
+		vehiclePositionHeadProjectionTokyoConverter,
 		vehiclePositionHeadTokyoConverter,
 		vehiclePositionTailTokyoConverter
 	} from "@tokyo/converters/core/position";
@@ -62,6 +63,7 @@
 	}
 
 	$: visibleVehiclePositionsEntries = visible.vehicles ? vehiclePositionsEntries : [];
+
 	$: visibleOperations = visible.operations ? operations : [];
 	$: visibleGeographicalZones = visible.geographical_zones ? geographicalZones : [];
 
@@ -123,6 +125,19 @@
 		   on:hover={({detail}) => hovered = detail}
 		   on:pick={({detail}) => pickings = detail} bind:this={tokyo}>
 		<!-- Map Elements -->
+		{#each visibleVehiclePositionsEntries as [id, positions] (id)}
+			<TokyoGenericMapElement
+					id={vehiclePositionHeadTokyoConverter.getId(positions[positions.length - 1])}
+					getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1])}/>
+			<TokyoGenericMapElement
+					id={vehiclePositionHeadProjectionTokyoConverter.getId(positions[positions.length - 1])}
+					getLayer={vehiclePositionHeadProjectionTokyoConverter.getConverter(positions[positions.length - 1])}/>
+			{#if positions.length > 1}
+				<TokyoGenericMapElement
+						id={vehiclePositionTailTokyoConverter.getId(positions)}
+						getLayer={vehiclePositionTailTokyoConverter.getConverter(positions)}/>
+			{/if}
+		{/each}
 		{#each visibleOperations as operation (operation.gufi)}
 			{@const operationDrawingProps = selected && selected.type === 'operation' ? {selected} : undefined }
 			<TokyoGenericMapElement
@@ -138,16 +153,7 @@
 
 			/>
 		{/each}
-		{#each visibleVehiclePositionsEntries as [id, positions] (id)}
-			<TokyoGenericMapElement
-					id={vehiclePositionHeadTokyoConverter.getId(positions[positions.length - 1])}
-					getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1])}/>
-			{#if positions.length > 1}
-				<TokyoGenericMapElement
-						id={vehiclePositionTailTokyoConverter.getId(positions)}
-						getLayer={vehiclePositionTailTokyoConverter.getConverter(positions)}/>
-			{/if}
-		{/each}
+
 		<div class="controls" slot="extra_controls">
 
 			{#if isShowingLayersPanel}

@@ -74,6 +74,10 @@ module.exports = composePlugins(withNx(), withReact(), (config: any) => {
 			{
 				test: /\.(ico|ts\.sample)$/,
 				type: 'asset/resource'
+			},
+			{
+				test: /\.gltf$/,
+				type: 'asset/resource'
 			}
 			/*{
 					test: /\.css$/,

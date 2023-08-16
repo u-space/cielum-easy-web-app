@@ -13,18 +13,54 @@
 	import {flyToCenterOfGeometry} from '@tokyo/store';
 	import {feature, featureCollection} from '@turf/helpers';
 	import {bbox, bboxPolygon} from '@turf/turf';
-	import {onMount} from 'svelte';
 	import {Geometry} from 'geojson';
 	import i18n from '../../../../i18n'
+	import {getQueryStringSelection, QueryStringSelection} from '../../../core_service/query_string_selection_load';
+	import {onMount} from 'svelte';
+	import {PositionEntity} from '@utm-entities/position';
+	import io from 'socket.io-client';
 
 	export let history: H.History;
 
+	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
+		OperationStateEnum.NOT_ACCEPTED,
+		OperationStateEnum.ACTIVATED, OperationStateEnum.CLOSED,
+		OperationStateEnum.PENDING, OperationStateEnum.ROGUE];
+
+	const operationAPIClient = getOperationAPIClient(env.core_api, null); // TODO: move to root of new app
+	const query = createQuery({
+		queryKey: ['operations'],
+		queryFn: () => operationAPIClient.getOperations<BaseOperation>('', states),
+	});
+
+	$: operations = $query.isSuccess ? $query.data.ops : [];
+	let vehiclePositions = new Map();
+
+	onMount(() => {
+		const socket = io(env.core_api + '/public'); // TODO: use private if logged in
+		socket.on('new-position', (position: PositionEntity) => {
+			const id = position.gufi + position.uvin;
+			let positionsOfOneVehicle = vehiclePositions.get(id) || [];
+			positionsOfOneVehicle = [...positionsOfOneVehicle, position];
+			vehiclePositions = new Map(vehiclePositions).set(id, positionsOfOneVehicle);
+		});
+		return () => {
+			socket.disconnect();
+		};
+	})
 
 	// Entity selection logic
-	let selected: TokyoPick | null = null;
+	let selected: QueryStringSelection = getQueryStringSelection();
 
-	function onSelected(pick: TokyoPick) {
-		selected = pick;
+	function onPick(pick: Partial<TokyoPick>) {
+		const {type, id, volume} = pick;
+		if (!id) {
+			selected = null;
+		} else if (type === PickableType.Operation && volume === undefined) {
+			selected = null
+		} else {
+			selected = {type, id, volume};
+		}
 	}
 
 	function isSelectedOfType(type: PickableType) {
@@ -32,19 +68,9 @@
 	}
 
 	$: selectedOperation = selected?.type === PickableType.Operation ? operations.find(op => op.gufi === selected?.id) : null;
+	$: idOperation = selected?.type === PickableType.Operation ? selected.id : null;
+	$: idVolume = selected?.volume;
 
-
-	// Loading of entity selection via query strings
-	// This will only work if the query string is set before the component is loaded
-	const params = new URLSearchParams(window.location.search);
-	const idOperation = params.get('operation');
-	const idVolume: number | undefined = Number(params.get('volume')) ?? undefined;
-
-	onMount(() => {
-		if (idOperation) {
-			selected = {type: PickableType.Operation, id: idOperation, volume: idVolume};
-		}
-	})
 
 	function centerOnVolume() {
 		if (idVolume === undefined) return;
@@ -72,22 +98,13 @@
 		}
 	}
 
-	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
-		OperationStateEnum.NOT_ACCEPTED,
-		OperationStateEnum.ACTIVATED, OperationStateEnum.CLOSED,
-		OperationStateEnum.PENDING, OperationStateEnum.ROGUE];
+	// Map props
 
-	const operationAPIClient = getOperationAPIClient(env.core_api, null); // TODO: move to root of new app
-	const query = createQuery({
-		queryKey: ['operations'],
-		queryFn: () => operationAPIClient.getOperations<BaseOperation>('', states),
-	});
-
-	$: operations = $query.isSuccess ? $query.data.ops : [];
+	$: isLoading = $query.isLoading || (idOperation && !selectedOperation); // TODO: handle error
 	$: liveMapViewsProps = {
 		operations,
 		geographicalZones: [],
-		vehiclePositions: new Map(),
+		vehiclePositions,
 		t: i18n.t,
 		controlsOptions: {
 			geocoder: {
@@ -96,6 +113,7 @@
 			}
 		}
 	};
+
 </script>
 
 <Dashboard canMenuOpen={!!selected}>
@@ -108,8 +126,8 @@
 			{/if}
 		{/if}
 	</slot>
-	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onSelected(event.detail)}/>
+	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onPick(event.detail)}/>
 </Dashboard>
-{#if $query.isLoading || (idOperation && !selectedOperation)}
+{#if isLoading}
 	<CLoading/>
 {/if}

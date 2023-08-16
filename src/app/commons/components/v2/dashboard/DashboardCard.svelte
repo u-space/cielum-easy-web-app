@@ -36,15 +36,16 @@
 
     transition: all 2s;
 
+
     & h1 {
       padding: var(--spacing-1);
 
       font-size: 0.9em;
-      color: var(--primary-100);
+      font-weight: bold;
+      color: var(--primary-300);
       text-align: left;
       text-transform: uppercase;
 
-      background-color: var(--primary-900);
     }
 
     & .content {
@@ -58,7 +59,6 @@
       padding: var(--padding-xs);
 
       color: var(--mirai-100);
-
       background-color: var(--primary-800);
     }
 

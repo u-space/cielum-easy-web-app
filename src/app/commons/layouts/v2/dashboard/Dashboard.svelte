@@ -45,6 +45,7 @@
     display: flex;
     justify-content: flex-start;
 
+
     & main {
       flex: 1;
 
@@ -85,7 +86,6 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(var(--dashboard-aside-size), 1fr));
         grid-template-rows: repeat(auto-fit, 5rem);
-        gap: 2px;
 
         & :global(> *) {
           min-width: var(--dashboard-aside-size);
@@ -94,6 +94,8 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          padding: 1em;
+          box-sizing: border-box;
         }
       }
     }

@@ -9,6 +9,9 @@ import type { ConvertToLayer, RGBA, RGBnumber } from '../../types';
 import { GeoJsonLayer } from '@deck.gl/layers/typed';
 import type { BaseOperation } from '@utm-entities/v2/model/operation';
 import type { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { ELEVATION_MULTIPLIER } from '../util';
+import type { Position } from 'geojson';
+import GL from '@luma.gl/constants';
 
 export interface OperationDrawingProps {
 	fillAlpha?: RGBnumber; // 0-255
@@ -44,6 +47,14 @@ function getHTMLTooltip(
 
 function getConverterFromOperation(_operation: BaseOperation, options?: OperationDrawingProps) {
 	const operation = _.cloneDeep(_operation);
+
+	operation.operation_volumes.forEach((volume) => {
+		if (volume.operation_geography)
+			volume.operation_geography.coordinates[0].forEach((coordinate) => {
+				coordinate[2] = volume.min_altitude * ELEVATION_MULTIPLIER;
+			});
+	});
+
 	const id = getIdFromOperation(operation);
 	const fillAlpha = options?.fillAlpha ?? 100;
 	const lineAlpha = options?.lineAlpha ?? 255;
@@ -73,22 +84,28 @@ function getConverterFromOperation(_operation: BaseOperation, options?: Operatio
 	return () =>
 		new GeoJsonLayer({
 			// TODO: Could use loaders.gl format to speed-up loading
-			data: operation.operation_volumes.map((volume, index) => ({
-				type: 'Feature',
-				geometry: volume.operation_geography,
-				properties: {
-					max_altitude: volume.max_altitude,
-					volume,
-					operation,
-					tooltip: options?.t
-						? getHTMLTooltip(options.t, operation, volume, index)
-						: undefined
-				}
-			})),
+			data: operation.operation_volumes.map((volume, index) => {
+				return {
+					type: 'Feature',
+					geometry: volume.operation_geography,
+					properties: {
+						max_altitude: volume.max_altitude,
+						min_altitude: volume.min_altitude,
+						volume,
+						operation,
+						tooltip: options?.t
+							? getHTMLTooltip(options.t, operation, volume, index)
+							: undefined
+					}
+				};
+			}),
 			id,
-			filled: true,
-			getElevation: (polygon) => polygon.properties?.volume.max_altitude,
+			//getElevation: (polygon) =>
+			//	polygon.properties?.volume.max_altitude * ELEVATION_MULTIPLIER,
+			getElevation: (polygon) =>
+				polygon.properties?.volume.max_altitude * ELEVATION_MULTIPLIER,
 			pickable: true,
+			wireframe: true,
 			extruded: true,
 			getFillColor,
 			getLineWidth,

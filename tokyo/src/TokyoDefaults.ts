@@ -47,7 +47,7 @@ export const FR_LINE_COLOR: RGBA = [100, 100, 100, 255];
 // Drone Marker
 export const ACTIVE_DRONE_MARKER_COLOR: RGB = [62, 223, 62];
 export const INACTIVE_DRONE_MARKER_COLOR: RGBA = [206, 206, 206, 255];
-export const ACTIVE_DRONE_LINE_COLOR: RGBA = [85, 195, 85, 150];
+export const ACTIVE_DRONE_LINE_COLOR: RGBA = [85, 255, 85, 255];
 
 /*
   Operation Coloring

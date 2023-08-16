@@ -150,7 +150,7 @@
 
       & label {
         font-weight: bold;
-        color: var(--primary-400);
+        color: var(--primary-300);
         margin-top: 1em;
       }
 
