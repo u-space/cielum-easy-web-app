@@ -95,6 +95,7 @@
 		"comments": "Comentarios",
 		"altitude_gps": "Altura GPS",
 		"id": "ID de Posición",
+		"time_sent": "Reporte enviado a las",
 		"operationId": "Operación",
 		"plural_generic": "Posiciones",
 		"singular_generic": "Posición"

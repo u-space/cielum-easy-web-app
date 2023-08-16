@@ -6,23 +6,53 @@ import { IconLayer, PathLayer } from '@deck.gl/layers/typed';
 import { SimpleMeshLayer } from '@deck.gl/mesh-layers/typed';
 import { ConeGeometry } from '@luma.gl/engine';
 import vehiclePositionMarker from '../../img/vehicle_position.png';
+import { BaseOperation } from '@utm-entities/v2/model/operation';
+import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 
-type VehiclePositionHeadTokyoConverter = ConvertToLayer<PositionEntity, undefined>;
+export interface VehiclePositionHeadDrawingProps {
+	t: (key: string) => string;
+}
 
+type VehiclePositionHeadTokyoConverter = ConvertToLayer<
+	PositionEntity,
+	VehiclePositionHeadDrawingProps
+>;
+
+function getHTMLTooltip(t: (key: string) => string, position: PositionEntity) {
+	let html = `<h1>${position.uvin}</h1>`; // TODO: Add vehicle name
+	// html += `<h2>${t('Volume')} ${index + 1} / ${operation.operation_volumes.length}</h2>`;
+	[
+		{ property: 'time_sent', value: new Date(position.time_sent).toLocaleTimeString() },
+		{ property: 'heading', value: position.heading.toString() },
+		{ property: 'altitude_gps', value: position.altitude_gps.toString() }
+	].forEach((entry) => {
+		html += `<p><span class="tooltip-property">${t(
+			`glossary:positions.${entry.property}`
+		)}: </span>${t(entry.value)}</p>`;
+	});
+	return html;
+}
 const getConverterFromPosition: VehiclePositionHeadTokyoConverter['getConverter'] =
-	(position: PositionEntity) => () => {
+	(position: PositionEntity, options: VehiclePositionHeadDrawingProps) => () => {
 		return new SimpleMeshLayer({
 			id: getIdFromPosition(position),
-			data: [position],
+			data: [
+				{
+					position: position,
+					properties: {
+						tooltip: options?.t ? getHTMLTooltip(options.t, position) : undefined
+					}
+				}
+			],
 			pickable: true,
-			mesh: new ConeGeometry({ radius: 100, height: 400 }),
-			getColor: [0, 0, 0],
+			mesh: new ConeGeometry({ radius: 50, height: 200 }),
+			getColor: [0, 150, 0],
 			parameters: {
 				depthTest: false
 			},
 			getPosition: (d) => [
-				d.location.coordinates[0],
-				d.location.coordinates[1],
+				d.position.location.coordinates[0],
+				d.position.location.coordinates[1],
 				position.altitude_gps * ELEVATION_MULTIPLIER
 			],
 			getOrientation: (d) => [0, -position.heading, 0]

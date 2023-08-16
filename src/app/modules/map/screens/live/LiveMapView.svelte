@@ -128,7 +128,7 @@
 		{#each visibleVehiclePositionsEntries as [id, positions] (id)}
 			<TokyoGenericMapElement
 					id={vehiclePositionHeadTokyoConverter.getId(positions[positions.length - 1])}
-					getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1])}/>
+					getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1], {t})}/>
 			<TokyoGenericMapElement
 					id={vehiclePositionHeadProjectionTokyoConverter.getId(positions[positions.length - 1])}
 					getLayer={vehiclePositionHeadProjectionTokyoConverter.getConverter(positions[positions.length - 1])}/>
