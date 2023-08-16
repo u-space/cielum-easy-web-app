@@ -69,7 +69,7 @@
 	}
 
 	$: stateColor = pick.properties?.operation ? OPERATION_STATE_COLORS_CSS[pick.properties.operation.state as keyof typeof OPERATION_STATE_COLORS_CSS] : undefined;
-	$: console.log('stateColor', stateColor);
+
 </script>
 
 <div class="pick" style:--state-color={stateColor}>
@@ -95,8 +95,6 @@
 					<label for="uas_registration">{i18n.t('glossary:operation.uas_registration')}</label>
 					<p id="uas_registration">{operation.uas_registrations[0].displayName}</p>
 				{/if}
-				<label for="state">{i18n.t('glossary:operation.state')}</label>
-				<p id="state">{i18n.t(operation.state)}</p>
 			</div>
 			<div class="label">
 				{i18n.t(operation.state)}
