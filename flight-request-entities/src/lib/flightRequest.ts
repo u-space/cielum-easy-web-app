@@ -5,11 +5,12 @@ import Joi from 'joi';
 import { GeographicalZone } from './geographicalZone';
 import { CoordinatorEntity } from './coordinator';
 import { VehicleEntity } from '@utm-entities/vehicle';
-import { OperationEntity, OperationVolume } from '@utm-entities/operation';
 import { UserEntity } from '@utm-entities/user';
 import { buildFilterAndOrderParametersObject } from './_util';
 import { EntityHasDisplayName } from './types';
 import { CoordinationEntity } from './coordination';
+import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { Operation } from '@utm-entities/v2/model/operation';
 
 export enum FlightRequestState {
 	REQUIRE_APPROVAL = 'REQUIRE_APPROVAL',
@@ -32,7 +33,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 	volumes: Array<OperationVolume>;
 	uavs: Array<VehicleEntity>;
 	state?: FlightRequestState;
-	operation?: OperationEntity[];
+	operation?: Operation[];
 	coordination?: CoordinationEntity[];
 	operator?: UserEntity | string | null;
 	creator?: UserEntity;
@@ -113,7 +114,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		this.state = state;
 	}
 
-	setOperation(operation: OperationEntity[]) {
+	setOperation(operation: Operation[]) {
 		this.operation = operation;
 	}
 
@@ -189,7 +190,7 @@ const transformFlightRequest = (data: any) => {
 	};
 };
 
-export const getFlightRequestAPIClient = (api: string, token: string) => {
+export const getFlightRequestAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 20000,

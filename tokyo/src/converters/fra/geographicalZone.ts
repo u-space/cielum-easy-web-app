@@ -60,6 +60,8 @@ function getConverterFromGeographicalZone(
 			getLineColor: lineColor,
 			lineWidthUnits: 'pixels',
 			getLineWidth: 1,
-			filled: true
+			filled: true,
+			extruded: true,
+			getElevation: 400
 		});
 }

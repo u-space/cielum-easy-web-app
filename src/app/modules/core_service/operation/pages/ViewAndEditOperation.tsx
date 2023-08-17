@@ -7,13 +7,12 @@ import POperationStateSelect from '@pcomponents/POperationStateSelect';
 import PTextArea from '@pcomponents/PTextArea';
 import PVehicleSelect from '@pcomponents/PVehicleSelect';
 import styles from '../../../../commons/Pages.module.scss';
-import { OperationEntity } from '@utm-entities/operation';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
 import { VehicleEntity } from '@utm-entities/vehicle';
 import { useAuthStore } from '../../../auth/store';
 import { useSchemaStore } from '../../../schemas/store';
-import { CSSProperties, FC, useEffect } from 'react';
+import { CSSProperties, FC } from 'react';
 import PNumberInput from '@pcomponents/PNumberInput';
 import env from '../../../../../vendor/environment/env';
 import { reactify } from 'svelte-preprocess-react';
@@ -21,17 +20,15 @@ import Tokyo from '@tokyo/Tokyo.svelte';
 import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
 import { EditMode, TokyoProps } from '@tokyo/types';
 import { operationTokyoConverter } from '@tokyo/converters/core/operation';
-import { tokyoViewState, useTokyo } from '@tokyo/store';
+import { useTokyo } from '@tokyo/store';
 import { Polygon } from 'geojson';
-import _ from 'lodash';
-import { isDeckMounted } from '@tokyo/deck/action';
-import { get } from 'svelte/store';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { Operation } from '@utm-entities/v2/model/operation';
 
 interface BaseOperationDetailsProps {
-	ls: UseLocalStoreEntity<OperationEntity>;
+	ls: UseLocalStoreEntity<Operation>;
 	isEditing: boolean;
 	isCreating: boolean;
 }
@@ -45,7 +42,7 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 			{!isCreating && (
 				<PInput
 					id="gufi"
-					defaultValue={ls.entity.gufi}
+					defaultValue={ls.entity.gufi || ''}
 					label={t('operation.gufi')}
 					disabled={true}
 					{...flags}
@@ -61,14 +58,21 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 				inline
 				{...flags}
 			/>
-			{Object.keys(ls.entity).map((prop) => {
+			{Object.keys(ls.entity).map((_prop) => {
+				const prop = _prop as keyof Operation;
+				const value = ls.entity[prop] as string | null;
 				if (
-					ls.entity.isBasic(prop) &&
 					prop !== 'gufi' &&
 					prop !== 'name' &&
 					prop !== 'state' &&
 					prop !== 'flight_comments' &&
-					prop !== 'aircraft_comments'
+					prop !== 'owner' &&
+					//					prop !== 'uas_registrations' &&
+					prop !== 'begin' &&
+					prop !== 'end' &&
+					prop !== 'displayName' &&
+					prop !== 'operation_volumes' &&
+					value !== null
 				) {
 					const id = `input-${prop}`;
 					const label = t(`operation.${prop}`);
@@ -77,11 +81,15 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 						<PInput
 							key={prop}
 							id={id}
-							defaultValue={ls.entity[prop]}
+							defaultValue={value}
 							label={label}
 							explanation={explanation}
 							disabled={!isEditing}
-							onChange={(value) => (ls.entity[prop] = value)}
+							onChange={(value) => {
+								// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+								// @ts-ignore
+								ls.entity[prop] = value;
+							}}
 							{...flags}
 							inline
 						/>
@@ -95,7 +103,7 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 };
 
 interface DetailedOperationDetailsProps {
-	ls: UseLocalStoreEntity<OperationEntity>;
+	ls: UseLocalStoreEntity<Operation>;
 	isEditing: boolean;
 	isAdmin?: boolean;
 }
@@ -149,7 +157,7 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 				fill={false}
 			/>
 
-			<PVehicleSelect
+			{/*<PVehicleSelect
 				label={t('glossary:operation.uas_registrations')}
 				onSelect={(value: VehicleEntity[]) => ls.setInfo('uas_registrations', value)}
 				preselected={ls.entity.uas_registrations}
@@ -161,7 +169,7 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 				token={token}
 				schema={schemaVehicles}
 				api={env.core_api}
-			/>
+			/>*/}
 
 			{/* <PTextArea
 				id="flight_comments"
@@ -184,7 +192,7 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 };
 
 interface VolumeDetailsProps {
-	ls: UseLocalStoreEntity<OperationEntity>;
+	ls: UseLocalStoreEntity<Operation>;
 	isEditing: boolean;
 	isAbleToChangeDates: boolean;
 }
@@ -258,7 +266,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				id="effective_time_begin"
 				label={t('glossary:volume.effective_time_begin')}
 				defaultValue={volume.effective_time_begin || new Date()}
-				onChange={(value) => (volume.effective_time_begin = value)}
+				onChange={(value) => volume.set('effective_time_begin', value)}
 				disabled={!isEditing || !isAbleToChangeDates}
 				inline
 				isTime
@@ -268,7 +276,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				id="effective_time_begin"
 				label={t('glossary:volume.effective_time_end')}
 				defaultValue={volume.effective_time_end || new Date()}
-				onChange={(value) => (volume.effective_time_end = value)}
+				onChange={(value) => volume.set('effective_time_end', value)}
 				disabled={!isEditing || !isAbleToChangeDates}
 				inline
 				isTime
@@ -288,7 +296,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				) {
 					const id = `input-${prop}`;
 					const label = t(`glossary:volume.${prop}`);
-					const value = volume[prop];
+					const value = volume.get(prop);
 					if (typeof value === 'number') {
 						return (
 							<PNumberInput
@@ -301,7 +309,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 								label={label}
 								onChange={(value) => {
 									// eslint-disable-next-line @typescript-eslint/no-explicit-any
-									(ls.entity.operation_volumes[0][prop] as any) = value;
+									ls.entity.operation_volumes[0].set(prop, value);
 								}}
 							/>
 						);
@@ -317,7 +325,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				defaultValue={ls.entity.operation_volumes[0].near_structure}
 				label={t('glossary:volume.near_structure')}
 				disabled={!isEditing}
-				onChange={(value) => (ls.entity.operation_volumes[0].near_structure = value)}
+				onChange={(value) => ls.entity.operation_volumes[0].set('near_structure', value)}
 				isRequired
 				isDarkVariant
 				inline
@@ -328,7 +336,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 				label={t('glossary:volume.beyond_visual_line_of_sight')}
 				disabled={!isEditing}
 				onChange={(value) =>
-					(ls.entity.operation_volumes[0].beyond_visual_line_of_sight = value)
+					ls.entity.operation_volumes[0].set('beyond_visual_line_of_sight', value)
 				}
 				isRequired
 				isDarkVariant
@@ -339,7 +347,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 };
 
 export interface ViewAndEditOperationProps {
-	ls: UseLocalStoreEntity<OperationEntity>;
+	ls: UseLocalStoreEntity<Operation>;
 	isEditing: boolean;
 	isAbleToChangeState?: boolean;
 	isCreating?: boolean;

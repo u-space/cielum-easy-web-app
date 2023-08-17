@@ -168,6 +168,8 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 		}
 	}, [step, setBlockingCenter]);
 
+	if (token === null) return null;
+
 	if (step === 1) {
 		return (
 			<>

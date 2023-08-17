@@ -17,6 +17,7 @@ import type { DeckActionParams, FlyToPosition } from '../types';
 import { BackgroundMode, EditMode } from '../types';
 import { logDebug } from '../logger';
 import { getOnClickHandler } from './click';
+import { isTouchDevice } from '../util';
 
 const mapView = new MapView({
 	id: 'base-map',
@@ -34,7 +35,7 @@ function calculateViewState(position: FlyToPosition) {
 		zoom: zoom,
 		bearing: 0,
 		pitch: 0,
-		maxPitch: 0,
+		maxPitch: 90,
 		minPitch: 0,
 		//minZoom: 10,
 		transitionDuration: duration ?? 500,
@@ -64,6 +65,17 @@ function getEditLayers(params: DeckActionParams): Layer[] {
 const lastPositionUpdate = writable<FlyToPosition | null>(null);
 export const isDeckMounted = writable<boolean>(false);
 
+function getTooltip(info: PickingInfo) {
+	if (isTouchDevice) return undefined;
+	return (
+		info.object?.properties?.tooltip && {
+			html: info.object.properties.tooltip,
+			style: {
+				background: 'none'
+			}
+		}
+	);
+}
 export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 	const lastViewState = localStorage.getItem('Tokyo_v3_ViewState');
 	const initialViewState = calculateViewState(params.position);
@@ -75,6 +87,7 @@ export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 			localStorage.setItem('Tokyo_v3_ViewState', JSON.stringify(newViewState));
 			tokyoViewState.set(newViewState as MapViewState);
 		},
+		getTooltip,
 		layers: getBaseLayers(params),
 		views: mapView
 	});
@@ -96,7 +109,9 @@ export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 				layers: [...getBaseLayers(params), ...params.layers, ...getEditLayers(params)],
 				onClick: getOnClickHandler({ deck, params, onClick: () => false }),
 				onHover: (info: PickingInfo) =>
-					node.dispatchEvent(new CustomEvent('hover', { detail: info.layer }))
+					node.dispatchEvent(
+						new CustomEvent('hover', { detail: info.object?.properties?.tooltip })
+					)
 			};
 			if (get(lastPositionUpdate) !== params.position) {
 				lastPositionUpdate.set(params.position);

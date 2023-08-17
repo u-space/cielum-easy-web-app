@@ -1,16 +1,10 @@
-import { OperationEntity } from '@utm-entities/operation';
 import { useQuery } from 'react-query';
-import { useMemo } from 'react';
 import { useCoreServiceAPI } from '../../../utils';
 import _ from 'lodash';
-import { AxiosResponse } from 'axios';
 import { PositionEntity } from '@utm-entities/position';
+import { Operation } from '@utm-entities/v2/model/operation';
 
-export function useQueryPastPositions(
-	gufi: OperationEntity['gufi'],
-	rangeFrom: Date,
-	rangeTo: Date
-) {
+export function useQueryPastPositions(gufi: Operation['gufi'], rangeFrom: Date, rangeTo: Date) {
 	const {
 		position: { getPastPositions }
 	} = useCoreServiceAPI();
@@ -22,7 +16,7 @@ export function useQueryPastPositions(
 		error: errorPositions
 	} = useQuery(
 		['past-positions', gufi, rangeFrom, rangeTo],
-		() => getPastPositions(gufi, rangeFrom, rangeTo),
+		() => getPastPositions(gufi as string, rangeFrom, rangeTo),
 		{ keepPreviousData: true }
 	);
 

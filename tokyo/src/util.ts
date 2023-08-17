@@ -23,3 +23,6 @@ export enum PickableType {
 export function getPickableId(type: PickableType, id: string, name: string) {
 	return `${type}|${id}|${name}`;
 }
+
+// Responsiveness
+export const isTouchDevice = 'ontouchstart' in document.documentElement;

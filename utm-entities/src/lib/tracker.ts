@@ -73,7 +73,7 @@ function transformTrackers(data: any) {
 	};
 }
 
-export const getTrackerAPIClient = (api: string, token: string) => {
+export const getTrackerAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,

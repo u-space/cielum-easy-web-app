@@ -1,4 +1,5 @@
 import type { RGB, RGBA } from './types';
+import { setCSSVariable } from '../../src/app/utils';
 
 export const DEFAULT_FILL_COLOR = [100, 200, 100, 60];
 export const EXISTING_HANDLE_FILL_COLOR = [255, 0, 0, 100];
@@ -21,7 +22,7 @@ export const TENTATIVE_FILL_COLOR = [0, 36, 115, 80];
 export const TENTATIVE_LINE_COLOR = [0, 36, 115, 255];
 
 // Selected Operation
-export const SELECTED_OPERATION_FILL_COLOR: RGBA = [255, 255, 255, 25];
+export const SELECTED_OPERATION_FILL_COLOR: RGBA = [255, 255, 255, 100];
 export const SELECTED_OPERATION_VOLUME_LINE_COLOR: RGBA = [175, 0, 0, 255];
 export const SELECTED_OPERATION_LINE_COLOR: RGBA = [0, 0, 0, 255];
 
@@ -46,7 +47,7 @@ export const FR_LINE_COLOR: RGBA = [100, 100, 100, 255];
 // Drone Marker
 export const ACTIVE_DRONE_MARKER_COLOR: RGB = [62, 223, 62];
 export const INACTIVE_DRONE_MARKER_COLOR: RGBA = [206, 206, 206, 255];
-export const ACTIVE_DRONE_LINE_COLOR: RGBA = [85, 195, 85, 150];
+export const ACTIVE_DRONE_LINE_COLOR: RGBA = [85, 255, 85, 255];
 
 /*
   Operation Coloring

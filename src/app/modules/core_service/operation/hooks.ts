@@ -5,15 +5,17 @@ import { QueryOptions, useMutation, useQuery, useQueryClient } from 'react-query
 import { useCoreServiceAPI, useQueryString } from '../../../utils';
 import { useEffect, useMemo } from 'react';
 import _ from 'lodash';
-import { GetOperationsParsedResponse, OperationEntity } from '@utm-entities/operation';
 import { AxiosError, AxiosResponse } from 'axios';
 import { UpdateEntityParams } from '@utm-entities/types';
+import { GetOperationsResponse } from '@utm-entities/v2/api/operation';
+import { BaseOperation, Operation } from '@utm-entities/v2/model/operation';
+
 export function useQueryOperation(gufi: string, enabled: boolean) {
 	const {
 		operation: { getOperation }
 	} = useCoreServiceAPI();
 
-	return useQuery<AxiosResponse<OperationEntity>>(['operation', gufi], () => getOperation(gufi), {
+	return useQuery(['operation', gufi], () => getOperation(gufi), {
 		enabled
 	});
 }
@@ -50,7 +52,10 @@ export function useQueryOperations(all = false) {
 		operation: { getOperations }
 	} = useCoreServiceAPI();
 
-	const query = useQuery<{ data: GetOperationsParsedResponse }, Error>(
+	const query = useQuery<
+		GetOperationsResponse<Operation> | GetOperationsResponse<BaseOperation>,
+		Error
+	>(
 		[
 			'operations',
 			states,
@@ -64,7 +69,7 @@ export function useQueryOperations(all = false) {
 			historicalToDate
 		],
 		() =>
-			getOperations(
+			getOperations<Operation>(
 				role,
 				states,
 				all ? 99999 : pageTake,
@@ -83,31 +88,31 @@ export function useQueryOperations(all = false) {
 		isLoading: isLoadingOperations,
 		isSuccess: isSuccessOperations,
 		isError: isErrorOperations,
-		data: response,
+		data,
 		error: errorOperations,
 		isPreviousData: isPreviousDataOperations
 	} = query;
 
 	const operations = useMemo(() => {
 		//console.log('Operations has been re-set', new Date().getMinutes());
-		if (response?.data?.ops) {
-			return response.data.ops;
+		if (data?.ops) {
+			return data.ops;
 		} else {
 			return [];
 		}
-	}, [response]);
+	}, [data]);
 
 	const count = useMemo(() => {
-		if (response?.data?.count) {
-			return response.data.count;
+		if (data?.count) {
+			return data.count;
 		} else {
 			return -1;
 		}
-	}, [response]);
+	}, [data]);
 
 	const shownOperations = useMemo(() => {
 		if (all) {
-			return operations.filter((op) => !hiddenOperations.includes(op.gufi));
+			return operations.filter((op) => !hiddenOperations.includes(op.gufi ?? ''));
 		} else {
 			return operations;
 		}
@@ -152,7 +157,7 @@ export function useQueryOperationsCounts() {
 	} = useCoreServiceAPI();
 
 	const { isSuccess: isSuccessPendingOperations, data: responsePending } = useQuery<
-		{ data: GetOperationsParsedResponse },
+		GetOperationsResponse<Operation> | GetOperationsResponse<BaseOperation>,
 		Error
 	>(
 		[
@@ -164,7 +169,7 @@ export function useQueryOperationsCounts() {
 			historicalToDate
 		],
 		() =>
-			getOperations(
+			getOperations<Operation>(
 				role,
 				['PENDING'],
 				0,
@@ -177,11 +182,10 @@ export function useQueryOperationsCounts() {
 		{ keepPreviousData: true }
 	);
 
-	const countPending =
-		isSuccessPendingOperations && responsePending ? responsePending.data.count : -1;
+	const countPending = isSuccessPendingOperations && responsePending ? responsePending.count : -1;
 
 	const { isSuccess: isSuccessActivatedOperations, data: responseActivated } = useQuery<
-		{ data: GetOperationsParsedResponse },
+		GetOperationsResponse<Operation>,
 		Error
 	>(
 		[
@@ -193,7 +197,7 @@ export function useQueryOperationsCounts() {
 			historicalToDate
 		],
 		() =>
-			getOperations(
+			getOperations<Operation>(
 				role,
 				['ACTIVATED'],
 				0,
@@ -207,10 +211,10 @@ export function useQueryOperationsCounts() {
 	);
 
 	const countActivated =
-		isSuccessActivatedOperations && responseActivated ? responseActivated.data.count : -1;
+		isSuccessActivatedOperations && responseActivated ? responseActivated.count : -1;
 
 	const { isSuccess: isSuccessRogueOperations, data: responseRogue } = useQuery<
-		{ data: GetOperationsParsedResponse },
+		GetOperationsResponse<Operation>,
 		Error
 	>(
 		[
@@ -222,11 +226,20 @@ export function useQueryOperationsCounts() {
 			historicalToDate
 		],
 		() =>
-			getOperations(role, ['ROGUE'], 0, 0, sortingProperty, sortingOrder, filterProperty, ''),
+			getOperations<Operation>(
+				role,
+				['ROGUE'],
+				0,
+				0,
+				sortingProperty,
+				sortingOrder,
+				filterProperty,
+				''
+			),
 		{ keepPreviousData: true }
 	);
 
-	const countRogue = isSuccessRogueOperations && responseRogue ? responseRogue.data.count : -1;
+	const countRogue = isSuccessRogueOperations && responseRogue ? responseRogue.count : -1;
 
 	return {
 		countPending,
@@ -241,27 +254,26 @@ export function useSaveOperation(onSuccess?: () => void, onError?: (error: Error
 		operation: { saveOperation }
 	} = useCoreServiceAPI();
 	const isPilot = useAuthIsPilot();
-	return useMutation<
-		AxiosResponse<OperationEntity>,
-		AxiosError<{ message?: string }>,
-		UpdateEntityParams<OperationEntity>
-	>(({ entity }) => saveOperation(entity, isPilot), {
-		onSuccess: () => {
-			// Invalidate and refetch
-			queryClient.invalidateQueries('operations').then(
-				onSuccess
-					? onSuccess
-					: () => {
-							return;
-					  }
-			);
-		},
-		onError: (error) => {
-			if (onError) {
-				onError(error);
+	return useMutation<Operation, AxiosError<{ message?: string }>, UpdateEntityParams<Operation>>(
+		({ entity }) => saveOperation(entity, isPilot),
+		{
+			onSuccess: () => {
+				// Invalidate and refetch
+				queryClient.invalidateQueries('operations').then(
+					onSuccess
+						? onSuccess
+						: () => {
+								return;
+						  }
+				);
+			},
+			onError: (error) => {
+				if (onError) {
+					onError(error);
+				}
 			}
 		}
-	});
+	);
 }
 
 export function useSelectedOperationAndVolume() {
@@ -289,7 +301,7 @@ export function useSelectedOperationAndVolume() {
 		}
 	}, [idOperation]);
 
-	const operation = querySelectedOperation?.data?.data;
+	const operation = querySelectedOperation?.data;
 	const volume = useMemo(() => {
 		return operation ? _.cloneDeep(operation.operation_volumes[Number(idVolume)]) : undefined;
 	}, [idVolume, operation]);
@@ -308,8 +320,8 @@ export function useDeleteOperation() {
 	const {
 		operation: { deleteOperation }
 	} = useCoreServiceAPI();
-	return useMutation<AxiosResponse<void>, AxiosError<{ message?: string }>, OperationEntity>(
-		(operation) => deleteOperation(operation.gufi),
+	return useMutation<void, AxiosError<{ message?: string }>, Operation>(
+		(operation) => deleteOperation(operation.gufi || ''),
 		{
 			onSuccess: () => {
 				// Invalidate and refetch

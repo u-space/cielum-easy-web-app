@@ -1,14 +1,77 @@
 import type { ConvertToLayer } from '../types';
-import { IconLayer } from '@deck.gl/layers/typed';
-import vehiclePositionMarker from '../../img/vehicle_position.png';
 import type { PositionEntity } from '@utm-entities/position';
 import { getPickableId, PickableType } from '@tokyo/util';
-import { LineLayer } from '@deck.gl/layers/typed';
-import _ from 'lodash';
-import { TokyoLines } from '@tokyo/shapes/2d/TokyoLines';
-import { ACTIVE_DRONE_LINE_COLOR, INACTIVE_DRONE_MARKER_COLOR } from '@tokyo/TokyoDefaults';
+import { calculateLocationWithElevationMultiplier, ELEVATION_MULTIPLIER } from '../util';
+import { IconLayer, PathLayer } from '@deck.gl/layers/typed';
+import { SimpleMeshLayer } from '@deck.gl/mesh-layers/typed';
+import { ConeGeometry, SphereGeometry } from '@luma.gl/engine';
+import vehiclePositionMarker from '../../img/vehicle_position.png';
+import { BaseOperation } from '@utm-entities/v2/model/operation';
+import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import GL from '@luma.gl/constants';
 
-type VehiclePositionHeadTokyoConverter = ConvertToLayer<PositionEntity, undefined>;
+export interface VehiclePositionHeadDrawingProps {
+	t: (key: string) => string;
+}
+
+type VehiclePositionHeadTokyoConverter = ConvertToLayer<
+	PositionEntity,
+	VehiclePositionHeadDrawingProps
+>;
+
+function getHTMLTooltip(t: (key: string) => string, position: PositionEntity) {
+	let html = `<h1>${position.uvin}</h1>`; // TODO: Add vehicle name
+	// html += `<h2>${t('Volume')} ${index + 1} / ${operation.operation_volumes.length}</h2>`;
+	[
+		{ property: 'time_sent', value: new Date(position.time_sent).toLocaleTimeString() },
+		{ property: 'heading', value: position.heading.toString() },
+		{ property: 'altitude_gps', value: position.altitude_gps.toString() }
+	].forEach((entry) => {
+		html += `<p><span class="tooltip-property">${t(
+			`glossary:positions.${entry.property}`
+		)}: </span>${t(entry.value)}</p>`;
+	});
+	return html;
+}
+const getConverterFromPosition: VehiclePositionHeadTokyoConverter['getConverter'] =
+	(position: PositionEntity, options: VehiclePositionHeadDrawingProps) => () => {
+		return new SimpleMeshLayer({
+			id: getIdFromPosition(position),
+			data: [
+				{
+					position: position,
+					properties: {
+						tooltip: options?.t ? getHTMLTooltip(options.t, position) : undefined
+					}
+				}
+			],
+			pickable: true,
+			mesh: new SphereGeometry({ radius: 5 }),
+			getColor: [0, 150, 0],
+			parameters: {
+				depthTest: false
+			},
+			getPosition: (d) => [
+				d.position.location.coordinates[0],
+				d.position.location.coordinates[1],
+				position.altitude_gps * ELEVATION_MULTIPLIER
+			],
+			getOrientation: (d) => [0, -position.heading, 0]
+		});
+	};
+
+export const vehiclePositionHeadTokyoConverter: VehiclePositionHeadTokyoConverter = {
+	getId: getIdFromPosition,
+	getConverter: getConverterFromPosition
+};
+
+function getIdFromPosition(position: PositionEntity) {
+	return getPickableId(PickableType.Vehicle, position.gufi, position.displayName);
+}
+
+// HEAD PROJECTION
+
+type VehiclePositionHeadProjectionTokyoConverter = ConvertToLayer<PositionEntity, undefined>;
 
 const ICON_MAPPING = {
 	vehicle: {
@@ -20,73 +83,64 @@ const ICON_MAPPING = {
 	}
 };
 
-const getConverterFromPosition: VehiclePositionHeadTokyoConverter['getConverter'] =
+const getProjectionConverterFromPosition: VehiclePositionHeadProjectionTokyoConverter['getConverter'] =
 	(position: PositionEntity) => () => {
 		return new IconLayer({
-			id: getIdFromPosition(position),
+			id: getIdFromPosition(position) + '-projection',
 			data: [position],
 			pickable: true,
+			billboard: false,
 			iconAtlas: vehiclePositionMarker,
 			iconMapping: ICON_MAPPING,
+			parameters: {
+				depthTest: false
+			},
 			getIcon: (d) => 'vehicle',
 			getSize: 36,
 			getAngle: -position.heading,
 			getPosition: (d) => [d.location.coordinates[0], d.location.coordinates[1]]
 		});
 	};
-export const vehiclePositionHeadTokyoConverter: VehiclePositionHeadTokyoConverter = {
-	getId: getIdFromPosition,
-	getConverter: getConverterFromPosition
-};
 
-function getIdFromPosition(position: PositionEntity) {
-	return getPickableId(PickableType.Vehicle, position.gufi, position.displayName);
-}
+export const vehiclePositionHeadProjectionTokyoConverter: VehiclePositionHeadProjectionTokyoConverter =
+	{
+		getId: getIdFromPosition,
+		getConverter: getProjectionConverterFromPosition
+	};
 
-// Tail converter
-// TODO: Make this as a composite layer in deckgl
+// TAIL
 type VehiclePositionTailTokyoConverter = ConvertToLayer<PositionEntity[], undefined>;
-
-const getConverterFromPositions: VehiclePositionTailTokyoConverter['getConverter'] = (
+const getConverterFromPositions: VehiclePositionHeadProjectionTokyoConverter['getConverter'] = (
 	positions: PositionEntity[]
 ) => {
-	const colorMultiplier = 1 / positions.length;
-	const data = _.reduce(
-		positions.slice(1),
-		(acc, pos) => [
-			...acc,
-			{
-				from: acc[acc.length - 1].to,
-				to: pos.location,
-				colorMultiplier: acc[acc.length - 1].colorMultiplier + colorMultiplier
-			}
-		],
-		[
-			{
-				from: positions[0].location,
-				to: positions[1].location,
-				colorMultiplier: 0
-			}
-		]
-	);
+	const data = positions
+		.reduce((acc, pos) => {
+			const coordinates = calculateLocationWithElevationMultiplier([
+				...pos.location.coordinates,
+				pos.altitude_gps
+			]);
+			return [
+				...acc,
+				{ from: acc.length > 0 ? acc[acc.length - 1].to : null, to: coordinates }
+			];
+		}, [])
+		.slice(1);
+
+	let index = data.length - 1;
 	return () =>
-		new LineLayer({
+		new PathLayer({
 			id: getIdFromPositions(positions) + '-tail',
 			data,
 			pickable: false,
-			getWidth: 5,
-			getSourcePosition: (d) => d.from.coordinates,
-			getTargetPosition: (d) => d.to.coordinates,
-			getColor: (d) => {
-				// Interpolate between the two colors
-				const from = ACTIVE_DRONE_LINE_COLOR;
-				const to = INACTIVE_DRONE_MARKER_COLOR;
-				const t = colorMultiplier ?? 0.5;
-				const r = from[0] * (1 - t) + to[0] * t;
-				const g = from[1] * (1 - t) + to[1] * t;
-				const b = from[2] * (1 - t) + to[2] * t;
-				return [r, g, b, to[3]];
-			}
+			getWidth: 2,
+			widthUnits: 'pixels',
+			billboard: true,
+			parameters: {
+				depthTest: false
+			},
+			extruded: true,
+			getPath: (d) => [...d.from, ...d.to],
+			getColor: () => [0, 255 * ((data.length - index--) / data.length), 0, 255]
 		});
 };
 

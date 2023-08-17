@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { OperationEntity, OperationVolume } from '@utm-entities/operation';
 import { useQueryClient } from 'react-query';
 import _ from 'lodash';
 import { PModalType } from '@pcomponents/PModal';
@@ -25,6 +24,10 @@ import { reactify } from 'svelte-preprocess-react';
 import { PFullModalProps, undefinedModal } from '@pcomponents/PFullModal';
 import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewProps';
 import { EditMode } from '@tokyo/types';
+import { Operation } from '@utm-entities/v2/model/operation';
+import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { useAuthStore } from '../../../auth/store';
+import { NestedUser } from '@utm-entities/v2/model/user';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -37,6 +40,8 @@ const OperationEditor = () => {
 	const queryOperation = useQueryOperation(id || '', !!id);
 	const tokyo = useTokyo();
 
+	const username = useAuthStore((state) => state.username);
+
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
 	const schemaUsers = useSchemaStore((state) => state.users);
 
@@ -47,11 +52,36 @@ const OperationEditor = () => {
 
 	const operation = useMemo(() => {
 		if (queryOperation.isSuccess) {
-			return queryOperation.data?.data;
+			return queryOperation.data;
 		} else {
-			return new OperationEntity();
+			const op = new Operation();
+			op.set(
+				'creator',
+				new NestedUser({
+					// TODO: Remove this when creating ExistingOperation, NewOperation
+					username,
+					email: '',
+
+					firstName: '',
+					lastName: '',
+					extra_fields_json: {}
+				})
+			);
+			op.set(
+				'owner',
+				new NestedUser({
+					// TODO: Remove this when creating ExistingOperation, NewOperation
+					username,
+					email: '',
+
+					firstName: '',
+					lastName: '',
+					extra_fields_json: {}
+				})
+			);
+			return op;
 		}
-	}, [queryOperation.data?.data, queryOperation.isSuccess]);
+	}, [queryOperation.data, queryOperation.isSuccess]);
 
 	const polygons = useMemo(() => {
 		return queryOperation.isSuccess
@@ -64,30 +94,28 @@ const OperationEditor = () => {
 	}, [queryOperation.isSuccess, operation.operation_volumes]);
 
 	useEffect(() => {
-		const geography = queryOperation.data?.data?.operation_volumes[0].operation_geography;
+		const geography = queryOperation.data?.operation_volumes[0].operation_geography;
 		if (queryOperation.isSuccess && geography) {
 			tokyo.flyToCenterOfGeometry(geography);
 		}
-	}, [queryOperation.data?.data?.operation_volumes, queryOperation.isSuccess, tokyo]);
+	}, [queryOperation.data?.operation_volumes, queryOperation.isSuccess, tokyo]);
 
 	const onPolygonsUpdated = useCallback(
 		(polygons: Polygon[]) => {
-			operation.set(
-				'operation_volumes',
-				polygons.map((polygon, index) => {
-					const volume = new OperationVolume(index);
-					volume.effective_time_begin = new Date();
-					volume.effective_time_end = new Date();
-					if (index < operation.operation_volumes.length) {
-						const existingVolume = operation.operation_volumes[index];
-						for (const prop in existingVolume) {
-							volume.set(prop, existingVolume[prop]);
-						}
+			operation.operation_volumes = polygons.map((polygon, index) => {
+				const volume = new OperationVolume();
+				volume.set('ordinal', index);
+				volume.set('effective_time_begin', new Date());
+				volume.set('effective_time_end', new Date());
+				if (index < operation.operation_volumes.length) {
+					const existingVolume = operation.operation_volumes[index];
+					for (const prop in existingVolume) {
+						volume.set(prop, existingVolume.get(prop));
 					}
-					volume.set('operation_geography', polygon);
-					return volume;
-				})
-			);
+				}
+				volume.set('operation_geography', polygon);
+				return volume;
+			});
 		},
 		[operation]
 	);

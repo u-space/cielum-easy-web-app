@@ -469,6 +469,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	if (token === null) return null;
 	if (ls.entity) {
 		return (
 			<div className={styles.twobytwo} style={style}>

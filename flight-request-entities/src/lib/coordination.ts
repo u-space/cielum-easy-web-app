@@ -85,7 +85,7 @@ const transformCoordination = (data: any) => {
 	};
 };
 
-export const getCoordinationAPIClient = (api: string, token: string) => {
+export const getCoordinationAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,

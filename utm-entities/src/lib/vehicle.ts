@@ -204,7 +204,7 @@ export interface GetVehicleInsuranceSimulationFlySafeParams {
 	consents_precontractual: boolean;
 	consents_contractual: boolean;
 }
-export function getVehicleAPIClient(api: string, token: string, schema: ExtraFieldSchema) {
+export function getVehicleAPIClient(api: string, token: string | null, schema: ExtraFieldSchema) {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,

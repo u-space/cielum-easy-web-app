@@ -37,7 +37,7 @@ export const CoreAPIContext = createContext(
 			vehicles: {},
 			documents: {}
 		},
-		''
+		null
 	)
 );
 

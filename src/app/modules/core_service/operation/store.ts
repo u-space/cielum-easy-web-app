@@ -50,7 +50,7 @@ export const useOperationStore = create<OperationStoreState>()(
 			filterShowPending: true,
 			filterShowActivated: true,
 			filterShowRogue: true,
-			filterShowClosed: true,
+			filterShowClosed: false,
 			hiddenOperations: [],
 
 			setFilterProposed: (value) => set({ filterShowProposed: value }),

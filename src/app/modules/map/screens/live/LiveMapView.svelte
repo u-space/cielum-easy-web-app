@@ -1,161 +1,188 @@
 <svelte:options immutable={true}/>
 
 <script lang="ts">
-    import Tokyo from '@tokyo/Tokyo.svelte';
-    import {LiveMapViewProps} from './LiveMapViewProps.ts';
-    import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
-    import {geographicalZoneTokyoConverter} from '@tokyo/converters/fra/geographicalZone';
-    import {EditMode, TokyoPick} from '@tokyo/types';
-    import CButton from '@tokyo/gui/CButton.svelte';
-    import {CTooltipPosition} from '@tokyo/gui/CTooltip';
-    import {createEventDispatcher} from "svelte";
-    import {CButtonVariant} from "@tokyo/gui/CButton";
-    import {operationTokyoConverter} from "@tokyo/converters/core/operation";
-    import {Layer} from "leaflet";
-    import {
-        vehiclePositionHeadTokyoConverter,
-        vehiclePositionTailTokyoConverter
-    } from "@tokyo/converters/core/position";
-    import {CSize} from "@tokyo/gui/CSizeWrapper";
-    import CModal from "@tokyo/gui/CModal.svelte";
-    import CPanel from "@tokyo/gui/CPanel.svelte";
-    import CCheckbox from "@tokyo/gui/CCheckbox.svelte";
-    import {CCheckboxCheckedEvent} from "@tokyo/gui/CCheckbox";
+	import Tokyo from '@tokyo/Tokyo.svelte';
+	import {LiveMapViewProps} from './LiveMapViewProps.ts';
+	import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
+	import {geographicalZoneTokyoConverter} from '@tokyo/converters/fra/geographicalZone';
+	import {EditMode, TokyoPick} from '@tokyo/types';
+	import CButton from '@tokyo/gui/CButton.svelte';
+	import {CTooltipPosition} from '@tokyo/gui/CTooltip';
+	import {createEventDispatcher, onMount} from "svelte";
+	import {CButtonVariant} from "@tokyo/gui/CButton";
+	import {operationTokyoConverter} from "@tokyo/converters/core/operation";
+	import {Layer} from "@deck.gl/core/typed";
+	import {
+		vehiclePositionHeadProjectionTokyoConverter,
+		vehiclePositionHeadTokyoConverter,
+		vehiclePositionTailTokyoConverter
+	} from "@tokyo/converters/core/position";
+	import {CSize} from "@tokyo/gui/CSizeWrapper";
+	import CModal from "@tokyo/gui/CModal.svelte";
+	import CPanel from "@tokyo/gui/CPanel.svelte";
+	import CCheckbox from "@tokyo/gui/CCheckbox.svelte";
+	import {CCheckboxCheckedEvent} from "@tokyo/gui/CCheckbox";
+	import {isTouchDevice} from '@tokyo/util';
+	import LiveMapPick from './LiveMapPick.svelte';
 
-    const dispatch = createEventDispatcher<{
-        'picked': TokyoPick // ID of Picked Entity
-    }>();
+	const dispatch = createEventDispatcher<{
+		'picked': TokyoPick // ID of Picked Entity
+	}>();
 
-    export let t: LiveMapViewProps['t'];
-    export let controlsOptions: LiveMapViewProps['controlsOptions'];
+	export let t: LiveMapViewProps['t'];
+	export let controlsOptions: LiveMapViewProps['controlsOptions'];
 
-    // Items to render
-    export let geographicalZones: LiveMapViewProps['geographicalZones'] = [];
-    export let operations: LiveMapViewProps['operations'] = [];
-    export let vehiclePositions: LiveMapViewProps['vehiclePositions'] = new Map();
-    $: vehiclePositionsEntries = Array.from(vehiclePositions.entries());
+	// Items to render
+	export let geographicalZones: LiveMapViewProps['geographicalZones'] = [];
+	export let operations: LiveMapViewProps['operations'] = [];
+	export let vehiclePositions: LiveMapViewProps['vehiclePositions'] = new Map();
+	$: vehiclePositionsEntries = Array.from(vehiclePositions.entries());
 
-    export let selected: LiveMapViewProps['selected'] = null;
+	export let selected: LiveMapViewProps['selected'] = null;
 
 
-    // Picking logic, displayal on side
-    let pickings: TokyoPick[] = [];
-    let tokyo: Tokyo;
+	// Picking logic, displayal on side
+	let pickings: TokyoPick[] = [];
+	let tokyo: Tokyo;
 
-    $: {
-        // Automatically select first pick if only one pick is available
-        if (pickings.length === 1) {
-            dispatch('picked', pickings[0]);
-            tokyo.pick([]);
-        }
-    }
+	$: {
+		// Automatically select first pick if only one pick is available
+		if (pickings.length === 1) {
+			dispatch('picked', pickings[0]);
+			tokyo.pick([]);
+		}
+	}
 
-    // Layer control logic
-    let isShowingLayersPanel = false;
-    let visible = {
-        operations: true,
-        rfvs: true,
-        geographical_zones: true,
-        vehicles: true
-    }
+	// Layer control logic
+	let isShowingLayersPanel = false;
+	let visible = {
+		operations: true,
+		rfvs: true,
+		geographical_zones: true,
+		vehicles: true
+	}
 
-    $: visibleVehiclePositionsEntries = visible.vehicles ? vehiclePositionsEntries : [];
-    $: visibleOperations = visible.operations ? operations : [];
-    $: visibleGeographicalZones = visible.geographical_zones ? geographicalZones : [];
+	$: visibleVehiclePositionsEntries = visible.vehicles ? vehiclePositionsEntries : [];
 
-    function toggleLayersPanel() {
-        isShowingLayersPanel = !isShowingLayersPanel
-    }
+	$: visibleOperations = visible.operations ? operations : [];
+	$: visibleGeographicalZones = visible.geographical_zones ? geographicalZones : [];
 
-    const onLayerChecked = ({detail}: CCheckboxCheckedEvent) => {
-        const {id, checked} = detail;
-        const type = id.split('-')[1];
-        visible = {
-            ...visible,
-            [type]: checked
-        }
-    }
+	function toggleLayersPanel() {
+		isShowingLayersPanel = !isShowingLayersPanel
+	}
 
-    // Hover logic
-    let hovered: Layer | null = null;
+	const onLayerChecked = ({detail}: CCheckboxCheckedEvent) => {
+		const {id, checked} = detail;
+		const type = id.split('-')[1];
+		visible = {
+			...visible,
+			[type]: checked
+		}
+	}
 
+	// Hover logic
+	let hovered: string | null = null;
+
+	const defaultOperationDrawingProps = {
+		t,
+	}
+
+	// Resize logic
+	let isMinWidth = false;
+	onMount(() => {
+		const mediaQuery = window.matchMedia('(min-width: 900px)');
+		const updateMinWidth = () => {
+			isMinWidth = mediaQuery.matches;
+		}
+		mediaQuery.addEventListener('change', updateMinWidth);
+		updateMinWidth();
+		return () => mediaQuery.removeEventListener('change', updateMinWidth);
+	})
 </script>
 
 <div id="map_with_fries">
-    <Tokyo {t} mapOptions={{isPickEnabled: true}}
-           controlsOptions={{zoom: { enabled: true}, backgroundModeSwitch: {enabled: true}, geocoder: {enabled: false}, geolocator: {enabled: true},...controlsOptions}}
-           editOptions={{mode: EditMode.DISABLED} }
-           on:hover={({detail}) => hovered = detail}
-           on:pick={({detail}) => pickings = detail} bind:this={tokyo}>
-        <!-- Map Elements -->
-        {#each visibleOperations as operation (operation.gufi)}
-            {@const operationDrawingProps = selected && selected.type === 'operation' ? {selected} : undefined }
-            <TokyoGenericMapElement
-                    id={operationTokyoConverter.getId(operation)}
-                    getLayer={operationTokyoConverter.getConverter(operation, operationDrawingProps)}
+	<!-- Using isTouchDevice is a temporal fix -->
+	<div id='fries' style:width={pickings.length > 0 ? !isMinWidth ? '100%' : '400px' : '0px'}>
+		<div>
+			<CButton icon="x" variant={CButtonVariant.DANGER} fill on:click={() => tokyo.pick([])}/>
 
-            />
-        {/each}
-        {#each visibleGeographicalZones as geographicalZone (geographicalZone.id)}
-            <TokyoGenericMapElement
-                    id={geographicalZoneTokyoConverter.getId(geographicalZone)}
-                    getLayer={geographicalZoneTokyoConverter.getConverter(geographicalZone)}
+		</div>
+		{#each pickings as pick}
+			<!--
+				{@const subtitle = pick.volume ? `${t(pick.type)} (Vol. ${pick.volume + 1})` : t(pick.type)}
+				<div>
+					<h2>{subtitle}</h2>
+					<p>{JSON.stringify(pick.properties)}</p>
+					<CButton on:click={() => dispatch('picked', pick)} fill
+							 tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
+				</div> -->
+			<LiveMapPick pick={pick}/>
+		{/each}
+	</div>
+	<Tokyo {t} mapOptions={{isPickEnabled: true}}
+		   controlsOptions={{zoom: { enabled: true}, backgroundModeSwitch: {enabled: true}, geocoder: {enabled: false}, geolocator: {enabled: true},...controlsOptions}}
+		   editOptions={{mode: EditMode.DISABLED} }
+		   on:hover={({detail}) => hovered = detail}
+		   on:pick={({detail}) => pickings = detail} bind:this={tokyo}>
+		<!-- Map Elements -->
+		{#each visibleVehiclePositionsEntries as [id, positions] (id)}
+			<TokyoGenericMapElement
+					id={vehiclePositionHeadTokyoConverter.getId(positions[positions.length - 1])}
+					getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1], {t})}/>
+			<TokyoGenericMapElement
+					id={vehiclePositionHeadProjectionTokyoConverter.getId(positions[positions.length - 1])}
+					getLayer={vehiclePositionHeadProjectionTokyoConverter.getConverter(positions[positions.length - 1])}/>
+			{#if positions.length > 1}
+				<TokyoGenericMapElement
+						id={vehiclePositionTailTokyoConverter.getId(positions)}
+						getLayer={vehiclePositionTailTokyoConverter.getConverter(positions)}/>
+			{/if}
+		{/each}
+		{#each visibleOperations as operation (operation.gufi)}
+			{@const operationDrawingProps = selected && selected.type === 'operation' ? {selected} : undefined }
+			<TokyoGenericMapElement
+					id={operationTokyoConverter.getId(operation)}
+					getLayer={operationTokyoConverter.getConverter(operation, {...defaultOperationDrawingProps, ...operationDrawingProps})}
 
-            />
-        {/each}
-        {#each visibleVehiclePositionsEntries as [id, positions] (id)}
-            <TokyoGenericMapElement
-                    id={vehiclePositionHeadTokyoConverter.getId(positions[positions.length - 1])}
-                    getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1])}/>
-            {#if positions.length > 1}
-                <TokyoGenericMapElement
-                        id={vehiclePositionTailTokyoConverter.getId(positions)}
-                        getLayer={vehiclePositionTailTokyoConverter.getConverter(positions)}/>
-            {/if}
-        {/each}
-        <div class="controls" slot="extra_controls">
+			/>
+		{/each}
+		{#each visibleGeographicalZones as geographicalZone (geographicalZone.id)}
+			<TokyoGenericMapElement
+					id={geographicalZoneTokyoConverter.getId(geographicalZone)}
+					getLayer={geographicalZoneTokyoConverter.getConverter(geographicalZone)}
 
-            {#if isShowingLayersPanel}
-                <CPanel>
-                    <div class="layers-panel">
-                        <CButton icon="x" variant={CButtonVariant.DANGER} size={CSize.EXTRA_SMALL}
-                                 on:click={toggleLayersPanel}/>
-                        <CCheckbox fill id="toggle-operations" label={t('OPERATIONS')} checked={visible.operations}
-                                   on:check={onLayerChecked}/>
-                        <CCheckbox fill id="toggle-rfvs" label={t('RFVS')} checked={visible.rfvs}
-                                   on:check={onLayerChecked}/>
-                        <CCheckbox fill id="toggle-geographical_zones" label={t('GEOGRAPHICAL ZONES')}
-                                   on:check={onLayerChecked}
-                                   checked={visible.geographical_zones}/>
-                        <CCheckbox fill id="toggle-vehicles" label={t('Vehicles')} checked={visible.vehicles}
-                                   on:check={onLayerChecked}/>
-                    </div>
-                </CPanel>
-            {/if}
-            <CButton icon="stack-duotone"
-                     tooltip={{text: t('ui:Layers'), position: CTooltipPosition.Left}} size={CSize.EXTRA_LARGE}
-                     on:click={toggleLayersPanel}/>
-        </div>
-    </Tokyo>
-    <div id='fries' style:width={pickings.length > 0 ? '200px' : '0px'}>
-        <div>
-            <CButton icon="x" variant={CButtonVariant.DANGER} fill on:click={() => tokyo.pick([])}/>
+			/>
+		{/each}
 
-        </div>
-        {#each pickings as pick}
-            {@const subtitle = pick.volume ? `${t(pick.type)} (Vol. ${pick.volume + 1})` : t(pick.type)}
-            <div>
-                <h2>{subtitle}</h2>
-                <CButton on:click={() => dispatch('picked', pick)} fill
-                         tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
-            </div>
-        {/each}
-    </div>
-    {#if hovered}
-        <div id="hovered_info">
-            {hovered.id.split('|')[2] || hovered.id}
-        </div>
-    {/if}
+		<div class="controls" slot="extra_controls">
+
+			{#if isShowingLayersPanel}
+				<CPanel>
+					<div class="layers-panel">
+						<CButton icon="x" variant={CButtonVariant.DANGER} size={CSize.EXTRA_SMALL}
+								 on:click={toggleLayersPanel}/>
+						<CCheckbox fill id="toggle-operations" label={t('OPERATIONS')} checked={visible.operations}
+								   on:check={onLayerChecked}/>
+						<CCheckbox fill id="toggle-rfvs" label={t('RFVS')} checked={visible.rfvs}
+								   on:check={onLayerChecked}/>
+						<CCheckbox fill id="toggle-geographical_zones" label={t('GEOGRAPHICAL ZONES')}
+								   on:check={onLayerChecked}
+								   checked={visible.geographical_zones}/>
+						<CCheckbox fill id="toggle-vehicles" label={t('Vehicles')} checked={visible.vehicles}
+								   on:check={onLayerChecked}/>
+					</div>
+				</CPanel>
+			{/if}
+			<CButton icon="stack-duotone"
+					 tooltip={{text: t('ui:Layers'), position: CTooltipPosition.Left}} size={CSize.EXTRA_LARGE}
+					 on:click={toggleLayersPanel}/>
+		</div>
+	</Tokyo>
+	{#if hovered && isTouchDevice}
+		<div id="hovered_info">
+			{@html hovered}
+		</div>
+	{/if}
 </div>
 
 
@@ -163,12 +190,13 @@
   #map_with_fries {
     position: relative;
     display: flex;
+    flex-direction: row-reverse;
     width: 100%;
     height: 100%;
   }
 
   #fries {
-    overflow: visible;
+    overflow: auto;
     flex-shrink: 0;
     background-color: var(--primary-800);
     transition: width 0.5s;
@@ -197,7 +225,21 @@
     left: 1rem;
     background-color: var(--primary-800);
     color: var(--white-100);
-    z-index: var(--z-index-fries);
+    z-index: var(--z-index-hovered);
+    padding: 0.5rem;
+
+    & :global(h1) {
+      font-size: 1rem;
+    }
+
+    & :global(h2) {
+      color: var(--mirai-100);
+      font-size: 0.95rem;
+    }
+
+    & :global(.tooltip-property) {
+      font-weight: 900;
+    }
   }
 
   .layers-panel {

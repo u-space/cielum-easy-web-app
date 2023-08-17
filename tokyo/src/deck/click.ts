@@ -28,7 +28,8 @@ function withPickHandling(builder: OnClickBuilder): OnClickBuilder {
 							id: split[1],
 							name: split[2],
 							volume,
-							layerId: pick.layer.id
+							layerId: pick.layer.id,
+							properties: pick.object.properties
 						};
 					} else {
 						return [];

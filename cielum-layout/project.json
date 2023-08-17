@@ -1,0 +1,29 @@
+{
+	"name": "cielum-layout",
+	"$schema": "../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "cielum-layout/src",
+	"projectType": "library",
+	"tags": [],
+	"targets": {
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["cielum-layout/**/*.{ts,svelte,spec.ts}"]
+			}
+		},
+		"check": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "svelte-check",
+				"cwd": "cielum-layout"
+			}
+		},
+		"test": {
+			"executor": "@nxext/vitest:vitest",
+			"options": {
+				"vitestConfig": "cielum-layout/vitest.config.ts"
+			}
+		}
+	}
+}

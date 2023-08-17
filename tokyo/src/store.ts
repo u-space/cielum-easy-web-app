@@ -39,9 +39,9 @@ export const tokyoInternalsUpdateHandler = writable<UpdateHandler | null>();
 export const tokyoInternalsDestroyHandler = writable<DestroyHandler | null>();
 
 // React-land
-function flyToCenterOfGeometry(viewState: MapViewState, geometry: Geometry, zoom?: number) {
+export function flyToCenterOfGeometry(geometry: Geometry, zoom?: number) {
+	const viewState = get(tokyoViewState) as MapViewState;
 	const viewport = getNewViewport(geometry, viewState);
-	console.log('flyToCenterOfGeometry', viewport);
 	tokyoFlyToPosition.set({
 		latitude: viewport?.latitude || 0,
 		longitude: viewport?.longitude || 0,
@@ -75,7 +75,7 @@ export const useTokyo = () => {
 			tokyoFlyToPosition.set({ longitude, latitude, zoom: zoom || 15 });
 		},
 		flyToCenterOfGeometry: (geometry: Geometry, zoom?: number) => {
-			flyToCenterOfGeometry(get(tokyoViewState) as MapViewState, geometry, zoom);
+			flyToCenterOfGeometry(geometry, zoom);
 		}
 	};
 };

@@ -215,7 +215,7 @@ export type ChangeUserConfirmationStatusResponse = AxiosResponse<
 >;
 export type ChangeUserConfirmationStatusError = AxiosError<{ message: string }>;
 
-export function getUserAPIClient(api: string, token: string, schema: ExtraFieldSchema) {
+export function getUserAPIClient(api: string, token: string | null, schema: ExtraFieldSchema) {
 	const axiosInstance = A.create({
 		baseURL: api,
 		timeout: 5000,

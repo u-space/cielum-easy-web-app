@@ -44,5 +44,10 @@
 
 	// Map indexes
 	--z-index-controls: 2;
-	--z-index-fries: 3;
+	--z-index-hovered: 3;
+	--z-index-fries: 4;
+
+	// Layout transitions
+	--layout-transition-duration: 0.2s;
+	--layout-transition-easing: ease-in-out;
 }

@@ -10,6 +10,8 @@ export interface FlyToPosition {
 	latitude: number;
 	longitude: number;
 	zoom: number;
+	bearing?: number;
+	pitch?: number;
 	duration?: number; // in milliseconds
 }
 
@@ -43,6 +45,10 @@ export interface TokyoPick {
 	name?: string;
 	volume?: number;
 	layerId?: string;
+	properties?: {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		[key: string]: any;
+	};
 }
 
 export interface TokyoMapProps {

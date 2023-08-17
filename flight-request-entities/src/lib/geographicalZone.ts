@@ -94,7 +94,7 @@ export interface GetGeographicalZonesParsedResponseType {
 	count: number;
 }
 
-export const getGeographicalZoneAPIClient = (api: string, token: string) => {
+export const getGeographicalZoneAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 15000,

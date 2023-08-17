@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { useEffect, useMemo, useState } from 'react';
 import { PModalType } from '@pcomponents/PModal';
 import { FlightCategory, FlightRequestEntity } from '@flight-request-entities/flightRequest';
-import { OperationVolume } from '@utm-entities/operation';
 import { GeographicalZone } from '@flight-request-entities/geographicalZone';
 import { Polygon } from 'geojson';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +12,7 @@ import { PFullModalProps } from '@pcomponents/PFullModal';
 import InsuranceAndPaymentStep from '../pages/editor/InsuranceAndPaymentStep';
 import i18n from '../../../../i18n';
 import env from '../../../../../vendor/environment/env';
+import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 
 export interface SubTotals {
 	amount: number;
@@ -35,9 +35,11 @@ const FlightRequestEditor = () => {
 		flightRequest.operator = env.tenant.features.FlightRequests.enabled
 			? env.tenant.features.FlightRequests.options.defaultOperatorUsername
 			: '';
-		const vol = new OperationVolume(-1);
-		vol.effective_time_begin = null;
-		vol.effective_time_end = null;
+		const vol = new OperationVolume();
+		vol.set('ordinal', -1);
+		vol.set('effective_time_begin', null);
+		vol.set('effective_time_end', null);
+
 		flightRequest.volumes = [vol];
 		return flightRequest;
 	}, []);

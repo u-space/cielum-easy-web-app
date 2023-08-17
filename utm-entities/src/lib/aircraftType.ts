@@ -111,7 +111,7 @@ const transformAircraftTypes = (data: any) => {
 	);
 };
 
-export function getAircraftTypeAPIClient(api: string, token: string) {
+export function getAircraftTypeAPIClient(api: string, token: string | null) {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,

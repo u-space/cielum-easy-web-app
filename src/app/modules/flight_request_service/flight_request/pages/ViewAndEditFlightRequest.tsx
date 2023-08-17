@@ -332,7 +332,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					id={`editor-flightRequest-volume-${volume}-max_altitude`}
 					defaultValue={ls.entity.volumes[volume].max_altitude}
 					label={t(`glossary:volume.max_altitude`)}
-					onChange={(value) => (ls.entity.volumes[volume].max_altitude = value)}
+					onChange={(value) => ls.entity.volumes[volume].set('max_altitude', value)}
 					disabled={!isEditing}
 					isDarkVariant
 					inline={false}
@@ -345,7 +345,9 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					isDarkVariant
 					isTime
 					isRequired={isEditing}
-					onChange={(value) => (ls.entity.volumes[volume].effective_time_begin = value)}
+					onChange={(value) =>
+						ls.entity.volumes[volume].set('effective_time_begin', value)
+					}
 				/>
 				<PDateInput
 					id={`editor-flightRequest-volume-${volume}-effective_time_end`}
@@ -354,7 +356,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					isDarkVariant
 					isTime
 					isRequired={isEditing}
-					onChange={(value) => (ls.entity.volumes[volume].effective_time_end = value)}
+					onChange={(value) => ls.entity.volumes[volume].set('effective_time_end', value)}
 				/>
 			</div>
 		);
