@@ -100,7 +100,7 @@
 
 	// Map props
 
-	$: isLoading = $query.isLoading || (idOperation && !selectedOperation); // TODO: handle error
+	$: isLoading = $query.isLoading || (idOperation && !selectedOperation) || false // TODO: handle error
 	$: liveMapViewsProps = {
 		operations,
 		geographicalZones: [],
@@ -116,7 +116,7 @@
 
 </script>
 
-<Dashboard canMenuOpen={!!selected}>
+<Dashboard canMenuOpen={!!selected} {isLoading}>
 	<slot slot="menu">
 		{#if selected}
 			{#if isSelectedOfType(PickableType.Operation) && selectedOperation}
@@ -128,6 +128,3 @@
 	</slot>
 	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onPick(event.detail)}/>
 </Dashboard>
-{#if isLoading}
-	<CLoading/>
-{/if}

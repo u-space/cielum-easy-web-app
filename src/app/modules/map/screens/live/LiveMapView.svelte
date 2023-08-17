@@ -119,7 +119,7 @@
 			<LiveMapPick pick={pick}/>
 		{/each}
 	</div>
-	<Tokyo {t} mapOptions={{isPickEnabled: true}}
+	<Tokyo {t} mapOptions={{isPickEnabled: true, is3D: true}}
 		   controlsOptions={{zoom: { enabled: true}, backgroundModeSwitch: {enabled: true}, geocoder: {enabled: false}, geolocator: {enabled: true},...controlsOptions}}
 		   editOptions={{mode: EditMode.DISABLED} }
 		   on:hover={({detail}) => hovered = detail}

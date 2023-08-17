@@ -7,12 +7,15 @@ import { GeographicalZone } from '@flight-request-entities/geographicalZone';
 import { Polygon } from 'geojson';
 import { useTranslation } from 'react-i18next';
 import CoordinationsStep from '../pages/editor/CoordinationsStep';
-import VolumesStep from '../pages/editor/VolumesStep';
 import { PFullModalProps } from '@pcomponents/PFullModal';
 import InsuranceAndPaymentStep from '../pages/editor/InsuranceAndPaymentStep';
 import i18n from '../../../../i18n';
 import env from '../../../../../vendor/environment/env';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { reactify } from 'svelte-preprocess-react';
+import DrawingStepSvelte from '../pages/editor/DrawingStep.svelte';
+
+const DrawingStep = reactify(DrawingStepSvelte);
 
 export interface SubTotals {
 	amount: number;
@@ -172,7 +175,7 @@ const FlightRequestEditor = () => {
 
 	if (step === FlightRequestEditorStep.VOLUME_AND_INFO) {
 		return (
-			<VolumesStep
+			<DrawingStep
 				{...{
 					nextStep,
 					flightRequest,

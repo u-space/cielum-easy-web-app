@@ -1,8 +1,10 @@
 <script lang="ts">
 	import CButton from '@tokyo/gui/CButton.svelte';
 	import {CSize} from '@tokyo/gui/CSizeWrapper';
+	import CLoading from '@tokyo/gui/CLoading.svelte';
 
 	export let canMenuOpen = false; // Setting this to true will automatically open, but allow for closing (and reopening)
+	export let isLoading = false;
 
 	let isMenuOpen = false;
 	const open = () => isMenuOpen = true;
@@ -33,6 +35,7 @@
 		{/if}
 	</main>
 </div>
+<CLoading isLoading={isLoading}/>
 
 <style lang="scss">
   .container {
