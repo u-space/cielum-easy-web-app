@@ -4,10 +4,11 @@ import { getPickableId, PickableType } from '@tokyo/util';
 import { calculateLocationWithElevationMultiplier, ELEVATION_MULTIPLIER } from '../util';
 import { IconLayer, PathLayer } from '@deck.gl/layers/typed';
 import { SimpleMeshLayer } from '@deck.gl/mesh-layers/typed';
-import { ConeGeometry } from '@luma.gl/engine';
+import { ConeGeometry, SphereGeometry } from '@luma.gl/engine';
 import vehiclePositionMarker from '../../img/vehicle_position.png';
 import { BaseOperation } from '@utm-entities/v2/model/operation';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import GL from '@luma.gl/constants';
 
 export interface VehiclePositionHeadDrawingProps {
 	t: (key: string) => string;
@@ -45,7 +46,7 @@ const getConverterFromPosition: VehiclePositionHeadTokyoConverter['getConverter'
 				}
 			],
 			pickable: true,
-			mesh: new ConeGeometry({ radius: 50, height: 200 }),
+			mesh: new SphereGeometry({ radius: 5 }),
 			getColor: [0, 150, 0],
 			parameters: {
 				depthTest: false
