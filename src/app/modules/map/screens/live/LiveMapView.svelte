@@ -53,6 +53,10 @@
 		}
 	}
 
+	function onSelectPick(event: CustomEvent<TokyoPick>) {
+		dispatch('picked', event.detail);
+	}
+
 	// Layer control logic
 	let isShowingLayersPanel = false;
 	let visible = {
@@ -116,7 +120,7 @@
 					<CButton on:click={() => dispatch('picked', pick)} fill
 							 tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
 				</div> -->
-			<LiveMapPick pick={pick}/>
+			<LiveMapPick pick={pick} on:select={onSelectPick}/>
 		{/each}
 	</div>
 	<Tokyo {t} mapOptions={{isPickEnabled: true}}
@@ -178,11 +182,12 @@
 					 on:click={toggleLayersPanel}/>
 		</div>
 	</Tokyo>
+	<!-- This works properly
 	{#if hovered && isTouchDevice}
 		<div id="hovered_info">
 			{@html hovered}
 		</div>
-	{/if}
+	{/if}-->
 </div>
 
 
@@ -196,6 +201,7 @@
   }
 
   #fries {
+    height: 100%;
     overflow: auto;
     flex-shrink: 0;
     background-color: var(--primary-800);

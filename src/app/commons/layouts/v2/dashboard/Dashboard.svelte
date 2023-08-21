@@ -49,6 +49,9 @@
     & main {
       flex: 1;
 
+      min-height: 0;
+      min-width: 0;
+
       position: relative;
 
       & .actions {
@@ -70,6 +73,7 @@
     }
 
     & aside {
+      flex-shrink: 0;
       width: var(--dashboard-aside-size);
       height: 100%;
       overflow-x: hidden;
