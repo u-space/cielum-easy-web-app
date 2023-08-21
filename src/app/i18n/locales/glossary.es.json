@@ -74,6 +74,7 @@
 		"update_time": "Última actualización",
 		"flight_comments": "Comentarios de la operación",
 		"aircraft_comments": "Comentarios de la aeronave",
+		"vehicle": "Aeronave",
 		"volumes_description": "Descripción de los volumenes",
 		"free_text": "Texto libre",
 		"state": "Estado",
@@ -101,7 +102,6 @@
 		"singular_generic": "Posición"
 	},
 	"vehicle": {
-		"max_file_size_error": "Max file size is {{number}}MB",
 		"max_file_size_error": "Max file size is {{number}}MB",
 		"gufi": "Operación asociada, Id.",
 		"authorization": "Autorización",

@@ -57,6 +57,7 @@
       justify-content: center;
 
       padding: var(--padding-xs);
+      overflow: hidden;
 
       color: var(--mirai-100);
       background-color: var(--primary-800);

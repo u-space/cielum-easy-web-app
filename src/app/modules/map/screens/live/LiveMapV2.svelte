@@ -122,6 +122,7 @@
 			{#if isSelectedOfType(PickableType.Operation) && selectedOperation}
 				<!-- TODO: Do it how it should be done
 				<ViewOperationDetails gufi={selected.id}/> -->
+				<h1>{i18n.t('Operation')}</h1>
 				<OperationDetails operation={selectedOperation}/>
 			{/if}
 		{/if}

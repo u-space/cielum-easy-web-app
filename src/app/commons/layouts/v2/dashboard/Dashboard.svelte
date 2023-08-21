@@ -89,7 +89,7 @@
 
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(var(--dashboard-aside-size), 1fr));
-        grid-template-rows: repeat(auto-fit, 5rem);
+        grid-template-rows: repeat(auto-fit, 6rem);
 
         & :global(> *) {
           min-width: var(--dashboard-aside-size);
@@ -97,9 +97,21 @@
           height: 100%;
           overflow: hidden;
           text-overflow: ellipsis;
-          white-space: nowrap;
-          padding: 1em;
+          //white-space: nowrap;
+          padding: 0.5rem;
           box-sizing: border-box;
+        }
+
+        & :global(> h1) {
+          font-weight: 800;
+          color: var(--primary-100);
+          font-size: 1.5rem;
+
+          // align h1 text vertically
+          display: flex;
+          
+          justify-content: center;
+          align-items: center;
         }
       }
     }
