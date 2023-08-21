@@ -19,6 +19,8 @@
 	import {onMount} from 'svelte';
 	import {PositionEntity} from '@utm-entities/position';
 	import io from 'socket.io-client';
+	import CModal from '@tokyo/gui/CModal.svelte';
+	import {CModalVariant} from '@tokyo/gui/CModal';
 
 	export let history: H.History;
 
@@ -100,7 +102,8 @@
 
 	// Map props
 
-	$: isLoading = $query.isLoading || (idOperation && !selectedOperation); // TODO: handle error
+	$: isLoading = $query.isLoading;
+	$: isError = !isLoading && ($query.isError || (idOperation && !selectedOperation));
 	$: liveMapViewsProps = {
 		operations,
 		geographicalZones: [],
@@ -131,4 +134,14 @@
 </Dashboard>
 {#if isLoading}
 	<CLoading/>
+{/if}
+{#if isError}
+	<CModal
+			title={i18n.t('There is no operation with the specified id')}
+			variant={CModalVariant.ERROR}
+			closeText={i18n.t('Close') || 'Close'}
+			on:close={() => window.location.href = window.location.origin + '/map'}>
+		<!-- TODO: Update this call when using a Svelte router -->
+		{i18n.t("Please check that no characters are missing from the URL and try again")}
+	</CModal>
 {/if}

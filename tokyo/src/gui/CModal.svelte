@@ -1,32 +1,36 @@
 <script lang="ts">
-    import {CModalProps, CModalVariant, CModalWidth} from '@tokyo/gui/CModal';
-    import {onMount} from 'svelte';
-    import CButton from '@tokyo/gui/CButton.svelte';
+	import {CModalProps, CModalVariant, CModalWidth} from '@tokyo/gui/CModal';
+	import {onMount} from 'svelte';
+	import CButton from '@tokyo/gui/CButton.svelte';
 
-    export let title: CModalProps['title'];
-    export let width: CModalProps['width'] = CModalWidth.SMALLEST;
-    export let variant: CModalProps['variant'] = CModalVariant.INFORMATION;
+	export let title: CModalProps['title'];
+	export let width: CModalProps['width'] = CModalWidth.SMALLEST;
+	export let variant: CModalProps['variant'] = CModalVariant.INFORMATION;
+	export let closeText: CModalProps['closeText'] = 'Close';
 
-    let ref;
+	let ref;
 
-    onMount(() => {
-        ref.showModal();
-    })
+	onMount(() => {
+		ref.showModal();
+	})
 </script>
 
 <dialog bind:this={ref} on:close class:smallest={width === CModalWidth.SMALLEST}
-        class:largest={width === CModalWidth.LARGEST}>
-    {#if title}
-        <h1 class:information={variant === CModalVariant.INFORMATION}>{title}</h1>
-    {/if}
-    <div class="body">
-        {#if $$slots.default}
-            <slot/>
-        {/if}
-        <div class="actions">
-            <CButton on:click={() => ref.close()}>Cancel</CButton>
-        </div>
-    </div>
+		class:largest={width === CModalWidth.LARGEST}>
+	{#if title}
+		<h1 class:information={variant === CModalVariant.INFORMATION}
+			class:error={variant === CModalVariant.ERROR}
+			class:success={variant === CModalVariant.SUCCESS}
+		>{title}</h1>
+	{/if}
+	<div class="body">
+		{#if $$slots.default}
+			<slot/>
+		{/if}
+		<div class="actions">
+			<CButton on:click={() => ref.close()}>{closeText}</CButton>
+		</div>
+	</div>
 </dialog>
 
 <style lang="scss">
@@ -35,7 +39,7 @@
   $min-width: 15vw;
   $max-width: 50vw;
 
-  dialog {
+  dialog[open] {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -71,7 +75,7 @@
 
     & > h1 {
       width: 100%;
-      padding: 0 var(--spacing-8) 0;
+      padding: 0.5rem;
 
       margin: 0;
       font-size: 1rem;
