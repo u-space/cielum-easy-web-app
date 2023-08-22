@@ -67,17 +67,15 @@ export const isDeckMounted = writable<boolean>(false);
 
 function getTooltip(info: PickingInfo) {
 	if (isTouchDevice) return undefined;
-	return undefined;
-	// We disabled tooltips for now because ...
-	// They work properly
-	/*return (
+
+	return (
 		info.object?.properties?.tooltip && {
 			html: info.object.properties.tooltip,
 			style: {
 				background: 'none'
 			}
 		}
-	);*/
+	);
 }
 export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 	const lastViewState = localStorage.getItem('Tokyo_v3_ViewState');

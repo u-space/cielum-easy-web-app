@@ -10,8 +10,6 @@ import { GeoJsonLayer } from '@deck.gl/layers/typed';
 import type { BaseOperation } from '@utm-entities/v2/model/operation';
 import type { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 import { ELEVATION_MULTIPLIER } from '../util';
-import type { Position } from 'geojson';
-import GL from '@luma.gl/constants';
 
 export interface OperationDrawingProps {
 	fillAlpha?: RGBnumber; // 0-255
@@ -35,14 +33,15 @@ function getHTMLTooltip(
 	volume: OperationVolume,
 	index: number
 ) {
+	/*
 	let html = `<h1>${t('Operation')} "${operation.name}"</h1>`;
 	html += `<h2>${t('Volume')} ${index + 1} / ${operation.operation_volumes.length}</h2>`;
 	volume.asPrintableEntries().forEach((entry) => {
 		html += `<p><span class="tooltip-property">${t(
 			`glossary:volume.${entry.property}`
 		)}: </span>${t(entry.value)}</p>`;
-	});
-	return html;
+	});*/
+	return undefined; // Temporally disabled because of ... reasons
 }
 
 function getConverterFromOperation(_operation: BaseOperation, options?: OperationDrawingProps) {
