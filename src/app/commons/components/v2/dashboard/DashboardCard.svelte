@@ -12,7 +12,7 @@
 	export let variant: DashboardCardProps['variant'] = DashboardCardVariant.PRIMARY;
 </script>
 
-<div class="card" style:danger="variant === DashboardCardVariant.DANGER">
+<div class="card" class:danger={variant === DashboardCardVariant.DANGER}>
 	{#if $$slots.header}
 		<h1>
 			<slot name="header"/>

@@ -22,7 +22,7 @@
 	import CModal from '@tokyo/gui/CModal.svelte';
 	import {CModalVariant} from '@tokyo/gui/CModal';
 
-	export let history: H.History;
+	//export let history: H.History;
 
 	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
 		OperationStateEnum.NOT_ACCEPTED,

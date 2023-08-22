@@ -218,7 +218,7 @@
       margin: 1rem;
 
 
-      & h2 {
+      /*& h2 {
         font-size: 0.75rem;
         color: var(--mirai-200);
         text-align: left;
@@ -226,11 +226,11 @@
         white-space: nowrap;
         overflow: hidden;
         margin-bottom: 0.5rem;
-      }
+      }*/
     }
   }
 
-  #hovered_info {
+  /*#hovered_info {
     position: absolute;
     bottom: 1rem;
     left: 1rem;
@@ -251,7 +251,7 @@
     & :global(.tooltip-property) {
       font-weight: 900;
     }
-  }
+  }*/
 
   .layers-panel {
     display: flex;
