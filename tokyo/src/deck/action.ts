@@ -70,6 +70,7 @@ export const isDeckMounted = writable<boolean>(false);
 
 function getTooltip(info: PickingInfo) {
 	if (isTouchDevice) return undefined;
+
 	return (
 		info.object?.properties?.tooltip && {
 			html: info.object.properties.tooltip,

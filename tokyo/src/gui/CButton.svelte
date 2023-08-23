@@ -1,41 +1,42 @@
 <script lang="ts">
-    import {CButtonProps, CButtonVariant} from './CButton';
-    import CTooltip from '@tokyo/gui/CTooltip.svelte';
-    import CSizeWrapper from "@tokyo/gui/CSizeWrapper.svelte";
-    import {CSize} from './CSizeWrapper';
+	import {CButtonProps, CButtonVariant} from './CButton';
+	import CTooltip from '@tokyo/gui/CTooltip.svelte';
+	import CSizeWrapper from "@tokyo/gui/CSizeWrapper.svelte";
+	import {CSize} from './CSizeWrapper';
 
-    export let variant: CButtonProps['variant'] = CButtonVariant.PRIMARY;
-    export let size: CButtonProps['size'] = CSize.MEDIUM;
-    export let icon: CButtonProps['icon'] = undefined;
-    export let fill: CButtonProps['fill'] = false;
+	export let variant: CButtonProps['variant'] = CButtonVariant.PRIMARY;
+	export let size: CButtonProps['size'] = CSize.MEDIUM;
+	export let icon: CButtonProps['icon'] = undefined;
+	export let fill: CButtonProps['fill'] = false;
 
-    export let tooltip: CButtonProps['tooltip'] = undefined;
+	export let tooltip: CButtonProps['tooltip'] = undefined;
+	export let disabled: CButtonProps['disabled'] = false;
 
-    let open = false;
+	let open = false;
 </script>
 
 <CSizeWrapper {size}>
-    <button
-            on:click
-            class:primary={variant === CButtonVariant.PRIMARY} class:secondary={variant === CButtonVariant.SECONDARY}
-            class:danger={variant === CButtonVariant.DANGER}
-            class:only_icon={!$$slots.default && icon} class:icon_and_text={$$slots.default && icon}
-            class:icon_or_text={($$slots.default || icon) && !($$slots.default && icon)}
-            class:fill={fill}
-            on:mouseenter={() => open = true} on:mouseleave={() => open = false}
-    >
-        {#if icon}
-            <iconify-icon height="1.5em" icon={`ph:${icon}`}></iconify-icon>
-        {/if}
-        {#if tooltip}
-            <CTooltip {...{text: '', position: 'bottom', ...tooltip, open}}/>
-        {/if}
-        {#if $$slots.default}
-            <p>
-                <slot></slot>
-            </p>
-        {/if}
-    </button>
+	<button
+			on:click
+			class:primary={variant === CButtonVariant.PRIMARY} class:secondary={variant === CButtonVariant.SECONDARY}
+			class:danger={variant === CButtonVariant.DANGER} class:disabled={disabled}
+			class:only_icon={!$$slots.default && icon} class:icon_and_text={$$slots.default && icon}
+			class:icon_or_text={($$slots.default || icon) && !($$slots.default && icon)}
+			class:fill={fill}
+			on:mouseenter={() => open = true} on:mouseleave={() => open = false}
+	>
+		{#if icon}
+			<iconify-icon height="1.5em" icon={`ph:${icon}`}></iconify-icon>
+		{/if}
+		{#if tooltip}
+			<CTooltip {...{text: '', position: 'bottom', ...tooltip, open}}/>
+		{/if}
+		{#if $$slots.default}
+			<p>
+				<slot></slot>
+			</p>
+		{/if}
+	</button>
 </CSizeWrapper>
 
 <style lang="scss">

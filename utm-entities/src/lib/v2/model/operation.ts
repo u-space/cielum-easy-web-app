@@ -133,6 +133,12 @@ export class BaseOperation {
 		entries.push({ property: 'state', value: this.state });
 		entries.push({ property: 'contact', value: this.contact });
 		entries.push({ property: 'contact_phone', value: this.contact_phone });
+		for (const vehicle of this.uas_registrations) {
+			entries.push({ property: 'vehicle', value: vehicle.displayName });
+		}
+		const max_altitude = 0;
+
+		if (this.gufi) entries.push({ property: 'gufi', value: this.gufi });
 		return entries;
 	}
 }

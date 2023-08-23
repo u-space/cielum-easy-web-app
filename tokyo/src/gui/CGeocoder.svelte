@@ -69,11 +69,7 @@
     padding: 0.25rem;
     border-radius: 0.25rem;
     @include box-shadow-1;
-
-    & .status {
-      text-align: center;
-    }
-
+	
     & .place {
       display: flex;
       justify-content: flex-start;

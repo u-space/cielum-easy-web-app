@@ -13,6 +13,7 @@
 	import {operationTokyoConverter} from "@tokyo/converters/core/operation";
 	import {Layer} from "@deck.gl/core/typed";
 	import {
+		vehiclePositionHeadLabelTokyoConverter,
 		vehiclePositionHeadProjectionTokyoConverter,
 		vehiclePositionHeadTokyoConverter,
 		vehiclePositionTailTokyoConverter
@@ -51,6 +52,10 @@
 			dispatch('picked', pickings[0]);
 			tokyo.pick([]);
 		}
+	}
+
+	function onSelectPick(event: CustomEvent<TokyoPick>) {
+		dispatch('picked', event.detail);
 	}
 
 	// Layer control logic
@@ -116,7 +121,7 @@
 					<CButton on:click={() => dispatch('picked', pick)} fill
 							 tooltip={{text: pick.name, position: CTooltipPosition.Left}}>{pick.name}</CButton>
 				</div> -->
-			<LiveMapPick pick={pick}/>
+			<LiveMapPick pick={pick} on:select={onSelectPick}/>
 		{/each}
 	</div>
 	<Tokyo {t} mapOptions={{isPickEnabled: true, is3D: true}}
@@ -126,9 +131,13 @@
 		   on:pick={({detail}) => pickings = detail} bind:this={tokyo}>
 		<!-- Map Elements -->
 		{#each visibleVehiclePositionsEntries as [id, positions] (id)}
+
 			<TokyoGenericMapElement
 					id={vehiclePositionHeadTokyoConverter.getId(positions[positions.length - 1])}
 					getLayer={vehiclePositionHeadTokyoConverter.getConverter(positions[positions.length - 1], {t})}/>
+			<TokyoGenericMapElement
+					id={vehiclePositionHeadLabelTokyoConverter.getId(positions[positions.length - 1])}
+					getLayer={vehiclePositionHeadLabelTokyoConverter.getConverter(positions[positions.length - 1], {size: 20})}/>
 			<TokyoGenericMapElement
 					id={vehiclePositionHeadProjectionTokyoConverter.getId(positions[positions.length - 1])}
 					getLayer={vehiclePositionHeadProjectionTokyoConverter.getConverter(positions[positions.length - 1])}/>
@@ -178,11 +187,12 @@
 					 on:click={toggleLayersPanel}/>
 		</div>
 	</Tokyo>
+	<!-- This works properly
 	{#if hovered && isTouchDevice}
 		<div id="hovered_info">
 			{@html hovered}
 		</div>
-	{/if}
+	{/if}-->
 </div>
 
 
@@ -196,6 +206,7 @@
   }
 
   #fries {
+    height: 100%;
     overflow: auto;
     flex-shrink: 0;
     background-color: var(--primary-800);
@@ -207,7 +218,7 @@
       margin: 1rem;
 
 
-      & h2 {
+      /*& h2 {
         font-size: 0.75rem;
         color: var(--mirai-200);
         text-align: left;
@@ -215,11 +226,11 @@
         white-space: nowrap;
         overflow: hidden;
         margin-bottom: 0.5rem;
-      }
+      }*/
     }
   }
 
-  #hovered_info {
+  /*#hovered_info {
     position: absolute;
     bottom: 1rem;
     left: 1rem;
@@ -240,7 +251,7 @@
     & :global(.tooltip-property) {
       font-weight: 900;
     }
-  }
+  }*/
 
   .layers-panel {
     display: flex;
