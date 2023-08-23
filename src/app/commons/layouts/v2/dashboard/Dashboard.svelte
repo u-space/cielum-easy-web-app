@@ -35,7 +35,9 @@
 		{/if}
 	</main>
 </div>
-<CLoading isLoading={isLoading}/>
+{#if isLoading}
+	<CLoading/>
+{/if}
 
 <style lang="scss">
   .container {
@@ -112,7 +114,7 @@
 
           // align h1 text vertically
           display: flex;
-          
+
           justify-content: center;
           align-items: center;
         }

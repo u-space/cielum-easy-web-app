@@ -23,15 +23,16 @@ import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 interface VolumesStepProps {
+	polygon: Polygon;
 	nextStep: () => void;
 	flightRequest: FlightRequestEntity;
-	setPolygon: (polygon: Polygon | undefined) => void;
+	setPolygon: (polygon: Polygon) => void;
 	modalProps: PFullModalProps | undefined;
 	setModalProps: (modalProps: PFullModalProps | undefined) => void;
 }
 
 const VolumesStep = (props: VolumesStepProps) => {
-	const { nextStep, flightRequest, setPolygon, modalProps, setModalProps } = props;
+	const { polygon, nextStep, flightRequest, setPolygon, modalProps, setModalProps } = props;
 
 	const start = useRef(setHoursAndReturnDate(addDays(new Date(), 10), 9, 0));
 	const end = useRef(
@@ -245,7 +246,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 
 	const editOptions: EditOptions = {
 		mode: EditMode.SINGLE,
-		polygons: []
+		polygons: [polygon]
 	};
 
 	return (

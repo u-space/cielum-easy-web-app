@@ -23,7 +23,6 @@ import TrackersHub from './modules/core_service/tracker/screens/TrackersHub';
 import NewTrackerScreen from './modules/core_service/tracker/screens/NewTrackerScreen';
 import RfvHub from './modules/core_service/rfv/screens/RfvHub';
 import RfvEditor from './modules/core_service/rfv/screens/RfvEditor';
-import FlightRequestEditor from './modules/flight_request_service/flight_request/screens/FlightRequestEditor';
 import SuccessScreen from './modules/flight_request_service/flight_request/screens/SuccessScreen';
 import CanceledScreen from './modules/flight_request_service/flight_request/screens/CanceledScreen';
 import FlightRequestHub from './modules/flight_request_service/flight_request/screens/FlightRequestHub';
@@ -31,6 +30,10 @@ import PlanningMap from './modules/flight_request_service/flight_request/screens
 import { getFeatureOption } from './utils';
 import UserProfileScreen from './modules/core_service/user/screens/UserProfileScreen';
 import CoordinationHub from './modules/flight_request_service/coordination/screens/CoordinationHub';
+import { reactify } from 'svelte-preprocess-react';
+import FlightRequestEditorSvelte from './modules/flight_request_service/flight_request/screens/FlightRequestEditor.svelte';
+import LegacyFlightRequestStepsEditor from './modules/flight_request_service/flight_request/screens/LegacyFlightRequestStepsEditor';
+const FlightRequestEditor = reactify(FlightRequestEditorSvelte);
 
 const LoggedInScreens = () => {
 	const { t } = useTranslation();
@@ -204,6 +207,15 @@ const LoggedInScreens = () => {
 						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
 					>
 						<PlanningMap />
+					</RoleGatedRoute>
+				)}
+				{isFeatureEnabled('FlightRequests') && (
+					<RoleGatedRoute
+						exact
+						path={'/editor/flightrequest/:polygon'}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
+					>
+						<LegacyFlightRequestStepsEditor />
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('FlightRequests') && (

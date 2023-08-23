@@ -132,9 +132,7 @@
 	</slot>
 	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onPick(event.detail)}/>
 </Dashboard>
-{#if isLoading}
-	<CLoading/>
-{/if}
+
 {#if isError}
 	<CModal
 			title={i18n.t('There is no operation with the specified id')}

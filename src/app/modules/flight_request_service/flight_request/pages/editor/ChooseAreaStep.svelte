@@ -4,14 +4,18 @@
 	import Tokyo from '@tokyo/Tokyo.svelte';
 	import {GeographicalZoneDrawingProps, geographicalZoneTokyoConverter} from '@tokyo/converters/fra/geographicalZone';
 	import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
-	import {EditorMapViewProps} from "./EditorMapViewProps";
+	import {EditorMapViewProps} from "../../../../map/screens/editor/EditorMapViewProps";
 	import {EditMode} from '@tokyo/types';
 	import {tokyoViewState} from '@tokyo/store';
-	import {onMount} from 'svelte';
 	import {WebMercatorViewport} from '@deck.gl/core/typed';
 	import {GenericVolumeDrawingProps, genericVolumeTokyoConverter} from '@tokyo/converters/generic_volume';
-	import env from '../../../../../vendor/environment/env';
+	import env from '../../../../../../vendor/environment/env';
 	import CButton from '@tokyo/gui/CButton.svelte';
+	import i18n from 'i18next';
+	import {createEventDispatcher} from 'svelte';
+	import {Polygon} from 'geojson';
+
+	const dispatch = createEventDispatcher<{ 'next': Polygon }>();
 
 
 	let topLeft = [0, 0];
@@ -41,7 +45,7 @@
 	$: volume = {
 		id: 'choose-area-polygon',
 		polygon: {
-			type: 'Polygon',
+			type: 'Polygon' as const,
 			coordinates: [[
 				[topLeft[0], topLeft[1]],
 				[topRight[0], topRight[1]],
@@ -52,6 +56,10 @@
 		},
 		max_altitude: 0,
 		min_altitude: 0,
+	}
+
+	function next() {
+		dispatch('next', volume.polygon);
 	}
 
 	export let geographicalZones: EditorMapViewProps['geographicalZones'];
@@ -100,7 +108,7 @@
 	/>
 </Tokyo>
 <div class="prompt">
-	<CButton>Quiero volar aqui</CButton>
+	<CButton on:click={next}>{i18n.t('I want to fly here')}</CButton>
 </div>
 
 <style lang="scss">

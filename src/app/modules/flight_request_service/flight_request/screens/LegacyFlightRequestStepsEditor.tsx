@@ -12,10 +12,8 @@ import InsuranceAndPaymentStep from '../pages/editor/InsuranceAndPaymentStep';
 import i18n from '../../../../i18n';
 import env from '../../../../../vendor/environment/env';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
-import { reactify } from 'svelte-preprocess-react';
-import DrawingStepSvelte from '../pages/editor/DrawingStep.svelte';
-
-const DrawingStep = reactify(DrawingStepSvelte);
+import VolumesStep from '../pages/editor/VolumesStep';
+import { useParams } from 'react-router-dom';
 
 export interface SubTotals {
 	amount: number;
@@ -28,10 +26,13 @@ enum FlightRequestEditorStep {
 	INSURANCE_AND_PAYMENT
 }
 
-const FlightRequestEditor = () => {
+const LegacyFlightRequestStepsEditor = () => {
 	const { t } = useTranslation();
 
-	const [polygon, setPolygon] = useState<Polygon | undefined>();
+	const params = useParams<{ polygon: string }>();
+	const existingPolygon = JSON.parse(params.polygon) as Polygon;
+
+	const [polygon, setPolygon] = useState<Polygon>(existingPolygon);
 	const [modalProps, setModalProps] = useState<PFullModalProps | undefined>();
 	const flightRequest = useMemo(() => {
 		const flightRequest = new FlightRequestEntity();
@@ -42,6 +43,7 @@ const FlightRequestEditor = () => {
 		vol.set('ordinal', -1);
 		vol.set('effective_time_begin', null);
 		vol.set('effective_time_end', null);
+		vol.set('operation_geography', polygon);
 
 		flightRequest.volumes = [vol];
 		return flightRequest;
@@ -175,8 +177,9 @@ const FlightRequestEditor = () => {
 
 	if (step === FlightRequestEditorStep.VOLUME_AND_INFO) {
 		return (
-			<DrawingStep
+			<VolumesStep
 				{...{
+					polygon,
 					nextStep,
 					flightRequest,
 					setPolygon,
@@ -268,4 +271,4 @@ function checkCoordinations(flightRequest: FlightRequestEntity) {
 	return days >= 4;
 }
 
-export default observer(FlightRequestEditor);
+export default observer(LegacyFlightRequestStepsEditor);

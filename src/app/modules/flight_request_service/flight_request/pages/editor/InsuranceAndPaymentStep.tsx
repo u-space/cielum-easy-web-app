@@ -12,7 +12,7 @@ import { useHistory } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import styles from '../../../../../commons/Pages.module.scss';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
-import { SubTotals } from '../../screens/FlightRequestEditor';
+import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
 import { DocumentEntity } from '@utm-entities/document';
 import PNumberInput from '@pcomponents/PNumberInput';
 import PDropdown from '@pcomponents/PDropdown';
@@ -205,7 +205,7 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 		},
 		{
 			onSuccess: (data) => {
-				window.location.href = data;
+				window.location.href = data.paymentLink;
 			},
 			onError: (error) => {
 				setModalProps({

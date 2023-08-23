@@ -9,7 +9,7 @@ import { useQueryGeographicalZonesIntersectingPolygon } from '../../../geographi
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { Polygon } from 'geojson';
 import styles from '../../../../../commons/Pages.module.scss';
-import { SubTotals } from '../../screens/FlightRequestEditor';
+import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
 import DashboardLayout from '../../../../../commons/layouts/DashboardLayout';
 import PFullModal from '@pcomponents/PFullModal';
 
