@@ -1,9 +1,9 @@
-import PButton from '@pcomponents/PButton';
+import PButton, { PButtonSize } from '@pcomponents/PButton';
 import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import PBooleanInput from '@pcomponents/PBooleanInput';
 import PTextArea from '@pcomponents/PTextArea';
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import PDropdown from '@pcomponents/PDropdown';
 import { FlightCategory, FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { ExtraFieldSchema } from '@utm-entities/extraFields';
@@ -18,6 +18,8 @@ import { VehicleEntity } from '@utm-entities/vehicle';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
 import { useSchemaStore } from '../../../schemas/store';
 import styled from 'styled-components';
+import PNumberInput from '@pcomponents/PNumberInput';
+import { Divider } from '@blueprintjs/core';
 
 interface FlightRequestInfoProps {
 	prop: keyof FlightRequestEntity;
@@ -96,6 +98,7 @@ interface InfoFlightRequestProps {
 	volumeProps: string[];
 	nextStep: () => void;
 	setBlockingCenter: (value: boolean) => void;
+	children: ReactNode;
 }
 
 const DivStepButtons = styled.div`
@@ -108,7 +111,8 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	isEditingExisting,
 	volumeProps,
 	nextStep,
-	setBlockingCenter
+	setBlockingCenter,
+	children
 }) => {
 	const { t } = useTranslation(['ui', 'glossary']);
 	const isPilot = useAuthIsPilot();
@@ -142,6 +146,28 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	return (
 		<>
 			<CardGroup header="Details of the request">
+				<PInput
+					id={'editor-volume-name'}
+					label={t('glossary:flightRequest.name')}
+					isRequired
+					onChange={(value) => flightRequest.set('name', value)}
+				/>
+				{children}
+				<PVehicleSelect
+					label={t('glossary:flightRequest.uas_registrations')}
+					onSelect={(value: VehicleEntity[]) => flightRequest.setUavs(value)}
+					preselected={flightRequest.uavs}
+					username={
+						isAdmin
+							? (flightRequest?.operator as UserEntity)?.username || username
+							: username
+					}
+					fill
+					isRequired
+					token={token}
+					schema={schemaVehicles}
+					api={env.core_api}
+				/>
 				<PBooleanInput
 					id={`editor-volume-isDefaultOperator`}
 					defaultValue={isDefaultOperator}
@@ -181,20 +207,12 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 						id={'editor-select-user-admin'}
 					/>
 				)}
-				<PVehicleSelect
-					label={t('glossary:flightRequest.uas_registrations')}
-					onSelect={(value: VehicleEntity[]) => flightRequest.setUavs(value)}
-					preselected={flightRequest.uavs}
-					username={
-						isAdmin ? (flightRequest?.operator as UserEntity)?.username : username
-					}
-					fill
-					isRequired
-					token={token}
-					schema={schemaVehicles}
-					api={env.core_api}
+				<FlightRequestInfo
+					key={'flight_comments'}
+					prop={'flight_comments'}
+					entity={flightRequest}
+					setInfo={(prop, value) => flightRequest.setFlightComments(value as string)}
 				/>
-
 				<FlightRequestInfo
 					key={'urban_flight'}
 					prop={'urban_flight'}
@@ -233,6 +251,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 						/>
 					</>
 				)}
+
 				<FlightRequestInfo
 					key={'flight_category'}
 					prop={'flight_category'}
@@ -240,18 +259,6 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 					setInfo={(prop, value) =>
 						flightRequest.setFlightCategory(value as FlightCategory)
 					}
-				/>
-				<FlightRequestInfo
-					key={'flight_comments'}
-					prop={'flight_comments'}
-					entity={flightRequest}
-					setInfo={(prop, value) => flightRequest.setFlightComments(value as string)}
-				/>
-				<PInput
-					id={'editor-volume-name'}
-					label={t('glossary:flightRequest.name')}
-					isRequired
-					onChange={(value) => flightRequest.set('name', value)}
 				/>
 			</CardGroup>
 

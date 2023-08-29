@@ -255,87 +255,6 @@ const VolumesStep = (props: VolumesStepProps) => {
 				text: `### ${t('You are in EDITOR MODE')} `
 			}}
 			isBlockingCenter={isBlockingCenter}
-			contextual={
-				<>
-					{flightRequest.volumes[0] ? (
-						<CardGroup
-							header={t('Fill in volume information')}
-							style={{ maxHeight: '50vh', overflowY: 'auto' }}
-						>
-							<PNumberInput
-								id="operation-height"
-								label={t('Maximum altitude')}
-								defaultValue={flightRequest.volumes[0]?.max_altitude ?? 120}
-								onChange={(value) => {
-									setMaxAltitude(value);
-									flightRequest.volumes.forEach((volume) => {
-										volume.set('max_altitude', value);
-									});
-								}}
-							/>
-							<Divider dir="horizontal" />
-							<p>{t('Intervalos de tiempo')}</p>
-							<div
-								style={{
-									display: 'flex',
-									flexDirection: 'column',
-									gap: '1rem',
-									justifyContent: 'center'
-								}}
-							>
-								<PButton
-									size={PButtonSize.SMALL}
-									icon="plus"
-									id={'editor-flightRequest-add-time-interval'}
-									onClick={() => {
-										setModalProps(getUserSelectTimeRangeModalProps());
-									}}
-								/>
-								{flightRequest.volumes.map((volume, index) => {
-									if (
-										volume.effective_time_begin !== null &&
-										volume.effective_time_end !== null
-									) {
-										return (
-											<div
-												key={volume.ordinal}
-												style={{
-													display: 'flex',
-													justifyContent: 'center'
-												}}
-											>
-												{volume.effective_time_begin.toLocaleString()} -{' '}
-												{volume.effective_time_end.toLocaleString()}
-												<PButton
-													size={PButtonSize.SMALL}
-													icon="minus"
-													onClick={() => {
-														if (flightRequest.volumes.length === 1) {
-															flightRequest.volumes[0].set(
-																'effective_time_begin',
-																null
-															);
-															flightRequest.volumes[0].set(
-																'effective_time_end',
-																null
-															);
-														} else {
-															flightRequest.volumes.splice(index, 1);
-														}
-													}}
-												/>
-											</div>
-										);
-									} else {
-										return null;
-									}
-								})}
-							</div>
-						</CardGroup>
-					) : null}
-					<MapViewModeSwitch />
-				</>
-			}
 			menu={
 				<InfoFlightRequest
 					{...{
@@ -345,7 +264,78 @@ const VolumesStep = (props: VolumesStepProps) => {
 						setBlockingCenter: setBlockingCenterFlag,
 						nextStep
 					}}
-				/>
+				>
+					<p>{t('Time intervals')}</p>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: '1rem',
+							justifyContent: 'center'
+						}}
+					>
+						{flightRequest.volumes.map((volume, index) => {
+							if (
+								volume.effective_time_begin !== null &&
+								volume.effective_time_end !== null
+							) {
+								return (
+									<div
+										key={volume.ordinal}
+										style={{
+											display: 'flex',
+											justifyContent: 'center'
+										}}
+									>
+										{volume.effective_time_begin.toLocaleString()} -{' '}
+										{volume.effective_time_end.toLocaleString()}
+										<PButton
+											size={PButtonSize.SMALL}
+											icon="minus"
+											onClick={() => {
+												if (flightRequest.volumes.length === 1) {
+													flightRequest.volumes[0].set(
+														'effective_time_begin',
+														null
+													);
+													flightRequest.volumes[0].set(
+														'effective_time_end',
+														null
+													);
+												} else {
+													flightRequest.volumes.splice(index, 1);
+												}
+											}}
+										/>
+									</div>
+								);
+							} else {
+								return null;
+							}
+						})}
+						<PButton
+							size={PButtonSize.SMALL}
+							icon="plus"
+							id={'editor-flightRequest-add-time-interval'}
+							onClick={() => {
+								setModalProps(getUserSelectIntervalModalProps());
+							}}
+						>
+							{t('Add interval')}
+						</PButton>
+					</div>
+					<PNumberInput
+						id="operation-height"
+						label={t('Maximum altitude')}
+						defaultValue={flightRequest.volumes[0]?.max_altitude ?? 120}
+						onChange={(value) => {
+							setMaxAltitude(value);
+							flightRequest.volumes.forEach((volume) => {
+								volume.set('max_altitude', value);
+							});
+						}}
+					/>
+				</InfoFlightRequest>
 			}
 			modal={modalProps}
 		>

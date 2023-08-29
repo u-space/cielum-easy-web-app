@@ -66,7 +66,6 @@
 
 	const geographicalZoneDrawingProps: GeographicalZoneDrawingProps = {
 		lineAlpha: 255,
-		fillAlpha: 200,
 		threeDimensional: false
 	};
 

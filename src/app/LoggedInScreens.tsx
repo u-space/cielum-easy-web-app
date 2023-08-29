@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import MasterLayout from './commons/layouts/MasterLayout';
-import { Switch } from 'react-router-dom';
+import { Switch, useHistory } from 'react-router-dom';
 import RoleGatedRoute from './commons/components/RoleGatedRoute';
-import { AuthRole } from './modules/auth/store';
+import { AuthRole, useAuthStore } from './modules/auth/store';
 import Home from './commons/screens/Home';
-import env from '../vendor/environment/env';
 import LiveMap from './modules/map/screens/live/LiveMap';
 import UserHub from './modules/core_service/user/screens/UserHub';
 import OperationHub from './modules/core_service/operation/screens/OperationHub';
@@ -31,12 +30,15 @@ import { getFeatureOption } from './utils';
 import UserProfileScreen from './modules/core_service/user/screens/UserProfileScreen';
 import CoordinationHub from './modules/flight_request_service/coordination/screens/CoordinationHub';
 import { reactify } from 'svelte-preprocess-react';
-import FlightRequestEditorSvelte from './modules/flight_request_service/flight_request/screens/FlightRequestEditor.svelte';
+import FlightRequestEditorSvelte from './modules/flight_request_service/flight_request/screens/FlightRequestEditorApp.svelte';
 import LegacyFlightRequestStepsEditor from './modules/flight_request_service/flight_request/screens/LegacyFlightRequestStepsEditor';
+
 const FlightRequestEditor = reactify(FlightRequestEditorSvelte);
 
 const LoggedInScreens = () => {
 	const { t } = useTranslation();
+	const token = useAuthStore((state) => state.token);
+
 	return (
 		<MasterLayout>
 			<Switch>
@@ -224,7 +226,7 @@ const LoggedInScreens = () => {
 						path={'/editor/flightrequest'}
 						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
 					>
-						<FlightRequestEditor />
+						<FlightRequestEditor token={token} />
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('FlightRequests') && (
