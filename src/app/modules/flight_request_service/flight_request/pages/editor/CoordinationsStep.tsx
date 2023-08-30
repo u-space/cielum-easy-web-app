@@ -39,7 +39,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		);
 
 	const totalNumber = useMemo(() => {
-		return total.reduce((acc, obj) => obj.amount, 0);
+		return total.reduce((acc, obj) => acc + obj.amount, 0);
 	}, [total]);
 
 	return (

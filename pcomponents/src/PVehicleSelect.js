@@ -186,7 +186,7 @@ const TextFieldSelectVehicle = ({
 										<PButton
 											id={`select-vehicle-${vehicle.uvin}`}
 											fill
-											disabled={vehicle.isAuthorized}
+											disabled={!vehicle.isAuthorized}
 											variant={PButtonType.SECONDARY}
 											icon="plus"
 											onClick={() => {

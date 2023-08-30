@@ -23,8 +23,8 @@ export enum FlightRequestState {
 
 export enum FlightCategory {
 	OPEN = 'OPEN',
-	STS_01 = 'STS-01',
-	STS_02 = 'STS-02'
+	STS_01 = 'STS_01',
+	STS_02 = 'STS_02'
 }
 
 export class FlightRequestEntity implements EntityHasDisplayName {
