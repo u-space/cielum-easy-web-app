@@ -65,13 +65,14 @@
 	export let geographicalZones: EditorMapViewProps['geographicalZones'];
 
 	const geographicalZoneDrawingProps: GeographicalZoneDrawingProps = {
+		fillAlpha: 25,
 		lineAlpha: 255,
 		threeDimensional: false
 	};
 
 	const volumeDrawingProps: GenericVolumeDrawingProps = {
-		fillColor: [255, 0, 0, 100],
-		lineColor: [255, 0, 0, 255],
+		fillColor: [0, 0, 150, 100],
+		lineColor: [0, 0, 150, 255],
 		threeDimensional: false
 	};
 </script>

@@ -531,11 +531,9 @@ const ViewAndEditUser = (props: UserPageProps) => {
 					<h2>{t('Password')}</h2>
 					{t('Your password must have atleast 4 characters')}
 				</aside>
-				{!isCreating && token && (
-					<section className={styles.details}>
-						<PasswordChanger ls={ls} isCreating={isCreating} token={token} />
-					</section>
-				)}
+				<section className={styles.details}>
+					<PasswordChanger ls={ls} isCreating={isCreating} token={token || ''} />
+				</section>
 				{!isCreating && vehicles && (
 					<>
 						<div className={styles.separator} />

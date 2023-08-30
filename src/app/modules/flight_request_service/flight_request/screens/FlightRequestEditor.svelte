@@ -15,6 +15,7 @@
 	import {getGeographicalZoneAPIClient} from '@flight-request-entities/geographicalZone';
 	import {tokyoViewState} from '@tokyo/store';
 	import {WebMercatorViewport} from '@deck.gl/core/typed';
+	import CLoading from '@tokyo/gui/CLoading.svelte';
 
 	export let token: string; // TODO: Remove when we have a proper microfrontend app
 
@@ -81,6 +82,10 @@
 		<ChooseAreaStep geographicalZones={$query.isSuccess ? $query.data.data.geographicalZones : []}
 						on:next={onNextChooseAreaStep}/>
 	</div>
+
+	{#if $query.isLoading}
+		<CLoading/>
+	{/if}
 {/if}
 
 
