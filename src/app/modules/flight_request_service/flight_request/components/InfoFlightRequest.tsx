@@ -176,7 +176,9 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 					flightRequest.setOperator(
 						value && env.tenant.features.FlightRequests.enabled
 							? env.tenant.features.FlightRequests.options.defaultOperatorUsername
-							: null
+							: isAdmin
+							? null
+							: username
 					);
 				}}
 				isRequired
@@ -201,6 +203,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 			)}
 			{!isDefaultOperator && isPilot && (
 				<PUserSelectForPilots
+					preselected={[flightRequest.operator as string]}
 					label={t('glossary:flightRequest.operator')}
 					onSelect={onSelectUserForPilots}
 					id={'editor-select-user-admin'}
