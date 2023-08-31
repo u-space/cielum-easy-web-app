@@ -128,6 +128,14 @@ const VolumesStep = (props: VolumesStepProps) => {
 		polygons: [polygon]
 	};
 
+	const timeOptions = {
+		year: 'numeric',
+		month: 'numeric',
+		day: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric'
+	} as Intl.DateTimeFormatOptions;
+
 	return (
 		<MapLayout
 			statusOverlay={{
@@ -166,8 +174,12 @@ const VolumesStep = (props: VolumesStepProps) => {
 											justifyContent: 'center'
 										}}
 									>
-										{volume.effective_time_begin.toLocaleString()} -{' '}
-										{volume.effective_time_end.toLocaleString()}
+										{volume.effective_time_begin.toLocaleString(
+											[],
+											timeOptions
+										)}{' '}
+										-{' '}
+										{volume.effective_time_end.toLocaleString([], timeOptions)}
 										<PButton
 											size={PButtonSize.SMALL}
 											icon="minus"
