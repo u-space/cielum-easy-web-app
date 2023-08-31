@@ -96,7 +96,7 @@ interface InfoFlightRequestProps {
 	flightRequest: FlightRequestEntity;
 	isEditingExisting: boolean;
 	volumeProps: string[];
-	nextStep: () => void;
+
 	setBlockingCenter: (value: boolean) => void;
 	children: ReactNode;
 }
@@ -110,7 +110,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	flightRequest,
 	isEditingExisting,
 	volumeProps,
-	nextStep,
+
 	setBlockingCenter,
 	children
 }) => {
@@ -144,132 +144,120 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	if (token === null) return null;
 
 	return (
-		<>
-			<CardGroup header="Details of the request">
-				<PInput
-					id={'editor-volume-name'}
-					label={t('glossary:flightRequest.name')}
-					isRequired
-					onChange={(value) => flightRequest.set('name', value)}
-				/>
-				{children}
-				<PVehicleSelect
-					label={t('glossary:flightRequest.uas_registrations')}
-					onSelect={(value: VehicleEntity[]) => flightRequest.setUavs(value)}
-					preselected={flightRequest.uavs}
-					username={
-						isAdmin
-							? (flightRequest?.operator as UserEntity)?.username || username
-							: username
-					}
-					fill
-					isRequired
-					token={token}
-					schema={schemaVehicles}
-					api={env.core_api}
-				/>
-				<PBooleanInput
-					id={`editor-volume-isDefaultOperator`}
-					defaultValue={isDefaultOperator}
-					label={t('glossary:flightRequest.isDefaultOperator')}
-					onChange={(value: boolean) => {
-						setDefaultOperatorFlag(value);
-						flightRequest.setOperator(
-							value && env.tenant.features.FlightRequests.enabled
-								? env.tenant.features.FlightRequests.options.defaultOperatorUsername
-								: null
-						);
-					}}
-					isRequired
-					inline
-					fill
-				/>
-				{!isDefaultOperator && isAdmin && (
-					<PUserSelectForAdmins
-						api={env.core_api}
-						label={t('glossary:flightRequest.operator')}
-						onSelect={onSelectUserForAdmins}
-						preselected={
-							flightRequest.operator ? [flightRequest.operator as UserEntity] : []
-						}
-						fill
-						isRequired
-						disabled={isPilot}
-						token={token}
-						schema={schemaUsers}
-						id={'editor-select-user-pilot'}
-					/>
-				)}
-				{!isDefaultOperator && isPilot && (
-					<PUserSelectForPilots
-						label={t('glossary:flightRequest.operator')}
-						onSelect={onSelectUserForPilots}
-						id={'editor-select-user-admin'}
-					/>
-				)}
-				<FlightRequestInfo
-					key={'flight_comments'}
-					prop={'flight_comments'}
-					entity={flightRequest}
-					setInfo={(prop, value) => flightRequest.setFlightComments(value as string)}
-				/>
-				<FlightRequestInfo
-					key={'urban_flight'}
-					prop={'urban_flight'}
-					entity={flightRequest}
-					setInfo={(prop, value) => flightRequest.setUrbanFlight(value as boolean)}
-				/>
-				{flightRequest.urban_flight && (
-					<FlightRequestInfo
-						key={'parachute_model'}
-						prop={'parachute_model'}
-						entity={flightRequest}
-						setInfo={(prop, value) => flightRequest.setParachuteModel(value as string)}
-					/>
-				)}
-				<FlightRequestInfo
-					key={'dji_blocked'}
-					prop={'dji_blocked'}
-					entity={flightRequest}
-					setInfo={(prop, value) => flightRequest.setDjiBlocked(value as boolean)}
-				/>
-				{flightRequest.dji_blocked && (
-					<>
-						<FlightRequestInfo
-							key={'dji_controller_number'}
-							prop={'dji_controller_number'}
-							entity={flightRequest}
-							setInfo={(prop, value) =>
-								flightRequest.setDjiControllerNumber(value as string)
-							}
-						/>
-						<FlightRequestInfo
-							key={'dji_email'}
-							prop={'dji_email'}
-							entity={flightRequest}
-							setInfo={(prop, value) => flightRequest.setDjiEmail(value as string)}
-						/>
-					</>
-				)}
-
-				<FlightRequestInfo
-					key={'flight_category'}
-					prop={'flight_category'}
-					entity={flightRequest}
-					setInfo={(prop, value) =>
-						flightRequest.setFlightCategory(value as FlightCategory)
-					}
-				/>
-			</CardGroup>
-
-			<PButton
-				onClick={() => {
-					nextStep();
+		<CardGroup header="Details of the request">
+			<PInput
+				id={'editor-volume-name'}
+				label={t('glossary:flightRequest.name')}
+				isRequired
+				onChange={(value) => flightRequest.set('name', value)}
+			/>
+			{children}
+			<PVehicleSelect
+				label={t('glossary:flightRequest.uas_registrations')}
+				onSelect={(value: VehicleEntity[]) => flightRequest.setUavs(value)}
+				preselected={flightRequest.uavs}
+				username={
+					isAdmin
+						? (flightRequest?.operator as UserEntity)?.username || username
+						: username
+				}
+				fill
+				isRequired
+				token={token}
+				schema={schemaVehicles}
+				api={env.core_api}
+			/>
+			<PBooleanInput
+				id={`editor-volume-isDefaultOperator`}
+				defaultValue={isDefaultOperator}
+				label={t('glossary:flightRequest.isDefaultOperator')}
+				onChange={(value: boolean) => {
+					setDefaultOperatorFlag(value);
+					flightRequest.setOperator(
+						value && env.tenant.features.FlightRequests.enabled
+							? env.tenant.features.FlightRequests.options.defaultOperatorUsername
+							: null
+					);
 				}}
-			>
-				{t('Continue')}
-			</PButton>
-		</>
+				isRequired
+				inline
+				fill
+			/>
+			{!isDefaultOperator && isAdmin && (
+				<PUserSelectForAdmins
+					api={env.core_api}
+					label={t('glossary:flightRequest.operator')}
+					onSelect={onSelectUserForAdmins}
+					preselected={
+						flightRequest.operator ? [flightRequest.operator as UserEntity] : []
+					}
+					fill
+					isRequired
+					disabled={isPilot}
+					token={token}
+					schema={schemaUsers}
+					id={'editor-select-user-pilot'}
+				/>
+			)}
+			{!isDefaultOperator && isPilot && (
+				<PUserSelectForPilots
+					label={t('glossary:flightRequest.operator')}
+					onSelect={onSelectUserForPilots}
+					id={'editor-select-user-admin'}
+				/>
+			)}
+			<FlightRequestInfo
+				key={'flight_comments'}
+				prop={'flight_comments'}
+				entity={flightRequest}
+				setInfo={(prop, value) => flightRequest.setFlightComments(value as string)}
+			/>
+			<FlightRequestInfo
+				key={'urban_flight'}
+				prop={'urban_flight'}
+				entity={flightRequest}
+				setInfo={(prop, value) => flightRequest.setUrbanFlight(value as boolean)}
+			/>
+			{flightRequest.urban_flight && (
+				<FlightRequestInfo
+					key={'parachute_model'}
+					prop={'parachute_model'}
+					entity={flightRequest}
+					setInfo={(prop, value) => flightRequest.setParachuteModel(value as string)}
+				/>
+			)}
+			<FlightRequestInfo
+				key={'dji_blocked'}
+				prop={'dji_blocked'}
+				entity={flightRequest}
+				setInfo={(prop, value) => flightRequest.setDjiBlocked(value as boolean)}
+			/>
+			{flightRequest.dji_blocked && (
+				<>
+					<FlightRequestInfo
+						key={'dji_controller_number'}
+						prop={'dji_controller_number'}
+						entity={flightRequest}
+						setInfo={(prop, value) =>
+							flightRequest.setDjiControllerNumber(value as string)
+						}
+					/>
+					<FlightRequestInfo
+						key={'dji_email'}
+						prop={'dji_email'}
+						entity={flightRequest}
+						setInfo={(prop, value) => flightRequest.setDjiEmail(value as string)}
+					/>
+				</>
+			)}
+
+			<FlightRequestInfo
+				key={'flight_category'}
+				prop={'flight_category'}
+				entity={flightRequest}
+				setInfo={(prop, value) => flightRequest.setFlightCategory(value as FlightCategory)}
+			/>
+		</CardGroup>
 	);
 };
 

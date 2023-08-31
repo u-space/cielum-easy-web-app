@@ -1,4 +1,3 @@
-import { Divider } from '@blueprintjs/core';
 import PButton, { PButtonSize } from '@pcomponents/PButton';
 import PDateInput from '@pcomponents/PDateInput';
 import PDateRangeInput from '@pcomponents/PDateRangeInput';
@@ -12,8 +11,6 @@ import { useTranslation } from 'react-i18next';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
 import MapLayout from '../../../../../commons/layouts/MapLayout';
-import CardGroup from '../../../../../commons/layouts/dashboard/menu/CardGroup';
-import MapViewModeSwitch from '../../../../map/components/MapViewModeSwitch';
 import InfoFlightRequest from '../../components/InfoFlightRequest';
 import { reactify } from 'svelte-preprocess-react';
 import EditorMapViewSvelte from '../../../../map/screens/editor/EditorMapView.svelte';
@@ -345,6 +342,18 @@ const VolumesStep = (props: VolumesStepProps) => {
 				geographicalZones={queryGeographicalZones.items}
 				onEdit={(event: any) => onPolygonsUpdated(event.detail)}
 			/>
+			<PButton
+				style={{
+					position: 'absolute',
+					bottom: '1rem'
+				}}
+				size={PButtonSize.LARGE}
+				onClick={() => {
+					nextStep();
+				}}
+			>
+				{t('Continue')}
+			</PButton>
 		</MapLayout>
 	);
 };
