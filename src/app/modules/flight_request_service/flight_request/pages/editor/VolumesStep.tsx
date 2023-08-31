@@ -98,7 +98,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 			</>
 		),
 		primary: {
-			text: t('Save'),
+			text: t('Add'),
 			onClick: () => {
 				// For each day in the range, create a new volume
 				// with the start and end time
@@ -117,124 +117,6 @@ const VolumesStep = (props: VolumesStepProps) => {
 		},
 		secondary: {
 			text: 'Cancelar',
-			onClick: () => {
-				setModalProps(undefined);
-			}
-		}
-	});
-
-	const getTimeIntervalModalProps = () => ({
-		isVisible: true,
-		type: PModalType.INFORMATION,
-		title: t('Select the time interval'),
-		content: (
-			<>
-				<PDateInput
-					id="start-date"
-					isTime
-					label={'Fecha y hora de inicio'}
-					labelInfo={''}
-					explanation={''}
-					placeholder={''}
-					defaultValue={start.current}
-					isDarkVariant
-					onChange={(value: Date) => {
-						start.current = value;
-					}}
-				/>
-				<PDateInput
-					id="end-date"
-					isTime
-					label={'Fecha y hora de fin'}
-					labelInfo={''}
-					explanation={''}
-					placeholder={''}
-					defaultValue={end.current}
-					isDarkVariant
-					onChange={(value: Date) => {
-						end.current = value;
-					}}
-				/>
-			</>
-		),
-		primary: {
-			onClick: () => {
-				if (start.current >= end.current) {
-					alert('La hora de inicio debe ser menor que la hora de fin');
-					return;
-				}
-				if (start.current < addDays(new Date(), 9)) {
-					alert('La fecha de inicio debe ser mayor a 10 dias de la fecha actual');
-					return;
-				}
-				// The end date should be on the same day as the start date
-				if (start.current.getDate() !== end.current.getDate()) {
-					alert('La fecha de fin debe ser el mismo día que la fecha de inicio');
-					return;
-				}
-				const newVolume = new OperationVolume();
-				newVolume.set('ordinal', flightRequest.volumes.length - 1);
-				newVolume.set('max_altitude', maxAltitude);
-				newVolume.set('effective_time_begin', start.current);
-				newVolume.set('effective_time_end', end.current);
-				flightRequest.volumes.push(newVolume);
-				setModalProps(undefined);
-			},
-			text: t('Save')
-		},
-		secondary: {
-			text: 'Cancelar',
-			onClick: () => {
-				setModalProps(undefined);
-			}
-		}
-	});
-
-	const getUserSelectTimeRangeModalProps = (): PFullModalProps => ({
-		isVisible: true,
-		type: PModalType.INFORMATION,
-		title: t('Select the time interval'),
-		content: (
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'center'
-				}}
-			>
-				<PButton
-					onClick={() => {
-						setModalProps(getTimeIntervalModalProps());
-					}}
-					size={PButtonSize.MEDIUM}
-					style={{
-						marginRight: '1rem',
-						width: '100px',
-						height: '100px',
-						textAlign: 'center'
-					}}
-				>
-					{t('Select date and time range')}
-				</PButton>
-				<PButton
-					onClick={() => {
-						setModalProps(getUserSelectIntervalModalProps());
-					}}
-					size={PButtonSize.MEDIUM}
-					style={{
-						marginRight: '1rem',
-						width: '100px',
-						height: '100px',
-						textAlign: 'center'
-					}}
-				>
-					{t('Select time interval')}
-				</PButton>
-			</div>
-		),
-		secondary: {
-			text: t('Cancel'),
 			onClick: () => {
 				setModalProps(undefined);
 			}
