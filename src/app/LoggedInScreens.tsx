@@ -38,6 +38,7 @@ const FlightRequestEditor = reactify(FlightRequestEditorSvelte);
 const LoggedInScreens = () => {
 	const { t } = useTranslation();
 	const token = useAuthStore((state) => state.token);
+	const history = useHistory();
 
 	return (
 		<MasterLayout>
@@ -226,7 +227,7 @@ const LoggedInScreens = () => {
 						path={'/editor/flightrequest'}
 						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
 					>
-						<FlightRequestEditor token={token} />
+						<FlightRequestEditor token={token} history={history} />
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('FlightRequests') && (

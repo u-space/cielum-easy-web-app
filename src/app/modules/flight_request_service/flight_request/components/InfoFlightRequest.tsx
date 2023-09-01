@@ -20,6 +20,12 @@ import { useSchemaStore } from '../../../schemas/store';
 import styled from 'styled-components';
 import PNumberInput from '@pcomponents/PNumberInput';
 import { Divider } from '@blueprintjs/core';
+import CVehicleSelectorSvelte from '@tokyo/gui/CVehicleSelector.svelte';
+import { reactify } from 'svelte-preprocess-react';
+import { useCoreServiceAPI } from '../../../../utils';
+import { useQuery } from 'react-query';
+import { ResponseBaseVehicle, ResponseVehicle, UtmVehicle } from '@utm-entities/v2/model/vehicle';
+const CVehicleSelector = reactify(CVehicleSelectorSvelte);
 
 interface FlightRequestInfoProps {
 	prop: keyof FlightRequestEntity;
@@ -83,7 +89,6 @@ const FlightRequestInfo: FC<FlightRequestInfoProps> = observer(({ prop, entity, 
 				label={t(`flightRequest.${prop}`)}
 				onChange={(value) => setInfo(prop, value)}
 				isRequired
-				inline
 				fill
 			/>
 		);
@@ -121,12 +126,31 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	const schemaUsers = useSchemaStore((state) => state.users);
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
 	const token = useAuthStore((state) => state.token);
+	const [operator, setOperator] = useState<string>(
+		env.tenant.features.FlightRequests.enabled
+			? env.tenant.features.FlightRequests.options.defaultOperatorUsername
+			: ''
+	);
+
+	const {
+		vehicle: { getVehiclesByOperator }
+	} = useCoreServiceAPI();
+	const queryVehicles = useQuery(
+		[`short_vehicles`, operator],
+		() => getVehiclesByOperator(operator, 99, 0),
+		{
+			retry: false,
+			enabled: operator.length > 0
+		}
+	);
 	const onSelectUserForAdmins = (_value: UserEntity[]) => {
 		flightRequest.setUavs([]);
 		if (_value.length > 0) {
 			const value = _value[0];
+			setOperator(value.username);
 			flightRequest.setOperator(value);
 		} else {
+			setOperator('');
 			flightRequest.setOperator(null);
 		}
 	};
@@ -134,7 +158,9 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 		flightRequest.setUavs([]);
 		if (value.length > 0) {
 			flightRequest.setOperator(value[0]);
+			setOperator(value[0]);
 		} else {
+			setOperator('');
 			flightRequest.setOperator(null);
 		}
 	};
@@ -144,7 +170,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	if (token === null) return null;
 
 	return (
-		<CardGroup header="Details of the request">
+		<CardGroup hasSeparators header="Details of the request">
 			<PInput
 				id={'editor-volume-name'}
 				label={t('glossary:flightRequest.name')}
@@ -152,7 +178,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				onChange={(value) => flightRequest.set('name', value)}
 			/>
 			{children}
-			<PVehicleSelect
+			{/*<PVehicleSelect
 				label={t('glossary:flightRequest.uas_registrations')}
 				onSelect={(value: VehicleEntity[]) => flightRequest.setUavs(value)}
 				preselected={flightRequest.uavs}
@@ -166,7 +192,8 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				token={token}
 				schema={schemaVehicles}
 				api={env.core_api}
-			/>
+			/>*/}
+
 			<PBooleanInput
 				id={`editor-volume-isDefaultOperator`}
 				defaultValue={isDefaultOperator}
@@ -182,33 +209,41 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 					);
 				}}
 				isRequired
-				inline
 				fill
 			/>
-			{!isDefaultOperator && isAdmin && (
-				<PUserSelectForAdmins
-					api={env.core_api}
-					label={t('glossary:flightRequest.operator')}
-					onSelect={onSelectUserForAdmins}
-					preselected={
-						flightRequest.operator ? [flightRequest.operator as UserEntity] : []
-					}
-					fill
-					isRequired
-					disabled={isPilot}
-					token={token}
-					schema={schemaUsers}
-					id={'editor-select-user-pilot'}
-				/>
-			)}
-			{!isDefaultOperator && isPilot && (
-				<PUserSelectForPilots
-					preselected={[flightRequest.operator as string]}
-					label={t('glossary:flightRequest.operator')}
-					onSelect={onSelectUserForPilots}
-					id={'editor-select-user-admin'}
-				/>
-			)}
+			<div>
+				{!isDefaultOperator && isAdmin && (
+					<PUserSelectForAdmins
+						api={env.core_api}
+						label={t('glossary:flightRequest.operator')}
+						onSelect={onSelectUserForAdmins}
+						preselected={
+							flightRequest.operator ? [flightRequest.operator as UserEntity] : []
+						}
+						fill
+						isRequired
+						disabled={isPilot}
+						token={token}
+						schema={schemaUsers}
+						id={'editor-select-user-pilot'}
+					/>
+				)}
+				{!isDefaultOperator && isPilot && (
+					<PUserSelectForPilots
+						preselected={[flightRequest.operator as string]}
+						label={t('glossary:flightRequest.operator')}
+						onSelect={onSelectUserForPilots}
+						id={'editor-select-user-admin'}
+					/>
+				)}
+			</div>
+			<div>
+				<CVehicleSelector
+					vehicles={queryVehicles.isSuccess ? queryVehicles.data.data.vehicles : []}
+				>
+					{t('Vehicles')}
+				</CVehicleSelector>
+			</div>
 			<FlightRequestInfo
 				key={'flight_comments'}
 				prop={'flight_comments'}

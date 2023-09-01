@@ -1,42 +1,45 @@
 <script lang="ts">
-	import {CButtonProps, CButtonVariant} from './CButton';
-	import CTooltip from '@tokyo/gui/CTooltip.svelte';
-	import CSizeWrapper from "@tokyo/gui/CSizeWrapper.svelte";
-	import {CSize} from './CSizeWrapper';
+    import {CButtonProps, CButtonVariant} from './CButton';
+    import CTooltip from '@tokyo/gui/CTooltip.svelte';
+    import CSizeWrapper from "@tokyo/gui/CSizeWrapper.svelte";
+    import {CSize} from './CSizeWrapper';
 
-	export let variant: CButtonProps['variant'] = CButtonVariant.PRIMARY;
-	export let size: CButtonProps['size'] = CSize.MEDIUM;
-	export let icon: CButtonProps['icon'] = undefined;
-	export let fill: CButtonProps['fill'] = false;
+    export let variant: CButtonProps['variant'] = CButtonVariant.PRIMARY;
+    export let size: CButtonProps['size'] = CSize.MEDIUM;
+    export let icon: CButtonProps['icon'] = undefined;
+    export let fill: CButtonProps['fill'] = false;
 
-	export let tooltip: CButtonProps['tooltip'] = undefined;
-	export let disabled: CButtonProps['disabled'] = false;
+    export let tooltip: CButtonProps['tooltip'] = undefined;
+    export let disabled: CButtonProps['disabled'] = false;
 
-	let open = false;
+    let open = false;
 </script>
 
 <CSizeWrapper {size}>
-	<button
-			on:click
-			class:primary={variant === CButtonVariant.PRIMARY} class:secondary={variant === CButtonVariant.SECONDARY}
-			class:danger={variant === CButtonVariant.DANGER} class:disabled={disabled}
-			class:only_icon={!$$slots.default && icon} class:icon_and_text={$$slots.default && icon}
-			class:icon_or_text={($$slots.default || icon) && !($$slots.default && icon)}
-			class:fill={fill}
-			on:mouseenter={() => open = true} on:mouseleave={() => open = false}
-	>
-		{#if icon}
-			<iconify-icon height="1.5em" icon={`ph:${icon}`}></iconify-icon>
-		{/if}
-		{#if tooltip}
-			<CTooltip {...{text: '', position: 'bottom', ...tooltip, open}}/>
-		{/if}
-		{#if $$slots.default}
-			<p>
-				<slot></slot>
-			</p>
-		{/if}
-	</button>
+    <button
+            {...$$restProps}
+            on:click
+            class:primary={variant === CButtonVariant.PRIMARY && !disabled}
+            class:secondary={variant === CButtonVariant.SECONDARY && !disabled}
+            class:danger={variant === CButtonVariant.DANGER && !disabled}
+            class:disabled={disabled}
+            class:only_icon={!$$slots.default && icon} class:icon_and_text={$$slots.default && icon}
+            class:icon_or_text={($$slots.default || icon) && !($$slots.default && icon)}
+            class:fill={fill}
+            on:mouseenter={() => open = true} on:mouseleave={() => open = false}
+    >
+        {#if icon}
+            <iconify-icon height="1.5em" icon={`ph:${icon}`}></iconify-icon>
+        {/if}
+        {#if tooltip}
+            <CTooltip {...{text: '', position: 'bottom', ...tooltip, open}}/>
+        {/if}
+        {#if $$slots.default}
+            <p>
+                <slot></slot>
+            </p>
+        {/if}
+    </button>
 </CSizeWrapper>
 
 <style lang="scss">
@@ -46,22 +49,21 @@
 
   button {
     position: relative;
-    display: flex;
     flex: 0;
 
-    width: auto;
-    height: 1.70em;
-
-    user-select: none;
-
+    display: flex;
     align-items: center;
 
+    overflow: visible; // To be able to draw the small overhang of the button that shows on hover
+
+    width: auto;
+    max-width: 100%;
+    min-height: 1.70em;
+
+    user-select: none;
     font-family: 'Lexend Deca', sans-serif;
     text-align: right;
-
     font-size: 1em;
-
-
     border-radius: var(--c-radius-s);
     box-shadow: inset 0 0 0 1px rgba(17, 20, 24, 0.2), 0 1px 2px rgba(17, 20, 24, 0.1);
 
@@ -71,13 +73,13 @@
                     0
     ); // https://stackoverflow.com/questions/48748223/really-weird-box-shadow-transition-bug
 
-    overflow: visible;
     @include no-outline;
 
 
     & p {
       margin: 0;
       width: 100%;
+      height: 100%;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
@@ -88,6 +90,7 @@
       transform: translateY(-$button-shift-action);
 
       &::after {
+        // To prevent a fast effect when the button is hovered (moving the button up and down)
         content: '';
         position: absolute;
         top: 100%;
@@ -173,6 +176,7 @@
     &:hover,
     &:active {
       background: var(--mirai-700) !important;
+      transform: none;
     }
   }
 

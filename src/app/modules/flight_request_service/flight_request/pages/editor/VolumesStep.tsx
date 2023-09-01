@@ -152,80 +152,87 @@ const VolumesStep = (props: VolumesStepProps) => {
 						nextStep
 					}}
 				>
-					<p>{t('Time intervals')}</p>
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: '1rem',
-							justifyContent: 'center'
-						}}
-					>
-						{flightRequest.volumes.map((volume, index) => {
-							if (
-								volume.effective_time_begin !== null &&
-								volume.effective_time_end !== null
-							) {
-								return (
-									<div
-										key={volume.ordinal}
-										style={{
-											display: 'flex',
-											justifyContent: 'center'
-										}}
-									>
-										{volume.effective_time_begin.toLocaleString(
-											[],
-											timeOptions
-										)}{' '}
-										-{' '}
-										{volume.effective_time_end.toLocaleString([], timeOptions)}
-										<PButton
-											size={PButtonSize.SMALL}
-											icon="minus"
-											onClick={() => {
-												if (flightRequest.volumes.length === 1) {
-													flightRequest.volumes[0].set(
-														'effective_time_begin',
-														null
-													);
-													flightRequest.volumes[0].set(
-														'effective_time_end',
-														null
-													);
-												} else {
-													flightRequest.volumes.splice(index, 1);
-												}
-											}}
-										/>
-									</div>
-								);
-							} else {
-								return null;
-							}
-						})}
-						<PButton
-							size={PButtonSize.SMALL}
-							icon="plus"
-							id={'editor-flightRequest-add-time-interval'}
-							onClick={() => {
-								setModalProps(getUserSelectIntervalModalProps());
+					<div>
+						<p>{t('Time intervals')}</p>
+						<div
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								gap: '1rem',
+								justifyContent: 'center'
 							}}
 						>
-							{t('Add interval')}
-						</PButton>
+							{flightRequest.volumes.map((volume, index) => {
+								if (
+									volume.effective_time_begin !== null &&
+									volume.effective_time_end !== null
+								) {
+									return (
+										<div
+											key={volume.ordinal}
+											style={{
+												display: 'flex',
+												justifyContent: 'center'
+											}}
+										>
+											{volume.effective_time_begin.toLocaleString(
+												[],
+												timeOptions
+											)}{' '}
+											-{' '}
+											{volume.effective_time_end.toLocaleString(
+												[],
+												timeOptions
+											)}
+											<PButton
+												size={PButtonSize.SMALL}
+												icon="minus"
+												onClick={() => {
+													if (flightRequest.volumes.length === 1) {
+														flightRequest.volumes[0].set(
+															'effective_time_begin',
+															null
+														);
+														flightRequest.volumes[0].set(
+															'effective_time_end',
+															null
+														);
+													} else {
+														flightRequest.volumes.splice(index, 1);
+													}
+												}}
+											/>
+										</div>
+									);
+								} else {
+									return null;
+								}
+							})}
+							<PButton
+								size={PButtonSize.SMALL}
+								icon="plus"
+								id={'editor-flightRequest-add-time-interval'}
+								onClick={() => {
+									setModalProps(getUserSelectIntervalModalProps());
+								}}
+							>
+								{t('Add interval')}
+							</PButton>
+						</div>
 					</div>
-					<PNumberInput
-						id="operation-height"
-						label={t('Maximum altitude')}
-						defaultValue={flightRequest.volumes[0]?.max_altitude ?? 120}
-						onChange={(value) => {
-							setMaxAltitude(value);
-							flightRequest.volumes.forEach((volume) => {
-								volume.set('max_altitude', value);
-							});
-						}}
-					/>
+					<div>
+						<PNumberInput
+							id="operation-height"
+							label={t('Maximum altitude')}
+							defaultValue={flightRequest.volumes[0]?.max_altitude ?? 120}
+							onChange={(value) => {
+								setMaxAltitude(value);
+								flightRequest.volumes.forEach((volume) => {
+									volume.set('max_altitude', value);
+								});
+							}}
+						/>
+					</div>
 				</InfoFlightRequest>
 			}
 			modal={modalProps}

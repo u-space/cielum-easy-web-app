@@ -14,6 +14,9 @@ import env from '../../../../../vendor/environment/env';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 import VolumesStep from '../pages/editor/VolumesStep';
 import { useParams } from 'react-router-dom';
+import { getVehicleAPIClient } from '@utm-entities/vehicle';
+import { useQuery } from 'react-query';
+import { useCoreServiceAPI } from '../../../../utils';
 
 export interface SubTotals {
 	amount: number;

@@ -3,11 +3,12 @@
 	import FlightRequestEditor from './FlightRequestEditor.svelte';
 
 	export let token: string;
+	export let history: any;
 
 	const queryClient = new QueryClient()
 </script>
 
 <QueryClientProvider client={queryClient}>
-	<FlightRequestEditor {token}/>
+	<FlightRequestEditor {token} {history}/>
 </QueryClientProvider>
 

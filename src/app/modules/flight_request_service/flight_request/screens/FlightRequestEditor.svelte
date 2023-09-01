@@ -18,6 +18,7 @@
 	import CLoading from '@tokyo/gui/CLoading.svelte';
 
 	export let token: string; // TODO: Remove when we have a proper microfrontend app
+	export let history: any; // TODO: Remove when we have a proper microfrontend app
 
 	let state: StepState = {
 		current: 'choose_area',
@@ -28,7 +29,7 @@
 		state.results_choose_area = event.detail;
 		state.current = 'legacy';
 		// TODO: This is temporal while we still have the legacy editor
-		window.location.href = window.location.origin + '/editor/flightRequest/' + JSON.stringify(state.results_choose_area);
+		history.push('/editor/flightRequest/' + JSON.stringify(state.results_choose_area));
 	}
 
 	// Load data, temporal api calls

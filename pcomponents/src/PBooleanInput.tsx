@@ -66,22 +66,24 @@ const PBooleanInput = ({
 			labelFor={id}
 			inline={inline}
 		>
-			<InputGroup
-				className={classnames({
-					[Classes.SKELETON]: isLoading,
-					[styles.dark]: isDarkVariant
-				})}
-				id={id}
-				placeholder={placeholder}
-				value={value ? t('Yes') : t('No')}
-				disabled={true}
-				{...extraProps}
-			/>
+			{disabled && (
+				<InputGroup
+					className={classnames({
+						[Classes.SKELETON]: isLoading,
+						[styles.dark]: isDarkVariant
+					})}
+					id={id}
+					placeholder={placeholder}
+					value={value ? t('Yes') : t('No')}
+					disabled={true}
+					{...extraProps}
+				/>
+			)}
 			{!disabled && (
 				<div className={classnames(styles.boolean, { [styles.hidden]: disabled })}>
 					<PButton
 						id={`${id}-yes`}
-						variant={PButtonType.SECONDARY}
+						variant={value ? PButtonType.PRIMARY : PButtonType.SECONDARY}
 						onClick={() => {
 							onValueChange(true);
 						}}
@@ -90,7 +92,7 @@ const PBooleanInput = ({
 					</PButton>
 					<PButton
 						id={`${id}-no`}
-						variant={PButtonType.SECONDARY}
+						variant={!value ? PButtonType.PRIMARY : PButtonType.SECONDARY}
 						onClick={() => {
 							onValueChange(false);
 						}}
