@@ -4,6 +4,9 @@
     import {CSize} from '@tokyo/gui/CSizeWrapper';
     import {VehicleAuthorizationStatus} from '@utm-entities/vehicle';
     import {CButtonVariant} from '@tokyo/gui/CButton';
+    import {createEventDispatcher} from 'svelte';
+
+    const dispatch = createEventDispatcher<{ select: VehicleEntity[] }>(); // Temporal until parents are all Svelte (for prop binding)
 
     export let vehicles: VehicleEntity[] = []; // TODO: Use vehicle v2
     export let selected: VehicleEntity[] = [];
@@ -15,6 +18,7 @@
             } else {
                 selected = [...selected, vehicle];
             }
+            dispatch('select', selected);
         }
     }
 </script>

@@ -240,6 +240,9 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 			<div>
 				<CVehicleSelector
 					vehicles={queryVehicles.isSuccess ? queryVehicles.data.data.vehicles : []}
+					onSelect={(event) =>
+						flightRequest.setUavs((event as CustomEvent<VehicleEntity[]>).detail)
+					}
 				>
 					{t('Vehicles')}
 				</CVehicleSelector>
