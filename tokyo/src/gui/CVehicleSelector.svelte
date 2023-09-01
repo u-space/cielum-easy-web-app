@@ -33,8 +33,7 @@
                  aria-label={selected.indexOf(vehicle) !== -1 ? `Deselect vehicle ${vehicle.vehicleName}` : `Select vehicle ${vehicle.vehicleName}`}
                  size={CSize.SMALL}
                  on:click={onSelectHandler(vehicle)}>
-
-            >{vehicle.vehicleName}<br/>
+            {vehicle.vehicleName}<br/>
             <em>{manufacturerModel}</em>
         </CButton>
 

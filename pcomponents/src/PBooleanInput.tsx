@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Kanpur.module.scss';
 import classnames from 'classnames';
-import PButton, { PButtonType } from './PButton';
+import PButton, { PButtonSize, PButtonType } from './PButton';
 import LabelInfo from './form/LabelInfo';
 
 export interface PBooleanInputProps {
@@ -83,21 +83,25 @@ const PBooleanInput = ({
 				<div className={classnames(styles.boolean, { [styles.hidden]: disabled })}>
 					<PButton
 						id={`${id}-yes`}
+						size={PButtonSize.SMALL}
+						style={{ fontWeight: value ? '900' : '300' }}
 						variant={value ? PButtonType.PRIMARY : PButtonType.SECONDARY}
 						onClick={() => {
 							onValueChange(true);
 						}}
 					>
-						{t('Yes')}
+						{t('Yes').toUpperCase()}
 					</PButton>
 					<PButton
+						size={PButtonSize.SMALL}
 						id={`${id}-no`}
+						style={{ fontWeight: !value ? '900' : '300' }}
 						variant={!value ? PButtonType.PRIMARY : PButtonType.SECONDARY}
 						onClick={() => {
 							onValueChange(false);
 						}}
 					>
-						{t('No')}
+						{t('No').toUpperCase()}
 					</PButton>
 				</div>
 			)}
