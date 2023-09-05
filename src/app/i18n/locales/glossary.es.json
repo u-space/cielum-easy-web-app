@@ -455,8 +455,8 @@
 		"flightCategory": "Categoría de vuelo",
 		"flight_category": {
 			"OPEN": "Open",
-			"STS-01": "STS 01",
-			"STS-02": "STS 02"
+			"STS_01": "STS 01",
+			"STS_02": "STS 02"
 		},
 		"state": "Estado",
 		"flight_state": {

@@ -12,7 +12,7 @@ import { useHistory } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import styles from '../../../../../commons/Pages.module.scss';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
-import { SubTotals } from '../../screens/FlightRequestEditor';
+import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
 import { DocumentEntity } from '@utm-entities/document';
 import PNumberInput from '@pcomponents/PNumberInput';
 import PDropdown from '@pcomponents/PDropdown';
@@ -205,7 +205,7 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 		},
 		{
 			onSuccess: (data) => {
-				window.location.href = data;
+				window.location.href = data.paymentLink;
 			},
 			onError: (error) => {
 				setModalProps({
@@ -326,7 +326,7 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 							<h2>{t('Insurance')}</h2>
 							{t('Insurance description')}
 						</aside>
-						<section className={styles.details}>
+						<ul className={styles.details}>
 							{flightRequest.uavs.map((uav: VehicleEntity) => {
 								const insurance = (uav.extra_fields?.documents as Array<any>).find(
 									(doc: any) => {
@@ -334,38 +334,38 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 									}
 								);
 								return (
-									<>
-										<Checkbox
-											key={uav.uvin}
-											label={uav.vehicleName}
-											checked={!!insurance}
-											onChange={undefined}
-											disabled={!!insuranceDocument(uav)}
-										></Checkbox>
-										<p>
-											{' '}
-											{insuranceDocument(uav) ? (
-												<>
-													{t('This drone has a valid insurance until')}{' '}
-													{new Date(
-														insurance?.valid_until
-													).toLocaleDateString()}
-												</>
-											) : uav.extra_fields.insurance ? (
-												<p>
-													{t(
-														'This insurance for this drone is calculated in'
-													)}{' '}
-													{
-														(uav.extra_fields.insurance as any)
-															.premium_total
-													}{' '}
-													{'€'}
-												</p>
-											) : (
-												<>
-													{t('The drone has no valid insurance')}
-													{/* <PButton
+									<li
+										key={uav.uvin}
+										style={{ color: insurance ? 'green' : 'red' }}
+									>
+										<div style={{ color: 'var(--primary-900)' }}>
+											<p>{uav.vehicleName}</p>
+											<p>
+												{' '}
+												{insuranceDocument(uav) ? (
+													<>
+														{t(
+															'This drone has a valid insurance until'
+														)}{' '}
+														{new Date(
+															insurance?.valid_until
+														).toLocaleDateString()}
+													</>
+												) : uav.extra_fields.insurance ? (
+													<p>
+														{t(
+															'This insurance for this drone is calculated in'
+														)}{' '}
+														{
+															(uav.extra_fields.insurance as any)
+																.premium_total
+														}{' '}
+														{'€'}
+													</p>
+												) : (
+													<>
+														{t('The drone has no valid insurance')}
+														{/* <PButton
 														onClick={() => {
 															setInsuranceFormOpenedFlag(true);
 															setVehicleSelectedForInsurance(uav);
@@ -373,13 +373,14 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 													>
 														{t('Calculate insurance')}
 													</PButton> */}
-												</>
-											)}
-										</p>
-									</>
+													</>
+												)}
+											</p>
+										</div>
+									</li>
 								);
 							})}
-						</section>
+						</ul>
 					</div>
 					<div className={styles.content}>
 						<aside className={styles.summary}>

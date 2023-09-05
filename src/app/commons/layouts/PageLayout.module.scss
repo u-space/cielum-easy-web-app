@@ -25,6 +25,7 @@
 	}
 
 	& > .borders {
+		flex-shrink: 0;
 		align-items: flex-end;
 
 		height: 3rem;
@@ -46,19 +47,19 @@
 		}
 	}
 
+	& > .content {
+		flex: 1;
+	}
+
 	& > p {
 		padding: var(--spacing-2);
 	}
 
 	& > footer {
-		position: absolute;
-		left: 0;
-		bottom: 0;
-		right: 0;
-
 		display: flex;
 		justify-content: flex-end;
 
+		margin-top: auto;
 		padding: var(--spacing-2);
 
 		background-color: var(--mirai-100);

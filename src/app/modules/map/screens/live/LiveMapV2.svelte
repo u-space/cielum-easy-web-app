@@ -119,7 +119,7 @@
 
 </script>
 
-<Dashboard canMenuOpen={!!selected}>
+<Dashboard canMenuOpen={!!selected} {isLoading}>
 	<slot slot="menu">
 		{#if selected}
 			{#if isSelectedOfType(PickableType.Operation) && selectedOperation}
@@ -132,9 +132,7 @@
 	</slot>
 	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onPick(event.detail)}/>
 </Dashboard>
-{#if isLoading}
-	<CLoading/>
-{/if}
+
 {#if isError}
 	<CModal
 			title={i18n.t('There is no operation with the specified id')}

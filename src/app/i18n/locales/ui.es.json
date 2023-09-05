@@ -412,7 +412,7 @@
 	"Insurance": "Seguros",
 	"Upload": "Subir",
 	"View file": "Ver archivo",
-	"Insurance description": "Solamente las solicitudes de coordinación que tengan un seguro válido podrán ser ejecutadas. Si no tienes un seguro, puedes contratar un seguro válido por un año a través de esta pantalla. Servicio ofrecido por Filhet-Allard MDS.",
+	"Insurance description": "Solamente las solicitudes de coordinación que tengan un seguro válido podrán ser ejecutadas. Si tienes un seguro pero no lo has subido al sistema, puedes crear la solicitud y te solicitaremos los detalles del mismo por correo electrónico",
 	"No drones selected": "No hay aeronaves seleccionadas",
 	"No zones selected": "No hay zonas seleccionadas",
 	"No coordinates selected": "No hay coordenadas seleccionadas",
@@ -506,5 +506,9 @@
 	"STEP 4 - Details of the request": "PASO 4 - Detalles de la solicitud",
 	"Previous step": "Atras",
 	"Next step": "Siguiente",
-	"You will be redirected to the mobile version": "Estás siendo redirigido a la versión móvil"
+	"You will be redirected to the mobile version": "Estás siendo redirigido a la versión móvil",
+	"Time intervals": "Periodos de tiempo",
+	"Add interval": "Agregar periodo",
+	"Details of the request": "Detalles de la solicitud",
+	"I want to fly here": "Quiero volar aquí"
 }

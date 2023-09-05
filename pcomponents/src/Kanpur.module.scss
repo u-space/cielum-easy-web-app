@@ -140,6 +140,41 @@
 			transform: translateY(0.5px);
 		}
 	}
+
+	// Large
+
+	&.large {
+		min-width: 48px;
+		min-height: 48px;
+		padding: 0 16px;
+
+		font-size: 16px;
+
+		&:hover {
+			transform: translateY(-2px);
+		}
+
+		&:active {
+			transform: translateY(2px);
+		}
+	}
+
+	// Extra Large
+	&.extra_large {
+		min-width: 64px;
+		min-height: 64px;
+		padding: 0 16px;
+
+		font-size: 16px;
+
+		&:hover {
+			transform: translateY(-4px);
+		}
+
+		&:active {
+			transform: translateY(4px);
+		}
+	}
 }
 
 .form {
@@ -386,7 +421,7 @@
 .user,
 .vehicle {
 	display: flex;
-	gap: 6px;
+	gap: 1rem;
 	justify-content: flex-end;
 
 	color: var(--yamate-400);

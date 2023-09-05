@@ -491,7 +491,6 @@ const ViewAndEditUser = (props: UserPageProps) => {
 	} = props;
 	const token = useAuthStore((state) => state.token);
 	const { t } = useTranslation();
-	if (token === null) return null;
 	return (
 		<div className={styles.twobytwo} style={style}>
 			<div className={styles.content}>
@@ -533,7 +532,7 @@ const ViewAndEditUser = (props: UserPageProps) => {
 					{t('Your password must have atleast 4 characters')}
 				</aside>
 				<section className={styles.details}>
-					<PasswordChanger ls={ls} isCreating={isCreating} token={token} />
+					<PasswordChanger ls={ls} isCreating={isCreating} token={token || ''} />
 				</section>
 				{!isCreating && vehicles && (
 					<>

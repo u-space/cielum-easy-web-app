@@ -36,8 +36,8 @@
 <style lang="scss">
   @import './mixins.scss';
 
-  $min-width: 15vw;
-  $max-width: 50vw;
+  $min-width: 500px;
+  $max-width: 800px;
 
   dialog[open] {
     display: flex;
@@ -45,8 +45,7 @@
     justify-content: flex-start;
     align-items: center;
 
-    min-width: $min-width;
-    max-width: $max-width;
+    min-width: min($min-width, 100%);
     min-height: 10vh;
     margin: auto auto;
 
@@ -65,7 +64,7 @@
 
     // Size variants
     &.smallest {
-      width: $min-width;
+      width: min($min-width, 100%);
     }
 
     &.largest {

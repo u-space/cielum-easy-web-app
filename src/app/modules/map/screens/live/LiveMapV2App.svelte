@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {QueryClient, QueryClientProvider} from '@tanstack/svelte-query'
-	import LiveMapV2 from './modules/map/screens/live/LiveMapV2.svelte';
+	import LiveMapV2 from './LiveMapV2.svelte';
 
 	export let history: History;
 

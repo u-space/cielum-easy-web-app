@@ -1,4 +1,3 @@
-import { Divider } from '@blueprintjs/core';
 import PButton, { PButtonSize } from '@pcomponents/PButton';
 import PDateInput from '@pcomponents/PDateInput';
 import PDateRangeInput from '@pcomponents/PDateRangeInput';
@@ -12,8 +11,6 @@ import { useTranslation } from 'react-i18next';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
 import MapLayout from '../../../../../commons/layouts/MapLayout';
-import CardGroup from '../../../../../commons/layouts/dashboard/menu/CardGroup';
-import MapViewModeSwitch from '../../../../map/components/MapViewModeSwitch';
 import InfoFlightRequest from '../../components/InfoFlightRequest';
 import { reactify } from 'svelte-preprocess-react';
 import EditorMapViewSvelte from '../../../../map/screens/editor/EditorMapView.svelte';
@@ -23,15 +20,16 @@ import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 interface VolumesStepProps {
+	polygon: Polygon;
 	nextStep: () => void;
 	flightRequest: FlightRequestEntity;
-	setPolygon: (polygon: Polygon | undefined) => void;
+	setPolygon: (polygon: Polygon) => void;
 	modalProps: PFullModalProps | undefined;
 	setModalProps: (modalProps: PFullModalProps | undefined) => void;
 }
 
 const VolumesStep = (props: VolumesStepProps) => {
-	const { nextStep, flightRequest, setPolygon, modalProps, setModalProps } = props;
+	const { polygon, nextStep, flightRequest, setPolygon, modalProps, setModalProps } = props;
 
 	const start = useRef(setHoursAndReturnDate(addDays(new Date(), 10), 9, 0));
 	const end = useRef(
@@ -100,7 +98,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 			</>
 		),
 		primary: {
-			text: t('Save'),
+			text: t('Add'),
 			onClick: () => {
 				// For each day in the range, create a new volume
 				// with the start and end time
@@ -125,128 +123,18 @@ const VolumesStep = (props: VolumesStepProps) => {
 		}
 	});
 
-	const getTimeIntervalModalProps = () => ({
-		isVisible: true,
-		type: PModalType.INFORMATION,
-		title: t('Select the time interval'),
-		content: (
-			<>
-				<PDateInput
-					id="start-date"
-					isTime
-					label={'Fecha y hora de inicio'}
-					labelInfo={''}
-					explanation={''}
-					placeholder={''}
-					defaultValue={start.current}
-					isDarkVariant
-					onChange={(value: Date) => {
-						start.current = value;
-					}}
-				/>
-				<PDateInput
-					id="end-date"
-					isTime
-					label={'Fecha y hora de fin'}
-					labelInfo={''}
-					explanation={''}
-					placeholder={''}
-					defaultValue={end.current}
-					isDarkVariant
-					onChange={(value: Date) => {
-						end.current = value;
-					}}
-				/>
-			</>
-		),
-		primary: {
-			onClick: () => {
-				if (start.current >= end.current) {
-					alert('La hora de inicio debe ser menor que la hora de fin');
-					return;
-				}
-				if (start.current < addDays(new Date(), 9)) {
-					alert('La fecha de inicio debe ser mayor a 10 dias de la fecha actual');
-					return;
-				}
-				// The end date should be on the same day as the start date
-				if (start.current.getDate() !== end.current.getDate()) {
-					alert('La fecha de fin debe ser el mismo día que la fecha de inicio');
-					return;
-				}
-				const newVolume = new OperationVolume();
-				newVolume.set('ordinal', flightRequest.volumes.length - 1);
-				newVolume.set('max_altitude', maxAltitude);
-				newVolume.set('effective_time_begin', start.current);
-				newVolume.set('effective_time_end', end.current);
-				flightRequest.volumes.push(newVolume);
-				setModalProps(undefined);
-			},
-			text: t('Save')
-		},
-		secondary: {
-			text: 'Cancelar',
-			onClick: () => {
-				setModalProps(undefined);
-			}
-		}
-	});
-
-	const getUserSelectTimeRangeModalProps = (): PFullModalProps => ({
-		isVisible: true,
-		type: PModalType.INFORMATION,
-		title: t('Select the time interval'),
-		content: (
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'center'
-				}}
-			>
-				<PButton
-					onClick={() => {
-						setModalProps(getTimeIntervalModalProps());
-					}}
-					size={PButtonSize.MEDIUM}
-					style={{
-						marginRight: '1rem',
-						width: '100px',
-						height: '100px',
-						textAlign: 'center'
-					}}
-				>
-					{t('Select date and time range')}
-				</PButton>
-				<PButton
-					onClick={() => {
-						setModalProps(getUserSelectIntervalModalProps());
-					}}
-					size={PButtonSize.MEDIUM}
-					style={{
-						marginRight: '1rem',
-						width: '100px',
-						height: '100px',
-						textAlign: 'center'
-					}}
-				>
-					{t('Select time interval')}
-				</PButton>
-			</div>
-		),
-		secondary: {
-			text: t('Cancel'),
-			onClick: () => {
-				setModalProps(undefined);
-			}
-		}
-	});
-
 	const editOptions: EditOptions = {
 		mode: EditMode.SINGLE,
-		polygons: []
+		polygons: [polygon]
 	};
+
+	const timeOptions = {
+		year: 'numeric',
+		month: 'numeric',
+		day: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric'
+	} as Intl.DateTimeFormatOptions;
 
 	return (
 		<MapLayout
@@ -254,87 +142,6 @@ const VolumesStep = (props: VolumesStepProps) => {
 				text: `### ${t('You are in EDITOR MODE')} `
 			}}
 			isBlockingCenter={isBlockingCenter}
-			contextual={
-				<>
-					{flightRequest.volumes[0] ? (
-						<CardGroup
-							header={t('Fill in volume information')}
-							style={{ maxHeight: '50vh', overflowY: 'auto' }}
-						>
-							<PNumberInput
-								id="operation-height"
-								label={t('Maximum altitude')}
-								defaultValue={flightRequest.volumes[0]?.max_altitude ?? 120}
-								onChange={(value) => {
-									setMaxAltitude(value);
-									flightRequest.volumes.forEach((volume) => {
-										volume.set('max_altitude', value);
-									});
-								}}
-							/>
-							<Divider dir="horizontal" />
-							<p>{t('Intervalos de tiempo')}</p>
-							<div
-								style={{
-									display: 'flex',
-									flexDirection: 'column',
-									gap: '1rem',
-									justifyContent: 'center'
-								}}
-							>
-								<PButton
-									size={PButtonSize.SMALL}
-									icon="plus"
-									id={'editor-flightRequest-add-time-interval'}
-									onClick={() => {
-										setModalProps(getUserSelectTimeRangeModalProps());
-									}}
-								/>
-								{flightRequest.volumes.map((volume, index) => {
-									if (
-										volume.effective_time_begin !== null &&
-										volume.effective_time_end !== null
-									) {
-										return (
-											<div
-												key={volume.ordinal}
-												style={{
-													display: 'flex',
-													justifyContent: 'center'
-												}}
-											>
-												{volume.effective_time_begin.toLocaleString()} -{' '}
-												{volume.effective_time_end.toLocaleString()}
-												<PButton
-													size={PButtonSize.SMALL}
-													icon="minus"
-													onClick={() => {
-														if (flightRequest.volumes.length === 1) {
-															flightRequest.volumes[0].set(
-																'effective_time_begin',
-																null
-															);
-															flightRequest.volumes[0].set(
-																'effective_time_end',
-																null
-															);
-														} else {
-															flightRequest.volumes.splice(index, 1);
-														}
-													}}
-												/>
-											</div>
-										);
-									} else {
-										return null;
-									}
-								})}
-							</div>
-						</CardGroup>
-					) : null}
-					<MapViewModeSwitch />
-				</>
-			}
 			menu={
 				<InfoFlightRequest
 					{...{
@@ -344,7 +151,89 @@ const VolumesStep = (props: VolumesStepProps) => {
 						setBlockingCenter: setBlockingCenterFlag,
 						nextStep
 					}}
-				/>
+				>
+					<div>
+						<p>{t('Time intervals')}</p>
+						<div
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								gap: '1rem',
+								justifyContent: 'center'
+							}}
+						>
+							{flightRequest.volumes.map((volume, index) => {
+								if (
+									volume.effective_time_begin !== null &&
+									volume.effective_time_end !== null
+								) {
+									return (
+										<div
+											key={volume.ordinal}
+											style={{
+												display: 'flex',
+												justifyContent: 'center'
+											}}
+										>
+											{volume.effective_time_begin.toLocaleString(
+												[],
+												timeOptions
+											)}{' '}
+											-{' '}
+											{volume.effective_time_end.toLocaleString(
+												[],
+												timeOptions
+											)}
+											<PButton
+												size={PButtonSize.SMALL}
+												icon="minus"
+												onClick={() => {
+													if (flightRequest.volumes.length === 1) {
+														flightRequest.volumes[0].set(
+															'effective_time_begin',
+															null
+														);
+														flightRequest.volumes[0].set(
+															'effective_time_end',
+															null
+														);
+													} else {
+														flightRequest.volumes.splice(index, 1);
+													}
+												}}
+											/>
+										</div>
+									);
+								} else {
+									return null;
+								}
+							})}
+							<PButton
+								size={PButtonSize.SMALL}
+								icon="plus"
+								id={'editor-flightRequest-add-time-interval'}
+								onClick={() => {
+									setModalProps(getUserSelectIntervalModalProps());
+								}}
+							>
+								{t('Add interval')}
+							</PButton>
+						</div>
+					</div>
+					<div>
+						<PNumberInput
+							id="operation-height"
+							label={t('Maximum altitude')}
+							defaultValue={flightRequest.volumes[0]?.max_altitude ?? 120}
+							onChange={(value) => {
+								setMaxAltitude(value);
+								flightRequest.volumes.forEach((volume) => {
+									volume.set('max_altitude', value);
+								});
+							}}
+						/>
+					</div>
+				</InfoFlightRequest>
 			}
 			modal={modalProps}
 		>
@@ -354,6 +243,18 @@ const VolumesStep = (props: VolumesStepProps) => {
 				geographicalZones={queryGeographicalZones.items}
 				onEdit={(event: any) => onPolygonsUpdated(event.detail)}
 			/>
+			<PButton
+				style={{
+					position: 'absolute',
+					bottom: '1rem'
+				}}
+				size={PButtonSize.LARGE}
+				onClick={() => {
+					nextStep();
+				}}
+			>
+				{t('Continue')}
+			</PButton>
 		</MapLayout>
 	);
 };

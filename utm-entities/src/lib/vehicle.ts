@@ -151,7 +151,7 @@ export class VehicleEntity implements EntityHasDisplayName {
 	}
 
 	get asNiceString() {
-		return `(${this.licensePlate}) ${this.vehicleName}`;
+		return `${this.vehicleName} (${this.licensePlate}) `;
 	}
 
 	get isAuthorized() {

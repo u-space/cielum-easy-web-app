@@ -14,7 +14,9 @@ export enum PButtonType {
 export enum PButtonSize {
 	MEDIUM = 'Medium',
 	SMALL = 'Small',
-	EXTRA_SMALL = 'ExtraSmall'
+	EXTRA_SMALL = 'ExtraSmall',
+	LARGE = 'Large',
+	EXTRA_LARGE = 'ExtraLarge'
 }
 
 export interface PButtonProps extends ButtonProps {
@@ -60,7 +62,8 @@ const PButton = (props: PButtonProps) => {
 	const isExtraSmall = size === PButtonSize.EXTRA_SMALL;
 	const isSmall = size === PButtonSize.SMALL;
 	const isMedium = size === PButtonSize.MEDIUM;
-	const isLarge = false;
+	const isExtraLarge = size === PButtonSize.EXTRA_LARGE;
+	const isLarge = size === PButtonSize.LARGE;
 	const isPrimary = variant === PButtonType.PRIMARY;
 	const isSecondary = variant === PButtonType.SECONDARY;
 	const isDanger = variant === PButtonType.DANGER;
@@ -88,6 +91,8 @@ const PButton = (props: PButtonProps) => {
 				[styles.extra_small]: isExtraSmall,
 				[styles.small]: isSmall,
 				[styles.medium]: isMedium,
+				[styles.large]: isLarge,
+				[styles.extra_large]: isExtraLarge,
 				[styles.primary]: isPrimary,
 				[styles.secondary]: isSecondary,
 				[styles.danger]: isDanger,

@@ -26,7 +26,10 @@ const mapView = new MapView({
 });
 
 /* Helpers */
-function calculateViewState(position: FlyToPosition) {
+function calculateMaxPitch(is3D: boolean) {
+	return is3D ? 60 : 0;
+}
+function calculateViewState(position: FlyToPosition, is3D: boolean) {
 	const { latitude, longitude, zoom, duration } = position;
 	return {
 		// We add microscopic noise to the position to force a fly even if the position is the same
@@ -35,7 +38,7 @@ function calculateViewState(position: FlyToPosition) {
 		zoom: zoom,
 		bearing: 0,
 		pitch: 0,
-		maxPitch: 90,
+		maxPitch: calculateMaxPitch(is3D),
 		minPitch: 0,
 		//minZoom: 10,
 		transitionDuration: duration ?? 500,
@@ -77,13 +80,16 @@ function getTooltip(info: PickingInfo) {
 		}
 	);
 }
+
 export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
-	const lastViewState = localStorage.getItem('Tokyo_v3_ViewState');
-	const initialViewState = calculateViewState(params.position);
+	const lastViewStateLocalStorage = localStorage.getItem('Tokyo_v3_ViewState');
+	const lastViewState = lastViewStateLocalStorage ? JSON.parse(lastViewStateLocalStorage) : null;
+	if (lastViewState) lastViewState.maxPitch = calculateMaxPitch(params.mapParams.is3D);
+	const initialViewState = calculateViewState(params.position, params.mapParams.is3D);
 
 	const deck = new Deck({
 		canvas: node,
-		initialViewState: lastViewState ? JSON.parse(lastViewState) : initialViewState,
+		initialViewState: lastViewState ?? initialViewState,
 		onViewStateChange: ({ viewState: newViewState }) => {
 			localStorage.setItem('Tokyo_v3_ViewState', JSON.stringify(newViewState));
 			tokyoViewState.set(newViewState as MapViewState);

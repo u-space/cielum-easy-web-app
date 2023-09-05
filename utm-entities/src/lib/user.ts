@@ -330,7 +330,7 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 			data.extra_fields = extraFields;
 
 			if (isCreating) {
-				const isLoggedIn = token !== '';
+				const isLoggedIn = token !== null;
 
 				return axiosInstance.post(
 					isLoggedIn ? 'user' : 'user/register',

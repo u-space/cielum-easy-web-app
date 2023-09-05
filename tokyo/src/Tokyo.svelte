@@ -30,7 +30,7 @@
 
 	/* Component props */
 	export let editOptions: TokyoProps['editOptions'];
-	export let mapOptions: TokyoProps['mapOptions'] = {isPickEnabled: true};
+	export let mapOptions: TokyoProps['mapOptions'] = {isPickEnabled: true, is3D: true};
 	export let controlsOptions: TokyoProps['controlsOptions'] = {
 		zoom: {
 			enabled: true
@@ -234,7 +234,8 @@
 		position: $tokyoFlyToPosition,
 		mapParams: {
 			backgroundMode,
-			isPickEnabled: mapOptions.isPickEnabled
+			isPickEnabled: mapOptions.isPickEnabled,
+			is3D: mapOptions.is3D
 		},
 		layers: visibleLayersArray,
 		handlers: {pick},

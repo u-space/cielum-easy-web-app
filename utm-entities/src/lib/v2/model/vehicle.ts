@@ -72,7 +72,7 @@ export class UtmBaseVehicle implements UtmResponseEntity {
 	get displayName() {
 		return this.registrationNumber
 			? `${this.vehicleName} (${this.registrationNumber})`
-			: `${this.vehicleName}`;
+			: `${this.vehicleName} [${this.manufacturer} ${this.model}]`;
 	}
 
 	asPrintableEntries(): { property: string; value: string }[] {

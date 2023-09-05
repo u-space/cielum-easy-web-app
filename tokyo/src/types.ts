@@ -85,6 +85,7 @@ export interface EditOptions {
 
 export interface MapOptions {
 	isPickEnabled: boolean;
+	is3D?: boolean;
 }
 
 export interface ControlsOptions {
@@ -132,6 +133,7 @@ export interface EditParams extends EditOptions {
 export interface MapParams {
 	backgroundMode: BackgroundMode;
 	isPickEnabled: boolean;
+	is3D: boolean;
 }
 
 export interface DeckActionParams {

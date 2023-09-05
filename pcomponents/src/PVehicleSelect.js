@@ -37,7 +37,7 @@ const PVehicleSelect = ({
 		refetch
 	} = useQuery(
 		[`short_vehicles_op_${username}`, value],
-		() => getVehiclesByOperator(username, 6, 0, 'vehicleName', value),
+		() => getVehiclesByOperator(username, 3, 0, 'vehicleName', value),
 		{
 			retry: false,
 			enabled: !!username
@@ -95,7 +95,8 @@ const PVehicleSelect = ({
 						isDarkVariant,
 						onSelect,
 						setSelected,
-						data
+						data,
+						response
 					}}
 				/>
 			)}
@@ -144,80 +145,94 @@ const TextFieldSelectVehicle = ({
 	isDarkVariant,
 	onSelect,
 	setSelected,
-	data
-}) => (
-	<>
-		<PInput
-			id="vehicle-name-input"
-			defaultValue={value}
-			disabled={disabled}
-			onChange={(value) => {
-				setValue(value);
-				if (value) {
-					debouncedRefetch();
-				}
-			}}
-			inline
-			fill
-			{...extra}
-		/>
-		<div style={{ textAlign: 'right' }}>
-			{isLoading && 'Loading information of the vehicle...'}
-			{isSuccess &&
-				!disabled &&
-				data.map((vehicle) => {
-					if (_.filter(selected, (veh) => veh.uvin === vehicle.uvin).length === 0) {
-						// Vehicle is not already selected
-						return (
-							<div
-								key={vehicle.uvin}
-								className={classnames(styles.vehicle, {
-									[styles.dark]: isDarkVariant,
-									[styles.error]: !vehicle.isAuthorized
-								})}
-							>
-								{vehicle.vehicleName} ({vehicle.owner_id})
-								{vehicle.isAuthorized && (
-									<PButton
-										id={`select-vehicle-${vehicle.uvin}`}
-										size={PButtonSize.EXTRA_SMALL}
-										variant={PButtonType.SECONDARY}
-										icon="plus"
-										onClick={() => {
-											setSelected((current) => {
-												const selected = [...current, vehicle];
-												onSelect(selected);
-												return selected;
-											});
-										}}
-									/>
-								)}
-							</div>
-						);
-					} else {
-						return <div key={vehicle.uvin} />;
+	data,
+	response
+}) => {
+	const difference = response && data ? response.data.count - data.length : 0;
+	return (
+		<>
+			<PInput
+				id="vehicle-name-input"
+				defaultValue={value}
+				disabled={disabled}
+				onChange={(value) => {
+					setValue(value);
+					if (value) {
+						debouncedRefetch();
 					}
-				})}
-			{isSuccess && value.length > 0 && data.length === 0 && (
-				<p
-					className={classnames(styles.vehicle, styles.error, {
-						[styles.dark]: isDarkVariant
-					})}
-				>
-					There is no vehicle with a matching name
-				</p>
-			)}
-			{isError && value.length > 0 && (
-				<p
-					className={classnames(styles.vehicle, styles.error, {
-						[styles.dark]: isDarkVariant
-					})}
-				>
-					An error ocurred while contacting the server
-				</p>
-			)}
-		</div>
-	</>
-);
+				}}
+				inline
+				fill
+				{...extra}
+			/>
+			<div style={{ textAlign: 'right' }}>
+				{isLoading && 'Loading information of the vehicle...'}
+				{isSuccess && !disabled && (
+					<>
+						{data.map((vehicle) => {
+							if (
+								_.filter(selected, (veh) => veh.uvin === vehicle.uvin).length === 0
+							) {
+								// Vehicle is not already selected
+								return (
+									<div
+										key={vehicle.uvin}
+										style={{ marginBottom: '0.5rem' }}
+										className={classnames(styles.vehicle, {
+											[styles.dark]: isDarkVariant,
+											[styles.error]: !vehicle.isAuthorized
+										})}
+									>
+										<PButton
+											id={`select-vehicle-${vehicle.uvin}`}
+											fill
+											disabled={!vehicle.isAuthorized}
+											variant={PButtonType.SECONDARY}
+											icon="plus"
+											onClick={() => {
+												setSelected((current) => {
+													const selected = [...current, vehicle];
+													onSelect(selected);
+													return selected;
+												});
+											}}
+										>
+											{vehicle.asNiceString}
+										</PButton>
+									</div>
+								);
+							} else {
+								return <div key={vehicle.uvin} />;
+							}
+						})}
+						{difference > 0 && (
+							<p style={{ color: 'white', height: '1rem', textAlign: 'center' }}>
+								... {`y ${difference} más`} ...
+							</p>
+						)}
+					</>
+				)}
+				{isSuccess && value.length > 0 && data.length === 0 && (
+					<p
+						className={classnames(styles.vehicle, styles.error, {
+							[styles.dark]: isDarkVariant
+						})}
+					>
+						No hay vehiculo con ese nombre
+					</p>
+				)}
+				{isError && value.length > 0 && (
+					<p
+						className={classnames(styles.vehicle, styles.error, {
+							[styles.dark]: isDarkVariant
+						})}
+					>
+						Ha ocurrido un error contactando al servidor
+					</p>
+				)}
+			</div>
+		</>
+	);
+};
 
 export default observer(PVehicleSelect);

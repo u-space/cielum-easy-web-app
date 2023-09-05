@@ -35,37 +35,19 @@ import { TokyoPick } from '@tokyo/types';
 import { usePositionStore } from '../../../core_service/position/store';
 import { getCSSVariable } from '@pcomponents/utils';
 import { Polygon } from 'geojson';
+import PButton from '@pcomponents/PButton';
+import { IconName } from '@blueprintjs/core';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
-const PickContainer = styled.div`
-	position: absolute;
-	bottom: 1rem;
-	right: 1rem;
-	z-index: 191919;
-`;
-
-const PickWarning = styled.div`
+const ExtraRealtimeMapButtons = styled.div`
 	position: absolute;
 	bottom: 1rem;
 	left: 1rem;
-	z-index: 191919;
-	font-size: 2rem;
-	background-color: var(--ramen-600);
-	color: var(--mirai-50);
-`;
-
-const PointedAtSummary = styled.div`
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translateX(-50%) translateY(-50%);
-	background-color: var(--primary-900);
-	padding: var(--spacing-2);
-	border-radius: var(--radius-l);
-	color: var(--mirai-50);
-	font-size: 1.5rem;
-	z-index: 212121;
+	right: 3rem;
+	display: flex;
+	justify-content: flex-start;
+	gap: 0.5rem;
 `;
 
 const LiveMap = () => {
@@ -255,6 +237,21 @@ const LiveMap = () => {
 				{...liveMapViewProps}
 				onPicked={(e) => redirectToPicked((e as CustomEvent<TokyoPick>).detail)}
 			/>
+			{env.tenant.extras.realtime_map_buttons && (
+				<ExtraRealtimeMapButtons>
+					{env.tenant.extras.realtime_map_buttons.map((button) => (
+						<PButton
+							key={button.label}
+							icon={(button.icon as IconName) || undefined}
+							onClick={() => {
+								history.push(button.path);
+							}}
+						>
+							{t(button.label)}
+						</PButton>
+					))}
+				</ExtraRealtimeMapButtons>
+			)}
 		</MapLayout>
 	);
 };

@@ -14,6 +14,7 @@ export interface CardGroupProps {
 	defaultOpen?: boolean;
 	style?: CSSProperties;
 	extraClassNames?: string;
+	hasSeparators?: boolean;
 }
 
 export interface CardGroupDetailLineProps {
@@ -42,7 +43,8 @@ const CardGroup = (props: CardGroupProps) => {
 		isDanger,
 		expandable,
 		defaultOpen = false,
-		style
+		style,
+		hasSeparators = false
 	} = props;
 
 	const tHeader = t(header || '');
@@ -67,7 +69,14 @@ const CardGroup = (props: CardGroupProps) => {
 			)}
 
 			<Collapse isOpen={!expandable || opened}>
-				<div className={styles.body}>{children}</div>
+				<div
+					className={classnames([
+						styles.body,
+						{ [styles.withSeparators]: hasSeparators }
+					])}
+				>
+					{children}
+				</div>
 			</Collapse>
 		</section>
 	);
