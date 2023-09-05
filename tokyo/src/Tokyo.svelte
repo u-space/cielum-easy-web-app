@@ -205,7 +205,12 @@
 
 
 	// Edit mode
-	let editPolygons: Polygon[] = editOptions.polygons ?? []; // Currently being edited polygons
+	let editPolygons: Polygon[] = []; // Currently being edited polygons
+	$: {
+		if (editOptions.polygons) {
+			editPolygons = editOptions.polygons;
+		}
+	}
 	let editIndexSelected: number | null = null; // Currently selected polygon index
 	const editHandlers: EditHandlers = {
 		edit: (polygons) => {

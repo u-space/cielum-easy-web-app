@@ -98,7 +98,7 @@ const OperationEditor = () => {
 		if (queryOperation.isSuccess && geography) {
 			tokyo.flyToCenterOfGeometry(geography);
 		}
-	}, [queryOperation.data?.operation_volumes, queryOperation.isSuccess, tokyo]);
+	}, [queryOperation.data?.operation_volumes, queryOperation.isSuccess]);
 
 	const onPolygonsUpdated = useCallback(
 		(polygons: Polygon[]) => {
@@ -158,8 +158,6 @@ const OperationEditor = () => {
 	};
 
 	/* -- */
-
-	useEffect(() => console.log('modalProps', modalProps), [modalProps]);
 
 	const props = _.filter(_.keys(operation), (key) => key !== 'gufi' && key !== 'state');
 
