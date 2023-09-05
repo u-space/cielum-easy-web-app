@@ -166,6 +166,7 @@
 
       & p {
         margin: 0;
+        text-align: left;
       }
 
       & label {

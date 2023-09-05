@@ -108,7 +108,7 @@
 <div id="map_with_fries">
 	<!-- Using isTouchDevice is a temporal fix -->
 	<div id='fries' style:width={pickings.length > 0 ? !isMinWidth ? '100%' : '400px' : '0px'}>
-		<div>
+		<div class="x_container">
 			<CButton icon="x" variant={CButtonVariant.DANGER} fill on:click={() => tokyo.pick([])}/>
 
 		</div>
@@ -214,6 +214,10 @@
     color: var(--white-100);
     z-index: var(--z-index-fries);
 
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+
     & > div {
       margin: 1rem;
 
@@ -227,6 +231,10 @@
         overflow: hidden;
         margin-bottom: 0.5rem;
       }*/
+    }
+
+    .x_container {
+      align-self: stretch;
     }
   }
 
