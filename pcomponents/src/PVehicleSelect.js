@@ -119,7 +119,7 @@ const DisplaySelectedVehicle = ({ isDarkVariant, showInfoSign, remove, vehicle, 
 					onClick={() => remove(vehicle.uvin)}
 				/>
 			)}
-			{vehicle.asNiceString}
+			{vehicle.displayName}
 			{showInfoSign && (
 				<PButton
 					icon="info-sign"
@@ -197,7 +197,7 @@ const TextFieldSelectVehicle = ({
 												});
 											}}
 										>
-											{vehicle.asNiceString}
+											{vehicle.displayName}
 										</PButton>
 									</div>
 								);

@@ -26,6 +26,7 @@ import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Operation } from '@utm-entities/v2/model/operation';
+import { UtmBaseVehicle, Vehicle } from '@utm-entities/v2/model/vehicle';
 
 interface BaseOperationDetailsProps {
 	ls: UseLocalStoreEntity<Operation>;
@@ -67,7 +68,8 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 					prop !== 'state' &&
 					prop !== 'flight_comments' &&
 					prop !== 'owner' &&
-					//					prop !== 'uas_registrations' &&
+					prop !== 'uas_registrations' &&
+					prop !== 'creator' &&
 					prop !== 'begin' &&
 					prop !== 'end' &&
 					prop !== 'displayName' &&
@@ -157,9 +159,9 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 				fill={false}
 			/>
 
-			{/*<PVehicleSelect
+			<PVehicleSelect
 				label={t('glossary:operation.uas_registrations')}
-				onSelect={(value: VehicleEntity[]) => ls.setInfo('uas_registrations', value)}
+				onSelect={(value: UtmBaseVehicle[]) => ls.setInfo('uas_registrations', value)}
 				preselected={ls.entity.uas_registrations}
 				username={ls.entity?.owner?.username}
 				fill
@@ -169,7 +171,7 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 				token={token}
 				schema={schemaVehicles}
 				api={env.core_api}
-			/>*/}
+			/>
 
 			{/* <PTextArea
 				id="flight_comments"
