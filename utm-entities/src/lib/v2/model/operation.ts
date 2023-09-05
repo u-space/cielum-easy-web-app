@@ -136,7 +136,11 @@ export class BaseOperation {
 		for (const vehicle of this.uas_registrations) {
 			entries.push({ property: 'vehicle', value: vehicle.displayName });
 		}
-		const max_altitude = 0;
+		let max_altitude = 0;
+		for (const volume of this.operation_volumes) {
+			if (volume.max_altitude > max_altitude) max_altitude = volume.max_altitude;
+		}
+		entries.push({ property: 'max_altitude', value: `${max_altitude}m` });
 
 		if (this.gufi) entries.push({ property: 'gufi', value: this.gufi });
 		return entries;

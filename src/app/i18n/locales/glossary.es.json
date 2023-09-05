@@ -80,6 +80,7 @@
 		"state": "Estado",
 		"uas_registration": "Aeronave",
 		"uas_registrations": "Aeronaves",
+		"max_altitude": "Altura máxima",
 		"remote_sensor_id": "Registro en sensores remotos",
 		"zero_operations": "No hay operaciones, o no hay operaciones que cumplan los filtros seleccionados.",
 		"creator": "Creador",
