@@ -80,7 +80,24 @@ export function useQueryOperations(all = false) {
 				filterMatchingText,
 				all ? undefined : historicalFromDate ? historicalFromDate : undefined,
 				all ? undefined : historicalToDate ? historicalToDate : undefined
-			),
+			).then((response) => {
+				if (all) {
+					// TODO: this is temporal, backend should not return these ones
+					console.log('response', response);
+					return {
+						...response,
+						ops: response.ops.flatMap((op) => {
+							if (op.end && op.end > new Date()) {
+								return [op];
+							} else {
+								return [];
+							}
+						})
+					};
+				} else {
+					return response;
+				}
+			}),
 		{ keepPreviousData: true }
 	);
 
