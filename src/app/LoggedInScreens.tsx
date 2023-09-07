@@ -32,6 +32,7 @@ import CoordinationHub from './modules/flight_request_service/coordination/scree
 import { reactify } from 'svelte-preprocess-react';
 import FlightRequestEditorSvelte from './modules/flight_request_service/flight_request/screens/FlightRequestEditorApp.svelte';
 import LegacyFlightRequestStepsEditor from './modules/flight_request_service/flight_request/screens/LegacyFlightRequestStepsEditor';
+import Vehicle from './modules/core_service/vehicle/screens/Vehicle';
 
 const FlightRequestEditor = reactify(FlightRequestEditorSvelte);
 
@@ -84,12 +85,22 @@ const LoggedInScreens = () => {
 				{/* Vehicles */}
 				{isFeatureEnabled('Vehicles') && (
 					<RoleGatedRoute
+						exact
+						path={'/vehicles/:uvin'}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+					>
+						<Vehicle />
+					</RoleGatedRoute>
+				)}
+				{isFeatureEnabled('Vehicles') && (
+					<RoleGatedRoute
 						path={'/vehicles'}
 						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
 					>
 						<VehiclesHub />
 					</RoleGatedRoute>
 				)}
+
 				{isFeatureEnabled('Vehicles') && (
 					<RoleGatedRoute
 						exact

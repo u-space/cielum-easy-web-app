@@ -1,12 +1,16 @@
 <script lang="ts">
 	import {CModalProps, CModalVariant, CModalWidth} from '@tokyo/gui/CModal';
-	import {onMount} from 'svelte';
+	import {createEventDispatcher, onMount} from 'svelte';
 	import CButton from '@tokyo/gui/CButton.svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let title: CModalProps['title'];
 	export let width: CModalProps['width'] = CModalWidth.SMALLEST;
 	export let variant: CModalProps['variant'] = CModalVariant.INFORMATION;
 	export let closeText: CModalProps['closeText'] = 'Close';
+
+	export let disabled: CModalProps['disabled'] = false;
 
 	let ref;
 
@@ -15,8 +19,15 @@
 	})
 </script>
 
-<dialog bind:this={ref} on:close class:smallest={width === CModalWidth.SMALLEST}
-		class:largest={width === CModalWidth.LARGEST}>
+<dialog bind:this={ref} class:largest={width === CModalWidth.LARGEST} class:smallest={width === CModalWidth.SMALLEST}
+		on:cancel={(event) => {
+			if (disabled) event.preventDefault();
+			dispatch('cancel', event)
+		}}
+		on:close={(event) => {
+			if (disabled) event.preventDefault();
+			dispatch('close', event)
+		}}>
 	{#if title}
 		<h1 class:information={variant === CModalVariant.INFORMATION}
 			class:error={variant === CModalVariant.ERROR}
@@ -28,7 +39,14 @@
 			<slot/>
 		{/if}
 		<div class="actions">
-			<CButton on:click={() => ref.close()}>{closeText}</CButton>
+			{#if !disabled}
+				<CButton
+						on:click={(evt) => {
+						evt.preventDefault();
+						ref.close()
+					}}
+				>{closeText}</CButton>
+			{/if}
 		</div>
 	</div>
 </dialog>

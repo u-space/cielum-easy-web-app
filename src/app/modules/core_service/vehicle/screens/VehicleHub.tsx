@@ -16,6 +16,8 @@ import VehicleSearchTools from '../components/VehicleSearchTools';
 import ViewAndEditVehicle from '../pages/ViewAndEditVehicle';
 import { UseMutationResult } from 'react-query';
 import { getCSSVariable } from '@pcomponents/utils';
+import VehicleHubPilotsSvelte from './VehicleHubPilots.svelte';
+import { reactify } from 'svelte-preprocess-react';
 
 const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const { t } = useTranslation();

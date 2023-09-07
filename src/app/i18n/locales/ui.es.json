@@ -514,5 +514,7 @@
 	"Details of the request": "Detalles de la solicitud",
 	"I want to fly here": "Quiero volar aquí",
 	"The length of field FIELD must be MAX and it currently is CURRENT": "El campo {{field}} debe tener una longitud máxima de {{max}} carácteres y actualmente tiene {{current}} carácteres",
-	"Min length is": "La longitud mínima es"
-	}
+	"Min length is": "La longitud mínima es",
+	"Please wait while your changes are being saved": "Por favor, espera mientras tus cambios son guardados",
+	"Your changes to VEHICLE have been saved": "Tus cambios a la aeronave {{vehicle}} han sido guardados"
+}

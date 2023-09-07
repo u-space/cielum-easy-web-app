@@ -15,4 +15,5 @@ export interface CModalProps {
 	width: CModalWidth;
 	inline: boolean;
 	closeText: string;
+	disabled?: boolean;
 }
