@@ -1,7 +1,7 @@
-import { Classes, FormGroup, InputGroup } from '@blueprintjs/core';
+import { Classes, FormGroup, InputGroup, Intent } from '@blueprintjs/core';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import styles from './Kanpur.module.scss';
 import LabelInfo from './form/LabelInfo';
 
@@ -20,6 +20,9 @@ export interface PInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
 	isRequired?: boolean;
 	fill?: boolean;
 	type?: string;
+	minLength?: number;
+	maxLength?: number;
+	children?: ReactNode;
 }
 
 const PInput = (props: PInputProps) => {
@@ -38,12 +41,24 @@ const PInput = (props: PInputProps) => {
 		isRequired = false,
 		fill = false,
 		type = 'text',
+		minLength,
+		maxLength,
+		children, // Only used for showing translated error messages for too short inputs
 		...extraProps
 	} = props;
 
-	const [value, setValue] = useState<string>(
+	const [value, _setValue] = useState<string>(
 		defaultValue !== undefined && defaultValue !== null ? String(defaultValue) : ''
 	);
+	const [previousValue, setPreviousValue] = useState<string>(value);
+	const [isFocused, setFocusedFlag] = useState<boolean>(false);
+
+	const setValue = (value: string) => {
+		_setValue((previousValue) => {
+			setPreviousValue(previousValue);
+			return value;
+		});
+	};
 
 	const onValueChange = (value: string) => {
 		setValue(value);
@@ -55,6 +70,11 @@ const PInput = (props: PInputProps) => {
 			setValue(String(defaultValue));
 		}
 	}, [defaultValue]);
+
+	let intent: Intent = Intent.NONE;
+	if (isRequired && value.length === 0 && previousValue.length > 0) intent = Intent.DANGER;
+	const minLengthError = minLength && value.length > 0 && value.length < minLength;
+	if (minLengthError) intent = Intent.DANGER;
 
 	return (
 		<FormGroup
@@ -84,7 +104,13 @@ const PInput = (props: PInputProps) => {
 				}}
 				type={type}
 				value={value}
+				intent={intent}
+				minLength={minLength}
+				maxLength={maxLength}
+				onFocus={() => setFocusedFlag(true)}
+				onBlur={() => setFocusedFlag(false)}
 			/>
+			{!isFocused && minLengthError && children}
 		</FormGroup>
 	);
 };

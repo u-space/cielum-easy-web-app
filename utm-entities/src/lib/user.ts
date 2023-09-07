@@ -317,8 +317,10 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 			for (const key in user.extra_fields) {
 				const schemaItem = schema[key];
 				if (!schemaItem) continue;
+
 				if (key.indexOf('_file_path') === -1 && key !== 'documents') {
 					const type = schemaItem.type;
+
 					if (type === 'String') {
 						extraFields[key] = user.extra_fields[key];
 					} else if (type === 'Date') {

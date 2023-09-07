@@ -53,5 +53,6 @@
 	"The operator x has no permission to operate the vehicle y": "The operator {{x}} has no permission to operate the vehicle {{y}}",
 	"Max file size is x MB": "Max file size is {{number}}MB",
 	"As 4 days or more were selected, extra charges can be charged": "Ha seleccionado 4 o más días, esto puede incurrir en gastos extra o cambios operacionales.",
-	"Please draw a polygon to continue": "Por favor, dibuje un polígono para continuar"
+	"Please draw a polygon to continue": "Por favor, dibuje un polígono para continuar",
+	"The length of field FIELD must be MAX and it currently is CURRENT": "The length of field {{field}} must be {{max}} and it currently is {{current}}"
 }

@@ -12,6 +12,8 @@ export interface SchemaItem {
 	required: boolean;
 	docType?: string;
 	onlyVisibleForAdmin?: boolean;
+	min_lenght?: number; // TODO (sic) rename when backend fixes typo
+	max_lenght?: number;
 }
 
 export type ExtraFieldSchema = { [key: string]: SchemaItem };

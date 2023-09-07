@@ -125,7 +125,7 @@
 	"Images explanation": "Para realizar las coordinaciones en tu nombre, necesitamos verificar y disponer de tu documentación.",
 	"Vehicles": "Aeronaves",
 	"All vehicles either owned or operated by the user": "Todas las aeronaves operadas o de la propiedad del usuario",
-	"Your password must have atleast 4 characters": "La contraseña debe tener más de 8 caracteres",
+	"Your password must have atleast 9 characters": "La contraseña debe tener 9 o mas cáracteres",
 	"Create new user": "Crear nuevo usuario",
 	"Change password": "Cambiar la contraseña",
 	"Verify your password": "Verifica la contraseña",
@@ -392,6 +392,8 @@
 	"insurance_carrier": "Aseguradora",
 	"insurance_date_begin": "Fecha de inicio de la póliza",
 	"insurance_limit": "Límite de la póliza",
+	"Max length exceeded": "Longitud máxima del campo excedida",
+	"Min length not reached": "Longitud mínima del campo no alcanzada",
 	"Confirm": "Confirmar",
 	"Delete": "Eliminar",
 	"school": "Escuela",
@@ -510,5 +512,7 @@
 	"Time intervals": "Periodos de tiempo",
 	"Add interval": "Agregar periodo",
 	"Details of the request": "Detalles de la solicitud",
-	"I want to fly here": "Quiero volar aquí"
-}
+	"I want to fly here": "Quiero volar aquí",
+	"The length of field FIELD must be MAX and it currently is CURRENT": "El campo {{field}} debe tener una longitud máxima de {{max}} carácteres y actualmente tiene {{current}} carácteres",
+	"Min length is": "La longitud mínima es"
+	}
