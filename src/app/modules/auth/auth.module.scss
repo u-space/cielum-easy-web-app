@@ -115,6 +115,10 @@
 
 		background-color: var(--mirai-100);
 
+		& h1 {
+			font-size: 2em;
+		}
+
 		&.login {
 			margin: 0;
 
