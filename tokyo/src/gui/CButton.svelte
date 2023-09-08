@@ -77,13 +77,16 @@
 
 
     & p {
-      margin: 0;
+      margin: auto 0;
       width: 100%;
       height: 100%;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
       text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     &:hover {
@@ -104,6 +107,10 @@
 
     &:active {
       transform: translateY($button-shift-action);
+    }
+
+    &:focus {
+      outline: 1px solid var(--primary-500);
     }
   }
 

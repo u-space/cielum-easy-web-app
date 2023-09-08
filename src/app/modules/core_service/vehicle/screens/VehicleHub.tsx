@@ -16,8 +16,11 @@ import VehicleSearchTools from '../components/VehicleSearchTools';
 import ViewAndEditVehicle from '../pages/ViewAndEditVehicle';
 import { UseMutationResult } from 'react-query';
 import { getCSSVariable } from '@pcomponents/utils';
-import VehicleHubPilotsSvelte from './VehicleHubPilots.svelte';
+import VehicleHubForPilotsSvelte from './VehicleHubForPilots.svelte';
 import { reactify } from 'svelte-preprocess-react';
+import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
+
+const VehicleHubForPilots = reactify(VehicleHubForPilotsSvelte);
 
 const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const { t } = useTranslation();
@@ -75,6 +78,7 @@ const VehicleHub = () => {
 	const username = useAuthStore((state) => state.username);
 	const isAdmin = useAuthIsAdmin();
 	const isPilot = useAuthIsPilot();
+	const token = useAuthStore((state) => state.token);
 
 	// Props
 	const idSelected = queryString.get('id');
@@ -160,6 +164,12 @@ const VehicleHub = () => {
 		};
 	}, [isPilot]);
 
+	if (isPilot)
+		return (
+			<DashboardLayout>
+				<VehicleHubForPilots vehicles={vehicles} token={token} history={history} />
+			</DashboardLayout>
+		);
 	return (
 		<GenericHub<VehicleEntity>
 			idProperty={'uvin'}
