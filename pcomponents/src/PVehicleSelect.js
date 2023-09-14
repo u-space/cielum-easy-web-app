@@ -46,7 +46,7 @@ const PVehicleSelect = ({
 
 	const debouncedRefetch = _.debounce(refetch, 500, { trailing: true, leading: false });
 
-	const data = isSuccess ? response.data.vehicles : [];
+	const data = isSuccess ? response.data?.data?.vehicles ?? [] : [];
 
 	const isChoosing = !single || (single && selected.length === 0);
 	const isEditing = !disabled;
@@ -148,7 +148,7 @@ const TextFieldSelectVehicle = ({
 	data,
 	response
 }) => {
-	const difference = response && data ? response.data.count - data.length : 0;
+	const difference = response && data ? response.data?.data?.count - data.length : 0;
 	return (
 		<>
 			<PInput

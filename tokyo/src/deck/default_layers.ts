@@ -93,8 +93,6 @@ export function getSatelliteLayer() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onEditableLayerEdit = (params: EditParams) => (e: any) => {
-	console.log('onEditableLayerEdit', e);
-
 	if (
 		e.editType === 'addFeature' ||
 		e.editType === 'movePosition' ||
@@ -110,7 +108,6 @@ const onEditableLayerEdit = (params: EditParams) => (e: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onEditableLayerClick = (params: EditParams) => (e: any) => {
-	console.log('onEditableLayerClick', e);
 	if (!e.isGuide && e.featureType === 'polygons') {
 		if (params.mode !== EditMode.DISABLED) {
 			params.handlers.select(e.index);

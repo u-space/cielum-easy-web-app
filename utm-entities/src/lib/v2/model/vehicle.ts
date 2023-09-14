@@ -1,6 +1,6 @@
 import { UtmRequestEntity, type UtmResponseEntity } from '../utm-entity';
 import { ExtraFields } from '../../extraFields';
-import { VehicleAuthorizationStatus } from '../../vehicle';
+import { VehicleAuthorizationStatus, VehicleEntity } from '../../vehicle';
 import { Static, Type } from '@sinclair/typebox';
 import { NestedUser, ResponseNestedUser } from './user';
 import { Value } from '@sinclair/typebox/value';
@@ -55,6 +55,16 @@ export class UtmBaseVehicle implements UtmResponseEntity {
 	model: string;
 	registrationNumber: string | null;
 	vehicleName: string;
+
+	static fromVehicleEntity(vehicle: VehicleEntity): UtmBaseVehicle {
+		return new UtmBaseVehicle({
+			uvin: vehicle.uvin,
+			manufacturer: vehicle.manufacturer,
+			model: vehicle.model,
+			registrationNumber: vehicle.faaNumber,
+			vehicleName: vehicle.vehicleName
+		});
+	}
 
 	constructor(backendVehicle: ResponseBaseVehicle) {
 		const validationErrors = Array.from(Value.Errors(ResponseBaseVehicle, backendVehicle));

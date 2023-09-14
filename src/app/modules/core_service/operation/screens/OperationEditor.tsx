@@ -27,7 +27,6 @@ import { EditMode } from '@tokyo/types';
 import { Operation } from '@utm-entities/v2/model/operation';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 import { useAuthStore } from '../../../auth/store';
-import { NestedUser } from '@utm-entities/v2/model/user';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -37,7 +36,7 @@ const OperationEditor = () => {
 	const queryString = useQueryString();
 
 	const id = queryString.get('id');
-	const queryOperation = useQueryOperation(id || '', !!id);
+	const queryOperation = useQueryOperation(id || '', false);
 	const tokyo = useTokyo();
 
 	const username = useAuthStore((state) => state.username);
@@ -50,48 +49,51 @@ const OperationEditor = () => {
 	const [modalProps, setModalProps] = useState<PFullModalProps>(undefinedModal);
 	const [selectedVolume, setSelectedVolume] = useState<number | null>(null);
 
-	const operation = useMemo(() => {
-		if (queryOperation.isSuccess) {
-			return queryOperation.data;
-		} else {
-			const op = new Operation();
-			op.set(
-				'creator',
-				new NestedUser({
-					// TODO: Remove this when creating ExistingOperation, NewOperation
-					username,
-					email: '',
+	/*const operation = useMemo(() => {
+		/* op.set(
+					'creator',
+					new NestedUser({
+						// TODO: Remove this when creating ExistingOperation, NewOperation
+						username,
+						email: '',
 
-					firstName: '',
-					lastName: '',
-					extra_fields_json: {}
-				})
-			);
-			op.set(
-				'owner',
-				new NestedUser({
-					// TODO: Remove this when creating ExistingOperation, NewOperation
-					username,
-					email: '',
+						firstName: '',
+						lastName: '',
+						extra_fields_json: {}
+					})
+				);
+				op.set(
+					'owner',
+					new NestedUser({
+						// TODO: Remove this when creating ExistingOperation, NewOperation
+						username,
+						email: '',
 
-					firstName: '',
-					lastName: '',
-					extra_fields_json: {}
-				})
-			);
-			return op;
+						firstName: '',
+						lastName: '',
+						extra_fields_json: {}
+					})
+				);
+		return new Operation();
+	}, []);*/
+
+	const [operation, setOperation] = useState<Operation>(new Operation());
+
+	useEffect(() => {
+		if (!!id && !queryOperation.isSuccess && !queryOperation.isError) {
+			queryOperation.refetch().then((response) => {
+				if (response.data) setOperation(response.data);
+			});
 		}
-	}, [queryOperation.data, queryOperation.isSuccess]);
+	}, [id, queryOperation.isSuccess, queryOperation.isError, queryOperation.refetch]);
 
 	const polygons = useMemo(() => {
-		return queryOperation.isSuccess
-			? _.cloneDeep(
-					operation.operation_volumes.flatMap((volume) =>
-						volume.operation_geography ? volume.operation_geography : []
-					)
-			  )
-			: [];
-	}, [queryOperation.isSuccess, operation.operation_volumes]);
+		return _.cloneDeep(
+			operation.operation_volumes.flatMap((volume) =>
+				volume.operation_geography ? volume.operation_geography : []
+			)
+		);
+	}, [operation]);
 
 	useEffect(() => {
 		const geography = queryOperation.data?.operation_volumes[0].operation_geography;
@@ -100,8 +102,12 @@ const OperationEditor = () => {
 		}
 	}, [queryOperation.data?.operation_volumes, queryOperation.isSuccess]);
 
-	const onPolygonsUpdated = useCallback(
-		(polygons: Polygon[]) => {
+	const onPolygonsUpdated = (polygons: Polygon[]) => {
+		setOperation((prev) => {
+			const operation = new Operation();
+			for (const prop in prev) {
+				operation.set(prop as keyof Operation, prev[prop as keyof Operation]);
+			}
 			operation.operation_volumes = polygons.map((polygon, index) => {
 				const volume = new OperationVolume();
 				volume.set('ordinal', index);
@@ -116,9 +122,9 @@ const OperationEditor = () => {
 				volume.set('operation_geography', polygon);
 				return volume;
 			});
-		},
-		[operation]
-	);
+			return operation;
+		});
+	};
 
 	const queryClient = useQueryClient();
 	const saveOperationMutation = useSaveOperation(

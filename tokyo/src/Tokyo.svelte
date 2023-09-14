@@ -102,7 +102,6 @@
 	}
 
 	function resetMapRotation() {
-		console.log($tokyoViewState)
 		$tokyoFlyToPosition = {
 			...$tokyoViewState,
 			bearing: 0,
@@ -139,6 +138,7 @@
 	let visibleLayersMap = new Map();
 
 	$: {
+
 		if (pickedLayersMap.size > 0) {
 			const newVisibleLayersMap = new Map();
 			for (const layer of allLayersMap.values()) {

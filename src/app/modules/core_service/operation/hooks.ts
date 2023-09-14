@@ -15,7 +15,7 @@ export function useQueryOperation(gufi: string, enabled: boolean) {
 		operation: { getOperation }
 	} = useCoreServiceAPI();
 
-	return useQuery(['operation', gufi], () => getOperation(gufi), {
+	return useQuery<Operation>(['operation', gufi], () => getOperation(gufi), {
 		enabled
 	});
 }

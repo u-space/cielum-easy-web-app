@@ -5,13 +5,23 @@ import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import PDateInput from '@pcomponents/PDateInput';
 import PTextArea from '@pcomponents/PTextArea';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { ExtraFieldSchema } from '@utm-entities/extraFields';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
 import { UserEntity } from '@utm-entities/user';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
 import { Operation, OperationState } from '@utm-entities/v2/model/operation';
 import { NestedUser } from '@utm-entities/v2/model/user';
+import { VehicleEntity } from '@utm-entities/vehicle';
+import { reactify } from 'svelte-preprocess-react';
+import CVehicleSelectorSvelte from '@tokyo/gui/CVehicleSelector.svelte';
+import { UtmBaseVehicle } from '@utm-entities/v2/model/vehicle';
+import { useQuery } from 'react-query';
+import { useCoreServiceAPI } from '../../../../utils';
+import env from '../../../../../vendor/environment/env';
+import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
+import PVehicleSelect from '@pcomponents/PVehicleSelect';
+const CVehicleSelector = reactify(CVehicleSelectorSvelte);
 
 interface OperationInfoProps {
 	prop: string;
@@ -105,15 +115,28 @@ const InfoOperation: FC<InfoOperationProps> = ({
 		}
 	};
 
+	const {
+		vehicle: { getVehiclesByOperator }
+	} = useCoreServiceAPI();
+
+	const queryVehicles = useQuery(
+		[`short_vehicles`, operation.owner],
+		() => getVehiclesByOperator(operation.owner?.username as string, 99, 0),
+		{
+			retry: false,
+			enabled: !!operation.owner
+		}
+	);
+
 	if (!token) return null;
 	return (
 		<>
 			<CardGroup header="Creating an operation">
-				{/*isAdmin && (
+				{isAdmin && (
 					<PUserSelectForAdmins
 						label={t('glossary:operation.owner')}
 						onSelect={onSelectUser}
-						preselected={operation.owner ? [operation.owner] : []}
+						preselected={operation.owner ? [new UserEntity(operation.owner, {})] : []}
 						fill
 						isRequired
 						disabled={isPilot}
@@ -124,19 +147,40 @@ const InfoOperation: FC<InfoOperationProps> = ({
 						api={env.core_api}
 						id={'user-select-admins'}
 					/>
-				)*/}
-				{/*
-				<PVehicleSelect
-					api={env.core_api}
-					label={t('glossary:operation.uas_registrations')}
-					onSelect={(value: VehicleEntity[]) => operation.set('uas_registrations', value)}
-					preselected={operation.uas_registrations}
-					username={operation.owner?.username}
-					fill
-					isRequired
-					token={token}
-					schema={schemaVehicles}
-				/>*/}
+				)}
+				{isAdmin && (
+					<PVehicleSelect
+						api={env.core_api}
+						label={t('glossary:operation.uas_registrations')}
+						onSelect={(value: VehicleEntity[]) =>
+							operation.set(
+								'uas_registrations',
+								value.map((vehicle) => UtmBaseVehicle.fromVehicleEntity(vehicle))
+							)
+						}
+						preselected={operation.uas_registrations}
+						username={operation.owner?.username}
+						fill
+						isRequired
+						token={token}
+						schema={schemaVehicles}
+					/>
+				)}
+				{isPilot && (
+					<CVehicleSelector
+						vehicles={queryVehicles.isSuccess ? queryVehicles.data.data.vehicles : []}
+						onSelect={(event) =>
+							operation.set(
+								'uas_registrations',
+								(event as CustomEvent<VehicleEntity[]>).detail.map((vehicle) =>
+									UtmBaseVehicle.fromVehicleEntity(vehicle)
+								)
+							)
+						}
+					>
+						{t('Vehicles')}
+					</CVehicleSelector>
+				)}
 				{isAdmin && isEditingExisting && (
 					<POperationStateSelect
 						id="editor-state"
