@@ -110,7 +110,7 @@ const PInput = (props: PInputProps) => {
 				onFocus={() => setFocusedFlag(true)}
 				onBlur={() => setFocusedFlag(false)}
 			/>
-			{!isFocused && minLengthError && children}
+			{!isFocused && !disabled && minLengthError && children}
 		</FormGroup>
 	);
 };

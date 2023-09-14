@@ -4,12 +4,12 @@
 	import {VehicleEntity} from '@utm-entities/vehicle';
 	import CButton from '@tokyo/gui/CButton.svelte';
 
-	export let token: string;
+
 	export let history: any; // TODO: remove when we have proper standalone frontend
 	export let vehicles: VehicleEntity[];
 
 	function getOnClickHandler(uvin: string) {
-		return (event) => {
+		return (event: MouseEvent) => {
 			event.preventDefault();
 			history.push(`/vehicles/${uvin}`);
 		}
