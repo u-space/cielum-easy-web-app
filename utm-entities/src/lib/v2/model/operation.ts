@@ -51,8 +51,8 @@ export type RequestOperation = Static<typeof RequestOperation>;
 const ResponseBaseOperation = Type.Object({
 	gufi: Type.String(),
 	name: Type.String(),
-	//contact: Type.String(),
-	//contact_phone: Type.String(),
+	contact: Type.String(),
+	contact_phone: Type.String(),
 	operation_volumes: Type.Array(ResponseOperationVolume),
 	state: OperationState,
 	uas_registrations: Type.Array(ResponseBaseVehicle)
@@ -93,10 +93,8 @@ export class BaseOperation {
 			}
 			this.gufi = backendOperation.gufi;
 			this.name = backendOperation.name;
-			//this.contact = backendOperation.contact;
-			this.contact = '';
-			//this.contact_phone = backendOperation.contact_phone;
-			this.contact_phone = '';
+			this.contact = backendOperation.contact;
+			this.contact_phone = backendOperation.contact_phone;
 			this.operation_volumes = backendOperation.operation_volumes.map(
 				(operationVolume) => new OperationVolume(operationVolume)
 			);
