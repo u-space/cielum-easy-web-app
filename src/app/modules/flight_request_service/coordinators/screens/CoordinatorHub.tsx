@@ -58,7 +58,7 @@ const CoordinatorHub = () => {
 	const query = useQueryCoordinators();
 	const { coordinators, count } = query;
 
-	const updateCoordinator = useUpdateCoordinator();
+	const updateCoordinator = useUpdateCoordinator(false);
 
 	// Handlers
 	function getData([col, row]: readonly [number, number]): GridCell {
