@@ -213,11 +213,16 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 							onClick={() => {
 								//If it is editing, then save and change to not editing mode
 								if (edit.find((e) => e === coordination.id)) {
-									console.log(coordination.id);
 									setEdit(edit.filter((e) => e !== coordination.id));
-									coordination.flightRequest = entity;
+									const coordinationToSave = {
+										...coordination,
+										flightRequest: { id: entity.id }
+									};
+
 									updateCoordination.mutate({
-										entity: coordination
+										// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+										// @ts-ignore
+										entity: coordinationToSave
 									});
 								} else {
 									//Enters editing mode
@@ -322,6 +327,7 @@ interface VolumeDetailsProps {
 }
 const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 	const { t } = useTranslation(['ui', 'glossary']);
+
 	if (ls.entity.volumes.length >= volume + 1) {
 		return (
 			<div style={{ backgroundColor: 'var(--mirai-150)' }}>
@@ -345,6 +351,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					isDarkVariant
 					isTime
 					isRequired={isEditing}
+					defaultValue={ls.entity.volumes[volume].effective_time_begin || undefined}
 					onChange={(value) =>
 						ls.entity.volumes[volume].set('effective_time_begin', value)
 					}
@@ -356,6 +363,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					isDarkVariant
 					isTime
 					isRequired={isEditing}
+					defaultValue={ls.entity.volumes[volume].effective_time_end || undefined}
 					onChange={(value) => ls.entity.volumes[volume].set('effective_time_end', value)}
 				/>
 			</div>

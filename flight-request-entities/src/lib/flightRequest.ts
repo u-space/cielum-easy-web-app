@@ -9,7 +9,7 @@ import { UserEntity } from '@utm-entities/user';
 import { buildFilterAndOrderParametersObject } from './_util';
 import { EntityHasDisplayName } from './types';
 import { CoordinationEntity } from './coordination';
-import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { OperationVolume, ResponseOperationVolume } from '@utm-entities/v2/model/operation_volume';
 import { Operation } from '@utm-entities/v2/model/operation';
 
 export enum FlightRequestState {
@@ -71,7 +71,9 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 
 		this.name = name;
 		this.id = id;
-		this.volumes = volumes;
+		this.volumes = volumes.map(
+			(volume: ResponseOperationVolume) => new OperationVolume(volume)
+		);
 		this.uavs = uavs;
 		this.state = state;
 		this.operation = operation;
@@ -200,7 +202,7 @@ export const APICoordinatorSchema = Joi.object({
 
 // API
 
-const transformFlightRequest = (data: any) => {
+const transformFlightRequests = (data: any) => {
 	return {
 		count: data.count,
 		flightRequests: data.flightRequests.map((flightRequest: any) => {
@@ -282,7 +284,9 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 					filter
 				),
 				headers: { auth: token },
-				transformResponse: Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				transformResponse: (
+					Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				).concat(transformFlightRequests)
 			});
 		}
 	};
