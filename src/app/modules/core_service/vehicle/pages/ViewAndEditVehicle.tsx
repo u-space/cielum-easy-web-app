@@ -166,7 +166,18 @@ const PDocumentWithSchema: FC<PDocumentWithSchemaProps> = ({ ls, document, isEdi
 			valid: validation
 		});
 
+	useEffect(() => {
+		if (updateDocumentValidationMutation.isSuccess) {
+			document.valid = updateDocumentValidationMutation.data.data.valid;
+		}
+	}, [updateDocumentValidationMutation.isSuccess, updateDocumentValidationMutation.data]);
+
 	if (!schemaQuery.isLoading && schemaQuery.data) {
+		if (
+			updateDocumentObservationMutation.isLoading ||
+			updateDocumentValidationMutation.isLoading
+		)
+			return <Spinner size={8} />;
 		return (
 			<PDocument
 				isEditing={isEditing}
