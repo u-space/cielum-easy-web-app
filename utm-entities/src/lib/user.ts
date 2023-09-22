@@ -106,7 +106,7 @@ export class UserEntity implements EntityHasDisplayName {
 							}
 						}
 					}
-					if (user.extra_fields.documents) {
+					if (user.extra_fields?.documents) {
 						this.extra_fields.documents = user.extra_fields.documents.map(
 							(doc: any) => {
 								return new DocumentEntity(doc);

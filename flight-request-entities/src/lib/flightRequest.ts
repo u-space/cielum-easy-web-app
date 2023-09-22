@@ -24,7 +24,9 @@ export enum FlightRequestState {
 export enum FlightCategory {
 	OPEN = 'OPEN',
 	STS_01 = 'STS_01',
-	STS_02 = 'STS_02'
+	STS_02 = 'STS_02',
+	A2 = 'A2',
+	A3 = 'A3'
 }
 
 export class FlightRequestEntity implements EntityHasDisplayName {
@@ -214,7 +216,7 @@ const transformFlightRequests = (data: any) => {
 export const getFlightRequestAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 20000,
+		timeout: 120000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
@@ -240,14 +242,11 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 		},
 		async updateFlightRequest(flightRequest: FlightRequestEntity) {
 			// Api ask us to delete the state bacause state change has separated endpoint
-			delete flightRequest.state;
-			const { data } = await axiosInstance.put(
-				`/flightRequest/${flightRequest.id}`,
-				flightRequest,
-				{
-					headers: { auth: token }
-				}
-			);
+			const body = flightRequest.asBackendFormat;
+			delete body.state;
+			const { data } = await axiosInstance.put(`/flightRequest/${body.id}`, body, {
+				headers: { auth: token }
+			});
 			return data;
 		},
 		async setFlightRequestState(flightRequestId: string, state: FlightRequestState) {
