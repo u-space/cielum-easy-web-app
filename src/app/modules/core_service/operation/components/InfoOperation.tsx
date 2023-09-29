@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import PDateInput from '@pcomponents/PDateInput';
 import PTextArea from '@pcomponents/PTextArea';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { ExtraFieldSchema } from '@utm-entities/extraFields';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
 import { UserEntity } from '@utm-entities/user';
@@ -128,6 +128,13 @@ const InfoOperation: FC<InfoOperationProps> = ({
 		}
 	);
 
+	const owner = useMemo(() => {
+		if (operation.owner) {
+			return [new UserEntity(operation.owner, {})];
+		}
+		return [];
+	}, [operation.owner]);
+
 	if (!token) return null;
 	return (
 		<>
@@ -136,7 +143,7 @@ const InfoOperation: FC<InfoOperationProps> = ({
 					<PUserSelectForAdmins
 						label={t('glossary:operation.owner')}
 						onSelect={onSelectUser}
-						preselected={operation.owner ? [new UserEntity(operation.owner, {})] : []}
+						preselected={owner}
 						fill
 						isRequired
 						disabled={isPilot}

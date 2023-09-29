@@ -27,6 +27,8 @@ import { EditMode } from '@tokyo/types';
 import { Operation } from '@utm-entities/v2/model/operation';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 import { useAuthStore } from '../../../auth/store';
+import { UserEntity } from '@utm-entities/user';
+import { NestedUser } from '@utm-entities/v2/model/user';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 

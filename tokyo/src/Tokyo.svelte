@@ -234,7 +234,6 @@
 		indexSelected: editIndexSelected
 	}
 
-
 	$: deckActionParams = {
 		position: $tokyoFlyToPosition,
 		mapParams: {

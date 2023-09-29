@@ -36,7 +36,7 @@ const RequestOperation = Type.Object(
 		contact: Type.String(),
 		contact_phone: Type.String(),
 		owner: Type.Optional(Type.String()), // Undefined when creating operation as pilot
-		creator: Type.String(),
+		//creator: Type.String(),
 		operation_volumes: Type.Array(RequestOperationVolume),
 		state: OperationState,
 		submit_time: Type.Optional(Type.String()), // Undefined when creating a new operation, defined when updating an existing operation
@@ -186,8 +186,7 @@ export class Operation
 
 	asBackendFormat(params: { omitOwner: boolean }): RequestOperation {
 		const { omitOwner } = params;
-		console.log('asBackendFormat', this);
-		if (!this.creator) throw new Error(`Operation creator is not set`);
+		//if (!this.creator) throw new Error(`Operation creator is not set`);
 		if (!omitOwner && !this.owner) throw new Error(`Operation owner is not set`);
 		if (omitOwner) this.owner = null;
 		// TODO: validate uas_registrations
@@ -220,7 +219,7 @@ export class Operation
 			contact: this.contact,
 			contact_phone: this.contact_phone,
 			state: 'PROPOSED', // TODO: fix this
-			creator: this.creator.username,
+			//creator: this.creator.username,
 			operation_volumes: this.operation_volumes.map((volume) => volume.asBackendFormat()),
 			uas_registrations: []
 		};

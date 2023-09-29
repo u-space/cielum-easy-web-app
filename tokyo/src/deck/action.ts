@@ -124,7 +124,7 @@ export function deckAction(node: HTMLCanvasElement, params: DeckActionParams) {
 				lastPositionUpdate.set(params.position);
 				deck.setProps({
 					...newProps,
-					initialViewState: calculateViewState(params.position)
+					initialViewState: calculateViewState(params.position, params.mapParams.is3D)
 				});
 			} else {
 				deck.setProps(newProps);
