@@ -48,13 +48,14 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 			email = '',
 			minimun_coordination_days = 0,
 			price = 0,
-			discount_Multiple_Dates = 0,
+			discount_Multiple_Dates = undefined,
 			geographical_zone = null,
-			manual_coordinator_procedure = {
+			/*manual_coordinator_procedure = {
 				text_description: '',
 				procedure_url: '',
 				template_url: ''
-			},
+			},*/
+			manual_coordinator_procedure = null,
 			automatic_coordinator_procedure = null
 		} = coordinator;
 		this.id = id || undefined;
@@ -65,7 +66,9 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 		this.email = email;
 		this.minimun_coordination_days = Number(minimun_coordination_days);
 		this.price = Number(price);
-		this.discount_Multiple_Dates = Number(discount_Multiple_Dates);
+		this.discount_Multiple_Dates = discount_Multiple_Dates
+			? discount_Multiple_Dates
+			: undefined;
 		this.geographical_zone = geographical_zone;
 		this.automatic_coordinator_procedure = automatic_coordinator_procedure;
 		this.manual_coordinator_procedure = manual_coordinator_procedure;
@@ -111,7 +114,7 @@ export const APICoordinatorSchema = Joi.object({
 	email: Joi.string().optional().allow(''),
 	minimun_coordination_days: Joi.number().required(),
 	price: Joi.number(),
-	discount_Multiple_Dates: Joi.number(),
+	discount_Multiple_Dates: Joi.number().optional(),
 	geographical_zone: Joi.string(),
 	manual_coordinator_procedure: Joi.object().allow(null),
 	automatic_coordinator_procedure: Joi.object().allow(null)
@@ -126,7 +129,7 @@ const transformCoordinators = (data: any) => {
 	};
 };
 
-export const getCoordinatorAPIClient = (api: string, token: string) => {
+export const getCoordinatorAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,
@@ -158,7 +161,7 @@ export const getCoordinatorAPIClient = (api: string, token: string) => {
 				)
 			});
 		},
-		saveCoordinator(_coordinator: CoordinatorEntity) {
+		saveCoordinator(_coordinator: CoordinatorEntity, isCreating: boolean) {
 			const aux = _.cloneDeep(_coordinator);
 			if (!aux.geographical_zone) return Promise.reject('Missing geographical zone');
 			if (typeof aux.geographical_zone !== 'string') {
@@ -176,9 +179,19 @@ export const getCoordinatorAPIClient = (api: string, token: string) => {
 				return Promise.reject(errors);
 			}
 
-			return axiosInstance.post('coordinator', aux, {
-				headers: { auth: token }
-			});
+			if (isCreating) {
+				return axiosInstance.post('coordinator', aux, {
+					headers: { auth: token }
+				});
+			} else {
+				return axiosInstance.put(
+					`coordinator/${aux.id}`,
+					{ ...aux, geographical_zone: { id: aux.geographical_zone } },
+					{
+						headers: { auth: token }
+					}
+				);
+			}
 		}
 	};
 };

@@ -1,11 +1,17 @@
 <script lang="ts">
 	import {CModalProps, CModalVariant, CModalWidth} from '@tokyo/gui/CModal';
-	import {onMount} from 'svelte';
+	import {createEventDispatcher, onMount} from 'svelte';
 	import CButton from '@tokyo/gui/CButton.svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let title: CModalProps['title'];
 	export let width: CModalProps['width'] = CModalWidth.SMALLEST;
 	export let variant: CModalProps['variant'] = CModalVariant.INFORMATION;
+	export let closeText: CModalProps['closeText'] = 'Close';
+
+	export let disabled: CModalProps['disabled'] = false;
+
 	let ref;
 
 	onMount(() => {
@@ -13,17 +19,34 @@
 	})
 </script>
 
-<dialog bind:this={ref} on:close class:smallest={width === CModalWidth.SMALLEST}
-		class:largest={width === CModalWidth.LARGEST}>
+<dialog bind:this={ref} class:largest={width === CModalWidth.LARGEST} class:smallest={width === CModalWidth.SMALLEST}
+		on:cancel={(event) => {
+			if (disabled) event.preventDefault();
+			dispatch('cancel', event)
+		}}
+		on:close={(event) => {
+			if (disabled) event.preventDefault();
+			dispatch('close', event)
+		}}>
 	{#if title}
-		<h1 class:information={variant === CModalVariant.INFORMATION}>{title}</h1>
+		<h1 class:information={variant === CModalVariant.INFORMATION}
+			class:error={variant === CModalVariant.ERROR}
+			class:success={variant === CModalVariant.SUCCESS}
+		>{title}</h1>
 	{/if}
 	<div class="body">
 		{#if $$slots.default}
 			<slot/>
 		{/if}
 		<div class="actions">
-			<CButton on:click={() => ref.close()}>Cancel</CButton>
+			{#if !disabled}
+				<CButton
+						on:click={(evt) => {
+						evt.preventDefault();
+						ref.close()
+					}}
+				>{closeText}</CButton>
+			{/if}
 		</div>
 	</div>
 </dialog>
@@ -31,17 +54,16 @@
 <style lang="scss">
   @import './mixins.scss';
 
-  $min-width: 15vw;
-  $max-width: 50vw;
+  $min-width: 500px;
+  $max-width: 800px;
 
-  dialog {
+  dialog[open] {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
 
-    min-width: $min-width;
-    max-width: $max-width;
+    min-width: min($min-width, 100%);
     min-height: 10vh;
     margin: auto auto;
 
@@ -60,7 +82,7 @@
 
     // Size variants
     &.smallest {
-      width: $min-width;
+      width: min($min-width, 100%);
     }
 
     &.largest {
@@ -70,7 +92,7 @@
 
     & > h1 {
       width: 100%;
-      padding: 0 var(--spacing-8) 0;
+      padding: 0.5rem;
 
       margin: 0;
       font-size: 1rem;

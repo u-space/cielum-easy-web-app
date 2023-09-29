@@ -85,6 +85,12 @@
 		text-align: center;
 
 		background-color: var(--mirai-100);
+
+		& h1 {
+			margin: auto 0;
+
+			font-size: 2em;
+		}
 	}
 
 	& > * {
@@ -114,6 +120,10 @@
 		border-radius: var(--radius-l);
 
 		background-color: var(--mirai-100);
+
+		& h1 {
+			font-size: 2em;
+		}
 
 		&.login {
 			margin: 0;

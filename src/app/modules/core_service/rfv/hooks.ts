@@ -7,7 +7,6 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { shallow } from 'zustand/shallow';
 import { useRfvStore } from './store';
 import { useEffect, useMemo } from 'react';
-import { OperationEntity } from '@utm-entities/operation';
 
 export function useDeleteRfv() {
 	const queryClient = useQueryClient();

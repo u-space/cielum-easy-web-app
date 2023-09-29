@@ -8,7 +8,7 @@ import {
 } from '@utm-entities/vehicle';
 import { useVehicleStore } from './store';
 import { shallow } from 'zustand/shallow';
-import { useAuthIsPilot } from '../../auth/store';
+import { useAuthIsPilot, useAuthStore } from '../../auth/store';
 import { AxiosError, AxiosResponse } from 'axios';
 import { DocumentEntity } from '@utm-entities/document';
 import { NotificationType, useNotificationStore } from '../../notification/store';
@@ -76,7 +76,7 @@ export function useGetVehiclesByOperator(username: string) {
 			enabled: !!username
 		}
 	); // TODO: Do show an error in case isErrorVehicles
-	const data = query.isError ? query.data?.data.vehiclePositions : [];
+	const data = query.isError ? query.data?.data.vehicles : [];
 	return { ...query, data };
 }
 export function useSelectedVehicle() {
@@ -181,7 +181,7 @@ export function useQueryVehicles(all = false) {
 	} = query;
 
 	const data = isSuccessVehicles ? response.data : null;
-	const vehicles = data ? data.vehiclePositions : [];
+	const vehicles = data ? data.vehicles : [];
 	const count = data ? data.count : 0;
 
 	return {

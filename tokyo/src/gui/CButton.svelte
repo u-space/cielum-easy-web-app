@@ -1,40 +1,46 @@
 <script lang="ts">
-    import {CButtonProps, CButtonSize, CButtonVariant} from './CButton';
-    import CTooltip from '@tokyo/gui/CTooltip.svelte';
+	import {CButtonProps, CButtonVariant} from './CButton';
+	import CTooltip from '@tokyo/gui/CTooltip.svelte';
+	import CSizeWrapper from "@tokyo/gui/CSizeWrapper.svelte";
+	import {CSize} from './CSizeWrapper';
 
-    export let variant: CButtonProps['variant'] = CButtonVariant.PRIMARY;
-    export let size: CButtonProps['size'] = CButtonSize.MEDIUM;
-    export let icon: CButtonProps['icon'] = undefined;
-    export let fill: CButtonProps['fill'] = false;
+	export let variant: CButtonProps['variant'] = CButtonVariant.PRIMARY;
+	export let size: CButtonProps['size'] = CSize.MEDIUM;
+	export let icon: CButtonProps['icon'] = undefined;
+	export let fill: CButtonProps['fill'] = false;
 
-    export let tooltip: CButtonProps['tooltip'];
+	export let tooltip: CButtonProps['tooltip'] = undefined;
+	export let disabled: CButtonProps['disabled'] = false;
 
-    let open = false;
+	let open = false;
 </script>
 
-<button
-        on:click
-        class:primary={variant === CButtonVariant.PRIMARY} class:secondary={variant === CButtonVariant.SECONDARY}
-        class:danger={variant === CButtonVariant.DANGER} class:extra_small={size === CButtonSize.EXTRA_SMALL}
-        class:small={size === CButtonSize.SMALL} class:medium={size === CButtonSize.MEDIUM}
-        class:large={size === CButtonSize.LARGE} class:extra_large={size === CButtonSize.EXTRA_LARGE}
-        class:only_icon={!$$slots.default && icon} class:icon_and_text={$$slots.default && icon}
-        class:icon_or_text={($$slots.default || icon) && !($$slots.default && icon)}
-        class:fill={fill}
-        on:mouseenter={() => open = true} on:mouseleave={() => open = false}
->
-    {#if icon}
-        <iconify-icon height="1.5em" icon={`ph:${icon}`}></iconify-icon>
-    {/if}
-    {#if tooltip}
-        <CTooltip {...{text: '', position: 'bottom', ...tooltip, open}}/>
-    {/if}
-    {#if $$slots.default}
-        <p>
-            <slot></slot>
-        </p>
-    {/if}
-</button>
+<CSizeWrapper {size}>
+	<button
+			{...$$restProps}
+			on:click
+			class:primary={variant === CButtonVariant.PRIMARY && !disabled}
+			class:secondary={variant === CButtonVariant.SECONDARY && !disabled}
+			class:danger={variant === CButtonVariant.DANGER && !disabled}
+			class:disabled={disabled}
+			class:only_icon={!$$slots.default && icon} class:icon_and_text={$$slots.default && icon}
+			class:icon_or_text={($$slots.default || icon) && !($$slots.default && icon)}
+			class:fill={fill}
+			on:mouseenter={() => open = true} on:mouseleave={() => open = false}
+	>
+		{#if icon}
+			<iconify-icon height="1.5em" icon={`ph:${icon}`}></iconify-icon>
+		{/if}
+		{#if tooltip}
+			<CTooltip {...{text: '', position: 'bottom', ...tooltip, open}}/>
+		{/if}
+		{#if $$slots.default}
+			<p>
+				<slot></slot>
+			</p>
+		{/if}
+	</button>
+</CSizeWrapper>
 
 <style lang="scss">
   @import './mixins.scss';
@@ -43,21 +49,22 @@
 
   button {
     position: relative;
-    display: flex;
     flex: 0;
 
+    display: flex;
+    align-items: center;
+
+    overflow: visible; // To be able to draw the small overhang of the button that shows on hover
+
     width: auto;
+    max-width: 100%;
     height: 1.70em;
 
     user-select: none;
-
-    align-items: center;
-
     font-family: 'Lexend Deca', sans-serif;
     text-align: right;
-
-
-    border-radius: 0.25em;
+    font-size: 1em;
+    border-radius: var(--c-radius-s);
     box-shadow: inset 0 0 0 1px rgba(17, 20, 24, 0.2), 0 1px 2px rgba(17, 20, 24, 0.1);
 
     transform: translate3d(
@@ -66,23 +73,27 @@
                     0
     ); // https://stackoverflow.com/questions/48748223/really-weird-box-shadow-transition-bug
 
-    overflow: visible;
     @include no-outline;
 
 
     & p {
-      margin: 0;
+      margin: auto 0;
       width: 100%;
+      height: 100%;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
       text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     &:hover {
       transform: translateY(-$button-shift-action);
 
       &::after {
+        // To prevent a fast effect when the button is hovered (moving the button up and down)
         content: '';
         position: absolute;
         top: 100%;
@@ -96,6 +107,10 @@
 
     &:active {
       transform: translateY($button-shift-action);
+    }
+
+    &:focus {
+      outline: 1px solid var(--primary-500);
     }
   }
 
@@ -168,26 +183,9 @@
     &:hover,
     &:active {
       background: var(--mirai-700) !important;
+      transform: none;
     }
   }
 
-  .extra_small {
-    font-size: 0.75rem;
-  }
 
-  .small {
-    font-size: 0.85rem;
-  }
-
-  .medium {
-    font-size: 1rem;
-  }
-
-  .large {
-    font-size: 1.15rem;
-  }
-
-  .extra_large {
-    font-size: 1.35rem;
-  }
 </style>

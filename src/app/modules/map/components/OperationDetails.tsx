@@ -3,20 +3,20 @@ import { Spinner } from '@blueprintjs/core';
 import BackButton from '../../../commons/layouts/dashboard/menu/BackButton';
 import React, { FC, useEffect, useState } from 'react';
 import { getCSSVariable, setCSSVariable } from '../../../utils';
-import { useLocalStore } from 'mobx-react';
-import { OperationEntity } from '@utm-entities/operation';
+
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PButton from '@pcomponents/PButton';
 import Fill from '../../../commons/layouts/dashboard/menu/Fill';
 import ViewAndEditOperation from '../../core_service/operation/pages/ViewAndEditOperation';
 import { useLs } from '../../../commons/utils';
+import { Operation } from '@utm-entities/v2/model/operation';
 
 export interface OperationDetailsProps {
 	isLoading: boolean;
 	isSuccess: boolean;
 	isError: boolean;
-	operation: OperationEntity;
+	operation: Operation;
 	canEdit?: boolean;
 	hideButtons?: boolean;
 }
@@ -39,6 +39,7 @@ const OperationDetails: FC<OperationDetailsProps> = ({
 	const values: string[] = [];
 	if (operation) {
 		for (const prop in operation) {
+			const value = operation[prop as keyof Operation];
 			if (
 				prop !== 'gufi' &&
 				prop !== 'name' &&
@@ -47,15 +48,15 @@ const OperationDetails: FC<OperationDetailsProps> = ({
 				prop !== 'faa_rule' &&
 				prop !== 'volumes_description' &&
 				prop !== 'airspace_authorization' &&
-				typeof operation[prop] === 'string'
+				typeof value === 'string'
 			) {
 				props.push(prop);
-				values.push(operation[prop]);
+				values.push(value);
 			}
 		}
 	}
 
-	const ls = useLs<OperationEntity>(operation);
+	const ls = useLs<Operation>(operation);
 
 	useEffect(() => {
 		ls.entity = operation;
@@ -91,13 +92,13 @@ const OperationDetails: FC<OperationDetailsProps> = ({
 							prop={'glossary:operation.state'}
 							value={t(operation.state)}
 						/>
-						{operation.uas_registrations.map((uasr) => (
+						{/*operation.uas_registrations.map((uasr) => (
 							<CardGroupDetailLine
 								key={`uasr_${uasr.uvin}`}
 								prop={'glossary:operation.uas_registrations'}
 								value={uasr.asNiceString}
 							/>
-						))}
+						))*/}
 						{props.map((prop, index) => (
 							<CardGroupDetailLine
 								key={`prop_${prop}`}
@@ -107,7 +108,7 @@ const OperationDetails: FC<OperationDetailsProps> = ({
 						))}
 						<CardGroupDetailLine
 							prop={'glossary:operation.submit_time'}
-							value={operation['submit_time'].toLocaleString()}
+							value={(operation['submit_time'] as Date).toLocaleString()}
 						/>
 					</CardGroup>
 					{!hideButtons && (

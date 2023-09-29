@@ -7,7 +7,8 @@ const RegularFlightSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useRegularFlightStore}
 			entityName={'regularflight'}
-			queryableProps={['name']}
+			searchableProps={['name']}
+			orderableProps={['name']}
 		/>
 	);
 };

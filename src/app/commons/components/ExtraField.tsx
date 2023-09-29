@@ -8,6 +8,7 @@ import { SchemaItemType } from '@utm-entities/extraFields';
 import { observer } from 'mobx-react';
 import env from '../../../vendor/environment/env';
 import { useAuthIsAdmin } from '../../modules/auth/store';
+import { useTranslation } from 'react-i18next';
 
 interface ExtraFieldProps {
 	type: SchemaItemType;
@@ -21,6 +22,8 @@ interface ExtraFieldProps {
 	ls: any;
 	value: any;
 	onlyAdmin?: boolean;
+	minLength?: number;
+	maxLength?: number;
 }
 
 const ExtraField = observer((props: ExtraFieldProps) => {
@@ -35,8 +38,11 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 		id,
 		ls,
 		value,
-		onlyAdmin
+		onlyAdmin,
+		minLength,
+		maxLength
 	} = props;
+	const { t } = useTranslation();
 	const isAdmin = useAuthIsAdmin();
 	if (onlyAdmin && !isAdmin) return null;
 	// Transform this list of IFs into a switch case
@@ -51,7 +57,14 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 					isDarkVariant={isDarkVariant}
 					disabled={!isEditing}
 					inline
-				/>
+					minLength={minLength}
+					maxLength={maxLength}
+				>
+					<p style={{ textAlign: 'right', fontSize: '0.9em' }}>
+						{t('Min length is')} {minLength} (
+						<strong>{(ls.entity.extra_fields[property] || '').length}</strong>)
+					</p>
+				</PInput>
 			);
 		case SchemaItemType.Number:
 			return (

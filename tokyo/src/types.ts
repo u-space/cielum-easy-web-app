@@ -10,6 +10,8 @@ export interface FlyToPosition {
 	latitude: number;
 	longitude: number;
 	zoom: number;
+	bearing?: number;
+	pitch?: number;
 	duration?: number; // in milliseconds
 }
 
@@ -43,6 +45,10 @@ export interface TokyoPick {
 	name?: string;
 	volume?: number;
 	layerId?: string;
+	properties?: {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		[key: string]: any;
+	};
 }
 
 export interface TokyoMapProps {
@@ -76,10 +82,35 @@ export interface EditOptions {
 	mode: EditMode;
 	polygons?: Polygon[];
 }
+
 export interface MapOptions {
 	isPickEnabled: boolean;
-	geoapifyApiKey?: string; // Not supplying it disables Geocoder
+	is3D?: boolean;
 }
+
+export interface ControlsOptions {
+	geocoder: {
+		enabled: boolean;
+		geoapifyApiKey?: string; // Not supplying it disables Geocoder
+	};
+	geolocator: {
+		enabled: boolean;
+	};
+	backgroundModeSwitch: {
+		enabled: boolean;
+	};
+	zoom: {
+		enabled: boolean;
+	};
+}
+
+export interface TokyoProps {
+	editOptions: EditOptions;
+	mapOptions: MapOptions;
+	controlsOptions: ControlsOptions;
+	t: (key: string) => string;
+}
+
 export type PickHandler = (pickings: TokyoPick[]) => void;
 export type SelectHandler = (selected: number | null) => void;
 export interface TokyoDispatchedEvent {
@@ -102,6 +133,7 @@ export interface EditParams extends EditOptions {
 export interface MapParams {
 	backgroundMode: BackgroundMode;
 	isPickEnabled: boolean;
+	is3D: boolean;
 }
 
 export interface DeckActionParams {

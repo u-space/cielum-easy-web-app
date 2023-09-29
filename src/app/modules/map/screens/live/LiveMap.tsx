@@ -9,7 +9,6 @@ import {
 	useQueryOperations,
 	useSelectedOperationAndVolume
 } from '../../../core_service/operation/hooks';
-import { useSimulatedPositions } from '../../../core_service/position/hooks';
 import useQueryRfvs, { useSelectedRfv } from '../../../core_service/rfv/hooks';
 import useQueryUvrs, { useSelectedUvr } from '../../../core_service/uvr/hooks';
 import {
@@ -30,42 +29,25 @@ import {
 	LiveMapViewProps
 } from './LiveMapViewProps';
 import styled from 'styled-components';
-import { useQueryString } from '../../../../utils';
+import { setCSSVariable, useQueryString } from '../../../../utils';
 import env from '../../../../../vendor/environment/env';
 import { TokyoPick } from '@tokyo/types';
-import { center, polygon } from '@turf/turf';
 import { usePositionStore } from '../../../core_service/position/store';
+import { getCSSVariable } from '@pcomponents/utils';
+import { Polygon } from 'geojson';
+import PButton from '@pcomponents/PButton';
+import { IconName } from '@blueprintjs/core';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
-const PickContainer = styled.div`
-	position: absolute;
-	bottom: 1rem;
-	right: 1rem;
-	z-index: 191919;
-`;
-
-const PickWarning = styled.div`
+const ExtraRealtimeMapButtons = styled.div`
 	position: absolute;
 	bottom: 1rem;
 	left: 1rem;
-	z-index: 191919;
-	font-size: 2rem;
-	background-color: var(--ramen-600);
-	color: var(--mirai-50);
-`;
-
-const PointedAtSummary = styled.div`
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translateX(-50%) translateY(-50%);
-	background-color: var(--primary-900);
-	padding: var(--spacing-2);
-	border-radius: var(--radius-l);
-	color: var(--mirai-50);
-	font-size: 1.5rem;
-	z-index: 212121;
+	right: 3rem;
+	display: flex;
+	justify-content: flex-start;
+	gap: 0.5rem;
 `;
 
 const LiveMap = () => {
@@ -115,7 +97,7 @@ const LiveMap = () => {
 		} else {
 			return null;
 		}
-	}, [gzSelection, operationSelection, rfvSelection, uvrSelection]);
+	}, [gz, operationSelection, operation, rfv, uvr]);
 	const positions = usePositionStore((state) => state.positions);
 	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
@@ -134,11 +116,11 @@ const LiveMap = () => {
 
 	useEffect(() => {
 		if (volume) {
-			tokyo.flyToCenterOfGeometry(volume.operation_geography);
+			tokyo.flyToCenterOfGeometry(volume.operation_geography as Polygon); // This is a operation fetched from the backend
 		}
 	}, [volume]);
 
-	const samplePolygon = [
+	/* const samplePolygon = [
 		[
 			[0, 0],
 			[0, 1],
@@ -170,7 +152,7 @@ const LiveMap = () => {
 				clearInterval(interval);
 			}
 		};
-	}, [simulatedQuery, operation]);
+	}, [simulatedQuery, operation]); */
 
 	useEffect(() => {
 		if (gz) {
@@ -190,6 +172,28 @@ const LiveMap = () => {
 		}
 	}, [rfv]);
 
+	useEffect(() => {
+		console.log('selected', selected);
+		if (!selected) {
+			setCSSVariable('side-width', '0px');
+		} else {
+			setCSSVariable('side-width', getCSSVariable('side-width-default'));
+		}
+		return () => {
+			setCSSVariable('side-width', getCSSVariable('side-width-default'));
+		};
+	}, [selected]);
+
+	const operations = useMemo(() => {
+		const operations = queryOperations.shownOperations;
+		if (operation) {
+			if (!operations.find((op) => op.gufi === operation.gufi)) {
+				operations.push(operation);
+			}
+		}
+		return operations;
+	}, [queryOperations.shownOperations, operation]);
+
 	const onVehicleClick = (vehicle: PositionEntity[]) => {
 		return () => {
 			history.push(`/map?uvin=${vehicle[0].uvin}&gufi=${vehicle[0].gufi}`);
@@ -197,14 +201,17 @@ const LiveMap = () => {
 		};
 	};
 	const liveMapViewProps: LiveMapViewProps = {
-		operations: queryOperations.shownOperations,
+		operations,
 		geographicalZones: isShowingGeographicalZones || gz ? queryGeographicalZones.items : [],
 		rfvs: queryRfvs.rfvs,
 		uvrs: isShowingUvrs ? queryUvrs.uvrs : uvr ? [uvr] : [],
 		vehiclePositions: positions || new Map(),
 		t,
-		mapOptions: {
-			geoapifyApiKey: env.API_keys.geoapify
+		controlsOptions: {
+			geocoder: {
+				enabled: true,
+				geoapifyApiKey: env.API_keys.geoapify
+			}
 		},
 		handlers: {
 			vehicleClick: onVehicleClick
@@ -231,6 +238,21 @@ const LiveMap = () => {
 				{...liveMapViewProps}
 				onPicked={(e) => redirectToPicked((e as CustomEvent<TokyoPick>).detail)}
 			/>
+			{env.tenant.extras.realtime_map_buttons && (
+				<ExtraRealtimeMapButtons>
+					{env.tenant.extras.realtime_map_buttons.map((button) => (
+						<PButton
+							key={button.label}
+							icon={(button.icon as IconName) || undefined}
+							onClick={() => {
+								history.push(button.path);
+							}}
+						>
+							{t(button.label)}
+						</PButton>
+					))}
+				</ExtraRealtimeMapButtons>
+			)}
 		</MapLayout>
 	);
 };

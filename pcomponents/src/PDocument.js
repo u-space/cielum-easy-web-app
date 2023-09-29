@@ -276,7 +276,7 @@ const PDocument = (props) => {
 						(doc) => doc.type !== docType
 					);
 				}
-				console.log({ document, schema });
+
 				ls.entity.extra_fields.documents.push(document);
 				ls.entity.extra_fields[property] = file;
 			}

@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import PTooltip from '@pcomponents/PTooltip';
 import GenericHub, { GenericHubProps, rowHeight } from '../../../../commons/screens/GenericHub';
-import { useQueryString } from '../../../../utils';
+import { setCSSVariable, useQueryString } from '../../../../utils';
 import { useQueryVehicles, useUpdateVehicle, useUpdateVehicleAuthorization } from '../hooks';
 import { VehicleAuthorizationStatus, VehicleEntity } from '@utm-entities/vehicle';
 import { useVehicleStore } from '../store';
@@ -15,23 +15,22 @@ import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/stor
 import VehicleSearchTools from '../components/VehicleSearchTools';
 import ViewAndEditVehicle from '../pages/ViewAndEditVehicle';
 import { UseMutationResult } from 'react-query';
+import { getCSSVariable } from '@pcomponents/utils';
+import VehicleHubForPilotsSvelte from './VehicleHubForPilots.svelte';
+import { reactify } from 'svelte-preprocess-react';
+import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
+
+const VehicleHubForPilots = reactify(VehicleHubForPilotsSvelte);
 
 const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const { t } = useTranslation();
 
 	const isAdmin = useAuthIsAdmin();
-	const isPilot = useAuthIsPilot();
-	const username = useAuthStore((state) => state.username);
 
 	const updateVehicleAuthorization = useUpdateVehicleAuthorization();
 
 	// Pilot users can de-authorize their own vehicles, but not authorize them
-	if (
-		isAdmin ||
-		(isPilot &&
-			data.owner_id === username &&
-			data.authorized !== VehicleAuthorizationStatus.PENDING)
-	) {
+	if (isAdmin) {
 		let newAuthorizationStatus: VehicleAuthorizationStatus;
 		if (isAdmin) {
 			newAuthorizationStatus = data.isAuthorized
@@ -78,6 +77,8 @@ const VehicleHub = () => {
 	);
 	const username = useAuthStore((state) => state.username);
 	const isAdmin = useAuthIsAdmin();
+	const isPilot = useAuthIsPilot();
+	const token = useAuthStore((state) => state.token);
 
 	// Props
 	const idSelected = queryString.get('id');
@@ -151,6 +152,24 @@ const VehicleHub = () => {
 		}
 	}, [shouldShowNonAuthorized]);
 
+	useEffect(() => {
+		// TODO: Re-evaluate whether hiding the sidebar makes sense for pilots.
+		if (isPilot) {
+			setCSSVariable('side-width', '0px');
+		} else {
+			setCSSVariable('side-width', getCSSVariable('side-width-default'));
+		}
+		return () => {
+			setCSSVariable('side-width', getCSSVariable('side-width-default'));
+		};
+	}, [isPilot]);
+
+	if (isPilot)
+		return (
+			<DashboardLayout>
+				<VehicleHubForPilots vehicles={vehicles} token={token} history={history} />
+			</DashboardLayout>
+		);
 	return (
 		<GenericHub<VehicleEntity>
 			idProperty={'uvin'}

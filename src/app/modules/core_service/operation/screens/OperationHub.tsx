@@ -2,37 +2,47 @@ import { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PTooltip from '@pcomponents/PTooltip';
-import PButton from '@pcomponents/PButton';
-import { PButtonSize, PButtonType } from '@pcomponents/PButton';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { getFeatureOption, useQueryString } from '../../../../utils';
 import { UseMutationResult, useQueryClient } from 'react-query';
 import GenericHub, { GenericHubProps, rowHeight } from '../../../../commons/screens/GenericHub';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
 import { useDeleteOperation, useQueryOperations, useSaveOperation } from '../hooks';
 import { GridCell, GridCellKind } from '@glideapps/glide-data-grid';
-import env from '../../../../../vendor/environment/env';
 import { useOperationStore } from '../store';
 import ViewAndEditOperation from '../pages/ViewAndEditOperation';
 import OperationSearchTools from '../components/OperationSearchTools';
-import { OperationEntity } from '@utm-entities/operation';
+import styled from 'styled-components';
+import { OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
+import { Operation, OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 
 interface ExtraActionsProps {
-	data: OperationEntity;
+	data: Operation;
 }
+
+const OperationStateCircle = styled.div`
+	height: 1rem;
+	width: 1rem;
+	border-radius: 100%;
+	margin-left: 1rem;
+	border: 1px solid rgb(var(--mirai-900-rgb), 0.25);
+	box-shadow: 0 1px 1px 0 rgba (0, 0, 0, 0.25);
+	filter: saturate(0.75);
+`;
 
 const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 	const history = useHistory();
 	const { t } = useTranslation();
 	return (
 		<>
-			<PTooltip content={t('View in map')}>
+			{/*<PTooltip content={t('View in map')}>
 				<PButton
 					size={PButtonSize.SMALL}
 					icon="eye-open"
 					variant={PButtonType.SECONDARY}
 					onClick={() => history.push(`/map?operation=${data.gufi}`)}
 				/>
-			</PTooltip>
+			</PTooltip>*/}
 			<PTooltip content={t('View past flights')}>
 				<PButton
 					size={PButtonSize.SMALL}
@@ -41,10 +51,20 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 					onClick={() =>
 						history.push(
 							`/past-flights?gufi=${data.gufi}&from=${(
-								data.start as Date
+								data.begin as Date
 							).toISOString()}&to=${(data.end as Date).toISOString()}`
 						)
 					}
+				/>
+			</PTooltip>
+			<PTooltip content={t(data.state)}>
+				<OperationStateCircle
+					style={{
+						backgroundColor:
+							OPERATION_STATE_COLORS_CSS[
+								data.state as keyof typeof OPERATION_STATE_COLORS_CSS
+							]
+					}}
 				/>
 			</PTooltip>
 		</>
@@ -69,16 +89,18 @@ const OperationHub = () => {
 	const columns = [
 		{ title: ' ', width: rowHeight * 3 }, // Fixed width
 		{ title: t('glossary:operation.name'), width: 3 }, // Ratios
-		{ title: t('glossary:operation.state'), width: 1 },
 		{ title: t('glossary:operation.contact'), width: 2 },
 		{ title: t('glossary:operation.contact_phone'), width: 1 },
 		{ title: t('glossary:volume.effective_time_begin'), width: 1 },
-		{ title: t('glossary:volume.effective_time_end'), width: 1 }
+		{ title: t('glossary:volume.effective_time_end'), width: 1 },
+		{ title: t('glossary:operation.submit_time'), width: 1 }
 	];
 
 	// Backend
 	const query = useQueryOperations();
-	const { operations, count } = query;
+	const { count } = query;
+
+	const operations = query.operations as Operation[];
 
 	const updateOperation = useSaveOperation();
 	const deleteOperation = useDeleteOperation();
@@ -92,17 +114,24 @@ const OperationHub = () => {
 			if (col === 1) {
 				data = operation.name;
 			} else if (col === 2) {
-				data = t(operation.state);
-			} else if (col === 3) {
 				data = operation.contact;
-			} else if (col === 4) {
+			} else if (col === 3) {
 				data = operation.contact_phone;
+			} else if (col === 4) {
+				data = (operation.operation_volumes[0].effective_time_begin as Date).toLocaleString(
+					[],
+					OPERATION_LOCALES_OPTIONS
+				);
 			} else if (col === 5) {
 				data = (
-					operation.operation_volumes[0].effective_time_begin as Date
-				).toLocaleString();
+					operation.operation_volumes[operation.operation_volumes.length - 1]
+						.effective_time_end as Date
+				).toLocaleString([], OPERATION_LOCALES_OPTIONS);
 			} else if (col === 6) {
-				data = (operation.operation_volumes[0].effective_time_end as Date).toLocaleString(); // TODO: Multiple volumes
+				data = (operation.submit_time as Date).toLocaleString(
+					[],
+					OPERATION_LOCALES_OPTIONS
+				);
 			} else if (col === 0) {
 				kind = GridCellKind.Custom;
 			}
@@ -131,13 +160,13 @@ const OperationHub = () => {
 			};
 		}
 	}
-	const onEntitySelected = (operation: OperationEntity) =>
+	const onEntitySelected = (operation: Operation) =>
 		history.replace(operation ? `/operations?id=${operation.gufi}` : '/operations');
 
 	return (
-		<GenericHub<OperationEntity>
+		<GenericHub<Operation>
 			idProperty={'gufi'}
-			extraActions={ExtraActions as GenericHubProps<OperationEntity>['extraActions']}
+			extraActions={ExtraActions as GenericHubProps<Operation>['extraActions']}
 			getData={getData}
 			entitySearchTools={OperationSearchTools}
 			entityPage={ViewAndEditOperation}
@@ -155,9 +184,7 @@ const OperationHub = () => {
 				(getFeatureOption<boolean>('Operations', 'pilotCanCreateOperations') && isPilot) ||
 				isAdmin
 			}
-			canEdit={(operation: OperationEntity) =>
-				operation?.owner?.username === username || isAdmin
-			}
+			canEdit={(operation: Operation) => operation?.owner?.username === username || isAdmin}
 		/>
 	);
 };

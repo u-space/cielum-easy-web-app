@@ -345,7 +345,7 @@ function GenericHub<T extends GenericHubEntityType>(props: GenericHubProps<T>) {
 						entities.map((entity) => {
 							return (
 								<section
-									key={idProperty}
+									key={entity[idProperty]}
 									style={{
 										height: rowHeight,
 										width: columns[0].width

@@ -9,7 +9,7 @@ export interface UseLocalStoreNullable<T> {
 
 export interface UseLocalStoreEntity<T> {
 	entity: T;
-	documents?: Map<string, DocumentEntity>;
+	documents: Map<string, DocumentEntity>;
 	setInfo: (prop: keyof T, value: T[keyof T]) => void;
 }
 

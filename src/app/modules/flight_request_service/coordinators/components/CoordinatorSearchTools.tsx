@@ -7,7 +7,8 @@ const CoordinatorSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useCoordinatorStore}
 			entityName={'coordinator'}
-			queryableProps={['infrastructure', 'liaison', 'telephone', 'email']}
+			searchableProps={['infrastructure', 'liaison', 'telephone', 'email']}
+			orderableProps={['infrastructure', 'liaison', 'telephone', 'email']}
 		/>
 	);
 };

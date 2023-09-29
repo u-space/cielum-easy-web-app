@@ -1,7 +1,7 @@
 import { getUserAPIClient, UserEntity } from './user';
 import { getVehicleAPIClient, VehicleEntity } from './vehicle';
 import { ExtraFieldSchemas } from './extraFields';
-import { getOperationAPIClient } from './operation';
+import { getOperationAPIClient as getOperationAPIClientV2 } from './v2/api/operation';
 import { getRfvAPIClient } from './rfv';
 import { getUvrAPIClient } from './uvr';
 import { DocumentEntity, DocumentEntityType, getDocumentAPIClient } from './document';
@@ -10,10 +10,10 @@ import { getRegularFlightAPIClient } from './regularFlight';
 import { getAircraftTypeAPIClient } from './aircraftType';
 import { getTrackerAPIClient } from './tracker';
 
-export function getUTMClient(api: string, schemas: ExtraFieldSchemas, token: string) {
+export function getUTMClient(api: string, schemas: ExtraFieldSchemas, token: string | null) {
 	const userAPIClient = getUserAPIClient(api, token, schemas.users);
 	const vehicleAPIClient = getVehicleAPIClient(api, token, schemas.vehicles);
-	const operationAPIClient = getOperationAPIClient(api, token);
+	const operationAPIClient = getOperationAPIClientV2(api, token);
 	const rfvAPIClient = getRfvAPIClient(api, token);
 	const uvrAPIClient = getUvrAPIClient(api, token);
 	const documentAPIClient = getDocumentAPIClient(api, token);

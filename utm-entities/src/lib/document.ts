@@ -54,7 +54,7 @@ export enum DocumentEntityType {
 	VEHICLE = 'vehicle'
 }
 
-export const getDocumentAPIClient = (api: string, token: string) => {
+export const getDocumentAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,
@@ -111,7 +111,7 @@ export const getDocumentAPIClient = (api: string, token: string) => {
 				auth: `${token}`
 			};
 
-			return axiosInstance.patch<void>(
+			return axiosInstance.patch<DocumentEntity>(
 				`/document/${id}/${(!valid && 'in') || ''}validate`,
 				{},
 				{ headers }

@@ -1,4 +1,3 @@
-import { HTMLSelect } from '@blueprintjs/core';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { FC, FunctionComponent, useEffect, useRef, useState } from 'react';
@@ -15,14 +14,16 @@ import { shallow } from 'zustand/shallow';
 interface FilterAndOrderSearchToolsProps {
 	useStore: UseGenericFilterableAndPaginableSliceStoreType;
 	entityName: string;
-	queryableProps: string[];
+	searchableProps: string[];
+	orderableProps: string[];
 	extra?: FunctionComponent;
 }
 
 const FilterAndOrderSearchTools: FC<FilterAndOrderSearchToolsProps> = ({
 	useStore,
 	entityName,
-	queryableProps,
+	searchableProps,
+	orderableProps,
 	extra
 }) => {
 	const { t } = useTranslation();
@@ -90,14 +91,13 @@ const FilterAndOrderSearchTools: FC<FilterAndOrderSearchToolsProps> = ({
 					</div>
 					<div className={styles.liner}>
 						{t('Filter by')}
-						<HTMLSelect
+						<select
 							id="filter"
 							name="filterProperty"
-							className={styles.property}
 							value={store.filterProperty}
 							onChange={(event) => store.setFilterProperty(event.currentTarget.value)}
 						>
-							{queryableProps.map((prop) => {
+							{searchableProps.map((prop) => {
 								if (prop.includes('date')) {
 									// pass
 								} else {
@@ -108,7 +108,7 @@ const FilterAndOrderSearchTools: FC<FilterAndOrderSearchToolsProps> = ({
 									);
 								}
 							})}
-						</HTMLSelect>
+						</select>
 					</div>
 				</div>
 			</CardGroup>
@@ -116,36 +116,32 @@ const FilterAndOrderSearchTools: FC<FilterAndOrderSearchToolsProps> = ({
 				<div className={styles.search}>
 					<div className={styles.order}>
 						<p>{t('By')}</p>
-						<HTMLSelect
+						<select
 							id="sorter"
 							name="UserSorter"
-							className={styles.property}
 							value={store.sortingProperty}
-							minimal
 							onChange={(event) =>
 								store.setSortingProperty(event.currentTarget.value)
 							}
 						>
-							{queryableProps.map((prop) => (
+							{orderableProps.map((prop) => (
 								<option key={prop} value={prop}>
 									{t(`glossary:${entityName}.${prop}`)}
 								</option>
 							))}
-						</HTMLSelect>
+						</select>
 						<p>{t('in order')}</p>
-						<HTMLSelect
+						<select
 							id="sorter"
 							name="UserSortingOrder"
-							className={styles.property}
 							value={store.sortingOrder}
-							minimal
 							onChange={(event) =>
 								store.setSortingOrder(event.currentTarget.value as 'ASC' | 'DESC')
 							}
 						>
 							<option value="ASC">{t('glossary:ascending')}</option>
 							<option value="DESC">{t('glossary:descending')}</option>
-						</HTMLSelect>
+						</select>
 					</div>
 				</div>
 			</CardGroup>

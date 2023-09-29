@@ -86,7 +86,7 @@ const OperationSearchToolsExtra = () => {
 
 	return (
 		<>
-			<CardGroup header="Date range">
+			{/*<CardGroup header="Date range">
 				<HistoricalModeCheckboxes
 					checked={store.isFilteringByDates}
 					onCheck={(isChecked) => {
@@ -96,7 +96,7 @@ const OperationSearchToolsExtra = () => {
 					to={store.historicalToDate}
 					onDateChange={(from, to) => store.setHistoricalDates(from, to)}
 				/>
-			</CardGroup>
+			</CardGroup>*/}
 			<CardGroup header="Filter by state">
 				<GridCheckboxes gridItems={gridItems} />
 			</CardGroup>
@@ -109,7 +109,8 @@ const OperationSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useOperationStore}
 			entityName={'operation'}
-			queryableProps={['name', 'owner', 'contact']}
+			searchableProps={['name']}
+			orderableProps={['submit_time', 'begin', 'end']}
 			extra={OperationSearchToolsExtra}
 		/>
 	);

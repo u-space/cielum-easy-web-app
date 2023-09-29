@@ -71,7 +71,7 @@ export class VehicleEntity implements EntityHasDisplayName {
 			model: Joi.string(),
 			class: Joi.string(),
 			payload: Joi.array(),
-			operators: Joi.array().items(Joi.string()),
+			operators: Joi.array().items(Joi.any()),
 			extra_fields: Joi.object(),
 			_vehicleSchema: Joi.object()
 		}).custom((obj) => {
@@ -151,7 +151,7 @@ export class VehicleEntity implements EntityHasDisplayName {
 	}
 
 	get asNiceString() {
-		return `(${this.licensePlate}) ${this.vehicleName}`;
+		return `${this.vehicleName} (${this.licensePlate}) `;
 	}
 
 	get isAuthorized() {
@@ -166,6 +166,14 @@ export class VehicleEntity implements EntityHasDisplayName {
 				delete vehicle[prop]; // Dont submit internal data to backend
 			}
 		}
+
+		vehicle.operators = vehicle.operators?.map((operator) => {
+			if (typeof operator === 'string') {
+				return operator;
+			} else {
+				return operator.username;
+			}
+		});
 
 		delete vehicle.date;
 		//if (vehicle.authorized) delete vehicle.authorized; // TODO: Only if pilot!
@@ -196,7 +204,7 @@ export interface GetVehicleInsuranceSimulationFlySafeParams {
 	consents_precontractual: boolean;
 	consents_contractual: boolean;
 }
-export function getVehicleAPIClient(api: string, token: string, schema: ExtraFieldSchema) {
+export function getVehicleAPIClient(api: string, token: string | null, schema: ExtraFieldSchema) {
 	const axiosInstance = Axios.create({
 		baseURL: api,
 		timeout: 5000,
@@ -314,17 +322,19 @@ export function getVehicleAPIClient(api: string, token: string, schema: ExtraFie
 			if (errors.length > 0) return Promise.reject(errors);
 			const vehicle: any = _vehicle.asBackendFormat;
 
-			if (isPilot) {
-				delete vehicle.owner_id;
-				delete vehicle.owner;
-				delete vehicle.authorized;
-			}
 			if (isCreating) {
 				delete vehicle.authorized;
 				delete vehicle.owner;
 			} else {
 				vehicle.owner = vehicle.owner?.username || '';
 			}
+
+			if (isPilot) {
+				delete vehicle.owner_id;
+				delete vehicle.owner;
+				delete vehicle.authorized;
+			}
+
 			if (vehicle.uvin === '_temp') delete vehicle.uvin;
 
 			const data: { [key: string]: any } = {};

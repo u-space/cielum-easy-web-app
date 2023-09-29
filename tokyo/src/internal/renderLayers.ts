@@ -31,10 +31,8 @@ function renderPolygonFeatureCollectionEditable(
 ) {
 	const isAPolygonSelected =
 		selectedPolygon !== null || (isSinglePolygon && polygons && polygons.length === 1);
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	console.log('renderPolygonFeatureCollectionEditable', polygons);
-	return new EditableGeoJsonLayer({
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	return new (EditableGeoJsonLayer as any)({
 		id: 'EditableGeoJsonLayer',
 		data: {
 			type: 'FeatureCollection',

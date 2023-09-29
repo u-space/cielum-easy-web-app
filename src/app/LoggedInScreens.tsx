@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import MasterLayout from './commons/layouts/MasterLayout';
-import { Switch } from 'react-router-dom';
+import { Switch, useHistory } from 'react-router-dom';
 import RoleGatedRoute from './commons/components/RoleGatedRoute';
-import { AuthRole } from './modules/auth/store';
+import { AuthRole, useAuthStore } from './modules/auth/store';
 import Home from './commons/screens/Home';
-import env from '../vendor/environment/env';
 import LiveMap from './modules/map/screens/live/LiveMap';
 import UserHub from './modules/core_service/user/screens/UserHub';
 import OperationHub from './modules/core_service/operation/screens/OperationHub';
@@ -23,7 +22,6 @@ import TrackersHub from './modules/core_service/tracker/screens/TrackersHub';
 import NewTrackerScreen from './modules/core_service/tracker/screens/NewTrackerScreen';
 import RfvHub from './modules/core_service/rfv/screens/RfvHub';
 import RfvEditor from './modules/core_service/rfv/screens/RfvEditor';
-import FlightRequestEditor from './modules/flight_request_service/flight_request/screens/FlightRequestEditor';
 import SuccessScreen from './modules/flight_request_service/flight_request/screens/SuccessScreen';
 import CanceledScreen from './modules/flight_request_service/flight_request/screens/CanceledScreen';
 import FlightRequestHub from './modules/flight_request_service/flight_request/screens/FlightRequestHub';
@@ -31,9 +29,18 @@ import PlanningMap from './modules/flight_request_service/flight_request/screens
 import { getFeatureOption } from './utils';
 import UserProfileScreen from './modules/core_service/user/screens/UserProfileScreen';
 import CoordinationHub from './modules/flight_request_service/coordination/screens/CoordinationHub';
+import { reactify } from 'svelte-preprocess-react';
+import FlightRequestEditorSvelte from './modules/flight_request_service/flight_request/screens/FlightRequestEditorApp.svelte';
+import LegacyFlightRequestStepsEditor from './modules/flight_request_service/flight_request/screens/LegacyFlightRequestStepsEditor';
+import Vehicle from './modules/core_service/vehicle/screens/Vehicle';
+
+const FlightRequestEditor = reactify(FlightRequestEditorSvelte);
 
 const LoggedInScreens = () => {
 	const { t } = useTranslation();
+	const token = useAuthStore((state) => state.token);
+	const history = useHistory();
+
 	return (
 		<MasterLayout>
 			<Switch>
@@ -78,12 +85,22 @@ const LoggedInScreens = () => {
 				{/* Vehicles */}
 				{isFeatureEnabled('Vehicles') && (
 					<RoleGatedRoute
+						exact
+						path={'/vehicles/:uvin'}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+					>
+						<Vehicle />
+					</RoleGatedRoute>
+				)}
+				{isFeatureEnabled('Vehicles') && (
+					<RoleGatedRoute
 						path={'/vehicles'}
 						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
 					>
 						<VehiclesHub />
 					</RoleGatedRoute>
 				)}
+
 				{isFeatureEnabled('Vehicles') && (
 					<RoleGatedRoute
 						exact
@@ -209,10 +226,19 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('FlightRequests') && (
 					<RoleGatedRoute
 						exact
+						path={'/editor/flightrequest/:polygon'}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
+					>
+						<LegacyFlightRequestStepsEditor />
+					</RoleGatedRoute>
+				)}
+				{isFeatureEnabled('FlightRequests') && (
+					<RoleGatedRoute
+						exact
 						path={'/editor/flightrequest'}
 						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
 					>
-						<FlightRequestEditor />
+						<FlightRequestEditor token={token} history={history} />
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('FlightRequests') && (

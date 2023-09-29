@@ -88,6 +88,7 @@
 
 	// White
 	--white-100: hsl(0, 0%, 100%);
+	--white-100-rgb: 255, 255, 255;
 
 	// RGB Color Values (for use with rgba(...))
 	--primary-900-rgb: 0, 14, 43;
@@ -118,6 +119,17 @@
 	--yamate-300-rgb: 126, 241, 174;
 	--yamate-200-rgb: 182, 251, 211;
 	--yamate-100-rgb: 230, 255, 240;
+	--mirai-900-rgb: 24, 26, 37;
+	--mirai-800-rgb: 47, 49, 60;
+	--mirai-700-rgb: 74, 76, 85;
+	--mirai-600-rgb: 97, 99, 107;
+	--mirai-500-rgb: 122, 124, 133;
+	--mirai-400-rgb: 146, 148, 155;
+	--mirai-300-rgb: 172, 174, 180;
+	--mirai-200-rgb: 195, 197, 203;
+	--mirai-150-rgb: 213, 215, 220;
+	--mirai-100-rgb: 227, 229, 232;
+	--mirai-50-rgb: 245, 246, 250;
 }
 
 /*

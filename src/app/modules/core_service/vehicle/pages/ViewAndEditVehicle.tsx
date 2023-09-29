@@ -166,7 +166,22 @@ const PDocumentWithSchema: FC<PDocumentWithSchemaProps> = ({ ls, document, isEdi
 			valid: validation
 		});
 
+	useEffect(() => {
+		if (
+			updateDocumentValidationMutation.isSuccess ||
+			updateDocumentObservationMutation.isSuccess
+		) {
+			//document.valid = updateDocumentValidationMutation.data.data.valid;
+			window.location.href = `${window.location.href}`;
+		}
+	}, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
+
 	if (!schemaQuery.isLoading && schemaQuery.data) {
+		if (
+			updateDocumentObservationMutation.isLoading ||
+			updateDocumentValidationMutation.isLoading
+		)
+			return <Spinner size={8} />;
 		return (
 			<PDocument
 				isEditing={isEditing}
@@ -469,6 +484,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	if (token === null) return null;
 	if (ls.entity) {
 		return (
 			<div className={styles.twobytwo} style={style}>
@@ -557,7 +573,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								onSelect={(selected) => {
 									ls.entity.operators = selected;
 								}}
-								preselected={ls.entity.operators}
+								preselected={ls.entity.operators.map((o) => o.username)}
 								fill
 								isRequired
 								disabled={!isEditing || !isAdmin || !isCreating}

@@ -3,9 +3,9 @@
 	import {getAutocomplete, getSearch} from '@tokyo/gui/CGeocoder';
 	import {createQuery} from '@tanstack/svelte-query';
 	import CButton from '@tokyo/gui/CButton.svelte';
-	import {CButtonSize} from '@tokyo/gui/CButton';
 	import {tokyoFlyToPosition} from '@tokyo/store';
 	import {createEventDispatcher} from 'svelte';
+	import {CSize} from "./CSizeWrapper";
 
 	const dispatch = createEventDispatcher();
 
@@ -43,46 +43,44 @@
 	}
 </script>
 
-<CInput bind:value={searchText}/>
-<div id="results">
-	{#if searchText.length < 3}
-		<div class="status">Enter at least 3 characters</div>
-	{:else}
-		{#if $queryAutocomplete.isLoading && $queryAutocomplete.isFetching}
-			<div class="status">Loading...</div>
-		{:else if $queryAutocomplete.isError}
-			<div class="status">Error: {$queryAutocomplete.error.message}</div>
-		{:else if $queryAutocomplete.isSuccess}
-			{#each $queryAutocomplete.data.data as place}
-				<div class="place">
-					<CButton icon="map-pin-fill" size={CButtonSize.EXTRA_SMALL}
-							 on:click={() => {
+<CInput size={CSize.EXTRA_LARGE} bind:value={searchText}/>
+{#if searchText.length >= 3 && $queryAutocomplete.isSuccess}
+	<div id="results">
+		{#each $queryAutocomplete.data.data as place}
+			<div class="place">
+				<CButton icon="map-pin-fill" size={CSize.EXTRA_SMALL}
+						 on:click={() => {
 							 $tokyoFlyToPosition = {...$tokyoFlyToPosition, latitude: place.lat, longitude: place.lon}
 							 dispatch('select', place);
 							 }}/>
-					<p>{place.formatted}</p>
-				</div>
-			{/each}
+				<p>{place.formatted}</p>
+			</div>
+		{/each}
+	</div>
 
-		{/if}
-	{/if}
-</div>
+{/if}
 
 <style lang="scss">
+  @import './mixins.scss';
+
   #results {
+    background-color: var(--mirai-100);
     margin-top: 0.25rem;
-
-    & .status {
-      text-align: center;
-    }
-
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    @include box-shadow-1;
+	
     & .place {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       gap: 1em;
       padding: 0.25rem 0;
-      border-bottom: 1px solid var(--mirai-200);
+
+
+      &:not(:last-child) {
+        border-bottom: 1px solid var(--mirai-200);
+      }
 
       & p {
         margin: 0;

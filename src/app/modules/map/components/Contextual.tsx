@@ -5,6 +5,7 @@ import PButton from '@pcomponents/PButton';
 import { useSelectedOperationAndVolume } from '../../core_service/operation/hooks';
 import CardGroup from '../../../commons/layouts/dashboard/menu/CardGroup';
 import ContextualInfo from '../../../commons/layouts/map/editor_map/ContextualInfo';
+import { Polygon } from 'geojson';
 
 const Contextual = () => {
 	const history = useHistory();
@@ -24,8 +25,10 @@ const Contextual = () => {
 			>
 				<ContextualInfo
 					entity={{
-						effective_time_begin: volume.effective_time_begin.toLocaleString(),
-						effective_time_end: volume.effective_time_end.toLocaleString(),
+						effective_time_begin: (
+							volume.effective_time_begin as Date
+						).toLocaleString(),
+						effective_time_end: (volume.effective_time_end as Date).toLocaleString(),
 						min_altitude: volume.min_altitude,
 						max_altitude: volume.max_altitude
 					}}
@@ -46,7 +49,9 @@ const Contextual = () => {
 					/>
 					<PButton
 						icon="send-to-map"
-						onClick={() => tokyo.flyToCenterOfGeometry(volume.operation_geography)}
+						onClick={() =>
+							tokyo.flyToCenterOfGeometry(volume.operation_geography as Polygon)
+						}
 					/>
 					<PButton
 						icon="arrow-right"

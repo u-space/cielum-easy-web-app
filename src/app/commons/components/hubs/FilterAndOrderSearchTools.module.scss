@@ -15,10 +15,15 @@
 	}
 
 	& select {
+		padding: 0.25rem;
+
 		color: var(--white-100);
 		font-family: 'Lexend Deca', sans-serif;
+		text-align: center;
 
-		background: none;
+		border: none;
+
+		background-color: var(--primary-800);
 
 		outline: none;
 
@@ -29,27 +34,18 @@
 		}
 
 		&:hover {
-			background: rgba(var(--primary-900-rgb), 0.5);
-		}
-	}
-
-	& .property {
-		text-overflow: ellipsis;
-
-		background: none;
-
-		& > .filterLabel {
-			color: white;
+			color: var(--mirai-100);
 		}
 
-		& span {
-			color: var(--white-100); // default arrows of the select
+		& option {
+			background-color: var(--primary-900);
 		}
 	}
 
 	& > .order {
 		display: grid;
-		grid-template-columns: 1fr 2fr;
+		grid-template-columns: 1fr 1fr;
+		grid-row-gap: 0.25rem;
 
 		text-align: center;
 

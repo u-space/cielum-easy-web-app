@@ -63,20 +63,24 @@
 	"operation": {
 		"plural_generic": "Operaciones",
 		"singular_generic": "Operación",
-		"name": "Nombre de la operación",
+		"name": "Nombre",
 		"owner": "Dueño",
 		"owner_editable": "Dueño (nombre de usuario)",
 		"contact": "Contacto",
 		"phone": "Tel. Contacto",
-		"submit_time": "Creado",
+		"begin": "Inicio",
+		"end": "Fin",
+		"submit_time": "Creada",
 		"update_time": "Última actualización",
 		"flight_comments": "Comentarios de la operación",
 		"aircraft_comments": "Comentarios de la aeronave",
+		"vehicle": "Aeronave",
 		"volumes_description": "Descripción de los volumenes",
 		"free_text": "Texto libre",
 		"state": "Estado",
-		"uas_registration": "Aeronaves",
+		"uas_registration": "Aeronave",
 		"uas_registrations": "Aeronaves",
+		"max_altitude": "Altura máxima",
 		"remote_sensor_id": "Registro en sensores remotos",
 		"zero_operations": "No hay operaciones, o no hay operaciones que cumplan los filtros seleccionados.",
 		"creator": "Creador",
@@ -93,12 +97,12 @@
 		"comments": "Comentarios",
 		"altitude_gps": "Altura GPS",
 		"id": "ID de Posición",
+		"time_sent": "Reporte enviado a las",
 		"operationId": "Operación",
 		"plural_generic": "Posiciones",
 		"singular_generic": "Posición"
 	},
 	"vehicle": {
-		"max_file_size_error": "Max file size is {{number}}MB",
 		"max_file_size_error": "Max file size is {{number}}MB",
 		"gufi": "Operación asociada, Id.",
 		"authorization": "Autorización",
@@ -273,9 +277,9 @@
 		"InsuranceDocument": "Seguro de responsabilidad civil"
 	},
 	"volume": {
-		"effective_time_begin": "Fecha y hora de inicio",
+		"effective_time_begin": "Inicio",
 		"effective_time_begin_description": "Momento desde el cual la operación usará el espacio aéreo",
-		"effective_time_end": "Fecha y hora de fin",
+		"effective_time_end": "Fin",
 		"effective_time_end_description": "Momento mas tardío en el cual el drone dejará de usar el espacio aéreo",
 		"min_altitude": "Altura mínima (en metros)",
 		"max_altitude": "Altura máxima (en metros)",
@@ -321,8 +325,8 @@
 		"id": "Id.",
 		"max_altitude": "Altura máxima (en metros)",
 		"min_altitude": "Altura mínima (en metros)",
-		"effective_time_begin": "Fecha y hora de inicio",
-		"effective_time_end": "Fecha y hora de fin",
+		"effective_time_begin": "Inicio",
+		"effective_time_end": "Fin",
 		"selected": "Volúmen de vuelo restringido",
 		"success": {
 			"save": "El RFV se guardó satifactoriamente"
@@ -451,9 +455,11 @@
 		"dji_email": "Email inicio sesión DJI",
 		"flightCategory": "Categoría de vuelo",
 		"flight_category": {
-			"OPEN": "Open",
-			"STS-01": "STS 01",
-			"STS-02": "STS 02"
+			"OPEN": "A1",
+			"STS_01": "STS 01",
+			"STS_02": "STS 02",
+			"A2": "A2",
+			"A3": "A3"
 		},
 		"state": "Estado",
 		"flight_state": {

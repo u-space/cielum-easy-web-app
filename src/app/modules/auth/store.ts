@@ -13,7 +13,7 @@ export enum AuthRole {
 
 interface AuthState {
 	// User data
-	token: string;
+	token: string | null;
 	username: string;
 	email: string;
 	role: AuthRole;
@@ -52,7 +52,7 @@ function getAuthStateFromToken(token: string) {
 export const useAuthStore = create<AuthState>()(
 	devtools(
 		(set) => ({
-			token: '',
+			token: null,
 			username: '',
 			email: '',
 			role: AuthRole.NOT_LOGGED_IN,

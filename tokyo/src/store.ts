@@ -1,6 +1,6 @@
 import type { MapViewState } from '@deck.gl/core/typed';
-import { useEffect, useState } from 'react';
-import { writable } from 'svelte/store';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { get, Unsubscriber, writable } from 'svelte/store';
 import type { Geometry } from 'geojson';
 import { getNewViewport } from './util';
 import {
@@ -14,7 +14,7 @@ import {
 const initialPosition = {
 	latitude: 40.407613,
 	longitude: -3.700002,
-	zoom: 11
+	zoom: 15
 };
 
 export interface TokyoStore {
@@ -39,6 +39,16 @@ export const tokyoInternalsUpdateHandler = writable<UpdateHandler | null>();
 export const tokyoInternalsDestroyHandler = writable<DestroyHandler | null>();
 
 // React-land
+export function flyToCenterOfGeometry(geometry: Geometry, zoom?: number) {
+	const viewState = get(tokyoViewState) as MapViewState;
+	const viewport = getNewViewport(geometry, viewState);
+	tokyoFlyToPosition.set({
+		latitude: viewport?.latitude || 0,
+		longitude: viewport?.longitude || 0,
+		zoom: zoom || viewport?.zoom || 15
+	});
+}
+
 export const useTokyo = () => {
 	const [currentTokyoStore, setTokyoStore] = useState<TokyoStore>({
 		//editMode: defaultEditMode,
@@ -65,12 +75,7 @@ export const useTokyo = () => {
 			tokyoFlyToPosition.set({ longitude, latitude, zoom: zoom || 15 });
 		},
 		flyToCenterOfGeometry: (geometry: Geometry, zoom?: number) => {
-			const viewport = getNewViewport(geometry, currentTokyoStore.viewState);
-			tokyoFlyToPosition.set({
-				latitude: viewport?.latitude || 0,
-				longitude: viewport?.longitude || 0,
-				zoom: zoom || viewport?.zoom || 15
-			});
+			flyToCenterOfGeometry(geometry, zoom);
 		}
 	};
 };

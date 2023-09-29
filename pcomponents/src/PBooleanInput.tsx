@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Kanpur.module.scss';
 import classnames from 'classnames';
-import PButton, { PButtonType } from './PButton';
+import PButton, { PButtonSize, PButtonType } from './PButton';
 import LabelInfo from './form/LabelInfo';
 
 export interface PBooleanInputProps {
@@ -66,36 +66,42 @@ const PBooleanInput = ({
 			labelFor={id}
 			inline={inline}
 		>
-			<InputGroup
-				className={classnames({
-					[Classes.SKELETON]: isLoading,
-					[styles.dark]: isDarkVariant
-				})}
-				id={id}
-				placeholder={placeholder}
-				value={value ? t('Yes') : t('No')}
-				disabled={true}
-				{...extraProps}
-			/>
+			{disabled && (
+				<InputGroup
+					className={classnames({
+						[Classes.SKELETON]: isLoading,
+						[styles.dark]: isDarkVariant
+					})}
+					id={id}
+					placeholder={placeholder}
+					value={value ? t('Yes') : t('No')}
+					disabled={true}
+					{...extraProps}
+				/>
+			)}
 			{!disabled && (
 				<div className={classnames(styles.boolean, { [styles.hidden]: disabled })}>
 					<PButton
 						id={`${id}-yes`}
-						variant={PButtonType.SECONDARY}
+						size={PButtonSize.SMALL}
+						style={{ fontWeight: value ? '900' : '300' }}
+						variant={value ? PButtonType.PRIMARY : PButtonType.SECONDARY}
 						onClick={() => {
 							onValueChange(true);
 						}}
 					>
-						{t('Yes')}
+						{t('Yes').toUpperCase()}
 					</PButton>
 					<PButton
+						size={PButtonSize.SMALL}
 						id={`${id}-no`}
-						variant={PButtonType.SECONDARY}
+						style={{ fontWeight: !value ? '900' : '300' }}
+						variant={!value ? PButtonType.PRIMARY : PButtonType.SECONDARY}
 						onClick={() => {
 							onValueChange(false);
 						}}
 					>
-						{t('No')}
+						{t('No').toUpperCase()}
 					</PButton>
 				</div>
 			)}

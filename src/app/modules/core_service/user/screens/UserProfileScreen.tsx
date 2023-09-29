@@ -121,7 +121,6 @@ const UserProfile = () => {
 
 				{ls.entity.username !== '' && (
 					<ViewAndEditUser
-						style={{ height: 0, flex: 1 }}
 						ls={ls}
 						isEditing={isEditing}
 						isCreating={false}

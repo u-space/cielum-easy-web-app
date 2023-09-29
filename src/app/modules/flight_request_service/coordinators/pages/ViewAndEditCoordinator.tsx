@@ -14,16 +14,18 @@ import PNumberInput from '@pcomponents/PNumberInput';
 import env from '../../../../../vendor/environment/env';
 
 const LiaisonOptions = env.tenant.features.FlightRequests.enabled
-	? [...Object.keys(env.tenant.features.FlightRequests.options.liaisons)].map((key) => ({
+	? [...Object.values(env.tenant.features.FlightRequests.options.liaisons)].map((key) => ({
 			value: key,
 			label: key
 	  }))
 	: [];
 const TypeOptions = env.tenant.features.FlightRequests.enabled
-	? [...Object.keys(env.tenant.features.FlightRequests.options.coordinatorTypes)].map((key) => ({
-			value: key,
-			label: key
-	  }))
+	? [...Object.values(env.tenant.features.FlightRequests.options.coordinatorTypes)].map(
+			(key) => ({
+				value: key,
+				label: key
+			})
+	  )
 	: [];
 
 const specialProps = [
@@ -129,9 +131,8 @@ const BaseCoordinatorDetails: FC<BaseCoordinatorDetailsProps> = ({ ls, isEditing
 						);
 					} else if (!specialProps.includes(String(prop))) {
 						const value = ls.entity[prop as keyof CoordinatorEntity] ?? '';
-						console.log('PROP', prop, value, ls.entity);
 						// is value number
-						if (typeof value === 'number') {
+						if (typeof value === 'number' && prop !== 'discount_Multiple_Dates') {
 							return (
 								<PNumberInput
 									key={prop}

@@ -7,7 +7,8 @@ const RfvSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useRfvStore}
 			entityName={'rfv'}
-			queryableProps={['reason']}
+			searchableProps={['reason']}
+			orderableProps={['reason']}
 		/>
 	);
 };

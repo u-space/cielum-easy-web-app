@@ -7,7 +7,6 @@ import POperationStateSelect from '@pcomponents/POperationStateSelect';
 import PTextArea from '@pcomponents/PTextArea';
 import PVehicleSelect from '@pcomponents/PVehicleSelect';
 import styles from '../../../../commons/Pages.module.scss';
-import { OperationEntity } from '@utm-entities/operation';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
 import { VehicleEntity } from '@utm-entities/vehicle';
@@ -16,9 +15,21 @@ import { useSchemaStore } from '../../../schemas/store';
 import { CSSProperties, FC } from 'react';
 import PNumberInput from '@pcomponents/PNumberInput';
 import env from '../../../../../vendor/environment/env';
+import { reactify } from 'svelte-preprocess-react';
+import Tokyo from '@tokyo/Tokyo.svelte';
+import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
+import { EditMode, TokyoProps } from '@tokyo/types';
+import { operationTokyoConverter } from '@tokyo/converters/core/operation';
+import { useTokyo } from '@tokyo/store';
+import { Polygon } from 'geojson';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import { Operation } from '@utm-entities/v2/model/operation';
+import { UtmBaseVehicle, Vehicle } from '@utm-entities/v2/model/vehicle';
 
 interface BaseOperationDetailsProps {
-	ls: UseLocalStoreEntity<OperationEntity>;
+	ls: UseLocalStoreEntity<Operation>;
 	isEditing: boolean;
 	isCreating: boolean;
 }
@@ -32,7 +43,7 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 			{!isCreating && (
 				<PInput
 					id="gufi"
-					defaultValue={ls.entity.gufi}
+					defaultValue={ls.entity.gufi || ''}
 					label={t('operation.gufi')}
 					disabled={true}
 					{...flags}
@@ -48,14 +59,22 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 				inline
 				{...flags}
 			/>
-			{Object.keys(ls.entity).map((prop) => {
+			{Object.keys(ls.entity).map((_prop) => {
+				const prop = _prop as keyof Operation;
+				const value = ls.entity[prop] as string | null;
 				if (
-					ls.entity.isBasic(prop) &&
 					prop !== 'gufi' &&
 					prop !== 'name' &&
 					prop !== 'state' &&
 					prop !== 'flight_comments' &&
-					prop !== 'aircraft_comments'
+					prop !== 'owner' &&
+					prop !== 'uas_registrations' &&
+					prop !== 'creator' &&
+					prop !== 'begin' &&
+					prop !== 'end' &&
+					prop !== 'displayName' &&
+					prop !== 'operation_volumes' &&
+					value !== null
 				) {
 					const id = `input-${prop}`;
 					const label = t(`operation.${prop}`);
@@ -64,11 +83,15 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 						<PInput
 							key={prop}
 							id={id}
-							defaultValue={ls.entity[prop]}
+							defaultValue={value}
 							label={label}
 							explanation={explanation}
 							disabled={!isEditing}
-							onChange={(value) => (ls.entity[prop] = value)}
+							onChange={(value) => {
+								// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+								// @ts-ignore
+								ls.entity[prop] = value;
+							}}
 							{...flags}
 							inline
 						/>
@@ -82,7 +105,7 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 };
 
 interface DetailedOperationDetailsProps {
-	ls: UseLocalStoreEntity<OperationEntity>;
+	ls: UseLocalStoreEntity<Operation>;
 	isEditing: boolean;
 	isAdmin?: boolean;
 }
@@ -138,7 +161,7 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 
 			<PVehicleSelect
 				label={t('glossary:operation.uas_registrations')}
-				onSelect={(value: VehicleEntity[]) => ls.setInfo('uas_registrations', value)}
+				onSelect={(value: UtmBaseVehicle[]) => ls.setInfo('uas_registrations', value)}
 				preselected={ls.entity.uas_registrations}
 				username={ls.entity?.owner?.username}
 				fill
@@ -171,23 +194,81 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 };
 
 interface VolumeDetailsProps {
-	ls: UseLocalStoreEntity<OperationEntity>;
+	ls: UseLocalStoreEntity<Operation>;
 	isEditing: boolean;
 	isAbleToChangeDates: boolean;
 }
 
+const TokyoSvelte = reactify(Tokyo);
+const TokyoGenericMapElementSvelte = reactify(TokyoGenericMapElement);
+const MapContainer = styled.div`
+	position: relative;
+	height: 500px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+`;
+
 const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDates }) => {
-	const { t } = useTranslation('glossary');
+	const { t } = useTranslation(['ui', 'glossary']);
+	const tokyo = useTokyo();
 	// TODO: Multiple volumes
 	const volume = ls.entity.operation_volumes[0];
 	const flags = { isRequired: true, isDarkVariant: true, fill: true };
+	const tokyoOptions: TokyoProps = {
+		editOptions: {
+			mode: EditMode.DISABLED
+		},
+		mapOptions: {
+			isPickEnabled: false
+		},
+		controlsOptions: {
+			zoom: {
+				enabled: true
+			},
+			geolocator: {
+				enabled: false
+			},
+			backgroundModeSwitch: {
+				enabled: true
+			},
+			geocoder: {
+				enabled: false
+			}
+		},
+		t
+	};
+
+	const history = useHistory();
+
 	return (
 		<>
+			<MapContainer>
+				<TokyoSvelte {...tokyoOptions}>
+					<TokyoGenericMapElementSvelte
+						id={operationTokyoConverter.getId(ls.entity)}
+						getLayer={operationTokyoConverter.getConverter(ls.entity)}
+						onLoad={() =>
+							tokyo.flyToCenterOfGeometry(volume.operation_geography as Polygon)
+						}
+					/>
+				</TokyoSvelte>
+				<div style={{ flex: 0, position: 'absolute', bottom: 0, left: 0 }}>
+					<PButton
+						size={PButtonSize.SMALL}
+						icon="eye-open"
+						variant={PButtonType.PRIMARY}
+						onClick={() => history.push(`/map?operation=${ls.entity.gufi}`)}
+					>
+						{t('View complete map')}
+					</PButton>
+				</div>
+			</MapContainer>
 			<PDateInput
 				id="effective_time_begin"
-				label={t('volume.effective_time_begin')}
+				label={t('glossary:volume.effective_time_begin')}
 				defaultValue={volume.effective_time_begin || new Date()}
-				onChange={(value) => (volume.effective_time_begin = value)}
+				onChange={(value) => volume.set('effective_time_begin', value)}
 				disabled={!isEditing || !isAbleToChangeDates}
 				inline
 				isTime
@@ -195,9 +276,9 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 			/>
 			<PDateInput
 				id="effective_time_begin"
-				label={t('volume.effective_time_end')}
+				label={t('glossary:volume.effective_time_end')}
 				defaultValue={volume.effective_time_end || new Date()}
-				onChange={(value) => (volume.effective_time_end = value)}
+				onChange={(value) => volume.set('effective_time_end', value)}
 				disabled={!isEditing || !isAbleToChangeDates}
 				inline
 				isTime
@@ -211,24 +292,26 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 					prop !== 'id' &&
 					prop !== 'beyond_visual_line_of_sight' &&
 					prop !== 'volume_type' &&
-					prop !== 'min_altitude' &&
 					prop !== 'effective_time_begin' &&
 					prop !== 'effective_time_end' &&
 					prop !== 'near_structure'
 				) {
 					const id = `input-${prop}`;
-					const label = t(`volume.${prop}`);
-					const value = volume[prop];
+					const label = t(`glossary:volume.${prop}`);
+					const value = volume.get(prop);
 					if (typeof value === 'number') {
 						return (
 							<PNumberInput
 								key={prop}
 								id={id}
+								isDarkVariant
+								disabled={!isEditing}
+								inline
 								defaultValue={value}
 								label={label}
 								onChange={(value) => {
 									// eslint-disable-next-line @typescript-eslint/no-explicit-any
-									(ls.entity.operation_volumes[0][prop] as any) = value;
+									ls.entity.operation_volumes[0].set(prop, value);
 								}}
 							/>
 						);
@@ -242,9 +325,9 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 			<PBooleanInput
 				id="near_structure"
 				defaultValue={ls.entity.operation_volumes[0].near_structure}
-				label={t('volume.near_structure')}
+				label={t('glossary:volume.near_structure')}
 				disabled={!isEditing}
-				onChange={(value) => (ls.entity.operation_volumes[0].near_structure = value)}
+				onChange={(value) => ls.entity.operation_volumes[0].set('near_structure', value)}
 				isRequired
 				isDarkVariant
 				inline
@@ -252,10 +335,10 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 			<PBooleanInput
 				id="beyond_visual_line_of_sight"
 				defaultValue={ls.entity.operation_volumes[0].beyond_visual_line_of_sight}
-				label={t('volume.beyond_visual_line_of_sight')}
+				label={t('glossary:volume.beyond_visual_line_of_sight')}
 				disabled={!isEditing}
 				onChange={(value) =>
-					(ls.entity.operation_volumes[0].beyond_visual_line_of_sight = value)
+					ls.entity.operation_volumes[0].set('beyond_visual_line_of_sight', value)
 				}
 				isRequired
 				isDarkVariant
@@ -266,7 +349,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, isEditing, isAbleToChangeDa
 };
 
 export interface ViewAndEditOperationProps {
-	ls: UseLocalStoreEntity<OperationEntity>;
+	ls: UseLocalStoreEntity<Operation>;
 	isEditing: boolean;
 	isAbleToChangeState?: boolean;
 	isCreating?: boolean;

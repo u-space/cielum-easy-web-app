@@ -2,12 +2,10 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import PInput from '@pcomponents/PInput';
 import { useTokyo } from '@tokyo/store';
-import turf from '@turf/turf';
 import { OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
 import { observer } from 'mobx-react';
 import { useOperationStore } from '../../core_service/operation/store';
 import { shallow } from 'zustand/shallow';
-import { OperationEntity } from '@utm-entities/operation';
 import CardGroup from '../../../commons/layouts/dashboard/menu/CardGroup';
 import GridCheckboxes from '../../../commons/layouts/dashboard/menu/GridCheckboxes';
 import { useQueryOperations } from '../../core_service/operation/hooks';
@@ -123,7 +121,7 @@ const OperationListAndStateFilters = () => {
 
 	const operationGridItems = useMemo(() => {
 		return operations.map((operation) => ({
-			checked: !hiddenOperations.includes(operation.gufi),
+			checked: !hiddenOperations.includes(operation.gufi as string),
 			onClick: () => {
 				if (operation.operation_volumes.length > 0)
 					tokyo.flyToCenterOfGeometry(
@@ -131,7 +129,7 @@ const OperationListAndStateFilters = () => {
 					);
 			},
 			onChange: (check: boolean) => {
-				toggleHiddenOperation(operation.gufi);
+				toggleHiddenOperation(operation.gufi as string);
 			},
 			label: operation.name
 		}));

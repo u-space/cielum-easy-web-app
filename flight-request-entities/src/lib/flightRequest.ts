@@ -5,11 +5,12 @@ import Joi from 'joi';
 import { GeographicalZone } from './geographicalZone';
 import { CoordinatorEntity } from './coordinator';
 import { VehicleEntity } from '@utm-entities/vehicle';
-import { OperationEntity, OperationVolume } from '@utm-entities/operation';
 import { UserEntity } from '@utm-entities/user';
 import { buildFilterAndOrderParametersObject } from './_util';
 import { EntityHasDisplayName } from './types';
 import { CoordinationEntity } from './coordination';
+import { OperationVolume, ResponseOperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { Operation } from '@utm-entities/v2/model/operation';
 
 export enum FlightRequestState {
 	REQUIRE_APPROVAL = 'REQUIRE_APPROVAL',
@@ -22,8 +23,10 @@ export enum FlightRequestState {
 
 export enum FlightCategory {
 	OPEN = 'OPEN',
-	STS_01 = 'STS-01',
-	STS_02 = 'STS-02'
+	STS_01 = 'STS_01',
+	STS_02 = 'STS_02',
+	A2 = 'A2',
+	A3 = 'A3'
 }
 
 export class FlightRequestEntity implements EntityHasDisplayName {
@@ -32,7 +35,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 	volumes: Array<OperationVolume>;
 	uavs: Array<VehicleEntity>;
 	state?: FlightRequestState;
-	operation?: OperationEntity[];
+	operation?: Operation[];
 	coordination?: CoordinationEntity[];
 	operator?: UserEntity | string | null;
 	creator?: UserEntity;
@@ -70,7 +73,9 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 
 		this.name = name;
 		this.id = id;
-		this.volumes = volumes;
+		this.volumes = volumes.map(
+			(volume: ResponseOperationVolume) => new OperationVolume(volume)
+		);
 		this.uavs = uavs;
 		this.state = state;
 		this.operation = operation;
@@ -113,7 +118,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		this.state = state;
 	}
 
-	setOperation(operation: OperationEntity[]) {
+	setOperation(operation: Operation[]) {
 		this.operation = operation;
 	}
 
@@ -162,6 +167,25 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		// @ts-ignore
 		this[property] = value;
 	}
+
+	get asBackendFormat() {
+		return {
+			...this,
+			operator: {
+				username:
+					typeof this.operator === 'string' ? this.operator : this.operator?.username
+			},
+			volumes: this.volumes.map((_volume) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const volume = _volume.asBackendFormat() as any;
+				// TODO: Remove this conversions when operation backend is fixed and does not expect strings for numbers
+				volume.min_altitude = Number(volume.min_altitude);
+				volume.max_altitude = Number(volume.max_altitude);
+				volume.ordinal = Number(volume.ordinal);
+				return volume;
+			})
+		};
+	}
 }
 
 export const APICoordinatorSchema = Joi.object({
@@ -180,7 +204,7 @@ export const APICoordinatorSchema = Joi.object({
 
 // API
 
-const transformFlightRequest = (data: any) => {
+const transformFlightRequests = (data: any) => {
 	return {
 		count: data.count,
 		flightRequests: data.flightRequests.map((flightRequest: any) => {
@@ -189,26 +213,18 @@ const transformFlightRequest = (data: any) => {
 	};
 };
 
-export const getFlightRequestAPIClient = (api: string, token: string) => {
+export const getFlightRequestAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 20000,
+		timeout: 120000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
 	return {
 		async saveFlightRequest(flightRequest: FlightRequestEntity) {
 			const { data } = await axiosInstance.post(
-				'/flightRequest',
-				{
-					...flightRequest,
-					operator: {
-						username:
-							typeof flightRequest.operator === 'string'
-								? flightRequest.operator
-								: flightRequest.operator?.username
-					}
-				},
+				'/flightRequest?includePaymentLink=true',
+				flightRequest.asBackendFormat,
 				{
 					headers: { auth: token }
 				}
@@ -226,14 +242,11 @@ export const getFlightRequestAPIClient = (api: string, token: string) => {
 		},
 		async updateFlightRequest(flightRequest: FlightRequestEntity) {
 			// Api ask us to delete the state bacause state change has separated endpoint
-			delete flightRequest.state;
-			const { data } = await axiosInstance.put(
-				`/flightRequest/${flightRequest.id}`,
-				flightRequest,
-				{
-					headers: { auth: token }
-				}
-			);
+			const body = flightRequest.asBackendFormat;
+			delete body.state;
+			const { data } = await axiosInstance.put(`/flightRequest/${body.id}`, body, {
+				headers: { auth: token }
+			});
 			return data;
 		},
 		async setFlightRequestState(flightRequestId: string, state: FlightRequestState) {
@@ -270,7 +283,9 @@ export const getFlightRequestAPIClient = (api: string, token: string) => {
 					filter
 				),
 				headers: { auth: token },
-				transformResponse: Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				transformResponse: (
+					Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				).concat(transformFlightRequests)
 			});
 		}
 	};

@@ -64,6 +64,7 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 	const OneLine = styled.div`
 		display: flex;
 		justify-content: space-between;
+		align-items: flex-start;
 		flex-wrap: wrap;
 		gap: 1rem;
 
@@ -94,7 +95,12 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 								label={t('Password')}
 								autoComplete="new-password"
 								isDarkVariant
-							/>
+								minLength={9}
+							>
+								<p style={{ color: 'var(--ramen-500)' }}>
+									{t('Your password must have atleast 9 characters')}
+								</p>
+							</PInput>
 							<PInput
 								id={'confirm-password'}
 								onChange={(value) => (ls.entity._password_verification = value)}

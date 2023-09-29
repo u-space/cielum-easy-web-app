@@ -173,20 +173,6 @@ const Menu = ({
 						onChange={() => setShowingUvrsFlag(!isShowingUvrs)}
 					/>
 				</CardGroup>
-				<CardGroup>
-					{env.tenant.extras.realtime_map_buttons &&
-						env.tenant.extras.realtime_map_buttons.map((button) => (
-							<PButton
-								key={button.label}
-								icon={(button.icon as IconName) || undefined}
-								onClick={() => {
-									history.push(button.path);
-								}}
-							>
-								{t(button.label)}
-							</PButton>
-						))}
-				</CardGroup>
 			</>
 		);
 	}

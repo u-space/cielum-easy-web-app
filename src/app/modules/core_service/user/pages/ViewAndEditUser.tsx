@@ -382,6 +382,8 @@ const ExtraUserDetailsValues = ({
 	const explanation = t([`user.${property}_desc`, '']);
 	const id = `input-${property}`;
 	const value = ls.entity.extra_fields[property];
+	const minLength = schemaValue.min_lenght;
+	const maxLength = schemaValue.max_lenght;
 
 	if (property === 'authorized' || property === 'caa_registration' || type === 'File')
 		return null;
@@ -399,7 +401,9 @@ const ExtraUserDetailsValues = ({
 					explanation,
 					id,
 					value,
-					ls
+					ls,
+					minLength,
+					maxLength
 				}}
 			/>
 		);
@@ -529,10 +533,10 @@ const ViewAndEditUser = (props: UserPageProps) => {
 				)}
 				<aside className={styles.summary}>
 					<h2>{t('Password')}</h2>
-					{t('Your password must have atleast 4 characters')}
+					{t('Your password must have atleast 9 characters')}
 				</aside>
 				<section className={styles.details}>
-					<PasswordChanger ls={ls} isCreating={isCreating} token={token} />
+					<PasswordChanger ls={ls} isCreating={isCreating} token={token || ''} />
 				</section>
 				{!isCreating && vehicles && (
 					<>

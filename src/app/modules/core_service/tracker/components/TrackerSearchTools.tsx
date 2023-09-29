@@ -7,7 +7,8 @@ const UvrSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useTrackerStore}
 			entityName={'tracker'}
-			queryableProps={['hardware_id']}
+			searchableProps={['hardware_id']}
+			orderableProps={['hardware_id']}
 		/>
 	);
 };

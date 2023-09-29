@@ -106,7 +106,7 @@ export class UserEntity implements EntityHasDisplayName {
 							}
 						}
 					}
-					if (user.extra_fields.documents) {
+					if (user.extra_fields?.documents) {
 						this.extra_fields.documents = user.extra_fields.documents.map(
 							(doc: any) => {
 								return new DocumentEntity(doc);
@@ -215,7 +215,7 @@ export type ChangeUserConfirmationStatusResponse = AxiosResponse<
 >;
 export type ChangeUserConfirmationStatusError = AxiosError<{ message: string }>;
 
-export function getUserAPIClient(api: string, token: string, schema: ExtraFieldSchema) {
+export function getUserAPIClient(api: string, token: string | null, schema: ExtraFieldSchema) {
 	const axiosInstance = A.create({
 		baseURL: api,
 		timeout: 5000,
@@ -317,8 +317,10 @@ export function getUserAPIClient(api: string, token: string, schema: ExtraFieldS
 			for (const key in user.extra_fields) {
 				const schemaItem = schema[key];
 				if (!schemaItem) continue;
+
 				if (key.indexOf('_file_path') === -1 && key !== 'documents') {
 					const type = schemaItem.type;
+
 					if (type === 'String') {
 						extraFields[key] = user.extra_fields[key];
 					} else if (type === 'Date') {
@@ -330,7 +332,7 @@ export function getUserAPIClient(api: string, token: string, schema: ExtraFieldS
 			data.extra_fields = extraFields;
 
 			if (isCreating) {
-				const isLoggedIn = token !== '';
+				const isLoggedIn = token !== null;
 
 				return axiosInstance.post(
 					isLoggedIn ? 'user' : 'user/register',

@@ -38,7 +38,11 @@ const MapLayout: FC<MapLayoutProps> = (props: MapLayoutProps) => {
 	} = props;
 	return (
 		<>
-			<Center isLoading={isLoading?.main} onMouseMove={onMouseMove}>
+			<Center
+				style={menu ? undefined : { gridArea: '1 / 2 / 2 / -1' }}
+				isLoading={isLoading?.main}
+				onMouseMove={onMouseMove}
+			>
 				<FullParentOverlayBlock
 					type={FullBlockType.DEFAULT}
 					isVisible={!!isBlockingCenter}

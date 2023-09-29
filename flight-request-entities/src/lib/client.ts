@@ -3,7 +3,7 @@ import { getCoordinationAPIClient } from './coordination';
 import { getCoordinatorAPIClient } from './coordinator';
 import { getFlightRequestAPIClient } from './flightRequest';
 
-export function getFlightRequestServiceAPIClient(api: string, token: string) {
+export function getFlightRequestServiceAPIClient(api: string, token: string | null) {
 	const geographicalZoneAPIClient = getGeographicalZoneAPIClient(api, token);
 	const coordinationAPIClient = getCoordinationAPIClient(api, token);
 	const coordinatorAPIClient = getCoordinatorAPIClient(api, token);

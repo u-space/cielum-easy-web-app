@@ -213,11 +213,16 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 							onClick={() => {
 								//If it is editing, then save and change to not editing mode
 								if (edit.find((e) => e === coordination.id)) {
-									console.log(coordination.id);
 									setEdit(edit.filter((e) => e !== coordination.id));
-									coordination.flightRequest = entity;
+									const coordinationToSave = {
+										...coordination,
+										flightRequest: { id: entity.id }
+									};
+
 									updateCoordination.mutate({
-										entity: coordination
+										// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+										// @ts-ignore
+										entity: coordinationToSave
 									});
 								} else {
 									//Enters editing mode
@@ -322,6 +327,7 @@ interface VolumeDetailsProps {
 }
 const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 	const { t } = useTranslation(['ui', 'glossary']);
+
 	if (ls.entity.volumes.length >= volume + 1) {
 		return (
 			<div style={{ backgroundColor: 'var(--mirai-150)' }}>
@@ -332,7 +338,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					id={`editor-flightRequest-volume-${volume}-max_altitude`}
 					defaultValue={ls.entity.volumes[volume].max_altitude}
 					label={t(`glossary:volume.max_altitude`)}
-					onChange={(value) => (ls.entity.volumes[volume].max_altitude = value)}
+					onChange={(value) => ls.entity.volumes[volume].set('max_altitude', value)}
 					disabled={!isEditing}
 					isDarkVariant
 					inline={false}
@@ -345,7 +351,10 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					isDarkVariant
 					isTime
 					isRequired={isEditing}
-					onChange={(value) => (ls.entity.volumes[volume].effective_time_begin = value)}
+					defaultValue={ls.entity.volumes[volume].effective_time_begin || undefined}
+					onChange={(value) =>
+						ls.entity.volumes[volume].set('effective_time_begin', value)
+					}
 				/>
 				<PDateInput
 					id={`editor-flightRequest-volume-${volume}-effective_time_end`}
@@ -354,7 +363,8 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					isDarkVariant
 					isTime
 					isRequired={isEditing}
-					onChange={(value) => (ls.entity.volumes[volume].effective_time_end = value)}
+					defaultValue={ls.entity.volumes[volume].effective_time_end || undefined}
+					onChange={(value) => ls.entity.volumes[volume].set('effective_time_end', value)}
 				/>
 			</div>
 		);

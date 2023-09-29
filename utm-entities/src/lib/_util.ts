@@ -17,6 +17,7 @@ export function translateErrors(errors: any, entity: any): string[] {
 				' is required, but no value was supplied'
 			);
 			const isRequiredIndex = error.indexOf(' is required');
+
 			if (isNotAllowedToBeEmptyIndex > -1) {
 				const prop = error.slice(1, isNotAllowedToBeEmptyIndex - 1);
 				return i18n.t('x is not allowed to be empty', {
@@ -114,6 +115,11 @@ export function saveExtraFields(entity: any, schema: any, current: any) {
 		}
 	}
 	if (entity.extra_fields?.documents) {
+		console.log(
+			'entity.extra_fields.documents',
+			entity.extra_fields.documents,
+			Array.isArray(entity.extra_fields.documents)
+		);
 		current.extra_fields.documents = entity.extra_fields.documents.map((doc: any) => {
 			return new DocumentEntity(doc);
 		});

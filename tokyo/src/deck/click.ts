@@ -1,5 +1,5 @@
 import type { Deck, Layer, PickingInfo } from '@deck.gl/core/typed';
-import { DeckActionParams, EditMode } from '../types';
+import { DeckActionParams, EditMode, TokyoPick } from '../types';
 import type { PickableType } from '@tokyo/util';
 import { createEventDispatcher } from 'svelte';
 
@@ -19,7 +19,7 @@ function withPickHandling(builder: OnClickBuilder): OnClickBuilder {
 					y: number;
 				};
 				const pickEvent = builder.deck.pickMultipleObjects({ x, y, radius: 10 });
-				const pickings = pickEvent.map((pick: PickingInfo) => {
+				const pickings: TokyoPick[] = pickEvent.flatMap((pick: PickingInfo) => {
 					if (pick.layer) {
 						const split = pick.layer.id.split('|');
 						const volume = pick.index;
@@ -28,10 +28,11 @@ function withPickHandling(builder: OnClickBuilder): OnClickBuilder {
 							id: split[1],
 							name: split[2],
 							volume,
-							layerId: pick.layer.id
+							layerId: pick.layer.id,
+							properties: pick.object.properties
 						};
 					} else {
-						return null;
+						return [];
 					}
 				});
 				builder.params.handlers.pick(pickings); // Picking has processed
