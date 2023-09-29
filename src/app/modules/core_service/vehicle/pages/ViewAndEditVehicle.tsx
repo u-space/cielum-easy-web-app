@@ -167,10 +167,14 @@ const PDocumentWithSchema: FC<PDocumentWithSchemaProps> = ({ ls, document, isEdi
 		});
 
 	useEffect(() => {
-		if (updateDocumentValidationMutation.isSuccess) {
-			document.valid = updateDocumentValidationMutation.data.data.valid;
+		if (
+			updateDocumentValidationMutation.isSuccess ||
+			updateDocumentObservationMutation.isSuccess
+		) {
+			//document.valid = updateDocumentValidationMutation.data.data.valid;
+			window.location.href = `${window.location.href}`;
 		}
-	}, [updateDocumentValidationMutation.isSuccess, updateDocumentValidationMutation.data]);
+	}, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
 
 	if (!schemaQuery.isLoading && schemaQuery.data) {
 		if (
