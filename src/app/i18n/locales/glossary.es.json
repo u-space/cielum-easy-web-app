@@ -455,9 +455,11 @@
 		"dji_email": "Email inicio sesión DJI",
 		"flightCategory": "Categoría de vuelo",
 		"flight_category": {
-			"OPEN": "Open",
+			"OPEN": "A1",
 			"STS_01": "STS 01",
-			"STS_02": "STS 02"
+			"STS_02": "STS 02",
+			"A2": "A2",
+			"A3": "A3"
 		},
 		"state": "Estado",
 		"flight_state": {

@@ -106,6 +106,11 @@ const RegisterScreen = () => {
 		if (event) event.preventDefault();
 		if (step === RegisterScreenStep.FORM_SCREEN) {
 			const errors = ls.entity.validate();
+			if (!ls.entity.lastName.includes(' ')) {
+				alert('Por favor, escribe tus dos apellidos');
+				return;
+			} // Temporal, due to a broken trigger
+
 			if (errors.length > 0) {
 				setError(translateErrors(errors, 'user')[0]);
 				setStep(RegisterScreenStep.ERROR_SCREEN);

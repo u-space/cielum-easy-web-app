@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useAuthStore } from '../auth/store';
 import { getWebConsoleLogger } from '../../../utils';
 import { useCoreServiceAPI } from '../../utils';
+import { DocumentEntity } from '@utm-entities/document';
 
 export interface UseUpdateDocumentValidationParams {
 	docId: string;
@@ -16,19 +17,20 @@ export const useUpdateDocumentValidation = () => {
 		document: { updateDocumentValidation }
 	} = useCoreServiceAPI();
 
-	return useMutation<AxiosResponse<void>, AxiosError, UseUpdateDocumentValidationParams>(
-		(params) => updateDocumentValidation(params.docId, params.valid),
-		{
-			onSuccess: () => {
-				queryClient.invalidateQueries(['users', 'vehicles']).then(() => {
-					return;
-				});
-			},
-			onError: (error) => {
-				getWebConsoleLogger().getBackendError(error);
-			}
+	return useMutation<
+		AxiosResponse<DocumentEntity>,
+		AxiosError,
+		UseUpdateDocumentValidationParams
+	>((params) => updateDocumentValidation(params.docId, params.valid), {
+		onSuccess: () => {
+			queryClient.invalidateQueries(['users', 'vehicles']).then(() => {
+				return;
+			});
+		},
+		onError: (error) => {
+			getWebConsoleLogger().getBackendError(error);
 		}
-	);
+	});
 };
 
 export interface UseUpdateDocumentObservationParams {

@@ -9,7 +9,7 @@ import { UserEntity } from '@utm-entities/user';
 import { buildFilterAndOrderParametersObject } from './_util';
 import { EntityHasDisplayName } from './types';
 import { CoordinationEntity } from './coordination';
-import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { OperationVolume, ResponseOperationVolume } from '@utm-entities/v2/model/operation_volume';
 import { Operation } from '@utm-entities/v2/model/operation';
 
 export enum FlightRequestState {
@@ -24,7 +24,9 @@ export enum FlightRequestState {
 export enum FlightCategory {
 	OPEN = 'OPEN',
 	STS_01 = 'STS_01',
-	STS_02 = 'STS_02'
+	STS_02 = 'STS_02',
+	A2 = 'A2',
+	A3 = 'A3'
 }
 
 export class FlightRequestEntity implements EntityHasDisplayName {
@@ -71,7 +73,9 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 
 		this.name = name;
 		this.id = id;
-		this.volumes = volumes;
+		this.volumes = volumes.map(
+			(volume: ResponseOperationVolume) => new OperationVolume(volume)
+		);
 		this.uavs = uavs;
 		this.state = state;
 		this.operation = operation;
@@ -200,7 +204,7 @@ export const APICoordinatorSchema = Joi.object({
 
 // API
 
-const transformFlightRequest = (data: any) => {
+const transformFlightRequests = (data: any) => {
 	return {
 		count: data.count,
 		flightRequests: data.flightRequests.map((flightRequest: any) => {
@@ -212,7 +216,7 @@ const transformFlightRequest = (data: any) => {
 export const getFlightRequestAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 20000,
+		timeout: 120000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
@@ -238,14 +242,11 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 		},
 		async updateFlightRequest(flightRequest: FlightRequestEntity) {
 			// Api ask us to delete the state bacause state change has separated endpoint
-			delete flightRequest.state;
-			const { data } = await axiosInstance.put(
-				`/flightRequest/${flightRequest.id}`,
-				flightRequest,
-				{
-					headers: { auth: token }
-				}
-			);
+			const body = flightRequest.asBackendFormat;
+			delete body.state;
+			const { data } = await axiosInstance.put(`/flightRequest/${body.id}`, body, {
+				headers: { auth: token }
+			});
 			return data;
 		},
 		async setFlightRequestState(flightRequestId: string, state: FlightRequestState) {
@@ -282,7 +283,9 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 					filter
 				),
 				headers: { auth: token },
-				transformResponse: Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				transformResponse: (
+					Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				).concat(transformFlightRequests)
 			});
 		}
 	};

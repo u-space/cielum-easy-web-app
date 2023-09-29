@@ -111,7 +111,7 @@ export const getDocumentAPIClient = (api: string, token: string | null) => {
 				auth: `${token}`
 			};
 
-			return axiosInstance.patch<void>(
+			return axiosInstance.patch<DocumentEntity>(
 				`/document/${id}/${(!valid && 'in') || ''}validate`,
 				{},
 				{ headers }

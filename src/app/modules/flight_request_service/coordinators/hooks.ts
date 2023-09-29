@@ -5,7 +5,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { shallow } from 'zustand/shallow';
 import { useCoordinatorStore } from './store';
 
-export function useUpdateCoordinator() {
+export function useUpdateCoordinator(isCreating = true) {
 	const queryClient = useQueryClient();
 
 	const {
@@ -16,7 +16,7 @@ export function useUpdateCoordinator() {
 		AxiosResponse<CoordinatorEntity>,
 		AxiosError<{ message?: string }>,
 		{ entity: CoordinatorEntity }
-	>(({ entity: coordinator }) => saveCoordinator(coordinator), {
+	>(({ entity: coordinator }) => saveCoordinator(coordinator, isCreating), {
 		onSuccess: () => {
 			// Invalidate and refetch
 			queryClient.invalidateQueries('coordinators').then(() => {

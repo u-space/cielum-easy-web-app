@@ -160,7 +160,7 @@ const FlightRequestHub: FC = () => {
 			idSelected={idSelected}
 			updateQuery={updateFlightRequest as UseMutationResult}
 			query={{ ...query, count }}
-			canEdit={() => isAdmin}
+			canEdit={() => false}
 			extraMenuButtons={MenuButtons}
 		/>
 	);

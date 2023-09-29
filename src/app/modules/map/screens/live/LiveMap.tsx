@@ -173,6 +173,7 @@ const LiveMap = () => {
 	}, [rfv]);
 
 	useEffect(() => {
+		console.log('selected', selected);
 		if (!selected) {
 			setCSSVariable('side-width', '0px');
 		} else {
