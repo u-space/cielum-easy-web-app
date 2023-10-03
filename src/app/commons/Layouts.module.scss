@@ -517,7 +517,7 @@
 
 @media (max-width: 1000px) {
 	.master {
-		grid-template-columns: var(--bar-width-default) 1fr;
+		grid-template-columns: var(--bar-width-default) 0 1fr;
 	}
 }
 
