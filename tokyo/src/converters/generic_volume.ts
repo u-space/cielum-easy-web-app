@@ -54,6 +54,9 @@ function getConverterFromGenericVolume(
 			getLineWidth: 1,
 			filled: true,
 			extruded: threeDimensional,
-			getElevation: volume.max_altitude * ELEVATION_MULTIPLIER
+			getElevation: volume.max_altitude * ELEVATION_MULTIPLIER,
+			parameters: {
+				depthMask: false
+			}
 		});
 }

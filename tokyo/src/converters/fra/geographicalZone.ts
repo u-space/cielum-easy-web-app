@@ -63,7 +63,10 @@ function getConverterFromGeographicalZone(
 			lineWidthUnits: 'pixels',
 			getLineWidth: 1,
 			filled: true,
-			extruded: threeDimensional
+			extruded: threeDimensional,
+			parameters: {
+				depthMask: false
+			}
 			//getElevation: 400
 		});
 }
