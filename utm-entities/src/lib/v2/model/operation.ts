@@ -190,7 +190,7 @@ export class Operation
 		if (!omitOwner && !this.owner) throw new Error(`Operation owner is not set`);
 		if (omitOwner) this.owner = null;
 		// TODO: validate uas_registrations
-		if (this.name.length === 0 || !/^[a-zA-Z0-9\s]+$/.test(this.name))
+		if (this.name.length === 0 /* || !/^[a-zA-Z0-9\s]+$/.test(this.name)*/)
 			throw new Error('Operation name must be set and alphanumeric');
 
 		// Validate operation volumes

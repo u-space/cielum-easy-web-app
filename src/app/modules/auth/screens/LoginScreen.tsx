@@ -1,14 +1,14 @@
 import { observer, useLocalStore } from 'mobx-react';
-import { useState, FormEvent, useEffect } from 'react';
+import { FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import PInput from '@pcomponents/PInput';
-import PButton from '@pcomponents/PButton';
+import PButton, { PButtonType } from '@pcomponents/PButton';
 import styles from '../auth.module.scss';
 import { useAuthStore } from '../store';
 import UnloggedLayout from '../layouts/UnloggedLayout';
 import StatusLayout from '../layouts/StatusLayout';
-import { useCoreServiceAPI } from '../../../utils';
+import env from '../../../../vendor/environment/env';
 
 const LoginScreen = () => {
 	const { t } = useTranslation();
@@ -85,6 +85,11 @@ const LoginScreen = () => {
 						OK
 					</PButton>
 				</StatusLayout>
+			)}
+			{env.tenant.features.ViewPublicMapButtonOnLoginScreen.enabled && (
+				<PButton variant={PButtonType.SECONDARY} onClick={() => history.push('/map')}>
+					{t('View public map')}
+				</PButton>
 			)}
 		</UnloggedLayout>
 	);
