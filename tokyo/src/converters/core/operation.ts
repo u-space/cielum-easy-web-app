@@ -109,7 +109,7 @@ function getConverterFromOperation(_operation: BaseOperation, options?: Operatio
 			getFillColor,
 			getLineWidth,
 			lineWidthUnits: 'pixels',
-
+			parameters: { depthMask: false },
 			getLineColor: (object, info) => {
 				if (options?.selected && options.selected.gufi === operation.gufi) {
 					if (info.index === options.selected.volume) {

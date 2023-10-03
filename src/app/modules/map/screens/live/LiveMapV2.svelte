@@ -22,6 +22,24 @@
 	import CModal from '@tokyo/gui/CModal.svelte';
 	import {CModalVariant} from '@tokyo/gui/CModal';
 
+	interface Telemetry {
+		timestamp: number;
+		lat: number;
+		lon: number;
+		publicTelemetry: boolean;
+		uvin: string;
+		heading: number;
+		altitudeAbs: number;
+		altitudeRel: number;
+		inAir: boolean;
+		calculatedData: {
+			groundElevationInMeters: number;
+			elevationProviderAPI: string;
+			altitudeAGLInMeters: number;
+		};
+		id: number;
+	}
+
 	//export let history: H.History;
 
 	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
@@ -36,14 +54,36 @@
 	});
 
 	$: operations = $query.isSuccess ? $query.data.ops : [];
-	let vehiclePositions = new Map();
+	let vehiclePositions: Map<String, PositionEntity[]> = new Map();
 
 	onMount(() => {
 		const socket = io(env.core_api + '/public'); // TODO: use private if logged in
 		socket.on('new-position', (position: PositionEntity) => {
 			const id = position.gufi + position.uvin;
-			let positionsOfOneVehicle = vehiclePositions.get(id) || [];
+			let positionsOfOneVehicle = vehiclePositions.get(id) || [] as PositionEntity[];
 			positionsOfOneVehicle = [...positionsOfOneVehicle, position];
+			vehiclePositions = new Map(vehiclePositions).set(id, positionsOfOneVehicle);
+		});
+
+		socket.on('new-telemetry', (telemetry: Telemetry) => {
+			// TODO: this is temporal, as telemetry is not a real entity
+			const id = telemetry.uvin;
+			let positionsOfOneVehicle = vehiclePositions.get(id) || [];
+			const pseudoPosition = new PositionEntity({
+				id: new Date().getTime(),
+				gufi: 'pseudo',
+				uvin: telemetry.uvin,
+				location: {
+					type: 'Point',
+					coordinates: [telemetry.lat, telemetry.lon]
+				},
+				time_sent: new Date(telemetry.timestamp),
+				heading: telemetry.heading,
+				altitude_gps: telemetry.altitudeRel,
+			});
+			console.log('pseudoPosition', pseudoPosition, telemetry);
+
+			positionsOfOneVehicle = [...positionsOfOneVehicle, pseudoPosition];
 			vehiclePositions = new Map(vehiclePositions).set(id, positionsOfOneVehicle);
 		});
 		return () => {
