@@ -12,7 +12,7 @@
 	{@const value = propvalue.value || `(${i18n.t('Unknown')})`}
 	<DashboardCard>
 		<svelte:fragment slot="header">{i18n.t('glossary:operation.' + propvalue.property)}</svelte:fragment>
-		{i18n.t(value)}
+		{propvalue.translatableValue ? i18n.t(value) : value}
 	</DashboardCard>
 
 {/each}

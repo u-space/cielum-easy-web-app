@@ -8,6 +8,7 @@ import {
 	ResponseOperationVolume
 } from './operation_volume';
 import { ResponseBaseVehicle, ResponseVehicle, UtmBaseVehicle, UtmVehicle } from './vehicle';
+import { dateOptions } from '../util';
 export const OPERATION_LOCALES_OPTIONS = {
 	year: 'numeric' as const,
 	month: 'numeric' as const,
@@ -125,22 +126,54 @@ export class BaseOperation {
 		return this.operation_volumes[this.operation_volumes.length - 1].effective_time_end;
 	}
 	asPrintableEntries() {
-		const entries: { property: string; value: string }[] = [];
+		const entries: { property: string; value: string; translatableValue: boolean }[] = [];
 
-		entries.push({ property: 'name', value: this.name });
-		entries.push({ property: 'state', value: this.state });
-		entries.push({ property: 'contact', value: this.contact });
-		entries.push({ property: 'contact_phone', value: this.contact_phone });
+		entries.push({ property: 'name', value: this.name, translatableValue: false });
+		entries.push({ property: 'state', value: this.state, translatableValue: true });
+		entries.push({ property: 'contact', value: this.contact, translatableValue: false });
+		entries.push({
+			property: 'contact_phone',
+			value: this.contact_phone,
+			translatableValue: false
+		});
 		for (const vehicle of this.uas_registrations) {
-			entries.push({ property: 'vehicle', value: vehicle.displayName });
+			entries.push({
+				property: 'vehicle',
+				value: vehicle.displayName,
+				translatableValue: false
+			});
+		}
+		if (this.operation_volumes.length > 0) {
+			entries.push({
+				property: 'begin',
+				value:
+					this.operation_volumes[0].effective_time_begin?.toLocaleString(
+						undefined,
+						dateOptions
+					) || '',
+				translatableValue: false
+			});
+			entries.push({
+				property: 'end',
+				value:
+					this.operation_volumes[
+						this.operation_volumes.length - 1
+					].effective_time_end?.toLocaleString(undefined, dateOptions) || '',
+				translatableValue: false
+			});
 		}
 		let max_altitude = 0;
 		for (const volume of this.operation_volumes) {
 			if (volume.max_altitude > max_altitude) max_altitude = volume.max_altitude;
 		}
-		entries.push({ property: 'max_altitude', value: `${max_altitude}m` });
+		entries.push({
+			property: 'max_altitude',
+			value: `${max_altitude}m`,
+			translatableValue: false
+		});
 
-		if (this.gufi) entries.push({ property: 'gufi', value: this.gufi });
+		if (this.gufi)
+			entries.push({ property: 'gufi', value: this.gufi, translatableValue: false });
 		return entries;
 	}
 }
@@ -239,14 +272,36 @@ export class Operation
 
 	asPrintableEntries() {
 		const entries = super.asPrintableEntries();
-		if (this.creator) entries.push({ property: 'creator', value: this.creator.username });
-		if (this.owner) entries.push({ property: 'owner', value: this.owner.username });
+		if (this.creator)
+			entries.push({
+				property: 'creator',
+				value: this.creator.username,
+				translatableValue: false
+			});
+		if (this.owner)
+			entries.push({
+				property: 'owner',
+				value: this.owner.username,
+				translatableValue: false
+			});
 		if (this.submit_time)
-			entries.push({ property: 'submit_time', value: this.submit_time.toLocaleTimeString() });
+			entries.push({
+				property: 'submit_time',
+				value: this.submit_time.toLocaleTimeString(),
+				translatableValue: false
+			});
 		if (this.update_time)
-			entries.push({ property: 'update_time', value: this.update_time.toLocaleTimeString() });
+			entries.push({
+				property: 'update_time',
+				value: this.update_time.toLocaleTimeString(),
+				translatableValue: false
+			});
 		if (this.flight_comments)
-			entries.push({ property: 'flight_comments', value: this.flight_comments });
+			entries.push({
+				property: 'flight_comments',
+				value: this.flight_comments,
+				translatableValue: false
+			});
 		return entries;
 	}
 
