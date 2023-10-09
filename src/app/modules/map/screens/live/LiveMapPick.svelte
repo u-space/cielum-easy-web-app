@@ -85,7 +85,7 @@
 				<h2>{operation.gufi}</h2>
 				<h3>{getOperationPeriod(operation)}</h3>
 				<label for="max_altitude">{i18n.t('glossary:volume.max_altitude')}</label>
-				<p id="max_altitude">{volume.max_altitude}</p>
+				<p id="max_altitude">{volume.max_altitude}m</p>
 				{#if operation.uas_registrations.length > 1}
 					<label for="uas_registrations">{i18n.t('glossary:operation.uas_registrations')}</label>
 					<ul id="uas_registrations">

@@ -251,7 +251,7 @@ export class Operation
 			name: this.name,
 			contact: this.contact,
 			contact_phone: this.contact_phone,
-			state: 'PROPOSED', // TODO: fix this
+			state: this.state,
 			//creator: this.creator.username,
 			operation_volumes: this.operation_volumes.map((volume) => volume.asBackendFormat()),
 			uas_registrations: []

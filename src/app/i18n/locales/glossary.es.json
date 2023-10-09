@@ -281,8 +281,8 @@
 		"effective_time_begin_description": "Momento desde el cual la operación usará el espacio aéreo",
 		"effective_time_end": "Fin",
 		"effective_time_end_description": "Momento mas tardío en el cual el drone dejará de usar el espacio aéreo",
-		"min_altitude": "Altura mínima (en metros)",
-		"max_altitude": "Altura máxima (en metros)",
+		"min_altitude": "Altura mínima AGL",
+		"max_altitude": "Altura máxima AGL",
 		"near_structure": "Zona Urbana",
 		"beyond_visual_line_of_sight": "Fuera de VLOS"
 	},

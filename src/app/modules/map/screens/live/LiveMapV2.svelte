@@ -79,7 +79,7 @@
 				},
 				time_sent: new Date(telemetry.timestamp),
 				heading: telemetry.heading,
-				altitude_gps: telemetry.altitudeRel,
+				altitude_gps: telemetry.calculatedData.altitudeAGLInMeters,
 			});
 			console.log('pseudoPosition', pseudoPosition, telemetry);
 
