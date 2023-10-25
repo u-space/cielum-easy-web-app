@@ -52,7 +52,9 @@ export function useQueryFlightRequests(all = false) {
 		sortingProperty,
 		sortingOrder,
 		filterProperty,
-		filterMatchingText
+		filterMatchingText,
+		filterShowPaid,
+		filterShowNotPaid
 	} = useFlightRequestStore(
 		(state) => ({
 			pageTake: state.pageTake,
@@ -60,7 +62,9 @@ export function useQueryFlightRequests(all = false) {
 			sortingProperty: state.sortingProperty,
 			sortingOrder: state.sortingOrder,
 			filterProperty: state.filterProperty,
-			filterMatchingText: state.filterMatchingText
+			filterMatchingText: state.filterMatchingText,
+			filterShowPaid: state.filterShowPaid,
+			filterShowNotPaid: state.filterShowNotPaid
 		}),
 		shallow
 	);

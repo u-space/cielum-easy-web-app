@@ -440,7 +440,7 @@
 			"SELF_MANAGED": "Auto gestionado"
 		}
 	},
-	"flightRequest": {
+	"flight-request": {
 		"name": "Nombre de la solicitud",
 		"isDefaultOperator": "¿Desea utilizar el operador por defecto?",
 		"uas_registrations": "Aeronaves a utilizar",
@@ -450,6 +450,7 @@
 		"id": "Id.",
 		"operator": "Operador",
 		"creator": "Creador",
+		"paid": "Estado del pago",
 		"parachute_model": "Modelo de paracaídas",
 		"dji_controller_number": "Número de controlador DJI",
 		"dji_email": "Email inicio sesión DJI",
@@ -469,6 +470,14 @@
 			"CANCELLED": "Cancelado",
 			"REJECTED": "Rechazado",
 			"PREFLIGHT": "Pre-vuelo"
+		},
+		"flight_state_explanation": {
+			"REQUIRE_APPROVAL": "El operador se hará cargo de solicitar sus permisos de vuelo. ",
+			"PENDING": "Hay algunas coordinaciones que no se han llevado a cabo, o están pendientes de aprobación por parte del gestor competente. Una vez todas las coordinaciones estén iniciadas, el estado pasará automaticamente a \"COMPLETADA\". ",
+			"COMPLETED": "Todas las coordinaciones han sido lanzadas. Advertencia: Esto no quiere decir que hayan sido aprobadas. ",
+			"CANCELLED": "El piloto ha solicitado una cancelación de esta solicitud. ",
+			"REJECTED": "La solicitud es incompatible o inviable. ",
+			"PREFLIGHT": "Todas las coordinaciones han sido aprobadas, y el piloto está listo para volar. "
 		},
 		"noCoordination": "Sin coordinaciones"
 	}

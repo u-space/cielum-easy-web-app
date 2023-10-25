@@ -45,6 +45,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 	dji_blocked: boolean;
 	dji_controller_number: string;
 	dji_email: string;
+	paid: boolean;
 	flight_category: FlightCategory;
 	geographicalZones?: GeographicalZone[] = [];
 
@@ -68,7 +69,8 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 			operation,
 			coordination,
 			geographicalZones,
-			id
+			id,
+			paid
 		} = existing;
 
 		this.name = name;
@@ -90,6 +92,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		this.flight_category = flight_category;
 		this.geographicalZones = geographicalZones;
 		this.creator = creator;
+		this.paid = paid;
 
 		makeAutoObservable(this);
 	}

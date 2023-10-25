@@ -20,6 +20,8 @@ import { Spinner } from '@blueprintjs/core';
 import PFullModal from '@pcomponents/PFullModal';
 import PNumberInput from '@pcomponents/PNumberInput';
 import PDateInput from '@pcomponents/PDateInput';
+import styled from 'styled-components';
+import PTooltip from '@pcomponents/PTooltip';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -27,6 +29,32 @@ interface BaseFlightRequestDetailsProps {
 	ls: UseLocalStoreEntity<FlightRequestEntity>;
 	isEditing: boolean;
 }
+
+const StateExplanationText = styled.div`
+	display: flex;
+	background-color: var(--primary-500);
+	color: var(--white-100);
+	border-radius: var(--radius-l);
+	padding: var(--padding-s);
+`;
+
+const PaidStateCircle = styled.div`
+	height: 1rem;
+	width: 1rem;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+	border: 1px solid rgb(var(--mirai-900-rgb), 0.25);
+	box-shadow: 0 1px 1px 0 rgba (0, 0, 0, 0.25);
+	filter: saturate(0.75);
+`;
+
+const PaymentLine = styled.div`
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	text-transform: uppercase;
+	color: var(--primary-900);
+`;
 
 const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 	({ ls, isEditing }) => {
@@ -51,13 +79,12 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 							<PTextArea
 								style={{ width: '100%' }}
 								key={prop}
-								id={`editor-flightRequest-${prop}`}
+								id={`editor-flight-request-${prop}`}
 								defaultValue={entity[prop]}
-								label={t(`glossary:flightRequest.${prop}`)}
+								label={t(`glossary:flight-request.${prop}`)}
 								disabled={!isEditing}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isDarkVariant
-								inline
 							/>
 						);
 					}
@@ -79,19 +106,19 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								key={prop}
 								options={Object.values(FlightCategory).map((value) => ({
 									value: value,
-									label: t(`glossary:flightRequest.flight_category.${value}`)
+									label: t(`glossary:flight-request.flight_category.${value}`)
 								}))}
-								id={`editor-flightRequest-${prop}`}
+								id={`editor-flight-request-${prop}`}
 								defaultValue={entity[prop]}
-								label={t(`glossary:flightRequest.flightCategory`)}
+								label={t(`glossary:flight-request.flightCategory`)}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isRequired
 								disabled={!isEditing}
 								isDarkVariant
-								inline
 							/>
 						);
 					}
+
 					if (prop === 'state') {
 						return (
 							// <PDropdown
@@ -109,29 +136,37 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 							// 	isDarkVariant
 							// 	inline
 							// />
-							<PInput
-								key={prop}
-								id={`editor-flightRequest-${prop}`}
-								defaultValue={entity[prop]}
-								label={t(`glossary:flightRequest.state`)}
-								disabled={true}
-								inline
-								isDarkVariant
-							/>
+							<>
+								<PInput
+									key={prop}
+									id={`editor-flight-request-${prop}`}
+									defaultValue={t(
+										'glossary:flight-request.flight_state.' + entity[prop]
+									)}
+									label={t(`glossary:flight-request.state`)}
+									disabled={true}
+									isDarkVariant
+								/>
+								<StateExplanationText>
+									{t(
+										'glossary:flight-request.flight_state_explanation.' +
+											entity[prop]
+									)}
+								</StateExplanationText>
+							</>
 						);
 					}
 					if (typeof value === 'string') {
 						return (
 							<PInput
 								key={prop}
-								id={`editor-flightRequest-${prop}`}
+								id={`editor-flight-request-${prop}`}
 								defaultValue={value}
-								label={t(`glossary:flightRequest.${prop}`)}
+								label={t(`glossary:flight-request.${prop}`)}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isRequired
 								disabled={!isEditing}
 								isDarkVariant
-								inline
 							/>
 						);
 					} else if (typeof value === 'boolean') {
@@ -140,12 +175,11 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								key={prop}
 								id={`editor-volume-${prop}`}
 								defaultValue={value}
-								label={t(`flightRequest.${prop}`)}
+								label={t(`flight-request.${prop}`)}
 								disabled={!isEditing}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isRequired
 								isDarkVariant
-								inline
 							/>
 						);
 					} else {
@@ -172,7 +206,7 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 		return null;
 	}
 	if (!entity.coordination || entity.coordination?.length === 0) {
-		return <h2>{t('flightRequest.noCoordination')}</h2>;
+		return <h2>{t('flight-request.noCoordination')}</h2>;
 	}
 	return (
 		<div>
@@ -254,7 +288,7 @@ const OperatorDetails: FC<OperatorDetailsProps> = ({ ls }) => {
 		<PUserSelectForAdmins
 			id="operator"
 			onSelect={(selected) => null}
-			label={t('flightRequest.operator')}
+			label={t('flight-request.operator')}
 			preselected={[entity.operator as UserEntity]}
 			fill
 			disabled={true}
@@ -335,7 +369,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					{t('Volume')} {volume + 1}
 				</h2>
 				<PNumberInput
-					id={`editor-flightRequest-volume-${volume}-max_altitude`}
+					id={`editor-flight-request-volume-${volume}-max_altitude`}
 					defaultValue={ls.entity.volumes[volume].max_altitude}
 					label={t(`glossary:volume.max_altitude`)}
 					onChange={(value) => ls.entity.volumes[volume].set('max_altitude', value)}
@@ -345,7 +379,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					isRequired={isEditing}
 				/>
 				<PDateInput
-					id={`editor-flightRequest-volume-${volume}-effective_time_begin`}
+					id={`editor-flight-request-volume-${volume}-effective_time_begin`}
 					label={t('glossary:volume.effective_time_begin')}
 					disabled={!isEditing}
 					isDarkVariant
@@ -357,7 +391,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					}
 				/>
 				<PDateInput
-					id={`editor-flightRequest-volume-${volume}-effective_time_end`}
+					id={`editor-flight-request-volume-${volume}-effective_time_end`}
 					label={t('glossary:volume.effective_time_end')}
 					disabled={!isEditing}
 					isDarkVariant
@@ -384,13 +418,13 @@ const CreatorDetails: FC<CreatorDetailsProps> = ({ ls }) => {
 		return null;
 	}
 	if (!entity.creator) {
-		return <h2>{t('flightRequest.noCreator')}</h2>;
+		return <h2>{t('flight-request.noCreator')}</h2>;
 	}
 	return (
 		<PUserSelectForAdmins
 			id="creator"
 			onSelect={(selected) => null}
-			label={t('flightRequest.creator')}
+			label={t('flight-request.creator')}
 			preselected={[entity.creator as UserEntity]}
 			fill
 			disabled={true}
@@ -424,16 +458,25 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 			<div className={styles.content}>
 				<aside className={styles.summary}>
 					<h2>{t('Flight Request information')}</h2>
+					<PTooltip content={t('Paid')}>
+						<PaymentLine>
+							<PaidStateCircle
+								style={{
+									backgroundColor: ls.entity.paid ? 'green' : 'red'
+								}}
+							/>
+							{ls.entity.paid ? t('Paid') : t('Pending payment')}
+						</PaymentLine>
+					</PTooltip>
 				</aside>
 				<section className={styles.details}>
 					<PInput
 						key={'input-id'}
 						id={'input-id'}
 						defaultValue={ls.entity.id}
-						label={t('glossary:flightRequest.id')}
+						label={t('glossary:flight-request.id')}
 						disabled={true}
 						isDarkVariant
-						inline
 					/>
 
 					<BaseFlightRequestDetails isEditing={isEditing} ls={ls} />

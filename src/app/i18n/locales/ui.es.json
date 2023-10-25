@@ -518,5 +518,9 @@
 	"Please wait while your changes are being saved": "Por favor, espera mientras tus cambios son guardados",
 	"Your changes to VEHICLE have been saved": "Tus cambios a la aeronave {{vehicle}} han sido guardados",
 	"Your vehicles": "Tus aeronaves",
-	"View public map": "Ver mapa público"
+	"View public map": "Ver mapa público",
+	"Paid": "Pagado",
+	"Pending payment": "Pendiente de pago",
+	"Show paid flight requests": "Mostrar solicitudes de coordinación pagadas",
+	"Show pending payment flight requests": "Mostrar solicitudes de coordinación pendientes de pago"
 }

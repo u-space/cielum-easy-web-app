@@ -17,11 +17,23 @@ import { FlightRequestEntity, FlightRequestState } from '@flight-request-entitie
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { observer } from 'mobx-react';
 import FlightRequestSearchTools from '../components/FlightRequestSearchTools';
+import styled from 'styled-components';
+import PTooltip from '@pcomponents/PTooltip';
 
 interface MenuButtonsProps {
 	entity: FlightRequestEntity;
 	style?: CSSProperties;
 }
+
+const PaidStateCircle = styled.div`
+	height: 1rem;
+	width: 1rem;
+	border-radius: 100%;
+	margin-left: 1rem;
+	border: 1px solid rgb(var(--mirai-900-rgb), 0.25);
+	box-shadow: 0 1px 1px 0 rgba (0, 0, 0, 0.25);
+	filter: saturate(0.75);
+`;
 const MenuButtons: FC<MenuButtonsProps> = ({ entity, style }) => {
 	const updateFlightRequestState = useUpdateFlightRequestState();
 	return (
@@ -54,13 +66,23 @@ const MenuButtons: FC<MenuButtonsProps> = ({ entity, style }) => {
 };
 const ExtraActions: FC<{ data: FlightRequestEntity }> = ({ data }) => {
 	const history = useHistory();
+	const { t } = useTranslation();
 	return (
-		<PButton
-			icon={'eye-open'}
-			size={PButtonSize.SMALL}
-			variant={PButtonType.SECONDARY}
-			onClick={() => history.push(`/flight-requests/${data.id}`)}
-		/>
+		<>
+			<PButton
+				icon={'eye-open'}
+				size={PButtonSize.SMALL}
+				variant={PButtonType.SECONDARY}
+				onClick={() => history.push(`/flight-requests/${data.id}`)}
+			/>
+			<PTooltip content={data.paid ? t('Paid') : t('Pending payment')}>
+				<PaidStateCircle
+					style={{
+						backgroundColor: data.paid ? 'green' : 'red'
+					}}
+				/>
+			</PTooltip>
+		</>
 	);
 };
 const FlightRequestHub: FC = () => {
@@ -76,10 +98,10 @@ const FlightRequestHub: FC = () => {
 	const idSelected = queryString.get('id');
 	const columns = [
 		{ title: ' ', width: rowHeight * 2 },
-		{ title: t('glossary:flightRequest.name'), width: 2 },
-		{ title: t('glossary:flightRequest.operator'), width: 2 },
-		{ title: t('glossary:flightRequest.creator'), width: 2 },
-		{ title: t('glossary:flightRequest.state'), width: 2 }
+		{ title: t('glossary:flight-request.name'), width: 2 },
+		{ title: t('glossary:flight-request.operator'), width: 2 },
+		{ title: t('glossary:flight-request.creator'), width: 2 },
+		{ title: t('glossary:flight-request.state'), width: 2 }
 	];
 
 	// Backend
@@ -102,7 +124,7 @@ const FlightRequestHub: FC = () => {
 				data = flightRequest.creator ? flightRequest.creator.username : '';
 			} else if (col === 4) {
 				data = flightRequest.state
-					? t(`glossary:flightRequest.flight_state.${flightRequest.state}`)
+					? t(`glossary:flight-request.flight_state.${flightRequest.state}`)
 					: '';
 			} else if (col === 0) {
 				data = '';
@@ -153,7 +175,7 @@ const FlightRequestHub: FC = () => {
 			entitySearchTools={FlightRequestSearchTools}
 			entityPage={ViewAndEditFlightRequest}
 			columns={columns}
-			entityName={'flightRequest'}
+			entityName={'flight-request'}
 			useStore={useFlightRequestStore}
 			entities={flightRequests}
 			onEntitySelected={onEntitySelected}
