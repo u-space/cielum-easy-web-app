@@ -25,8 +25,8 @@ export class CoordinationEntity implements EntityHasDisplayName {
 	last_state_change_reason: string;
 	coordinator: CoordinatorEntity;
 	geographical_zone: GeographicalZone;
-	//flightRequest: FlightRequestEntity;
-	flightRequest: string;
+	flightRequest: FlightRequestEntity;
+	//flightRequest: string;
 
 	constructor(
 		reference: string,
@@ -39,13 +39,14 @@ export class CoordinationEntity implements EntityHasDisplayName {
 		id?: string
 	) {
 		this.id = id;
-		this.reference = reference;
+		this.reference = `${coordinator.infrastructure} (${coordinator.liaison})`;
 		this.state = state;
 		this.limit_date = limit_date;
 		this.last_state_change_reason = last_state_change_reason;
 		this.coordinator = coordinator;
-		this.flightRequest = flightRequest.id || '';
+		this.flightRequest = flightRequest;
 		this.geographical_zone = geographical_zone;
+		console.log(this);
 		makeAutoObservable(this);
 	}
 
@@ -76,9 +77,9 @@ const transformCoordination = (data: any) => {
 					coordination.state,
 					coordination.limit_date,
 					coordination.last_state_change_reason,
-					coordination.coordinator?.id,
-					coordination.flightRequest?.id,
-					coordination.geographical_zone,
+					coordination.coordinator,
+					coordination.flightRequest,
+					coordination.coordinator?.geographical_zone,
 					coordination.id
 				)
 		),
@@ -123,6 +124,7 @@ export const getCoordinationAPIClient = (api: string, token: string | null) => {
 			});
 		},
 		saveCoordination(coordination: CoordinationEntity) {
+			console.log('coordination', coordination);
 			return axiosInstance.post('coordination', coordination, {
 				headers: { auth: token }
 			});
