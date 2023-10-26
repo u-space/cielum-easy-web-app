@@ -22,6 +22,7 @@ import PNumberInput from '@pcomponents/PNumberInput';
 import PDateInput from '@pcomponents/PDateInput';
 import styled from 'styled-components';
 import PTooltip from '@pcomponents/PTooltip';
+import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -32,6 +33,7 @@ interface BaseFlightRequestDetailsProps {
 
 const StateExplanationText = styled.div`
 	display: flex;
+	width: 100%;
 	background-color: var(--primary-500);
 	color: var(--white-100);
 	border-radius: var(--radius-l);
@@ -196,6 +198,13 @@ interface FlightRequestCoordinationsProps {
 	isEditing: boolean;
 }
 
+const Coordination = styled.div`
+	background-color: var(--mirai-150);
+	border-bottom: 1px solid var(--mirai-200);
+	padding: 0.5rem;
+	margin-bottom: 0.5rem;
+`;
+
 const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, isEditing }) => {
 	const { t } = useTranslation('glossary');
 	const [edit, setEdit] = useState<string[]>([]);
@@ -212,8 +221,52 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 		<div>
 			{entity.coordination.map((coordination, index) => {
 				return (
-					<div key={coordination.id} className={styles.info_table}>
-						<div>{coordination.id} </div>
+					<Coordination>
+						<div className={styles.info_table}>
+							<PButton
+								icon="info-sign"
+								size={PButtonSize.SMALL}
+								onClick={() => {
+									history.push(`/coordinations?id=${coordination.id}`);
+								}}
+							></PButton>
+							<PButton
+								icon={
+									edit.find((e) => e === coordination.id) ? 'floppy-disk' : 'edit'
+								}
+								size={PButtonSize.SMALL}
+								onClick={() => {
+									//If it is editing, then save and change to not editing mode
+									if (edit.find((e) => e === coordination.id)) {
+										setEdit(edit.filter((e) => e !== coordination.id));
+										const coordinationToSave = {
+											...coordination,
+											flightRequest: { id: entity.id }
+										};
+
+										updateCoordination.mutate({
+											// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+											// @ts-ignore
+											entity: coordinationToSave
+										});
+									} else {
+										//Enters editing mode
+										setEdit([...edit, coordination.id as string]);
+									}
+								}}
+							></PButton>
+						</div>
+						<div key={coordination.id} className={styles.info_table}>
+							<div className={styles.id}>
+								{coordination.coordinator?.infrastructure}
+							</div>
+							<div className={styles.date}>
+								{new Date(coordination.limit_date as Date).toLocaleString(
+									[],
+									OPERATION_LOCALES_OPTIONS
+								)}
+							</div>
+						</div>
 						<div className={styles.state}>
 							<PDropdown
 								key={'coordination-state'}
@@ -223,48 +276,14 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 								}))}
 								id={'coordination-state'}
 								defaultValue={coordination.state as CoordinationState}
-								label={''}
 								onChange={(value) => (coordination.state = value)}
+								label={''}
 								isRequired
 								disabled={!edit.find((e) => e === coordination.id)}
 								isDarkVariant
-								inline
 							/>
 						</div>
-						<div className={styles.date}>
-							{new Date(coordination.limit_date as Date).toLocaleString()}
-						</div>
-						<PButton
-							icon="info-sign"
-							size={PButtonSize.EXTRA_SMALL}
-							onClick={() => {
-								history.push(`/coordinations?id=${coordination.id}`);
-							}}
-						></PButton>
-						<PButton
-							icon={edit.find((e) => e === coordination.id) ? 'floppy-disk' : 'edit'}
-							size={PButtonSize.EXTRA_SMALL}
-							onClick={() => {
-								//If it is editing, then save and change to not editing mode
-								if (edit.find((e) => e === coordination.id)) {
-									setEdit(edit.filter((e) => e !== coordination.id));
-									const coordinationToSave = {
-										...coordination,
-										flightRequest: { id: entity.id }
-									};
-
-									updateCoordination.mutate({
-										// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-										// @ts-ignore
-										entity: coordinationToSave
-									});
-								} else {
-									//Enters editing mode
-									setEdit([...edit, coordination.id as string]);
-								}
-							}}
-						></PButton>
-					</div>
+					</Coordination>
 				);
 			})}
 		</div>

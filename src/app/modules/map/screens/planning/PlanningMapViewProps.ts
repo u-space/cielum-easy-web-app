@@ -5,7 +5,7 @@ import { TokyoPick } from '@tokyo/types';
 export interface PlanningMapViewProps {
 	flightRequests: FlightRequestEntity[];
 	geographicalZones: GeographicalZone[];
-	selected: {
+	selected?: {
 		flightRequest: string | null;
 	};
 }

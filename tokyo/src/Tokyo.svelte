@@ -29,7 +29,7 @@
 	import {CSize} from "./gui/CSizeWrapper";
 
 	/* Component props */
-	export let editOptions: TokyoProps['editOptions'];
+	export let editOptions: TokyoProps['editOptions'] = {};
 	export let mapOptions: TokyoProps['mapOptions'] = {isPickEnabled: true, is3D: true};
 	export let controlsOptions: TokyoProps['controlsOptions'] = {
 		zoom: {
