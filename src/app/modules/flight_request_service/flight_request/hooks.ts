@@ -77,7 +77,9 @@ export function useQueryFlightRequests(all = false) {
 			sortingProperty,
 			sortingOrder,
 			filterProperty,
-			filterMatchingText
+			filterMatchingText,
+			filterShowPaid,
+			filterShowNotPaid
 		],
 		() =>
 			getFlightRequests(
@@ -86,7 +88,9 @@ export function useQueryFlightRequests(all = false) {
 				sortingProperty,
 				sortingOrder,
 				filterProperty,
-				filterMatchingText
+				filterMatchingText,
+				filterShowPaid,
+				filterShowNotPaid
 			)
 	);
 	const { data: response } = query;

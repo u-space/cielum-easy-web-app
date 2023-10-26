@@ -274,17 +274,23 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 			orderBy: string,
 			order: string,
 			filterBy?: string,
-			filter?: string
+			filter?: string,
+			showPaid?: boolean,
+			showNotPaid?: boolean
 		) {
 			return axiosInstance.get('flightRequest', {
-				params: buildFilterAndOrderParametersObject(
-					take,
-					skip,
-					orderBy,
-					order,
-					filterBy,
-					filter
-				),
+				params: {
+					...buildFilterAndOrderParametersObject(
+						take,
+						skip,
+						orderBy,
+						order,
+						filterBy,
+						filter
+					),
+					paid: showPaid,
+					unpaid: showNotPaid
+				},
 				headers: { auth: token },
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
