@@ -101,6 +101,12 @@
 			<div class="label">
 				{i18n.t(operation.state)}
 			</div>
+		{:else if pick.type === 'geographical-zone' && pick.properties}
+			{@const geographicalZone = pick.properties}
+			<div class="properties">
+				<h1>{geographicalZone.name}</h1>
+				<h2>{i18n.t('Geographical zone')}</h2>
+			</div>
 		{/if}
 	{:else}
 		<!-- Default pick render, still no properties -->

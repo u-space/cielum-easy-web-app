@@ -12,7 +12,7 @@ export enum SchemaStatus {
 
 const axios = Axios.create({
 	baseURL: env.core_api,
-	timeout: 3000,
+	timeout: 30000,
 	headers: {
 		'Content-Type': 'application/json'
 	}

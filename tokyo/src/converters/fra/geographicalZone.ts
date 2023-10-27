@@ -56,7 +56,7 @@ function getConverterFromGeographicalZone(
 		new PolygonLayer({
 			pickable: true,
 			id,
-			data: [geographicalZone.geography],
+			data: [{ ...geographicalZone.geography, properties: geographicalZone }],
 			getPolygon: (d) => d.coordinates,
 			getFillColor: fillColor,
 			getLineColor: lineColor,

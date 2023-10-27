@@ -57,7 +57,7 @@ export enum DocumentEntityType {
 export const getDocumentAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: 100000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 	return {
@@ -83,8 +83,6 @@ export const getDocumentAPIClient = (api: string, token: string | null) => {
 			formData.delete('name');
 			if (document.id.indexOf('TEMP_') === 0) {
 				formData.delete('id');
-
-				console.log('Start time', new Date().getMilliseconds());
 				const response = await axiosInstance.post(
 					`/${entityType}/${entityId}/document`,
 					formData,
@@ -92,7 +90,6 @@ export const getDocumentAPIClient = (api: string, token: string | null) => {
 						headers
 					}
 				);
-				console.log('Response time', new Date().getMilliseconds());
 				return response.data;
 			} else {
 				const response = await axiosInstance.patch(

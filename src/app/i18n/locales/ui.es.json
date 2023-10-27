@@ -522,5 +522,7 @@
 	"Paid": "Pagado",
 	"Pending payment": "Pendiente de pago",
 	"Show paid flight requests": "Mostrar solicitudes de coordinación pagadas",
-	"Show pending payment flight requests": "Mostrar solicitudes de coordinación pendientes de pago"
+	"Show pending payment flight requests": "Mostrar solicitudes de coordinación pendientes de pago",
+	"No linked coordinator": "No hay coordinador asociado",
+	"Geographical zone": "Zona geográfica"
 }
