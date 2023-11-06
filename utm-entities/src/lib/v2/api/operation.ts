@@ -3,6 +3,8 @@ import { AdesRole, FilteringParameters } from '../../_util';
 import {
 	BaseOperation,
 	Operation,
+	OperationState,
+	OperationStateEnum,
 	ResponseBaseOperation,
 	ResponseOperation
 } from '../model/operation';
@@ -125,8 +127,10 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 
 	return {
 		saveOperation(operation: Operation, isPilot = false) {
-			if (isPilot && operation.state === 'CLOSED')
+			if (isPilot && operation.state === OperationStateEnum.CLOSED)
 				throw new Error("You can't edit a closed operation");
+
+			if (!operation.state) operation.state = OperationStateEnum.PROPOSED;
 
 			return axiosInstance
 				.post('operation', operation.asBackendFormat({ omitOwner: isPilot }), {
