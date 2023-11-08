@@ -1,47 +1,47 @@
 <script lang="ts">
-	import CButton from '@tokyo/gui/CButton.svelte';
-	import {CSize} from '@tokyo/gui/CSizeWrapper';
-	import CLoading from '@tokyo/gui/CLoading.svelte';
+    import CButton from '@tokyo/gui/CButton.svelte';
+    import {CSize} from '@tokyo/gui/CSizeWrapper';
+    import CLoading from '@tokyo/gui/CLoading.svelte';
 
-	export let canMenuOpen = false; // Setting this to true will automatically open, but allow for closing (and reopening)
-	export let isLoading = false;
+    export let canMenuOpen = false; // Setting this to true will automatically open, but allow for closing (and reopening)
+    export let isLoading = false;
 
-	let isMenuOpen = false;
-	const open = () => isMenuOpen = true;
-	const close = () => isMenuOpen = false;
+    let isMenuOpen = false;
+    const open = () => isMenuOpen = true;
+    const close = () => isMenuOpen = false;
 
-	$: {
-		if (canMenuOpen) {
-			open(); // Using a function to prevent reactivity on "isMenuOpen"
-		} else {
-			close();
-		}
-	}
+    $: {
+        if (canMenuOpen) {
+            open(); // Using a function to prevent reactivity on "isMenuOpen"
+        } else {
+            close();
+        }
+    }
 </script>
 
 <div class="container" style:--dashboard-aside-size={isMenuOpen ? '261px': 0}>
-	<aside>
-		<div class="menu">
-			<slot name="menu"/>
-		</div>
-	</aside>
-	<main>
-		<slot/>
-		{#if canMenuOpen}
-			<div class="actions">
-				<CButton size={CSize.LARGE} icon={isMenuOpen ? "caret-double-left-bold" : "caret-double-right-bold"}
-						 on:click={() => isMenuOpen = !isMenuOpen}/>
-			</div>
-		{/if}
-	</main>
+    <aside>
+        <div class="menu">
+            <slot name="menu"/>
+        </div>
+    </aside>
+    <main>
+        <slot/>
+        {#if canMenuOpen}
+            <div class="actions">
+                <CButton size={CSize.LARGE} icon={isMenuOpen ? "caret-double-left-bold" : "caret-double-right-bold"}
+                         on:click={() => isMenuOpen = !isMenuOpen}/>
+            </div>
+        {/if}
+    </main>
 </div>
 {#if isLoading}
-	<CLoading/>
+    <CLoading/>
 {/if}
 
 <style lang="scss">
   .container {
-    position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
     bottom: 0;

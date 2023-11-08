@@ -1,0 +1,39 @@
+meta {
+  name: Send a position report
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseCoreUrl}}/position
+  body: json
+  auth: none
+}
+
+headers {
+  auth: {{token}}
+}
+
+script:pre-request {
+  let lng = -55.61577084062854;
+  let lat = -35.62204543325929;
+  
+  lng += (Math.random()-0.5) / 10;
+  lat += (Math.random()-0.5) / 10;
+  
+  const altitude = Math.round(Math.random() * 100);
+  const heading = (Math.random() - 0.5) * 360;
+  
+  req.setBody({
+    "altitude_gps": altitude,
+    "location": {
+      "type": "Point",
+      "coordinates": [lng, lat]
+    },
+    "time_sent": new Date().toISOString(),
+    "heading": heading,
+    "gufi": "19cbc2a4-77e7-4804-95b1-68d5ef6e0da8",
+    "uvin": "1b108dce-b821-4ef7-88f8-b0f771da311c",
+    "public": true
+  })
+}

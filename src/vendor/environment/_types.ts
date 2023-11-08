@@ -47,7 +47,7 @@ export enum ImplementationId {}
 // Example TestScreen.001.tsx, TestScreen.002.tsx, TestScreen.003.tsx, etc are all implementations of the same component
 
 export interface Tenant {
-  code: "net2fly" | "cielum" | "dev";
+  code: "net2fly" | "papacharlie" | "cielum" | "dev";
   specific_implementations?: ImplementationId[];
   short_name: string; //Title of the page
   assets: AssetList;

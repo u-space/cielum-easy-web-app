@@ -33,6 +33,8 @@ import { reactify } from 'svelte-preprocess-react';
 import FlightRequestEditorSvelte from './modules/flight_request_service/flight_request/screens/FlightRequestEditorApp.svelte';
 import LegacyFlightRequestStepsEditor from './modules/flight_request_service/flight_request/screens/LegacyFlightRequestStepsEditor';
 import Vehicle from './modules/core_service/vehicle/screens/Vehicle';
+import HistoricalMapApp from './modules/map/screens/historical/HistoricalMapApp.svelte';
+const HistoricalMap = reactify(HistoricalMapApp);
 
 const FlightRequestEditor = reactify(FlightRequestEditorSvelte);
 
@@ -119,6 +121,15 @@ const LoggedInScreens = () => {
 						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
 					>
 						<OperationHub />
+					</RoleGatedRoute>
+				)}
+				{isFeatureEnabled('Operations') && (
+					<RoleGatedRoute
+						exact
+						path={'/historical'}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+					>
+						<HistoricalMap />
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('Operations') && (
