@@ -40,7 +40,11 @@ const getConverterFromPositions: VehiclePositionTailTokyoConverter['getConverter
 };
 
 const getIdFromPositions = (positions: PositionEntity[]) => {
-	return getPickableId(PickableType.Vehicle, positions[0].gufi, positions[0].displayName);
+	return getPickableId(
+		PickableType.Vehicle,
+		positions[0].gufi + positions[0].uvin,
+		positions[0].displayName
+	);
 };
 
 export const vehiclePositionTailTokyoConverter: VehiclePositionTailTokyoConverter = {
