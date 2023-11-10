@@ -34,7 +34,10 @@ const getConverterFromPosition: VehiclePositionHeadLabelTokyoConverter['getConve
 	};
 
 function getIdFromPosition(position: PositionEntity) {
-	return getPickableId(PickableType.Vehicle, position.gufi, position.displayName) + '-label';
+	return (
+		getPickableId(PickableType.Vehicle, position.gufi + position.uvin, position.displayName) +
+		'-label'
+	);
 }
 
 export const vehiclePositionHeadLabelTokyoConverter: VehiclePositionHeadLabelTokyoConverter = {

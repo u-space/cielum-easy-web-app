@@ -41,6 +41,14 @@ const BaseTrackerDetails: FC<BaseTrackerDetailsProps> = observer(
 				setUser(null);
 			}
 		};
+
+		// Load user if editing
+		useEffect(() => {
+			if (!isCreating && ls.entity) {
+				setUser(ls.entity.vehicle?.owner || null);
+			}
+		}, [isCreating, ls.entity]);
+
 		if (token === null) return null;
 		if (ls.entity) {
 			return (

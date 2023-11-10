@@ -36,7 +36,10 @@ const getProjectionConverterFromPosition: VehiclePositionHeadProjectionTokyoConv
 	};
 
 function getIdFromPosition(position: PositionEntity) {
-	return getPickableId(PickableType.Vehicle, position.gufi, position.displayName) + '-projection';
+	return (
+		getPickableId(PickableType.Vehicle, position.gufi + position.uvin, position.displayName) +
+		'-projection'
+	);
 }
 
 export const vehiclePositionHeadProjectionTokyoConverter: VehiclePositionHeadProjectionTokyoConverter =
