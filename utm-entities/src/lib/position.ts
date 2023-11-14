@@ -34,15 +34,15 @@ export class PositionEntity {
 				this[prop] = position[prop];
 			}
 
-			const coordinates = [
+			/*const coordinates = [
 				position.location.coordinates[1],
 				position.location.coordinates[0]
-			];
+			];*/
 
 			this.altitude_gps = parseInt(position.altitude_gps);
 			this.heading = parseInt(position.heading);
 			this.time_sent = new Date(position.time_sent);
-			this.location = { ...position.location, coordinates: coordinates };
+			//this.location = { ...position.location, coordinates: coordinates };
 		}
 		makeAutoObservable(this);
 	}
@@ -71,8 +71,6 @@ export const getPositionAPIClient = (api: string, token: string | null) => {
 
 	return {
 		getPastPositions(gufi: string, rangeFrom: Date, rangeTo: Date) {
-			alert('Please check the date format might be wrong');
-
 			return axiosInstance.get('position/date', {
 				headers: { auth: token },
 				params: {

@@ -24,7 +24,7 @@
 		"@luma.gl/webgl": "^8.5.20",
 		"@nebula.gl/layers": "^1.0.3",
 		"@sinclair/typebox": "^0.29.6",
-		"@tanstack/svelte-query": "^4.32.6",
+		"@tanstack/svelte-query": "^4.36.1",
 		"@turf/turf": "^6.5.0",
 		"@types/geojson": "^7946.0.10",
 		"@types/react-router-dom": "^5.3.3",

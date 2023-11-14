@@ -178,8 +178,10 @@
 	}
 
 	function destroyHandler(id: string) {
+		console.log('destroy', id, allLayersMap)
 		allLayersMap.delete(id)
 		allLayersMap = allLayersMap;
+		console.log('destroyed', id, allLayersMap)
 	}
 
 	onMount(() => {

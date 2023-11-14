@@ -24,7 +24,7 @@ const getConverterFromPositions: VehiclePositionTailTokyoConverter['getConverter
 	let index = data.length - 1;
 	return () =>
 		new PathLayer({
-			id: getIdFromPositions(positions) + '-tail',
+			id: getIdFromPositions(positions),
 			data,
 			pickable: false,
 			getWidth: 2,
@@ -40,10 +40,12 @@ const getConverterFromPositions: VehiclePositionTailTokyoConverter['getConverter
 };
 
 const getIdFromPositions = (positions: PositionEntity[]) => {
-	return getPickableId(
-		PickableType.Vehicle,
-		positions[0].gufi + positions[0].uvin,
-		positions[0].displayName
+	return (
+		getPickableId(
+			PickableType.Vehicle,
+			positions[0].gufi + positions[0].uvin,
+			positions[0].displayName
+		) + '-tail'
 	);
 };
 

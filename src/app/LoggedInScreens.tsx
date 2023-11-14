@@ -129,7 +129,7 @@ const LoggedInScreens = () => {
 						path={'/historical'}
 						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
 					>
-						<HistoricalMap />
+						<HistoricalMap token={token} />
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('Operations') && (

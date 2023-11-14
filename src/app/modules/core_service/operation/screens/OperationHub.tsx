@@ -48,13 +48,7 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 					size={PButtonSize.SMALL}
 					icon="time"
 					variant={PButtonType.SECONDARY}
-					onClick={() =>
-						history.push(
-							`/past-flights?gufi=${data.gufi}&from=${(
-								data.begin as Date
-							).toISOString()}&to=${(data.end as Date).toISOString()}`
-						)
-					}
+					onClick={() => history.push(`/historical?operation=${data.gufi}`)}
 				/>
 			</PTooltip>
 			<PTooltip content={t(data.state)}>

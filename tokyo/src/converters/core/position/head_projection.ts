@@ -19,7 +19,7 @@ const ICON_MAPPING = {
 const getProjectionConverterFromPosition: VehiclePositionHeadProjectionTokyoConverter['getConverter'] =
 	(position: PositionEntity) => () => {
 		return new IconLayer({
-			id: getIdFromPosition(position) + '-projection',
+			id: getIdFromPosition(position),
 			data: [position],
 			pickable: true,
 			billboard: false,

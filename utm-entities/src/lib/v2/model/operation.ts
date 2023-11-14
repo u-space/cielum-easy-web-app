@@ -174,6 +174,7 @@ export class BaseOperation {
 
 		if (this.gufi)
 			entries.push({ property: 'gufi', value: this.gufi, translatableValue: false });
+
 		return entries;
 	}
 }
