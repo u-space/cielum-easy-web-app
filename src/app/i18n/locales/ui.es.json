@@ -524,5 +524,11 @@
 	"Show paid flight requests": "Mostrar solicitudes de coordinación pagadas",
 	"Show pending payment flight requests": "Mostrar solicitudes de coordinación pendientes de pago",
 	"No linked coordinator": "No hay coordinador asociado",
-	"Geographical zone": "Zona geográfica"
+	"Geographical zone": "Zona geográfica",
+	"This user has not validated their email address": "Este usuario no ha validado su dirección de correo electrónico",
+	"This aircraft is not validated": "Esta aeronave no está validada",
+	"This user has at least a document that is not valid and without observations": "Este usuario tiene al menos un documento que no es válido y sin observaciones",
+	"This user has no documents that are not valid without observation": "Este usuario no tiene documentos que no sean válidos sin observaciones",
+	"This aircraft has at least a document that is not valid and without observations": "Esta aeronave tiene al menos un documento que no es válido y sin observaciones",
+	"This aircraft has no documents that are not valid without observation": "Esta aeronave no tiene documentos que no sean válidos sin observaciones"
 }

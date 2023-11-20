@@ -19,8 +19,37 @@ import { getCSSVariable } from '@pcomponents/utils';
 import VehicleHubForPilotsSvelte from './VehicleHubForPilots.svelte';
 import { reactify } from 'svelte-preprocess-react';
 import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
+import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
+import i18n from 'i18next';
 
 const VehicleHubForPilots = reactify(VehicleHubForPilotsSvelte);
+
+const getStateInformation = (data: Record<string, any>): { text: string; color: string } => {
+	if (data.authorized === 'PENDING') {
+		return {
+			text: i18n.t('ui:This user has not validated their email address'),
+			color: 'var(--ramen-500)'
+		};
+	} else if (
+		data.extra_fields?.documents &&
+		data.extra_fields.documents.some(
+			(doc: { valid: boolean; observations: string }) =>
+				!doc.valid && doc.observations.length === 0
+		)
+	) {
+		return {
+			text: i18n.t(
+				'ui:This user has at least a document that is not valid and without observations'
+			),
+			color: 'var(--kannai-500)'
+		};
+	} else {
+		return {
+			text: i18n.t('ui:This user has no documents that are not valid without observation'),
+			color: 'var(--yamate-500)'
+		};
+	}
+};
 
 const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const { t } = useTranslation();
@@ -42,19 +71,24 @@ const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 				: VehicleAuthorizationStatus.PENDING;
 		}
 		return (
-			<PTooltip content={data.isAuthorized ? t('De-authorize') : t('Authorize')}>
-				<PButton
-					size={PButtonSize.SMALL}
-					icon={data.isAuthorized ? 'cross' : 'tick'}
-					variant={PButtonType.SECONDARY}
-					onClick={() => {
-						updateVehicleAuthorization.mutate({
-							uvin: data.uvin,
-							status: newAuthorizationStatus
-						});
-					}}
-				/>
-			</PTooltip>
+			<>
+				<PTooltip content={data.isAuthorized ? t('De-authorize') : t('Authorize')}>
+					<PButton
+						size={PButtonSize.SMALL}
+						icon={data.isAuthorized ? 'cross' : 'tick'}
+						variant={PButtonType.SECONDARY}
+						onClick={() => {
+							updateVehicleAuthorization.mutate({
+								uvin: data.uvin,
+								status: newAuthorizationStatus
+							});
+						}}
+					/>
+				</PTooltip>
+				<PTooltip content={getStateInformation(data).text}>
+					<StateCircle style={{ backgroundColor: getStateInformation(data).color }} />
+				</PTooltip>
+			</>
 		);
 	} else {
 		return null;
@@ -84,7 +118,7 @@ const VehicleHub = () => {
 	const idSelected = queryString.get('id');
 	const shouldShowNonAuthorized = queryString.get('pending');
 	const columns = [
-		{ title: ' ', width: rowHeight * 2 },
+		{ title: ' ', width: rowHeight * 3 },
 		{ title: t('glossary:vehicle.name'), width: 300 },
 		{ title: t('glossary:vehicle.authorization'), width: 100 },
 		{ title: t('glossary:vehicle.model'), width: 100 },
