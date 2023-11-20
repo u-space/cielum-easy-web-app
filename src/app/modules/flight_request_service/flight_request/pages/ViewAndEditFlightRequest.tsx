@@ -383,10 +383,18 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 
 	if (ls.entity.volumes.length >= volume + 1) {
 		return (
-			<div style={{ backgroundColor: 'var(--mirai-150)' }}>
+			<div style={{ padding: '0.5rem', backgroundColor: 'var(--mirai-150)' }}>
 				<h2>
 					{t('Volume')} {volume + 1}
 				</h2>
+				<h3>{t('Coordinates')}</h3>
+				{ls.entity.volumes[volume].asDMS?.map((coord) => {
+					return (
+						<div className={styles.leftbalancedline} style={{ padding: '0.25rem' }}>
+							{coord}
+						</div>
+					);
+				})}
 				<PNumberInput
 					id={`editor-flight-request-volume-${volume}-max_altitude`}
 					defaultValue={ls.entity.volumes[volume].max_altitude}

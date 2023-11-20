@@ -105,4 +105,31 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 	get(prop: string) {
 		return this[prop];
 	}
+
+	get asDMS() {
+		return this.operation_geography?.coordinates[0].map((coord: any) => {
+			const lat = coord[1];
+			const long = coord[0];
+			const latDMS = getDMSFromDecimal(lat);
+			const longDMS = getDMSFromDecimal(long);
+			return `${latDMS.isPositive ? `${latDMS.text} N` : `${latDMS.text} S`} ${
+				longDMS.isPositive ? `${longDMS.text} E` : `${longDMS.text} W`
+			}`;
+		});
+	}
+}
+
+function getDMSFromDecimal(decimal: number) {
+	const fractionalDegrees = Math.abs(decimal);
+	const degrees = Math.trunc(fractionalDegrees);
+	const fractionalMinutes = (fractionalDegrees - degrees) * 60;
+	const minutes = Math.trunc(fractionalMinutes);
+	const fractionalSeconds = (fractionalMinutes - minutes) * 60;
+	const DIGITS_AFTER_SECONDS = 3;
+	const factor = 10 ** DIGITS_AFTER_SECONDS;
+	const seconds = Math.round(fractionalSeconds * factor) / factor;
+	return {
+		isPositive: decimal > 0,
+		text: `${degrees}°${minutes}'${seconds}"`
+	};
 }
