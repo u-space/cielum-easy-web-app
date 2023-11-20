@@ -7,7 +7,14 @@ import {
 	RequestOperationVolume,
 	ResponseOperationVolume
 } from './operation_volume';
-import { ResponseBaseVehicle, ResponseVehicle, UtmBaseVehicle, UtmVehicle } from './vehicle';
+import {
+	RequestVehicle,
+	ResponseBaseVehicle,
+	ResponseVehicle,
+	UtmBaseVehicle,
+	UtmVehicle,
+	RequestOperationVehicle
+} from './vehicle';
 import { dateOptions } from '../util';
 export const OPERATION_LOCALES_OPTIONS = {
 	year: 'numeric' as const,
@@ -42,7 +49,7 @@ const RequestOperation = Type.Object(
 		state: OperationState,
 		submit_time: Type.Optional(Type.String()), // Undefined when creating a new operation, defined when updating an existing operation
 		update_time: Type.Optional(Type.String()), // Undefined when creating a new operation, defined when updating an existing operation
-		uas_registrations: Type.Array(ResponseBaseVehicle)
+		uas_registrations: Type.Array(RequestOperationVehicle)
 	},
 	{ additionalProperties: false }
 );
@@ -260,6 +267,12 @@ export class Operation
 
 		if (this.gufi) requestOperation.gufi = this.gufi;
 		if (this.owner) requestOperation.owner = this.owner.username;
+
+		requestOperation.uas_registrations = this.uas_registrations.map((vehicle) => {
+			return {
+				uvin: vehicle.uvin
+			};
+		});
 
 		if (!Value.Check(RequestOperation, requestOperation)) {
 			throw new Error(

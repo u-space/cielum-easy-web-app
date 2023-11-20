@@ -48,6 +48,7 @@ export const RequestVehicle = Type.Object({
 });
 
 export type RequestVehicle = Static<typeof RequestVehicle>;
+export const RequestOperationVehicle = Type.Pick(RequestVehicle, ['uvin']);
 
 export class UtmBaseVehicle implements UtmResponseEntity {
 	uvin: string;
