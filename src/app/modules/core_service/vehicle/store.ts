@@ -12,7 +12,8 @@ export const useVehicleStore = create<VehicleStoreState>()(
 	devtools(
 		(set, get) => ({
 			...createFilterableAndPaginableSlice<VehicleStoreSpecificState>(set, get),
-			sortingProperty: 'vehicleName',
+			sortingProperty: 'date',
+			sortingOrder: 'DESC',
 			filterProperty: 'vehicleName'
 		}),
 		{ name: 'VehicleStore' }

@@ -30,7 +30,7 @@ const FlightRequestSearchTools: FC = () => {
 				useStore={useFlightRequestStore}
 				entityName={'flight-request'}
 				searchableProps={['id', 'name']}
-				orderableProps={['name']}
+				orderableProps={['createdAt', 'name']}
 			/>
 			<CardGroup header="Filter by state">
 				<GridCheckboxes gridItems={gridItems} />
