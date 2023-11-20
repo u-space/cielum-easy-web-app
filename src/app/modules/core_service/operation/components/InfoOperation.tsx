@@ -159,12 +159,13 @@ const InfoOperation: FC<InfoOperationProps> = ({
 					<PVehicleSelect
 						api={env.core_api}
 						label={t('glossary:operation.uas_registrations')}
-						onSelect={(value: VehicleEntity[]) =>
+						onSelect={(value: VehicleEntity[]) => {
 							operation.set(
 								'uas_registrations',
 								value.map((vehicle) => UtmBaseVehicle.fromVehicleEntity(vehicle))
-							)
-						}
+							);
+							console.log('operation after changing uas_registrations', operation);
+						}}
 						preselected={operation.uas_registrations}
 						username={operation.owner?.username}
 						fill
