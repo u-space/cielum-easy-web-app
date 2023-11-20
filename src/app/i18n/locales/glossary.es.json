@@ -479,6 +479,7 @@
 			"REJECTED": "La solicitud es incompatible o inviable. ",
 			"PREFLIGHT": "Todas las coordinaciones han sido aprobadas, y el piloto está listo para volar. "
 		},
-		"noCoordination": "Sin coordinaciones"
+		"noCoordination": "Sin coordinaciones",
+		"starting_time": "Comienzo"
 	}
 }

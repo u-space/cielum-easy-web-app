@@ -19,6 +19,7 @@ import { observer } from 'mobx-react';
 import FlightRequestSearchTools from '../components/FlightRequestSearchTools';
 import styled from 'styled-components';
 import PTooltip from '@pcomponents/PTooltip';
+import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 
 interface MenuButtonsProps {
 	entity: FlightRequestEntity;
@@ -101,7 +102,8 @@ const FlightRequestHub: FC = () => {
 		{ title: t('glossary:flight-request.name'), width: 2 },
 		{ title: t('glossary:flight-request.operator'), width: 2 },
 		{ title: t('glossary:flight-request.creator'), width: 2 },
-		{ title: t('glossary:flight-request.state'), width: 2 }
+		{ title: t('glossary:flight-request.state'), width: 2 },
+		{ title: t('glossary:flight-request.starting_time'), width: 2 }
 	];
 
 	// Backend
@@ -125,6 +127,13 @@ const FlightRequestHub: FC = () => {
 			} else if (col === 4) {
 				data = flightRequest.state
 					? t(`glossary:flight-request.flight_state.${flightRequest.state}`)
+					: '';
+			} else if (col === 5) {
+				data = flightRequest.volumes[0].effective_time_begin
+					? new Date(flightRequest.volumes[0].effective_time_begin).toLocaleString(
+							[],
+							OPERATION_LOCALES_OPTIONS
+					  )
 					: '';
 			} else if (col === 0) {
 				data = '';
