@@ -80,7 +80,7 @@ const VehicleSearchTools: FC = () => {
 			useStore={useVehicleStore}
 			entityName={'vehicle'}
 			searchableProps={['vehicleName', 'model', 'uvin']}
-			orderableProps={['vehicleName', 'model', 'uvin']}
+			orderableProps={['date', 'vehicleName', 'model', 'uvin']}
 			extra={VehicleSearchToolsExtras}
 		/>
 	);

@@ -19,7 +19,8 @@ export const useFlightRequestStore = create<FlightRequestStoreState>()(
 	devtools(
 		(set, get) => ({
 			...createFilterableAndPaginableSlice<FlightRequestStoreSpecificState>(set, get),
-			sortingProperty: 'id',
+			sortingProperty: 'createdAt',
+			sortingOrder: 'DESC',
 			filterProperty: 'id',
 			filterShowNotPaid: false,
 			filterShowPaid: true,

@@ -448,6 +448,7 @@
 		"urban_flight": "¿Es este un vuelo en zona urbana?",
 		"dji_blocked": "¿Necesita usted que se le desbloqueen las zonas en su drone DJI?",
 		"id": "Id.",
+		"createdAt": "Fecha de creación",
 		"operator": "Operador",
 		"creator": "Creador",
 		"paid": "Estado del pago",
