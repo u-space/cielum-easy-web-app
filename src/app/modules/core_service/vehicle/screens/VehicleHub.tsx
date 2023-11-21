@@ -21,6 +21,7 @@ import { reactify } from 'svelte-preprocess-react';
 import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
 import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
 import i18n from 'i18next';
+import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 
 const VehicleHubForPilots = reactify(VehicleHubForPilotsSvelte);
 
@@ -122,7 +123,8 @@ const VehicleHub = () => {
 		{ title: t('glossary:vehicle.name'), width: 300 },
 		{ title: t('glossary:vehicle.authorization'), width: 100 },
 		{ title: t('glossary:vehicle.model'), width: 100 },
-		{ title: t('glossary:vehicle.owner'), width: 100 }
+		{ title: t('glossary:vehicle.owner'), width: 100 },
+		{ title: t('glossary:vehicle.date'), width: 100 }
 	];
 
 	// Backend
@@ -148,6 +150,8 @@ const VehicleHub = () => {
 				data = vehicle.model;
 			} else if (col === 4) {
 				data = vehicle.owner_id;
+			} else if (col === 5) {
+				data = vehicle.date.toLocaleString([], OPERATION_LOCALES_OPTIONS);
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;
