@@ -404,6 +404,9 @@
 			"PREFLIGHT": "Preflight"
 		},
 		"noCoordination": "No coordinations",
+		"noOperator": "No operator",
+		"noCreator": "No creator",
+		"noUavs": "No UAVs",
 		"operator": "Operator",
 		"creator": "Creator"
 	}
