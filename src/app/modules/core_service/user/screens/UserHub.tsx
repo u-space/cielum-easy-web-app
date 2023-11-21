@@ -110,7 +110,8 @@ const UserHub = () => {
 		{ title: t('glossary:user.fullname'), width: 3 },
 		{ title: t('glossary:user.email'), width: 2 },
 		// { title: t('glossary:user.username'), width: 1 },
-		{ title: t('glossary:user.role'), width: 1 }
+		{ title: t('glossary:user.role'), width: 1 },
+		{ title: t('ui:Obs.'), width: 1 }
 	];
 	const [overlay, setOverlay] = useState<ReactNode>(undefined);
 
@@ -139,6 +140,13 @@ const UserHub = () => {
 				data = user.email;
 			} else if (col === 4 - 1) {
 				data = user.role;
+			} else if (col === 5 - 1) {
+				data = user.extra_fields?.documents?.some(
+					(doc: { observations?: string }) =>
+						doc.observations && doc.observations.length > 0
+				)
+					? t('Yes')
+					: t('No');
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;

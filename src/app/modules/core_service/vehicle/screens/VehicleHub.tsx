@@ -124,7 +124,8 @@ const VehicleHub = () => {
 		{ title: t('glossary:vehicle.authorization'), width: 100 },
 		{ title: t('glossary:vehicle.model'), width: 100 },
 		{ title: t('glossary:vehicle.owner'), width: 100 },
-		{ title: t('glossary:vehicle.date'), width: 100 }
+		{ title: t('glossary:vehicle.date'), width: 100 },
+		{ title: t('ui:Obs.'), width: 100 }
 	];
 
 	// Backend
@@ -152,6 +153,13 @@ const VehicleHub = () => {
 				data = vehicle.owner_id;
 			} else if (col === 5) {
 				data = vehicle.date.toLocaleString([], OPERATION_LOCALES_OPTIONS);
+			} else if (col === 6) {
+				data = vehicle.extra_fields?.documents?.some(
+					(doc: { observations?: string }) =>
+						doc.observations && doc.observations.length > 0
+				)
+					? t('Yes')
+					: t('No');
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;
@@ -162,7 +170,7 @@ const VehicleHub = () => {
 					kind: GridCellKind.Text,
 					data: data,
 					displayData: data,
-					allowOverlay: false
+					allowOverlay: true
 				} as TextCell;
 			} else if (kind === GridCellKind.Custom) {
 				return {
@@ -170,7 +178,7 @@ const VehicleHub = () => {
 					data: data,
 					displayData: data,
 					copyData: data,
-					allowOverlay: false
+					allowOverlay: true
 				} as CustomCell;
 			}
 		}
@@ -178,7 +186,7 @@ const VehicleHub = () => {
 			kind: GridCellKind.Text,
 			data: ' ',
 			displayData: ' ',
-			allowOverlay: false
+			allowOverlay: true
 		};
 	}
 
