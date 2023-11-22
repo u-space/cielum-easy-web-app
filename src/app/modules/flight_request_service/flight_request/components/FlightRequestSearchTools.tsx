@@ -28,7 +28,7 @@ const FlightRequestSearchTools: FC = () => {
 		<>
 			<FilterAndOrderSearchTools
 				useStore={useFlightRequestStore}
-				entityName={'flight-request'}
+				entityName={'flightRequest'}
 				searchableProps={['id', 'name']}
 				orderableProps={['createdAt', 'name']}
 			/>

@@ -91,7 +91,7 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								key={prop}
 								id={`editor-flight-request-${prop}`}
 								defaultValue={entity[prop]}
-								label={t(`glossary:flight-request.${prop}`)}
+								label={t(`glossary:flightRequest.${prop}`)}
 								disabled={!isEditing}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isDarkVariant
@@ -116,11 +116,11 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								key={prop}
 								options={Object.values(FlightCategory).map((value) => ({
 									value: value,
-									label: t(`glossary:flight-request.flight_category.${value}`)
+									label: t(`glossary:flightRequest.flight_category.${value}`)
 								}))}
 								id={`editor-flight-request-${prop}`}
 								defaultValue={entity[prop]}
-								label={t(`glossary:flight-request.flightCategory`)}
+								label={t(`glossary:flightRequest.flightCategory`)}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isRequired
 								disabled={!isEditing}
@@ -151,15 +151,15 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 									key={prop}
 									id={`editor-flight-request-${prop}`}
 									defaultValue={t(
-										'glossary:flight-request.flight_state.' + entity[prop]
+										'glossary:flightRequest.flight_state.' + entity[prop]
 									)}
-									label={t(`glossary:flight-request.state`)}
+									label={t(`glossary:flightRequest.state`)}
 									disabled={true}
 									isDarkVariant
 								/>
 								<StateExplanationText>
 									{t(
-										'glossary:flight-request.flight_state_explanation.' +
+										'glossary:flightRequest.flight_state_explanation.' +
 											entity[prop]
 									)}
 								</StateExplanationText>
@@ -172,7 +172,7 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								key={prop}
 								id={`editor-flight-request-${prop}`}
 								defaultValue={value}
-								label={t(`glossary:flight-request.${prop}`)}
+								label={t(`glossary:flightRequest.${prop}`)}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isRequired
 								disabled={!isEditing}
@@ -185,7 +185,7 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								key={prop}
 								id={`editor-volume-${prop}`}
 								defaultValue={value}
-								label={t(`flight-request.${prop}`)}
+								label={t(`flightRequest.${prop}`)}
 								disabled={!isEditing}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isRequired
@@ -223,7 +223,7 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 		return null;
 	}
 	if (!entity.coordination || entity.coordination?.length === 0) {
-		return <h2>{t('flight-request.noCoordination')}</h2>;
+		return <h2>{t('flightRequest.noCoordination')}</h2>;
 	}
 	return (
 		<div>
@@ -315,7 +315,7 @@ const OperatorDetails: FC<OperatorDetailsProps> = ({ ls }) => {
 		<PUserSelectForAdmins
 			id="operator"
 			onSelect={(selected) => null}
-			label={t('flight-request.operator')}
+			label={t('flightRequest.operator')}
 			preselected={[entity.operator as UserEntity]}
 			fill
 			disabled={true}
@@ -500,13 +500,13 @@ const CreatorDetails: FC<CreatorDetailsProps> = ({ ls }) => {
 		return null;
 	}
 	if (!entity.creator) {
-		return <h2>{t('flight-request.noCreator')}</h2>;
+		return <h2>{t('flightRequest.noCreator')}</h2>;
 	}
 	return (
 		<PUserSelectForAdmins
 			id="creator"
 			onSelect={(selected) => null}
-			label={t('flight-request.creator')}
+			label={t('flightRequest.creator')}
 			preselected={[entity.creator as UserEntity]}
 			fill
 			disabled={true}
@@ -556,7 +556,7 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 						key={'input-id'}
 						id={'input-id'}
 						defaultValue={ls.entity.id}
-						label={t('glossary:flight-request.id')}
+						label={t('glossary:flightRequest.id')}
 						disabled={true}
 						isDarkVariant
 					/>

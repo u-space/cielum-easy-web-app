@@ -99,11 +99,11 @@ const FlightRequestHub: FC = () => {
 	const idSelected = queryString.get('id');
 	const columns = [
 		{ title: ' ', width: rowHeight * 2 },
-		{ title: t('glossary:flight-request.name'), width: 2 },
-		{ title: t('glossary:flight-request.operator'), width: 2 },
-		{ title: t('glossary:flight-request.creator'), width: 2 },
-		{ title: t('glossary:flight-request.state'), width: 2 },
-		{ title: t('glossary:flight-request.starting_time'), width: 2 }
+		{ title: t('glossary:flightRequest.name'), width: 2 },
+		{ title: t('glossary:flightRequest.operator'), width: 2 },
+		{ title: t('glossary:flightRequest.creator'), width: 2 },
+		{ title: t('glossary:flightRequest.state'), width: 2 },
+		{ title: t('glossary:flightRequest.starting_time'), width: 2 }
 	];
 
 	// Backend
@@ -126,7 +126,7 @@ const FlightRequestHub: FC = () => {
 				data = flightRequest.creator ? flightRequest.creator.username : '';
 			} else if (col === 4) {
 				data = flightRequest.state
-					? t(`glossary:flight-request.flight_state.${flightRequest.state}`)
+					? t(`glossary:flightRequest.flight_state.${flightRequest.state}`)
 					: '';
 			} else if (col === 5) {
 				data = flightRequest.volumes[0].effective_time_begin
@@ -184,7 +184,7 @@ const FlightRequestHub: FC = () => {
 			entitySearchTools={FlightRequestSearchTools}
 			entityPage={ViewAndEditFlightRequest}
 			columns={columns}
-			entityName={'flight-request'}
+			entityName={'flightRequest'}
 			useStore={useFlightRequestStore}
 			entities={flightRequests}
 			onEntitySelected={onEntitySelected}
