@@ -35,7 +35,7 @@ const getStateInformation = (data: Record<string, any>): { text: string; color: 
 		data.extra_fields?.documents &&
 		data.extra_fields.documents.some(
 			(doc: { valid: boolean; observations: string }) =>
-				!doc.valid && doc.observations.length === 0
+				!doc.valid && (!doc.observations || doc.observations.length === 0)
 		)
 	) {
 		return {
