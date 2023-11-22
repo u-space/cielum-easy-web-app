@@ -19,8 +19,38 @@ import { getCSSVariable } from '@pcomponents/utils';
 import VehicleHubForPilotsSvelte from './VehicleHubForPilots.svelte';
 import { reactify } from 'svelte-preprocess-react';
 import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
+import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
+import i18n from 'i18next';
+import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 
 const VehicleHubForPilots = reactify(VehicleHubForPilotsSvelte);
+
+const getStateInformation = (data: Record<string, any>): { text: string; color: string } => {
+	if (data.authorized === 'PENDING') {
+		return {
+			text: i18n.t('ui:This user has not validated their email address'),
+			color: 'var(--ramen-500)'
+		};
+	} else if (
+		data.extra_fields?.documents &&
+		data.extra_fields.documents.some(
+			(doc: { valid: boolean; observations: string }) =>
+				!doc.valid && doc.observations.length === 0
+		)
+	) {
+		return {
+			text: i18n.t(
+				'ui:This user has at least a document that is not valid and without observations'
+			),
+			color: 'var(--kannai-500)'
+		};
+	} else {
+		return {
+			text: i18n.t('ui:This user has no documents that are not valid without observation'),
+			color: 'var(--yamate-500)'
+		};
+	}
+};
 
 const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const { t } = useTranslation();
@@ -42,19 +72,24 @@ const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 				: VehicleAuthorizationStatus.PENDING;
 		}
 		return (
-			<PTooltip content={data.isAuthorized ? t('De-authorize') : t('Authorize')}>
-				<PButton
-					size={PButtonSize.SMALL}
-					icon={data.isAuthorized ? 'cross' : 'tick'}
-					variant={PButtonType.SECONDARY}
-					onClick={() => {
-						updateVehicleAuthorization.mutate({
-							uvin: data.uvin,
-							status: newAuthorizationStatus
-						});
-					}}
-				/>
-			</PTooltip>
+			<>
+				<PTooltip content={data.isAuthorized ? t('De-authorize') : t('Authorize')}>
+					<PButton
+						size={PButtonSize.SMALL}
+						icon={data.isAuthorized ? 'cross' : 'tick'}
+						variant={PButtonType.SECONDARY}
+						onClick={() => {
+							updateVehicleAuthorization.mutate({
+								uvin: data.uvin,
+								status: newAuthorizationStatus
+							});
+						}}
+					/>
+				</PTooltip>
+				<PTooltip content={getStateInformation(data).text}>
+					<StateCircle style={{ backgroundColor: getStateInformation(data).color }} />
+				</PTooltip>
+			</>
 		);
 	} else {
 		return null;
@@ -84,11 +119,13 @@ const VehicleHub = () => {
 	const idSelected = queryString.get('id');
 	const shouldShowNonAuthorized = queryString.get('pending');
 	const columns = [
-		{ title: ' ', width: rowHeight * 2 },
+		{ title: ' ', width: rowHeight * 3 },
 		{ title: t('glossary:vehicle.name'), width: 300 },
 		{ title: t('glossary:vehicle.authorization'), width: 100 },
 		{ title: t('glossary:vehicle.model'), width: 100 },
-		{ title: t('glossary:vehicle.owner'), width: 100 }
+		{ title: t('glossary:vehicle.owner'), width: 100 },
+		{ title: t('glossary:vehicle.date'), width: 100 },
+		{ title: t('ui:Obs.'), width: 100 }
 	];
 
 	// Backend
@@ -114,6 +151,15 @@ const VehicleHub = () => {
 				data = vehicle.model;
 			} else if (col === 4) {
 				data = vehicle.owner_id;
+			} else if (col === 5) {
+				data = vehicle.date.toLocaleString([], OPERATION_LOCALES_OPTIONS);
+			} else if (col === 6) {
+				data = vehicle.extra_fields?.documents?.some(
+					(doc: { observations?: string }) =>
+						doc.observations && doc.observations.length > 0
+				)
+					? t('Yes')
+					: t('No');
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;
@@ -124,7 +170,7 @@ const VehicleHub = () => {
 					kind: GridCellKind.Text,
 					data: data,
 					displayData: data,
-					allowOverlay: false
+					allowOverlay: true
 				} as TextCell;
 			} else if (kind === GridCellKind.Custom) {
 				return {
@@ -132,7 +178,7 @@ const VehicleHub = () => {
 					data: data,
 					displayData: data,
 					copyData: data,
-					allowOverlay: false
+					allowOverlay: true
 				} as CustomCell;
 			}
 		}
@@ -140,7 +186,7 @@ const VehicleHub = () => {
 			kind: GridCellKind.Text,
 			data: ' ',
 			displayData: ' ',
-			allowOverlay: false
+			allowOverlay: true
 		};
 	}
 

@@ -19,6 +19,7 @@ import UserSearchTools from '../components/UserSearchTools';
 import { UseMutationResult } from 'react-query';
 import ViewAndEditUser from '../pages/ViewAndEditUser';
 import { UserEntity } from '@utm-entities/user';
+import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
 
 interface ExtraActionsProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,42 +34,55 @@ const getExtraActions =
 		return <ExtraActions data={data} setOverlay={setOverlay} />;
 	};
 
+const getStateColor = (data: Record<string, any>) => {
+	if (!data.verified) {
+		return 'var(--ramen-500)';
+	} else {
+		return 'yellow';
+	}
+};
+
 const ExtraActions: FC<ExtraActionsProps> = ({ data, setOverlay }) => {
 	const { t } = useTranslation();
 	const updateUserStatus = useUpdateUserStatus();
 
 	return (
-		<PTooltip content={data.verified ? t('De-authorize') : t('Authorize')}>
-			<PButton
-				size={PButtonSize.SMALL}
-				icon={data.verified ? 'cross' : 'tick'}
-				variant={PButtonType.SECONDARY}
-				onClick={() =>
-					updateUserStatus.mutate(
-						{
-							username: data.username,
-							verified: !data.verified
-						},
-						{
-							onError: (error) => {
-								setOverlay(
-									<PModal
-										key={'errorOnUpdateUserStatus'}
-										title={t('Error')}
-										content={t('ui:' + error.response?.data?.message)}
-										type={PModalType.ERROR}
-										primary={{
-											onClick: () => setOverlay(undefined),
-											text: t('Ok')
-										}}
-									/>
-								);
+		<>
+			<PTooltip content={data.verified ? t('De-authorize') : t('Authorize')}>
+				<PButton
+					size={PButtonSize.SMALL}
+					icon={data.verified ? 'cross' : 'tick'}
+					variant={PButtonType.SECONDARY}
+					onClick={() =>
+						updateUserStatus.mutate(
+							{
+								username: data.username,
+								verified: !data.verified
+							},
+							{
+								onError: (error) => {
+									setOverlay(
+										<PModal
+											key={'errorOnUpdateUserStatus'}
+											title={t('Error')}
+											content={t('ui:' + error.response?.data?.message)}
+											type={PModalType.ERROR}
+											primary={{
+												onClick: () => setOverlay(undefined),
+												text: t('Ok')
+											}}
+										/>
+									);
+								}
 							}
-						}
-					)
-				}
-			/>
-		</PTooltip>
+						)
+					}
+				/>
+			</PTooltip>
+			<PTooltip content={'text'}>
+				<StateCircle style={{ backgroundColor: getStateColor(data) }} />
+			</PTooltip>
+		</>
 	);
 };
 
@@ -92,11 +106,12 @@ const UserHub = () => {
 	const idSelected = queryString.get('id');
 	const shouldShowNonAuthorized = queryString.get('unconfirmed');
 	const columns = [
-		{ title: ' ', width: rowHeight * 2 },
+		{ title: ' ', width: rowHeight * 3 },
 		{ title: t('glossary:user.fullname'), width: 3 },
 		{ title: t('glossary:user.email'), width: 2 },
 		// { title: t('glossary:user.username'), width: 1 },
-		{ title: t('glossary:user.role'), width: 1 }
+		{ title: t('glossary:user.role'), width: 1 },
+		{ title: t('ui:Obs.'), width: 1 }
 	];
 	const [overlay, setOverlay] = useState<ReactNode>(undefined);
 
@@ -125,6 +140,13 @@ const UserHub = () => {
 				data = user.email;
 			} else if (col === 4 - 1) {
 				data = user.role;
+			} else if (col === 5 - 1) {
+				data = user.extra_fields?.documents?.some(
+					(doc: { observations?: string }) =>
+						doc.observations && doc.observations.length > 0
+				)
+					? t('Yes')
+					: t('No');
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;

@@ -23,6 +23,14 @@ import PDateInput from '@pcomponents/PDateInput';
 import styled from 'styled-components';
 import PTooltip from '@pcomponents/PTooltip';
 import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
+import { operationTokyoConverter } from '@tokyo/converters/core/operation';
+import { Polygon } from 'geojson';
+import { reactify } from 'svelte-preprocess-react';
+import Tokyo from '@tokyo/Tokyo.svelte';
+import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
+import { useTokyo } from '@tokyo/store';
+import { EditMode, TokyoProps } from '@tokyo/types';
+import { flightRequestTokyoConverter } from '@tokyo/converters/fra/flightRequest';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -378,15 +386,57 @@ interface VolumeDetailsProps {
 	volume: number;
 	isEditing: boolean;
 }
+
+const TokyoSvelte = reactify(Tokyo);
+const TokyoGenericMapElementSvelte = reactify(TokyoGenericMapElement);
+const MapContainer = styled.div`
+	position: relative;
+	height: 500px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+`;
 const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 	const { t } = useTranslation(['ui', 'glossary']);
+	const tokyo = useTokyo();
+	const tokyoOptions: TokyoProps = {
+		editOptions: {
+			mode: EditMode.DISABLED
+		},
+		mapOptions: {
+			isPickEnabled: false
+		},
+		controlsOptions: {
+			zoom: {
+				enabled: true
+			},
+			geolocator: {
+				enabled: false
+			},
+			backgroundModeSwitch: {
+				enabled: true
+			},
+			geocoder: {
+				enabled: false
+			}
+		},
+		t
+	};
 
 	if (ls.entity.volumes.length >= volume + 1) {
 		return (
-			<div style={{ backgroundColor: 'var(--mirai-150)' }}>
+			<div style={{ padding: '0.5rem', backgroundColor: 'var(--mirai-150)' }}>
 				<h2>
 					{t('Volume')} {volume + 1}
 				</h2>
+				<h3>{t('Coordinates')}</h3>
+				{ls.entity.volumes[volume].asDMS?.map((coord) => {
+					return (
+						<div className={styles.leftbalancedline} style={{ padding: '0.25rem' }}>
+							{coord}
+						</div>
+					);
+				})}
 				<PNumberInput
 					id={`editor-flight-request-volume-${volume}-max_altitude`}
 					defaultValue={ls.entity.volumes[volume].max_altitude}
@@ -419,6 +469,19 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 					defaultValue={ls.entity.volumes[volume].effective_time_end || undefined}
 					onChange={(value) => ls.entity.volumes[volume].set('effective_time_end', value)}
 				/>
+				<MapContainer>
+					<TokyoSvelte {...tokyoOptions}>
+						<TokyoGenericMapElementSvelte
+							id={flightRequestTokyoConverter.getId(ls.entity)}
+							getLayer={flightRequestTokyoConverter.getConverter(ls.entity)}
+							onLoad={() =>
+								tokyo.flyToCenterOfGeometry(
+									ls.entity.volumes[volume].operation_geography as Polygon
+								)
+							}
+						/>
+					</TokyoSvelte>
+				</MapContainer>
 			</div>
 		);
 	} else {

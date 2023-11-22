@@ -15,20 +15,11 @@ import OperationSearchTools from '../components/OperationSearchTools';
 import styled from 'styled-components';
 import { OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
 import { Operation, OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
+import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
 
 interface ExtraActionsProps {
 	data: Operation;
 }
-
-const OperationStateCircle = styled.div`
-	height: 1rem;
-	width: 1rem;
-	border-radius: 100%;
-	margin-left: 1rem;
-	border: 1px solid rgb(var(--mirai-900-rgb), 0.25);
-	box-shadow: 0 1px 1px 0 rgba (0, 0, 0, 0.25);
-	filter: saturate(0.75);
-`;
 
 const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 	const history = useHistory();
@@ -52,7 +43,7 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 				/>
 			</PTooltip>
 			<PTooltip content={t(data.state)}>
-				<OperationStateCircle
+				<StateCircle
 					style={{
 						backgroundColor:
 							OPERATION_STATE_COLORS_CSS[

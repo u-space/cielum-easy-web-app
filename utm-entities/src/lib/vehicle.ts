@@ -41,7 +41,7 @@ export class VehicleEntity implements EntityHasDisplayName {
 		defaultOperator: string | null = null
 	) {
 		this.uvin = vehicle?.uvin ?? '_temp';
-		this.date = vehicle?.date;
+		this.date = new Date(vehicle?.date);
 		this.authorized = vehicle?.authorized ?? 'AUTHORIZED';
 		this.registeredBy = vehicle?.registeredBy;
 		this.faaNumber = vehicle?.faaNumber ?? 'FAANUMBER';
