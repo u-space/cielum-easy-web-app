@@ -431,6 +431,7 @@
 	"flight request must have an operator": "La solicitud de coordinación debe tener un operador",
 	"flight request must have at least one uav": "La solicitud de coordinación debe tener por lo menos una aeronave",
 	"flight request must have at least one volume": "La solicitud de coordinación debe tener por lo menos un volumen",
+	"Flight request information": "Información de la solicitud de coordinación",
 	"All drones must have insurance": "Todas las aeronaves deben tener un seguro válido",
 	"Fill the form": "Rellena el formulario",
 	"capital_explanation": "El capital asegurado es el máximo que la aseguradora pagará por cada siniestro. El capital asegurado debe ser mayor que el valor de la aeronave.",

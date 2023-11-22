@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react';
+import { observer, useLocalStore } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import PInput from '@pcomponents/PInput';
 import styles from '../../../../commons/Pages.module.scss';
@@ -6,6 +6,8 @@ import PCoordinationStateSelect from '@pcomponents/PCoordinationStateSelect';
 import { CSSProperties, FC } from 'react';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import { CoordinationEntity, CoordinationState } from '@flight-request-entities/coordination';
+import ViewAndEditFlightRequest from '../../flight_request/pages/ViewAndEditFlightRequest';
+import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 
 const specialProps = ['id', 'state'];
 const nonRequiredProps = ['email', 'telephone', 'price', 'discount_Multiple_Dates'];
@@ -102,6 +104,21 @@ const ViewAndEditCoordination: FC<ViewAndEditCoordinationProps> = ({
 	style
 }) => {
 	const { t } = useTranslation();
+	const lsFr: UseLocalStoreEntity<FlightRequestEntity> = useLocalStore(() => ({
+		entity: ls.entity.flightRequest,
+		documents: new Map(),
+
+		setInfo(
+			prop: keyof FlightRequestEntity,
+			value: FlightRequestEntity[keyof FlightRequestEntity]
+		) {
+			if (ls.entity) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				ls.entity[prop] = value;
+			}
+		}
+	}));
 	return (
 		<div className={styles.twobytwo} style={style}>
 			<div className={styles.content}>
@@ -115,6 +132,19 @@ const ViewAndEditCoordination: FC<ViewAndEditCoordinationProps> = ({
 						ls={ls}
 					/>
 				</section>
+				{/* <aside className={styles.flightRequestInfo}>
+					<h2>{t('Flight request information')}</h2>
+				</aside>
+				<section>
+					<ViewAndEditFlightRequest
+						ls={lsFr}
+						isEditing={false}
+					/>
+				</section> */}
+			</div>
+			<div className={styles.flightRequestInfo}>
+				<h2 className={styles.title}>{t('Flight request information')}</h2>
+				<ViewAndEditFlightRequest ls={lsFr} isEditing={false} />
 			</div>
 		</div>
 	);

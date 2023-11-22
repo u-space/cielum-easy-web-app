@@ -501,22 +501,25 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 					<BaseFlightRequestDetails isEditing={isEditing} ls={ls} />
 				</section>
 				<div className={styles.separator} />
-
-				<aside className={styles.summary}>
-					<h2>{t('Volumes')}</h2>
-				</aside>
-				<section className={styles.details}>
-					{ls.entity.volumes.map((volume, index) => {
-						return (
-							<VolumeDetails
-								key={volume.ordinal}
-								isEditing={isEditing}
-								ls={ls}
-								volume={index}
-							/>
-						);
-					})}
-				</section>
+				{ls.entity.volumes.length > 0 && (
+					<>
+						<aside className={styles.summary}>
+							<h2>{t('Volumes')}</h2>
+						</aside>
+						<section className={styles.details}>
+							{ls.entity.volumes.map((volume, index) => {
+								return (
+									<VolumeDetails
+										key={volume.ordinal}
+										isEditing={isEditing}
+										ls={ls}
+										volume={index}
+									/>
+								);
+							})}
+						</section>
+					</>
+				)}
 
 				<aside className={styles.summary}>
 					<h2>{t('Flight Request Operator')}</h2>
