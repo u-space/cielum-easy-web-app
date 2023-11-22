@@ -20,6 +20,7 @@ import { UseMutationResult } from 'react-query';
 import ViewAndEditUser from '../pages/ViewAndEditUser';
 import { UserEntity } from '@utm-entities/user';
 import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
+import i18n from 'src/app/i18n';
 
 interface ExtraActionsProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,14 +35,33 @@ const getExtraActions =
 		return <ExtraActions data={data} setOverlay={setOverlay} />;
 	};
 
-const getStateColor = (data: Record<string, any>) => {
-	if (!data.verified) {
-		return 'var(--ramen-500)';
+const getStateInformation = (data: Record<string, any>): { text: string; color: string } => {
+	console.log('User', data);
+	if (data.verified === false) {
+		return {
+			text: i18n.t('ui:This user has not validated their email address'),
+			color: 'var(--ramen-500)'
+		};
+	} else if (
+		data.extra_fields?.documents &&
+		data.extra_fields.documents.some(
+			(doc: { valid: boolean; observations: string }) =>
+				!doc.valid && (!doc.observations || doc.observations.length === 0)
+		)
+	) {
+		return {
+			text: i18n.t(
+				'ui:This user has at least a document that is not valid and without observations'
+			),
+			color: 'var(--kannai-500)'
+		};
 	} else {
-		return 'yellow';
+		return {
+			text: i18n.t('ui:This user has no documents that are not valid without observation'),
+			color: 'var(--yamate-500)'
+		};
 	}
 };
-
 const ExtraActions: FC<ExtraActionsProps> = ({ data, setOverlay }) => {
 	const { t } = useTranslation();
 	const updateUserStatus = useUpdateUserStatus();
@@ -79,8 +99,8 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data, setOverlay }) => {
 					}
 				/>
 			</PTooltip>
-			<PTooltip content={'text'}>
-				<StateCircle style={{ backgroundColor: getStateColor(data) }} />
+			<PTooltip content={getStateInformation(data).text}>
+				<StateCircle style={{ backgroundColor: getStateInformation(data).color }} />
 			</PTooltip>
 		</>
 	);

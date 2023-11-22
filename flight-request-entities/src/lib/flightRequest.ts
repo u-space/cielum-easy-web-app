@@ -46,6 +46,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 	dji_controller_number: string;
 	dji_email: string;
 	paid: boolean;
+	createdAt: Date;
 	flight_category: FlightCategory;
 	geographicalZones?: GeographicalZone[] = [];
 
@@ -70,7 +71,8 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 			coordination,
 			geographicalZones,
 			id,
-			paid
+			paid,
+			createdAt
 		} = existing;
 
 		this.name = name;
@@ -93,6 +95,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		this.geographicalZones = geographicalZones;
 		this.creator = creator;
 		this.paid = paid;
+		this.createdAt = createdAt;
 
 		makeAutoObservable(this);
 	}
@@ -172,7 +175,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 	}
 
 	get asBackendFormat() {
-		return {
+		const result = {
 			...this,
 			operator: {
 				username:
@@ -188,6 +191,10 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 				return volume;
 			})
 		};
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		delete result.createdAt;
+		return result;
 	}
 }
 

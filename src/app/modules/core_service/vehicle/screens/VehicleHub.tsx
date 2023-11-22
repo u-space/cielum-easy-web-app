@@ -28,7 +28,7 @@ const VehicleHubForPilots = reactify(VehicleHubForPilotsSvelte);
 const getStateInformation = (data: Record<string, any>): { text: string; color: string } => {
 	if (data.authorized === 'PENDING') {
 		return {
-			text: i18n.t('ui:This user has not validated their email address'),
+			text: i18n.t('ui:This aircraft is not validated'),
 			color: 'var(--ramen-500)'
 		};
 	} else if (
@@ -40,13 +40,15 @@ const getStateInformation = (data: Record<string, any>): { text: string; color: 
 	) {
 		return {
 			text: i18n.t(
-				'ui:This user has at least a document that is not valid and without observations'
+				'ui:This aircraft has at least a document that is not valid and without observations'
 			),
 			color: 'var(--kannai-500)'
 		};
 	} else {
 		return {
-			text: i18n.t('ui:This user has no documents that are not valid without observation'),
+			text: i18n.t(
+				'ui:This aircraft has no documents that are not valid without observation'
+			),
 			color: 'var(--yamate-500)'
 		};
 	}

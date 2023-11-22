@@ -103,7 +103,8 @@ const FlightRequestHub: FC = () => {
 		{ title: t('glossary:flightRequest.operator'), width: 2 },
 		{ title: t('glossary:flightRequest.creator'), width: 2 },
 		{ title: t('glossary:flightRequest.state'), width: 2 },
-		{ title: t('glossary:flightRequest.starting_time'), width: 2 }
+		{ title: t('glossary:flightRequest.starting_time'), width: 2 },
+		{ title: t('glossary:flightRequest.createdAt'), width: 2 }
 	];
 
 	// Backend
@@ -131,6 +132,13 @@ const FlightRequestHub: FC = () => {
 			} else if (col === 5) {
 				data = flightRequest.volumes[0].effective_time_begin
 					? new Date(flightRequest.volumes[0].effective_time_begin).toLocaleString(
+							[],
+							OPERATION_LOCALES_OPTIONS
+					  )
+					: '';
+			} else if (col === 6) {
+				data = flightRequest.createdAt
+					? new Date(flightRequest.createdAt).toLocaleString(
 							[],
 							OPERATION_LOCALES_OPTIONS
 					  )
