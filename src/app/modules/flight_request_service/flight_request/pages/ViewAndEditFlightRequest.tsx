@@ -31,6 +31,9 @@ import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
 import { useTokyo } from '@tokyo/store';
 import { EditMode, TokyoProps } from '@tokyo/types';
 import { flightRequestTokyoConverter } from '@tokyo/converters/fra/flightRequest';
+import { useSchemaStore } from 'src/app/modules/schemas/store';
+import { useAuthStore } from 'src/app/modules/auth/store';
+import env from '../../../../../vendor/environment/env';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -304,12 +307,22 @@ interface OperatorDetailsProps {
 
 const OperatorDetails: FC<OperatorDetailsProps> = ({ ls }) => {
 	const { t } = useTranslation('glossary');
+	const schemaUsers = useSchemaStore((state) => state.users);
+	const token = useAuthStore((state) => state.token);
+	const role = useAuthStore((state) => state.role);
+	const isAdmin = role === 'ADMIN';
 	const entity = ls.entity;
 	if (!entity) {
 		return null;
 	}
 	if (!entity.operator) {
 		return <h2>{t('flightRequest.noOperator')}</h2>;
+	}
+	if (!schemaUsers) {
+		return null;
+	}
+	if (!token) {
+		return null;
 	}
 	return (
 		<PUserSelectForAdmins
@@ -320,9 +333,10 @@ const OperatorDetails: FC<OperatorDetailsProps> = ({ ls }) => {
 			fill
 			disabled={true}
 			isDarkVariant
-			api={''}
-			token={''}
-			schema={{}}
+			api={env.core_api}
+			token={token}
+			schema={schemaUsers}
+			isAdmin={isAdmin}
 		/>
 	);
 };
