@@ -101,6 +101,14 @@
 	& > * {
 		width: 100%;
 	}
+	.moreDetails {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		align-items: center;
+
+		margin-bottom: 10px;
+	}
 }
 
 h2 {

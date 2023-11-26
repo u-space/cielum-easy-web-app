@@ -8,6 +8,8 @@ import { UseLocalStoreEntity } from '../../../../commons/utils';
 import { CoordinationEntity, CoordinationState } from '@flight-request-entities/coordination';
 import ViewAndEditFlightRequest from '../../flight_request/pages/ViewAndEditFlightRequest';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
+import { Button } from '@blueprintjs/core';
+import PButton from '@pcomponents/PButton';
 
 const specialProps = ['id', 'state'];
 const nonRequiredProps = ['email', 'telephone', 'price', 'discount_Multiple_Dates'];
@@ -145,6 +147,14 @@ const ViewAndEditCoordination: FC<ViewAndEditCoordinationProps> = ({
 			<div className={styles.flightRequestInfo}>
 				<h2 className={styles.title}>{t('Flight request information')}</h2>
 				<ViewAndEditFlightRequest ls={lsFr} isEditing={false} />
+				<div className={styles.moreDetails}>
+					<PButton
+						text={t('Flight Request Details')}
+						onClick={() => {
+							window.open(`/flight-requests?id=${lsFr.entity?.id}`, '_blank');
+						}}
+					/>
+				</div>
 			</div>
 		</div>
 	);
