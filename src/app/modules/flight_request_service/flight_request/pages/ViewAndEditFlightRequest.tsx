@@ -509,12 +509,22 @@ interface CreatorDetailsProps {
 
 const CreatorDetails: FC<CreatorDetailsProps> = ({ ls }) => {
 	const { t } = useTranslation('glossary');
+	const schemaUsers = useSchemaStore((state) => state.users);
+	const token = useAuthStore((state) => state.token);
+	const role = useAuthStore((state) => state.role);
+	const isAdmin = role === 'ADMIN';
 	const entity = ls.entity;
 	if (!entity) {
 		return null;
 	}
 	if (!entity.creator) {
 		return <h2>{t('flightRequest.noCreator')}</h2>;
+	}
+	if (!schemaUsers) {
+		return null;
+	}
+	if (!token) {
+		return null;
 	}
 	return (
 		<PUserSelectForAdmins
@@ -525,9 +535,10 @@ const CreatorDetails: FC<CreatorDetailsProps> = ({ ls }) => {
 			fill
 			disabled={true}
 			isDarkVariant
-			api={''}
-			schema={{}}
-			token={''}
+			api={env.core_api}
+			token={token}
+			schema={schemaUsers}
+			isAdmin={isAdmin}
 		/>
 	);
 };
