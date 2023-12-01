@@ -7,6 +7,7 @@
 		"username": "Username",
 		"username_desc": "Quelques requirements",
 		"email": "E-mail",
+		"country": "Country",
 		"role": "Role",
 		"role_pilot": "Pilot",
 		"role_admin": "Administrator",

@@ -153,7 +153,13 @@ export class VehicleEntity implements EntityHasDisplayName {
 	get asNiceString() {
 		const serialNumber = this.extra_fields?.serial_number ?? undefined;
 		const res = `${this.vehicleName} (${this.licensePlate}) `;
-		if (serialNumber) return `${res}[${serialNumber}]`;
+		if (serialNumber && this.licensePlate) {
+			return `${res}[${serialNumber}]`;
+		} else if (this.licensePlate) {
+			return res;
+		} else {
+			return `${this.vehicleName}`;
+		}
 	}
 
 	get isAuthorized() {

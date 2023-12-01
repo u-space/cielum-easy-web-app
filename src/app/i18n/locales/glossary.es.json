@@ -7,6 +7,7 @@
 		"username": "Nombre de usuario",
 		"username_desc": "Quelques requirements, longer than whatever else in this text whate is this yeah genau lalala",
 		"email": "Email",
+		"country": "País",
 		"role": "Rol",
 		"role_pilot": "Piloto",
 		"role_admin": "Administrador",
