@@ -29,6 +29,7 @@ import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 import { useAuthStore } from '../../../auth/store';
 import { UserEntity } from '@utm-entities/user';
 import { NestedUser } from '@utm-entities/v2/model/user';
+import { useQueryUser } from '../../user/hooks';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -42,6 +43,8 @@ const OperationEditor = () => {
 	const tokyo = useTokyo();
 
 	const username = useAuthStore((state) => state.username);
+
+	const queryUser = useQueryUser(username, true);
 
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
 	const schemaUsers = useSchemaStore((state) => state.users);
@@ -80,6 +83,22 @@ const OperationEditor = () => {
 	}, []);*/
 
 	const [operation, setOperation] = useState<Operation>(new Operation());
+
+	useEffect(() => {
+		if (queryUser.isSuccess) {
+			const user: UserEntity = queryUser.data?.data;
+			if (operation.owner === null) {
+				operation.set(
+					'owner',
+					new NestedUser({
+						...user
+					})
+				);
+				operation.set('contact', user.fullName);
+				operation.set('contact_phone', user.phone || t('The user has no known phone'));
+			}
+		}
+	}, [queryUser, operation]);
 
 	useEffect(() => {
 		if (!!id && !queryOperation.isSuccess && !queryOperation.isError) {
