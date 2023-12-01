@@ -200,6 +200,8 @@ export class Operation
 	constructor(backendOperation?: ResponseOperation) {
 		super(backendOperation);
 		if (backendOperation) {
+			backendOperation.flight_comments = backendOperation?.flight_comments || ' ';
+
 			if (!Value.Check(ResponseOperation, backendOperation)) {
 				console.error(
 					ResponseOperation,
@@ -220,7 +222,7 @@ export class Operation
 			this.owner = null;
 			this.submit_time = null;
 			this.update_time = null;
-			this.flight_comments = undefined;
+			this.flight_comments = ' ';
 			this.uas_registrations = [];
 		}
 	}
