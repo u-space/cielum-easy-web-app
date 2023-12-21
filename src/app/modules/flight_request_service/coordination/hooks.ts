@@ -51,7 +51,9 @@ export function useQueryCoordinations() {
 			sortingOrder: state.sortingOrder,
 			filterProperty: state.filterProperty,
 			filterMatchingText: state.filterMatchingText,
-			states: Array.from(state.filterShowStates.keys()),
+			states: Array.from(state.filterShowStates.keys()).filter((s) =>
+				state.filterShowStates.get(s)
+			),
 			filterCoordinatorTypes: state.filterCoordinatorTypes
 		}),
 		shallow

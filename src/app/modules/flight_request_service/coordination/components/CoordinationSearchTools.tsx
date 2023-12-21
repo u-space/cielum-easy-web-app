@@ -4,7 +4,7 @@ import FilterAndOrderSearchTools from '../../../../commons/components/hubs/Filte
 import { useCoordinationStore } from '../store';
 import GridCheckboxes from '../../../../commons/layouts/dashboard/menu/GridCheckboxes';
 import { CoordinationState } from '@flight-request-entities/coordination';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import PCoordinatorTypeSelect from '@pcomponents/PCoordinatorTypeSelect';
 import { useTranslation } from 'react-i18next';
 import { getFeatureOption } from '../../../../utils';
