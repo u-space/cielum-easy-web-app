@@ -208,5 +208,14 @@ export interface Tenant {
       icon: string | null;
       path: string; // URL to redirect to when the button is clicked (from root)
     }[];
+
+    // Add script for external client tracking
+    // ex: <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/6079301.js"></script>
+    external_client_tracking_script?: {
+      id: string;
+      src: string;
+      element: string;
+    };
+    // easy-webapp v3.1.x
   };
 }

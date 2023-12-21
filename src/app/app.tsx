@@ -99,6 +99,19 @@ export function App() {
 		localStorage.setItem('bannerHidden', isBannerHidden.toString());
 	}, [isBannerHidden]);
 
+	// Add script to the document, if extra tenant config is set
+	useEffect(() => {
+		if (!env.tenant.extras.external_client_tracking_script) return;
+		const { element, id, src } = env.tenant.extras.external_client_tracking_script;
+		const script = document.createElement('script');
+		script.src = src;
+		script.id = id;
+		script.defer = true;
+		script.async = true;
+		script.type = 'text/javascript';
+		document.querySelector(element)?.appendChild(script);
+	}, []);
+
 	useEffect(() => {
 		if (!env.redirect_small_screens_url) return;
 		if (window.screen.width <= 1000) {
