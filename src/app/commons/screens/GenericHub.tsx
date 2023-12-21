@@ -85,6 +85,7 @@ function GenericHub<T extends GenericHubEntityType>(props: GenericHubProps<T>) {
 		canAddNew = true,
 		canEdit = () => true
 	} = props;
+
 	// Other hooks
 	const { t } = useTranslation(['ui', 'glossary']);
 	const history = useHistory();

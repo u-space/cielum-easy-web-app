@@ -48,7 +48,7 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 			email = '',
 			minimun_coordination_days = 0,
 			price = 0,
-			discount_Multiple_Dates = undefined,
+			discount_Multiple_Dates = 0,
 			geographical_zone = null,
 			/*manual_coordinator_procedure = {
 				text_description: '',
@@ -67,8 +67,8 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 		this.minimun_coordination_days = Number(minimun_coordination_days);
 		this.price = Number(price);
 		this.discount_Multiple_Dates = discount_Multiple_Dates
-			? discount_Multiple_Dates
-			: undefined;
+			? Number(discount_Multiple_Dates)
+			: 0;
 		this.geographical_zone = geographical_zone;
 		this.automatic_coordinator_procedure = automatic_coordinator_procedure;
 		this.manual_coordinator_procedure = manual_coordinator_procedure;

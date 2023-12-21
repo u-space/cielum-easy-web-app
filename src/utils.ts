@@ -39,7 +39,7 @@ export const colors = {
 };
 
 function getCIELUMBrand() {
-	return `${colors.bg.blue}[${colors.bright}CIELUMeasy${colors.reset}${colors.bg.blue}]${colors.reset} `;
+	return `${colors.bg.blue}[${colors.bright}CIELUMeasy W·A${colors.reset}${colors.bg.blue}]${colors.reset} `;
 }
 
 function getTag(bgColor: keyof typeof colors.bg, text: string) {
@@ -55,7 +55,7 @@ export function logCIELUMGeneralInfo(message: string) {
 }
 
 export function getWebConsoleLogger() {
-	const brand = 'CIELUMeasy';
+	const brand = 'CIELUMeasy W·A';
 	return {
 		getErrorForDeveloperToFix: (message: string) => {
 			throw new Error(`${brand} DevError: ${message}`);

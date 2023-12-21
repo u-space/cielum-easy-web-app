@@ -30,7 +30,7 @@ const SuccessScreen = () => {
 	);
 	const error = finishAction.error;
 	useEffect(() => {
-		finishAction.mutate();
+		if (finishAction.isIdle) finishAction.mutate();
 	}, [sessionId]);
 
 	return (

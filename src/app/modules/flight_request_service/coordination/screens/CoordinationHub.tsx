@@ -130,7 +130,7 @@ const CoordinationHub = () => {
 			onEntitySelected={onEntitySelected}
 			idSelected={idSelected}
 			updateQuery={updateCoordination as UseMutationResult}
-			query={{ ...count, query }}
+			query={{ ...query, count: count as number }}
 			canEdit={() => isAdmin}
 		/>
 	);

@@ -46,7 +46,6 @@ export class CoordinationEntity implements EntityHasDisplayName {
 		this.coordinator = coordinator;
 		this.flightRequest = flightRequest;
 		this.geographical_zone = geographical_zone;
-		console.log(this);
 		makeAutoObservable(this);
 	}
 

@@ -132,7 +132,7 @@ const BaseCoordinatorDetails: FC<BaseCoordinatorDetailsProps> = ({ ls, isEditing
 					} else if (!specialProps.includes(String(prop))) {
 						const value = ls.entity[prop as keyof CoordinatorEntity] ?? '';
 						// is value number
-						if (typeof value === 'number' && prop !== 'discount_Multiple_Dates') {
+						if (typeof value === 'number') {
 							return (
 								<PNumberInput
 									key={prop}

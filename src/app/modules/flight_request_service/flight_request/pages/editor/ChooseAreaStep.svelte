@@ -96,16 +96,17 @@
 			}
 		}}
 >
+	<TokyoGenericMapElement
+			id={genericVolumeTokyoConverter.getId(volume)}
+			getLayer={genericVolumeTokyoConverter.getConverter(volume, volumeDrawingProps)}
+	/>
 	{#each geographicalZones as geographicalZone (geographicalZone.id)}
 		<TokyoGenericMapElement
 				id={geographicalZoneTokyoConverter.getId(geographicalZone)}
 				getLayer={geographicalZoneTokyoConverter.getConverter(geographicalZone, geographicalZoneDrawingProps)}
 		/>
 	{/each}
-	<TokyoGenericMapElement
-			id={genericVolumeTokyoConverter.getId(volume)}
-			getLayer={genericVolumeTokyoConverter.getConverter(volume, volumeDrawingProps)}
-	/>
+
 </Tokyo>
 <div class="prompt">
 	<CButton on:click={next}>{i18n.t('I want to fly here')}</CButton>

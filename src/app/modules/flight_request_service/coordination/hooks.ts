@@ -57,17 +57,9 @@ export function useQueryCoordinations() {
 		shallow
 	);
 
-	const {
-		isLoading: isLoadingCoordinations,
-		isSuccess: isSuccessCoordinations,
-		isError: isErrorCoordinations,
-		data: response,
-		error: errorCoordinations,
-		isPreviousData: isPreviousDataCoordinations,
-		refetch
-	} = useQuery(
+	const query = useQuery(
 		[
-			'coordinators',
+			'coordinations',
 			states,
 			filterCoordinatorTypes,
 			pageTake,
@@ -91,11 +83,21 @@ export function useQueryCoordinations() {
 		{ keepPreviousData: true }
 	);
 
+	const {
+		isLoading: isLoadingCoordinations,
+		isSuccess: isSuccessCoordinations,
+		isError: isErrorCoordinations,
+		data: response,
+		error: errorCoordinations,
+		isPreviousData: isPreviousDataCoordinations,
+		refetch
+	} = query;
 	const data = isSuccessCoordinations ? response.data : null;
 	const coordinations = data ? data.coordinations : [];
 	const count = data ? data.count : 0;
 
 	return {
+		...query,
 		coordinations,
 		count,
 		isLoadingCoordinations,
