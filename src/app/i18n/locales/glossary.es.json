@@ -486,5 +486,51 @@
 		"noUavs": "Sin aeronaves",
 		"noCreator": "Sin creador",
 		"starting_time": "Comienzo"
+	},
+	"flight-request": {
+		"name": "Nombre de la solicitud",
+		"isDefaultOperator": "¿Desea utilizar el operador por defecto?",
+		"uas_registrations": "Aeronaves a utilizar",
+		"flight_comments": "Comentarios de vuelo",
+		"urban_flight": "¿Es este un vuelo en zona urbana?",
+		"dji_blocked": "¿Necesita usted que se le desbloqueen las zonas en su drone DJI?",
+		"id": "Id.",
+		"createdAt": "Fecha de creación",
+		"operator": "Operador",
+		"creator": "Creador",
+		"paid": "Estado del pago",
+		"parachute_model": "Modelo de paracaídas",
+		"dji_controller_number": "Número de controlador DJI",
+		"dji_email": "Email inicio sesión DJI",
+		"flightCategory": "Categoría de vuelo",
+		"flight_category": {
+			"OPEN": "A1",
+			"STS_01": "STS 01",
+			"STS_02": "STS 02",
+			"A2": "A2",
+			"A3": "A3"
+		},
+		"state": "Estado",
+		"flight_state": {
+			"REQUIRE_APPROVAL": "Requiere aprobación",
+			"PENDING": "Pendiente",
+			"COMPLETED": "Completado",
+			"CANCELLED": "Cancelado",
+			"REJECTED": "Rechazado",
+			"PREFLIGHT": "Pre-vuelo"
+		},
+		"flight_state_explanation": {
+			"REQUIRE_APPROVAL": "El operador se hará cargo de solicitar sus permisos de vuelo. ",
+			"PENDING": "Hay algunas coordinaciones que no se han llevado a cabo, o están pendientes de aprobación por parte del gestor competente. Una vez todas las coordinaciones estén iniciadas, el estado pasará automaticamente a \"COMPLETADA\". ",
+			"COMPLETED": "Todas las coordinaciones han sido lanzadas. Advertencia: Esto no quiere decir que hayan sido aprobadas. ",
+			"CANCELLED": "El piloto ha solicitado una cancelación de esta solicitud. ",
+			"REJECTED": "La solicitud es incompatible o inviable. ",
+			"PREFLIGHT": "Todas las coordinaciones han sido aprobadas, y el piloto está listo para volar. "
+		},
+		"noCoordination": "Sin coordinaciones",
+		"noOperator": "Sin operador",
+		"noUavs": "Sin aeronaves",
+		"noCreator": "Sin creador",
+		"starting_time": "Comienzo"
 	}
 }
