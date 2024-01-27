@@ -97,7 +97,7 @@ export interface GetGeographicalZonesParsedResponseType {
 export const getGeographicalZoneAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 15000,
+		timeout: 3000000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
@@ -141,6 +141,22 @@ export const getGeographicalZoneAPIClient = (api: string, token: string | null) 
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
 				).concat(transformGeographicalZone)
 			});
+		},
+		async getFetchUpdateInformation() {
+			return (
+				await axiosInstance.get('geographicalzones/fetchUpdateInformation', {
+					headers: { auth: token }
+				})
+			).data;
+		},
+		async postCommitUpdateInformation() {
+			return axiosInstance.post(
+				'geographicalzones/commitUpdateInformation',
+				{},
+				{
+					headers: { auth: token }
+				}
+			);
 		}
 	};
 };

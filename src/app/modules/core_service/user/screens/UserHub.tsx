@@ -36,7 +36,6 @@ const getExtraActions =
 	};
 
 const getStateInformation = (data: Record<string, any>): { text: string; color: string } => {
-	console.log('User', data);
 	if (data.verified === false) {
 		return {
 			text: i18n.t('ui:This user has not validated their email address'),
@@ -131,7 +130,9 @@ const UserHub = () => {
 		{ title: t('glossary:user.email'), width: 2 },
 		// { title: t('glossary:user.username'), width: 1 },
 		{ title: t('glossary:user.role'), width: 1 },
-		{ title: t('ui:Obs.'), width: 1 }
+		{ title: t('ui:Obs.'), width: 1 },
+		{ title: t('glossary:user.createdAt'), width: 1 },
+		{ title: t('glossary:user.updatedAt'), width: 1 }
 	];
 	const [overlay, setOverlay] = useState<ReactNode>(undefined);
 
@@ -167,6 +168,10 @@ const UserHub = () => {
 				)
 					? t('Yes')
 					: t('No');
+			} else if (col === 6 - 1) {
+				data = user.createdAt ? (user.createdAt as Date).toLocaleString() : '-';
+			} else if (col === 7 - 1) {
+				data = user.updatedAt ? (user.updatedAt as Date).toLocaleString() : '-';
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;

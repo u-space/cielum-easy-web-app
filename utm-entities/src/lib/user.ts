@@ -32,6 +32,8 @@ export class UserEntity implements EntityHasDisplayName {
 	_password_verification: string;
 	status: string;
 	deletedAt: Date | null;
+	updatedAt: Date | null;
+	createdAt: Date | null;
 	settings: unknown;
 	verified: boolean;
 	extra_fields_json: string;
@@ -117,6 +119,8 @@ export class UserEntity implements EntityHasDisplayName {
 			}
 		}
 		if (user?.role) this.role = user.role.toLowerCase();
+		this.updatedAt = user && user.updatedAt ? new Date(user.updatedAt) : null;
+		this.createdAt = user && user.createdAt ? new Date(user.createdAt) : null;
 		makeAutoObservable(this);
 	}
 
@@ -181,13 +185,15 @@ export class UserEntity implements EntityHasDisplayName {
 	}
 
 	get asBackendFormat() {
-		const user = _.cloneDeep(this);
+		const user: any = _.cloneDeep(this);
 
 		for (const prop in user) {
-			if (prop[0] === '_') {
+			if (prop.startsWith('_')) {
 				delete user[prop]; // Dont submit internal data to backend
 			}
 		}
+		delete user.deletedAt;
+		delete user.updatedAt;
 		return user;
 	}
 }

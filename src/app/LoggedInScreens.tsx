@@ -34,6 +34,7 @@ import FlightRequestEditorSvelte from './modules/flight_request_service/flight_r
 import LegacyFlightRequestStepsEditor from './modules/flight_request_service/flight_request/screens/LegacyFlightRequestStepsEditor';
 import Vehicle from './modules/core_service/vehicle/screens/Vehicle';
 import HistoricalMapApp from './modules/map/screens/historical/HistoricalMapApp.svelte';
+import UpdateGeographicalZonesScreen from './modules/admin/screens/UpdateGeographicalZonesScreen';
 const HistoricalMap = reactify(HistoricalMapApp);
 
 const FlightRequestEditor = reactify(FlightRequestEditorSvelte);
@@ -267,6 +268,9 @@ const LoggedInScreens = () => {
 						<NewCoordinatorScreen />
 					</RoleGatedRoute>
 				)}
+				<RoleGatedRoute path={'/update-zones'} roles={[AuthRole.ADMIN]}>
+					<UpdateGeographicalZonesScreen />
+				</RoleGatedRoute>
 				{/* Not found */}
 				<SimpleStaticInformation
 					title={t('Not found')}

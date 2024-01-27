@@ -49,7 +49,9 @@
 		"operator_register_file_path": "Operator registration",
 		"theorical_uas_certificate_file_path": "Theorical UAS certificate",
 		"practical_uas_certificate_file_path": "Practical UAS certificate",
-		"liability_insurance_file_path": "Liability insurance"
+		"liability_insurance_file_path": "Liability insurance",
+		"createdAt": "Created at",
+		"updatedAt": "Updated at"
 	},
 	"operation": {
 		"plural_generic": "Operations",

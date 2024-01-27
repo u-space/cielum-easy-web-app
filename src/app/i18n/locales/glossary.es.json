@@ -59,7 +59,9 @@
 		"Sts02Docuemnt": "Certificado STS-02",
 		"sts01_file_path": "Certificado STS-01",
 		"sts02_file_path": "Certificado STS-02",
-		"radiofinist_certificate_file_path": "Radiofonista"
+		"radiofinist_certificate_file_path": "Radiofonista",
+		"createdAt": "Creado",
+		"updatedAt": "Actualizado"
 	},
 	"operation": {
 		"plural_generic": "Operaciones",
