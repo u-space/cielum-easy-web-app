@@ -34,16 +34,7 @@ const NewVehicleScreen = () => {
 	const isAdmin = useAuthIsAdmin();
 
 	const [step, setStep] = useState<FormStep>(0);
-	const ls = useLs<VehicleEntity>(
-		new VehicleEntity(
-			{},
-			schemaVehicles,
-			username,
-			env.tenant.features.FlightRequests.enabled
-				? env.tenant.features.FlightRequests.options.defaultOperatorUsername
-				: null
-		)
-	);
+	const ls = useLs<VehicleEntity>(new VehicleEntity({}, schemaVehicles, username, null));
 
 	// Aircraft type associated state
 	const [hasSelectedAnAircraftType, setHasSelectedAnAircraftType] = useState<boolean>(false);
