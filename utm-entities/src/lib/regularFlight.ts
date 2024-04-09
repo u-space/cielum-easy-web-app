@@ -1,17 +1,18 @@
 import { bbox, lineString } from '@turf/turf';
-import _ from 'lodash';
-import { makeAutoObservable, toJS } from 'mobx';
 import Axios, { AxiosResponseTransformer } from 'axios';
 import i18n from 'i18next';
 import Joi from 'joi';
+import _ from 'lodash';
+import { makeAutoObservable, toJS } from 'mobx';
+import env from '../../../src/vendor/environment/env';
 import { buildParametersObject } from './_util';
-import { APIVertiportSchema, Vertiport } from './vertiport';
-import { EntityHasDisplayName } from './types';
 import {
 	APIThreeDimensionalPointSchema,
 	ThreeDimensionalPoint
 } from './legacy_map_do_not_use/entities/ThreeDimensionalPoint';
+import { EntityHasDisplayName } from './types';
 import { Operation } from './v2/model/operation';
+import { APIVertiportSchema, Vertiport } from './vertiport';
 
 export class RegularFlightSegment implements Record<string, number | any> {
 	start: ThreeDimensionalPoint;
@@ -339,7 +340,7 @@ const transformRegularFlight = (data: any) => RegularFlightEntity.createFromAPI(
 export const getRegularFlightAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 

@@ -1,9 +1,9 @@
-import Axios, { AxiosResponse, AxiosResponseTransformer } from 'axios';
+import Axios, { AxiosResponseTransformer } from 'axios';
+import env from '../../../../../src/vendor/environment/env';
 import { AdesRole, FilteringParameters } from '../../_util';
 import {
 	BaseOperation,
 	Operation,
-	OperationState,
 	OperationStateEnum,
 	ResponseBaseOperation,
 	ResponseOperation
@@ -66,7 +66,7 @@ export interface OperationAPI {
 export function getOperationAPIClient(api: string, token: string | null): OperationAPI {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 60000, // TODO: remove this, added for the screenshot
+		timeout: env.tiemeout || 50000, //timeout: 60009, // TODO: remove this, added for the screenshot, emi:no entiendo todo
 		headers: { 'Content-Type': 'application/json' }
 	});
 

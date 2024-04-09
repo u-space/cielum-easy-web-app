@@ -1,10 +1,11 @@
 import Axios, { AxiosResponseTransformer } from 'axios';
 import Joi from 'joi';
+import _ from 'lodash';
 import { makeAutoObservable } from 'mobx';
+import env from '../../../src/vendor/environment/env';
+import { buildParametersObject } from './_util';
 import { EntityHasDisplayName } from './types';
 import { VehicleEntity } from './vehicle';
-import { buildParametersObject } from './_util';
-import _ from 'lodash';
 
 export class TrackerEntity implements EntityHasDisplayName {
 	hardware_id: string;
@@ -76,7 +77,7 @@ function transformTrackers(data: any) {
 export const getTrackerAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 	return {

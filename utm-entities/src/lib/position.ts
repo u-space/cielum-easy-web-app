@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Axios, { AxiosResponseTransformer } from 'axios';
-import { makeAutoObservable } from 'mobx';
 import { Point } from 'geojson';
+import { makeAutoObservable } from 'mobx';
+import env from '../../../src/vendor/environment/env';
 
 export class PositionEntity {
 	id: number;
@@ -65,7 +66,7 @@ const transformPosition = (data: any) => {
 export const getPositionAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 

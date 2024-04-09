@@ -1,6 +1,7 @@
-import A from 'axios';
-import { makeAutoObservable } from 'mobx';
+import env from '../../../src/vendor/environment/env';
+
 import Axios from 'axios';
+import { makeAutoObservable } from 'mobx';
 
 export class DocumentEntity {
 	downloadFileUrl?: string;
@@ -57,7 +58,7 @@ export enum DocumentEntityType {
 export const getDocumentAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 100000,
+		timeout: env.tiemeout || 100000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 	return {

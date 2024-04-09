@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import Axios, { AxiosResponseTransformer } from 'axios';
+import { Polygon } from 'geojson';
 import i18n from 'i18next';
 import Joi from 'joi';
-import { makeAutoObservable } from 'mobx';
 import _ from 'lodash';
-import Axios, { AxiosResponseTransformer } from 'axios';
+import { makeAutoObservable } from 'mobx';
+import env from '../../../src/vendor/environment/env';
 import { buildParametersObject } from './_util';
-import { Polygon } from 'geojson';
 import { EntityHasDisplayName } from './types';
 
 export class UvrEntity implements EntityHasDisplayName {
@@ -135,7 +136,7 @@ export interface GetUvrsParsedResponse {
 export const getUvrAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 

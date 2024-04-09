@@ -1,8 +1,8 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import Axios, { AxiosResponseTransformer } from 'axios';
-import A from 'axios';
+
 import Joi from 'joi';
-import { ExtraFieldSchema } from './extraFields';
+import env from '../../../src/vendor/environment/env';
 
 export enum vehicleType {
 	MULTIROTOR = 'MULTIROTOR',
@@ -114,7 +114,7 @@ const transformAircraftTypes = (data: any) => {
 export function getAircraftTypeAPIClient(api: string, token: string | null) {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 	return {

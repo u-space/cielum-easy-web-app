@@ -1,6 +1,7 @@
-import { makeAutoObservable } from 'mobx';
 import Axios, { AxiosResponseTransformer } from 'axios';
 import Joi from 'joi';
+import { makeAutoObservable } from 'mobx';
+import env from '../../../src/vendor/environment/env';
 import { ThreeDimensionalPoint } from './legacy_map_do_not_use/entities/ThreeDimensionalPoint';
 
 export class Vertiport implements Record<string, any> {
@@ -88,7 +89,7 @@ export const transformVertiports = (data: any) => {
 export function getVertiportAPIClient(api: string, token: string) {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 	return {

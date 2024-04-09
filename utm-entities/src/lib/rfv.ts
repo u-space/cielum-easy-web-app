@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import Joi from 'joi';
-import { makeAutoObservable } from 'mobx';
-import _ from 'lodash';
-import i18n from 'i18next';
 import Axios, { AxiosResponseTransformer } from 'axios';
+import i18n from 'i18next';
+import Joi from 'joi';
+import _ from 'lodash';
+import { makeAutoObservable } from 'mobx';
+import env from '../../../src/vendor/environment/env';
 
 import { Polygon } from 'geojson';
 
@@ -118,7 +119,7 @@ const transformRFV = (data: any) => {
 export const getRfvAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 

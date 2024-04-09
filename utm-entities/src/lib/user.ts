@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+	default as A,
+	default as Axios,
 	AxiosError,
 	AxiosResponse,
-	AxiosResponseTransformer,
-	default as Axios,
-	default as A
+	AxiosResponseTransformer
 } from 'axios';
 //import { observable } from 'mobx';
 import Joi, { ValidationError } from 'joi';
@@ -12,9 +12,10 @@ import _ from 'lodash';
 import { makeAutoObservable } from 'mobx';
 import { DocumentEntity } from './document';
 
+import env from '../../../src/vendor/environment/env';
+import { buildParametersObject } from './_util';
 import { ExtraFields, ExtraFieldSchema } from './extraFields';
 import { EntityHasDisplayName } from './types';
-import { buildParametersObject } from './_util';
 
 const RolesType = Joi.string().valid('admin', 'monitor', 'pilot');
 
@@ -224,7 +225,7 @@ export type ChangeUserConfirmationStatusError = AxiosError<{ message: string }>;
 export function getUserAPIClient(api: string, token: string | null, schema: ExtraFieldSchema) {
 	const axiosInstance = A.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: {
 			'Content-Type': 'application/json'
 		}

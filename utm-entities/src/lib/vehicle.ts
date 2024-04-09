@@ -4,10 +4,11 @@ import Axios, { AxiosResponseTransformer } from 'axios';
 import Joi, { ValidationError } from 'joi';
 import _ from 'lodash';
 import { makeAutoObservable, observable } from 'mobx';
+import env from '../../../src/vendor/environment/env';
 import { buildParametersObject, saveExtraFields } from './_util';
-import { UserEntity } from './user';
 import { ExtraFieldSchema, ExtraFields } from './extraFields';
 import { EntityHasDisplayName } from './types';
+import { UserEntity } from './user';
 
 export enum VehicleAuthorizationStatus {
 	NOT_AUTHORIZED = 'NOT_AUTHORIZED',
@@ -215,7 +216,7 @@ export interface GetVehicleInsuranceSimulationFlySafeParams {
 export function getVehicleAPIClient(api: string, token: string | null, schema: ExtraFieldSchema) {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: env.tiemeout || 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
