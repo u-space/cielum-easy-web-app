@@ -300,6 +300,8 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 			if (!isCreating) delete user.password;
 			delete user.extra_fields_json;
 			delete user.deletedAt;
+			delete user.createdAt;
+			delete user.updatedAt;
 			delete user.settings;
 			delete user.verified;
 			delete user.status;
