@@ -54,7 +54,7 @@ export class UserEntity implements EntityHasDisplayName {
 		this.deletedAt = (user && user.deletedAt) ?? null;
 		this.settings = null;
 		this.disabled = (user && user.disabled) ?? false;
-		this.verified = (user && user.verified) ?? false;
+		this.verified = user ? (user.verified !== undefined ? user.verified : true) : false;
 		this.id = (user && user.id) ?? '';
 		this.extra_fields_json = (user && user.extra_fields_json) ?? '';
 		this._userSchema = Joi.object({
