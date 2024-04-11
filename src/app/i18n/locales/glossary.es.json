@@ -61,7 +61,10 @@
 		"sts02_file_path": "Certificado STS-02",
 		"radiofinist_certificate_file_path": "Radiofonista",
 		"createdAt": "Creado",
-		"updatedAt": "Actualizado"
+		"updatedAt": "Actualizado",
+		"userDocument": "Cédula",
+		"pilotLicense": "Licencia piloto",
+		"companyCertification": "Certificado empresa"
 	},
 	"operation": {
 		"plural_generic": "Operaciones",

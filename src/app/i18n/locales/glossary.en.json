@@ -51,7 +51,10 @@
 		"practical_uas_certificate_file_path": "Practical UAS certificate",
 		"liability_insurance_file_path": "Liability insurance",
 		"createdAt": "Created at",
-		"updatedAt": "Updated at"
+		"updatedAt": "Updated at",
+		"userDocument": "Document",
+		"pilotLicense": "Pilot permit",
+		"companyCertification": "Company certification"
 	},
 	"operation": {
 		"plural_generic": "Operations",
