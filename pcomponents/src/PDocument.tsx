@@ -1,6 +1,3 @@
-import classNames from 'classnames';
-import styles from './Kanpur.module.scss';
-import LabelInfo from './form/LabelInfo';
 import {
 	Dialog,
 	DialogStep,
@@ -10,16 +7,21 @@ import {
 	Intent,
 	MultistepDialog
 } from '@blueprintjs/core';
-import PButton, { PButtonType, PButtonSize } from './PButton';
-import { useTranslation } from 'react-i18next';
-import { CSSProperties, FC, ReactNode, useState } from 'react';
 import { DocumentEntity } from '@utm-entities/document';
-import PFileInput from './PFileInput';
+import classNames from 'classnames';
+import { CSSProperties, FC, ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styles from './Kanpur.module.scss';
+import PBooleanInput from './PBooleanInput';
+import PButton, { PButtonSize, PButtonType } from './PButton';
 import PDateInput from './PDateInput';
+import PFileInput from './PFileInput';
 import PInput from './PInput';
 import PNumberInput from './PNumberInput';
-import PBooleanInput from './PBooleanInput';
 import PTextArea from './PTextArea';
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // TODO: make configurable
+const byte2MB = (sizeInByte: number) => (sizeInByte / 1024 / 1024).toFixed(1);
 
 export interface PDocumentProps {
 	document: DocumentEntity;
@@ -127,12 +129,36 @@ const EditingModal = (props: EditingModalProps) => {
 	const finalButtonProps = {
 		intent: Intent.PRIMARY,
 		onClick: () => {
-			if (
-				Object.keys(document.extra_fields).length !== Object.keys(schema).length ||
-				!document['valid_until'] ||
-				Object.values(document.extra_fields).some((value) => value === null || value === '')
-			) {
-				alert(t('All fields are required'));
+			const errors: string[] = [];
+			for (const [key, value] of Object.entries(schema)) {
+				if (value.required && !document.extra_fields[key]) {
+					errors.push(`Field ${t(key)} is required`);
+				} else {
+					if (
+						value.min_lenght &&
+						document.extra_fields[key].toString().length < value.min_lenght
+					) {
+						errors.push(
+							`Field ${t(key)} must have at least ${value.min_lenght} characters`
+						);
+					}
+					if (
+						value.max_lenght &&
+						document.extra_fields[key].toString().length > value.max_lenght
+					) {
+						errors.push(
+							`Field ${t(key)} must have at most ${value.max_lenght} characters`
+						);
+					}
+				}
+			}
+
+			if (!document['valid_until']) {
+				errors.push('Date is required');
+			}
+
+			if (errors.length > 0) {
+				alert(errors.join('\n'));
 			} else {
 				onClose();
 				onSave(
@@ -149,6 +175,22 @@ const EditingModal = (props: EditingModalProps) => {
 	const [file, setFile] = useState<File | string | undefined | null>(
 		document.file || document.downloadFileUrl
 	);
+
+	const handleFileChange = (file: File | null) => {
+		console.log('file::', file);
+		console.log('document', JSON.stringify(document, null, 2));
+		if (file) {
+			if (file?.size < MAX_FILE_SIZE) {
+				setFile(file);
+			} else {
+				alert(
+					`Max file size is ${byte2MB(MAX_FILE_SIZE)} and the file size is ${byte2MB(
+						file?.size
+					)}`
+				);
+			}
+		}
+	};
 
 	return (
 		<MultistepDialog
@@ -178,7 +220,7 @@ const EditingModal = (props: EditingModalProps) => {
 								<PFileInput
 									{...{ id, label, explanation }}
 									defaultValue={file}
-									onChange={setFile}
+									onChange={handleFileChange}
 									isDarkVariant
 									isRequired={true}
 									API={'changeme'}
