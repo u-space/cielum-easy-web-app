@@ -180,6 +180,9 @@ export const getCoordinatorAPIClient = (api: string, token: string | null) => {
 			}
 
 			if (isCreating) {
+				if (typeof aux.geographical_zone === 'string') {
+					aux.geographical_zone = { id: aux.geographical_zone };
+				}
 				return axiosInstance.post('coordinator', aux, {
 					headers: { auth: token }
 				});
