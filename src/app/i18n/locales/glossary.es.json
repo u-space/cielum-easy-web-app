@@ -280,7 +280,10 @@
 		"zero_vehicles_explanation": "Debes tener al menos una aeronave para poder crear una operación, o bien, debes ser agregado a la lista de operadores de una aeronave de una tercera persona",
 		"no_vehicles": "No hay aeronaves",
 		"Other": "Otros",
-		"InsuranceDocument": "Seguro de responsabilidad civil"
+		"InsuranceDocument": "Seguro de responsabilidad civil",
+		"use": "Uso",
+		"fuel": "Combustible",
+		"insurance": "Seguro"
 	},
 	"volume": {
 		"effective_time_begin": "Inicio",

@@ -303,6 +303,8 @@
 	"\"value\" failed custom validation because serial_number_file_path is required, but no value was supplied": "No se puede crear una aeronave sin subir la foto de la etiqueta que indica el número serial",
 	"\"value\" failed custom validation because year is required, but no value was supplied": "El año de fabricación de la aeronave no fue provisto",
 	"\"value\" failed custom validation because serial_number is required, but no value was supplied": "El número serial de la aeronave no ha sido provisto",
+	"serial_number": "Número de serie",
+	"remote_sensor_id_desc": "Id de sensor remoto",
 	"There is no vehicle associated with the operation, and at least one is required": "Una operación debe tener por lo menos una aeronave asociada",
 	"The vehicle x has been deauthorized correctly": "La aeronave {{x}} ha sido desautorizada correctamente",
 	"The vehicle x has been authorized correctly": "La aeronave {{x}} ha sido autorizada correctamente",
