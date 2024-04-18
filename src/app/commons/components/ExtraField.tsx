@@ -4,6 +4,7 @@ import PDateInput from '@pcomponents/PDateInput';
 import PFileInput from '@pcomponents/PFileInput';
 import PInput from '@pcomponents/PInput';
 import PNumberInput from '@pcomponents/PNumberInput';
+import PSelect from '@pcomponents/PSelect';
 import { SchemaItemType } from '@utm-entities/extraFields';
 import { observer } from 'mobx-react';
 import env from '../../../vendor/environment/env';
@@ -24,6 +25,7 @@ interface ExtraFieldProps {
 	onlyAdmin?: boolean;
 	minLength?: number;
 	maxLength?: number;
+	values?: string[];
 }
 
 const ExtraField = observer((props: ExtraFieldProps) => {
@@ -40,32 +42,47 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 		value,
 		onlyAdmin,
 		minLength,
-		maxLength
+		maxLength,
+		values
 	} = props;
 	const { t } = useTranslation();
 	const isAdmin = useAuthIsAdmin();
 	if (onlyAdmin && !isAdmin) return null;
-	// Transform this list of IFs into a switch case
 	switch (type) {
 		case SchemaItemType.String:
-			return (
-				<PInput
-					{...{ id, label, explanation }}
-					defaultValue={value}
-					onChange={(value) => (ls.entity.extra_fields[property] = value)}
-					isRequired={required}
-					isDarkVariant={isDarkVariant}
-					disabled={!isEditing}
-					inline
-					minLength={minLength}
-					maxLength={maxLength}
-				>
-					<p style={{ textAlign: 'right', fontSize: '0.9em' }}>
-						{t('Min length is')} {minLength} (
-						<strong>{(ls.entity.extra_fields[property] || '').length}</strong>)
-					</p>
-				</PInput>
-			);
+			if (values) {
+				return (
+					<PSelect
+						{...{ id, label, explanation }}
+						defaultValue={value}
+						onChange={(value) => (ls.entity.extra_fields[property] = value)}
+						isRequired={required}
+						isDarkVariant={isDarkVariant}
+						disabled={!isEditing}
+						inline
+						values={values}
+					/>
+				);
+			} else {
+				return (
+					<PInput
+						{...{ id, label, explanation }}
+						defaultValue={value}
+						onChange={(value) => (ls.entity.extra_fields[property] = value)}
+						isRequired={required}
+						isDarkVariant={isDarkVariant}
+						disabled={!isEditing}
+						inline
+						minLength={minLength}
+						maxLength={maxLength}
+					>
+						<p style={{ textAlign: 'right', fontSize: '0.9em' }}>
+							{t('Min length is')} {minLength} (
+							<strong>{(ls.entity.extra_fields[property] || '').length}</strong>)
+						</p>
+					</PInput>
+				);
+			}
 		case SchemaItemType.Number:
 			return (
 				<PNumberInput

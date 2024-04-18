@@ -384,9 +384,10 @@ const ExtraUserDetailsValues = ({
 	const value = ls.entity.extra_fields[property];
 	const minLength = schemaValue.min_lenght;
 	const maxLength = schemaValue.max_lenght;
+	const values = schemaValue.values;
 
-	if (property === 'authorized' || property === 'caa_registration' || type === 'File')
-		return null;
+	// if (property === 'authorized' || property === 'caa_registration' || type === 'File')
+	// 	return null;
 	if (schemaValue.required === required) {
 		return (
 			<ExtraField
@@ -403,7 +404,8 @@ const ExtraUserDetailsValues = ({
 					value,
 					ls,
 					minLength,
-					maxLength
+					maxLength,
+					values
 				}}
 			/>
 		);

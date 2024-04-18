@@ -374,6 +374,7 @@ const ExtraVehicleDetailsValues = ({
 	const explanation = t([`vehicle.${property}_desc`, '']);
 	const id = `input-${property}`;
 	const value = ls.entity.extra_fields[property];
+	const values = schemaValue.values;
 
 	if (
 		property === 'authorized' ||
@@ -396,7 +397,8 @@ const ExtraVehicleDetailsValues = ({
 					explanation,
 					id,
 					value,
-					ls
+					ls,
+					values
 				}}
 			/>
 		);

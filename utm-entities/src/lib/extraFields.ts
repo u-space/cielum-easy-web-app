@@ -1,4 +1,3 @@
-import { string } from 'joi';
 import { DocumentEntity } from './document';
 
 export interface ExtraFieldSchemas {
@@ -14,6 +13,7 @@ export interface SchemaItem {
 	onlyVisibleForAdmin?: boolean;
 	min_lenght?: number; // TODO (sic) rename when backend fixes typo
 	max_lenght?: number;
+	values?: string[];
 }
 
 export type ExtraFieldSchema = { [key: string]: SchemaItem };
