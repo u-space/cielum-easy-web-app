@@ -41,7 +41,7 @@ export interface BaseVehicleDetailsProps {
 const BaseVehicleDetails: FC<BaseVehicleDetailsProps> = observer(
 	({ ls, isEditing, isCreating, hasSelectedAnAircraftType }) => {
 		const { t } = useTranslation(['glossary', 'ui']);
-		const [payloadTypesDrop, setPayloadTypesDrop] = useState<PayloadType[]>([]);
+		// const [payloadTypesDrop, setPayloadTypesDrop] = useState<PayloadType[]>([]);
 
 		const classes = [
 			{ label: t('ui:Multi rotor'), value: 'MULTIROTOR' },
@@ -110,7 +110,7 @@ const BaseVehicleDetails: FC<BaseVehicleDetailsProps> = observer(
 					isDarkVariant
 					inline
 				/>
-				<PVehiclePayloadSelect
+				{/* <PVehiclePayloadSelect
 					id={'payload'}
 					disabled={!isEditing}
 					label={t('vehicle.payload')}
@@ -128,7 +128,7 @@ const BaseVehicleDetails: FC<BaseVehicleDetailsProps> = observer(
 						setPayloadTypesDrop(arr);
 					}}
 					selected={payloadTypesDrop}
-				/>
+				/> */}
 			</>
 		);
 	}
