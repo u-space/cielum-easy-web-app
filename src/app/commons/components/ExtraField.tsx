@@ -5,14 +5,13 @@ import PFileInput from '@pcomponents/PFileInput';
 import PInput from '@pcomponents/PInput';
 import PNumberInput from '@pcomponents/PNumberInput';
 import PSelect from '@pcomponents/PSelect';
-import { SchemaItemType } from '@utm-entities/extraFields';
+import { SchemaItem, SchemaItemType } from '@utm-entities/extraFields';
 import { observer } from 'mobx-react';
 import env from '../../../vendor/environment/env';
 import { useAuthIsAdmin } from '../../modules/auth/store';
 import { useTranslation } from 'react-i18next';
 
 interface ExtraFieldProps {
-	type: SchemaItemType;
 	property: string;
 	isEditing: boolean;
 	isDarkVariant: boolean;
@@ -22,15 +21,11 @@ interface ExtraFieldProps {
 	id: string;
 	ls: any;
 	value: any;
-	onlyAdmin?: boolean;
-	minLength?: number;
-	maxLength?: number;
-	values?: string[];
+	schemaValue: SchemaItem;
 }
 
 const ExtraField = observer((props: ExtraFieldProps) => {
 	const {
-		type,
 		property,
 		isEditing,
 		isDarkVariant,
@@ -40,11 +35,16 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 		id,
 		ls,
 		value,
-		onlyAdmin,
-		minLength,
-		maxLength,
-		values
+		schemaValue
 	} = props;
+
+	const {
+		type,
+		onlyVisibleForAdmin: onlyAdmin,
+		min_lenght: minLength,
+		max_lenght: maxLength,
+		values
+	} = schemaValue;
 	const { t } = useTranslation();
 	const isAdmin = useAuthIsAdmin();
 	if (onlyAdmin && !isAdmin) return null;
@@ -139,16 +139,3 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 });
 
 export default ExtraField;
-
-/*
-
-<Checkbox
-					{...{ id, label }}
-					value={value}
-					style={{ display: 'flex', justifyContent: 'center' }}
-					alignIndicator={Alignment.RIGHT}
-					onChange={(evt) => ls.entity.setExtraField(property, evt.target.checked)}
-				/>
-
-
- */

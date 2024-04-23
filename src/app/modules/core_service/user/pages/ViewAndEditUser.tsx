@@ -370,24 +370,18 @@ const ExtraUserDetailsValues = ({
 }: {
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	ls: any;
-	schema: ExtraFieldSchemas['vehicles'];
+	schema: ExtraFieldSchemas['users'];
 	property: string;
 	required: boolean;
 	isEditing: boolean;
 }) => {
 	const { t } = useTranslation('glossary');
-	const schemaValue = schema[property];
-	const type = schemaValue.type;
 	const label = t(`user.${property}`);
 	const explanation = t([`user.${property}_desc`, '']);
 	const id = `input-${property}`;
 	const value = ls.entity.extra_fields[property];
-	const minLength = schemaValue.min_lenght;
-	const maxLength = schemaValue.max_lenght;
-	const values = schemaValue.values;
+	const schemaValue = schema[property];
 
-	// if (property === 'authorized' || property === 'caa_registration' || type === 'File')
-	// 	return null;
 	if (schemaValue.required === required) {
 		return (
 			<ExtraField
@@ -395,7 +389,6 @@ const ExtraUserDetailsValues = ({
 				isDarkVariant
 				isEditing={isEditing}
 				{...{
-					type,
 					property: property,
 					required,
 					label,
@@ -403,9 +396,7 @@ const ExtraUserDetailsValues = ({
 					id,
 					value,
 					ls,
-					minLength,
-					maxLength,
-					values
+					schemaValue
 				}}
 			/>
 		);
@@ -419,6 +410,7 @@ const ExtraUserDetails = (props: ExtraUserDetailsProps) => {
 
 	// TODO: Emprolijar esto que basicamente
 	//  hace lo mismo dos veces pero para tener todos los requeridos al principio
+	// agregar display:flex y column(?) al conteiner, agregar order a los childs, incluso se podría pasar un order en la definición de extra fields
 
 	const schema = useSchemaStore((state) => state.users);
 

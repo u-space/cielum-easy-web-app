@@ -368,21 +368,13 @@ const ExtraVehicleDetailsValues = ({
 	isEditing: boolean;
 }) => {
 	const { t } = useTranslation('glossary');
-	const schemaValue = schema[property];
-	const type = schemaValue.type;
 	const label = t(`vehicle.${property}`);
 	const explanation = t([`vehicle.${property}_desc`, '']);
 	const id = `input-${property}`;
 	const value = ls.entity.extra_fields[property];
-	const values = schemaValue.values;
 
-	if (
-		property === 'authorized' ||
-		property === 'documents' ||
-		property === 'caa_registration' ||
-		type === 'File'
-	)
-		return null;
+	const schemaValue = schema[property];
+
 	if (schemaValue.required === required) {
 		return (
 			<ExtraField
@@ -390,7 +382,6 @@ const ExtraVehicleDetailsValues = ({
 				isDarkVariant
 				isEditing={isEditing}
 				{...{
-					type,
 					property: property,
 					required,
 					label,
@@ -398,7 +389,7 @@ const ExtraVehicleDetailsValues = ({
 					id,
 					value,
 					ls,
-					values
+					schemaValue
 				}}
 			/>
 		);
