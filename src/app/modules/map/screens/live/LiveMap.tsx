@@ -55,7 +55,7 @@ const LiveMap = () => {
 	const history = useHistory();
 	const queryOperations = useQueryOperations(true);
 	const queryGeographicalZones = useQueryGeographicalZones(true);
-	const queryRfvs = useQueryRfvs();
+	const queryRfvs = useQueryRfvs(true);
 	const queryUvrs = useQueryUvrs(true);
 	const isLoading =
 		queryOperations.isLoading ||
@@ -79,12 +79,14 @@ const LiveMap = () => {
 				gufi: operation.gufi as string,
 				volume: Number(operationSelection.volume)
 			} as LiveMapOperationSelected;
-		} else if (gz) {
-			return {
-				type: LiveMapSelectableType.GEOGRAPHICAL_ZONE,
-				id: gz.id
-			} as LiveMapGeographicalZoneSelected;
-		} else if (rfv) {
+		}
+		// else if (gz) {
+		// 	return {
+		// 		type: LiveMapSelectableType.GEOGRAPHICAL_ZONE,
+		// 		id: gz.id
+		// 	} as LiveMapGeographicalZoneSelected;
+		// }
+		else if (rfv) {
 			return {
 				type: LiveMapSelectableType.RFV,
 				id: rfv.id
