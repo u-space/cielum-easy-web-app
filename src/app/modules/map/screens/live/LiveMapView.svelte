@@ -11,6 +11,7 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { CButtonVariant } from '@tokyo/gui/CButton';
 	import { operationTokyoConverter } from '@tokyo/converters/core/operation';
+	import { rfvTokyoConverter } from '@tokyo/converters/core/rfvDrawer';
 	import { Layer } from '@deck.gl/core/typed';
 	import {
 		vehiclePositionHeadLabelTokyoConverter,
@@ -37,6 +38,7 @@
 	export let geographicalZones: LiveMapViewProps['geographicalZones'] = [];
 	export let operations: LiveMapViewProps['operations'] = [];
 	export let vehiclePositions: LiveMapViewProps['vehiclePositions'] = new Map();
+	export let rfvs: LiveMapViewProps['rfvs'] = [];
 	$: vehiclePositionsEntries = Array.from(vehiclePositions.entries());
 
 	export let selected: LiveMapViewProps['selected'] = null;
@@ -69,6 +71,7 @@
 	$: visibleVehiclePositionsEntries = visible.vehicles ? vehiclePositionsEntries : [];
 	$: console.log('visibleVehiclePositionsEntries', visibleVehiclePositionsEntries);
 	$: visibleOperations = visible.operations ? operations : [];
+	$: visibleRfvs = visible.rfvs ? rfvs : [];
 	$: visibleGeographicalZones = visible.geographical_zones ? geographicalZones : [];
 
 	function toggleLayersPanel() {
@@ -82,6 +85,7 @@
 			...visible,
 			[type]: checked
 		};
+		console.log('visible', visible);
 	};
 
 	// Hover logic
@@ -182,6 +186,12 @@
 					...defaultOperationDrawingProps,
 					...operationDrawingProps
 				})}
+			/>
+		{/each}
+		{#each visibleRfvs as rfv (rfv.id)}
+			<TokyoGenericMapElement
+				id={rfvTokyoConverter.getId(rfv)}
+				getLayer={rfvTokyoConverter.getConverter(rfv)}
 			/>
 		{/each}
 		{#each visibleGeographicalZones as geographicalZone (geographicalZone.id)}
