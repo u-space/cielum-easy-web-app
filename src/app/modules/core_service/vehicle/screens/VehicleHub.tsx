@@ -26,7 +26,7 @@ import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 const VehicleHubForPilots = reactify(VehicleHubForPilotsSvelte);
 
 const getStateInformation = (data: Record<string, any>): { text: string; color: string } => {
-	if (data.authorized === 'PENDING') {
+	if (data.authorized === 'PENDING' || data.authorized === 'NOT_AUTHORIZED') {
 		return {
 			text: i18n.t('ui:This aircraft is not validated'),
 			color: 'var(--ramen-500)'
