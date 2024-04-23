@@ -64,7 +64,7 @@
 		"updatedAt": "Actualizado",
 		"userDocument": "Cédula",
 		"pilotLicense": "Licencia piloto",
-		"companyCertification": "Certificado empresa"
+		"aerialWorkPermitResolution": "Resolución de permiso de trabajo aéreo"
 	},
 	"operation": {
 		"plural_generic": "Operaciones",
