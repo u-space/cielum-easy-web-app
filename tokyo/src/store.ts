@@ -12,8 +12,8 @@ import {
 } from './types';
 
 const initialPosition = {
-	latitude: 40.407613,
-	longitude: -3.700002,
+	latitude: -34.89712784173059,
+	longitude: -56.163996853234295,
 	zoom: 15
 };
 
