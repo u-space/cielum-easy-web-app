@@ -2,7 +2,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useCoreServiceAPI } from '../../../utils';
 import { useSchemaStore } from '../../schemas/store';
-import { useAuthIsPilot } from '../../auth/store';
+import { useAuthIsAdmin, useAuthIsPilot } from '../../auth/store';
 import { ChangeUserConfirmationStatusError, UserEntity } from '@utm-entities/user';
 import { UpdateEntityParams } from '@utm-entities/types';
 import { useUserStore } from './store';
@@ -13,6 +13,7 @@ export function useUpdateUser() {
 
 	const schema = useSchemaStore((state) => state.users);
 	const isPilot = useAuthIsPilot();
+	const isAdmin = useAuthIsAdmin();
 	const {
 		multi: { saveUserAndDocuments }
 	} = useCoreServiceAPI();
@@ -23,7 +24,7 @@ export function useUpdateUser() {
 			if (isPilot) {
 				user = new UserEntity(user, schema);
 			}
-			return saveUserAndDocuments(user, documents, isCreating);
+			return saveUserAndDocuments(user, isAdmin, documents, isCreating);
 		},
 		{
 			onSuccess: () => {

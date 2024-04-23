@@ -36,10 +36,11 @@ export function getUTMClient(api: string, schemas: ExtraFieldSchemas, token: str
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			async saveUserAndDocuments(
 				user: UserEntity,
+				isAdmin: boolean,
 				documents: Map<string, DocumentEntity>,
 				isCreating: boolean
 			) {
-				let result = userAPIClient.saveUser(user, isCreating);
+				let result = userAPIClient.saveUser(user, isAdmin, isCreating);
 				if (documents) {
 					result = result.then(async (response) => {
 						for await (const document of Array.from(documents.values())) {

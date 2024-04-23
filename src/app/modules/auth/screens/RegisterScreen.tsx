@@ -60,7 +60,7 @@ const TermsAndConditions = () => {
 		>
 			<aside className={pagesStyles.summary}>
 				<h2>{t('Terms and conditions')}</h2>
-				{t('Terms and conditions explanation')}
+				{/* {t('Terms and conditions explanation')} */}
 			</aside>
 			<section className={pagesStyles.details}>
 				{/* TODO: Leer de un endpoint */}
@@ -100,7 +100,7 @@ const RegisterScreen = () => {
 		AxiosResponse<void>,
 		AxiosError<{ message?: string }>,
 		UserEntity
-	>((user: UserEntity) => saveUser(user, true));
+	>((user: UserEntity) => saveUser(user, false, true));
 
 	const nextStep = (event?: FormEvent<HTMLFormElement>) => {
 		if (event) event.preventDefault();

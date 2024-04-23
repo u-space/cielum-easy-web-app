@@ -285,7 +285,7 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 		deleteUser: (username: string) => {
 			return axiosInstance.delete(`user/${username}`, { headers: { auth: token } });
 		},
-		saveUser: (_user: any, isCreating = false) => {
+		saveUser: (_user: any, isAdmin: boolean, isCreating = false) => {
 			// If no token, you're self-registering
 			const user = _.cloneDeep(_user);
 			if (!_user.username) {
@@ -298,6 +298,7 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 					delete user[prop]; // Dont submit internal data to backend
 				}
 			}
+			if (!isAdmin) delete user.role;
 			if (!isCreating) delete user.password;
 			delete user.extra_fields_json;
 			delete user.deletedAt;
