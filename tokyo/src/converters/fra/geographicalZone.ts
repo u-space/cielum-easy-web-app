@@ -38,9 +38,10 @@ function getConverterFromGeographicalZone(
 	const threeDimensional = options?.threeDimensional ?? true;
 
 	let fillColor: RGBA = [GZ_FILL_COLOR[0], GZ_FILL_COLOR[1], GZ_FILL_COLOR[2], fillAlpha];
-	if (false) {
-		fillColor = SELECTED_GZ_FILL_COLOR;
-	} else if (geographicalZone.name.startsWith('CTR')) {
+	// if (false) {
+	// 	fillColor = SELECTED_GZ_FILL_COLOR;
+	// } else
+	if (geographicalZone.name.startsWith('CTR')) {
 		fillColor = [33, 156, 217, fillAlpha];
 	} else if (geographicalZone.name.startsWith('HELIPUERTO')) {
 		fillColor = [217, 125, 33, fillAlpha];
