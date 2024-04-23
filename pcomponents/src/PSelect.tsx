@@ -1,4 +1,4 @@
-import { FormGroup, HTMLSelect } from '@blueprintjs/core';
+import { Classes, FormGroup, HTMLSelect } from '@blueprintjs/core';
 import classnames from 'classnames';
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -62,6 +62,10 @@ const PSelect: FC<PSelectProps> = ({
 		>
 			<HTMLSelect
 				id={id}
+				className={classnames({
+					// [Classes.SKELETON]: isLoading,
+					[styles.dark]: isDarkVariant
+				})}
 				name={label}
 				value={value}
 				minimal
