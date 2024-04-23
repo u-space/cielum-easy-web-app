@@ -18,7 +18,8 @@ export function getNewViewport(geometry: Geometry, currentViewState: MapViewStat
 export enum PickableType {
 	GeographicalZone = 'geographical-zone',
 	Operation = 'operation',
-	Vehicle = 'vehicle'
+	Vehicle = 'vehicle',
+	Rfv = 'rfv'
 }
 export function getPickableId(type: PickableType, id: string, name: string) {
 	return `${type}|${id}|${name}`;
