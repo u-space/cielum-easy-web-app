@@ -36,6 +36,7 @@ const RfvEditor = () => {
 	const queryGeographicalZones = useQueryGeographicalZones(true);
 
 	const [modalProps, setModalProps] = useState<PFullModalProps | undefined>(undefined);
+	const [selectedVolume, setSelectedVolume] = useState<number | null>(null);
 
 	const rfv = useMemo(() => {
 		if (queryRfv.isSuccess) {
@@ -137,7 +138,11 @@ const RfvEditor = () => {
 			}}
 			modal={modalProps}
 		>
-			<EditorMapView {...editorMapViewProps} />
+			<EditorMapView
+				{...editorMapViewProps}
+				onSelect={(e) => setSelectedVolume((e as CustomEvent<number>).detail)}
+				onEdit={(e) => onPolygonsUpdated((e as CustomEvent<Polygon[]>).detail)}
+			/>
 		</MapLayout>
 	);
 };
