@@ -31,13 +31,6 @@ export function useUpdateRfv(onSuccess?: () => void, onError?: (error: Error) =>
 		rfv: { saveRfv }
 	} = useCoreServiceAPI();
 
-	// return useMutation((rfv) => deleteRfv(rfv.id, token), {
-	// 	onSuccess: () => {
-	// 		// Invalidate and refetch
-	// 		queryClient.invalidateQueries('rfvs');
-	// 	}
-	// });
-
 	return useMutation<AxiosResponse<void>, AxiosError, { entity: RfvEntity }>(
 		({ entity: rfv }) => saveRfv(rfv),
 		{
