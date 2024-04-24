@@ -30,7 +30,7 @@ export class UvrEntity implements EntityHasDisplayName {
 	[key: string]: any;
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	constructor(uvr: any) {
+	constructor(uvr?: any) {
 		this.message_id = null;
 		this.actual_time_end = null;
 		this.cause = 'SECURITY';
@@ -151,6 +151,15 @@ export const getUvrAPIClient = (api: string, token: string | null) => {
 		) {
 			return axiosInstance.get('uasvolume', {
 				params: buildParametersObject(take, skip, orderBy, order, filterBy, filter),
+				headers: { auth: token },
+				transformResponse: (
+					Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				).concat(transformUVR)
+			});
+		},
+		getUvr(id: string) {
+			return axiosInstance.get('uasvolume', {
+				params: buildParametersObject(1, 0, 'id', 'ASC', 'id', id),
 				headers: { auth: token },
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
