@@ -35,6 +35,7 @@ import LegacyFlightRequestStepsEditor from './modules/flight_request_service/fli
 import Vehicle from './modules/core_service/vehicle/screens/Vehicle';
 import HistoricalMapApp from './modules/map/screens/historical/HistoricalMapApp.svelte';
 import UpdateGeographicalZonesScreen from './modules/admin/screens/UpdateGeographicalZonesScreen';
+import UvrEditor from './modules/core_service/uvr/screens/UvrEditor';
 const HistoricalMap = reactify(HistoricalMapApp);
 
 const FlightRequestEditor = reactify(FlightRequestEditorSvelte);
@@ -179,6 +180,11 @@ const LoggedInScreens = () => {
 						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
 					>
 						<UvrsHub />
+					</RoleGatedRoute>
+				)}
+				{isFeatureEnabled('Uvrs') && (
+					<RoleGatedRoute path={'/editor/uvr'} roles={[AuthRole.ADMIN]}>
+						<UvrEditor />
 					</RoleGatedRoute>
 				)}
 				{/* ------------------------------------------------------------------------------------------------ */}
