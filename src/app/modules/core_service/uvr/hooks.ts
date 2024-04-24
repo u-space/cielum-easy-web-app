@@ -8,6 +8,16 @@ import { shallow } from 'zustand/shallow';
 
 // Hooks
 
+export function useQueryUvr(id: string, enabled: boolean) {
+	const {
+		uvr: { getUvr }
+	} = useCoreServiceAPI();
+
+	return useQuery<AxiosResponse<UvrEntity>>(['uvr', id], () => getUvr(id), {
+		enabled
+	});
+}
+
 export function useDeleteUvr() {
 	const queryClient = useQueryClient();
 
@@ -106,7 +116,7 @@ export function useQueryUvrs(all = false) {
 	};
 }
 
-export function useUpdateUvr() {
+export function useUpdateUvr(onSuccess?: () => void, onError?: (error: Error) => void) {
 	const queryClient = useQueryClient();
 	const {
 		uvr: { saveUvr }
@@ -116,7 +126,17 @@ export function useUpdateUvr() {
 		{
 			onSuccess: () => {
 				// Invalidate and refetch
-				queryClient.invalidateQueries('uvrs').then();
+				queryClient.invalidateQueries('uvrs').then(() => {
+					return;
+				});
+				if (onSuccess) {
+					onSuccess();
+				}
+			},
+			onError: (error) => {
+				if (onError) {
+					onError(error);
+				}
 			}
 		}
 	);
