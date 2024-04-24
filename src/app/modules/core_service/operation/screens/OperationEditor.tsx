@@ -54,34 +54,6 @@ const OperationEditor = () => {
 	const [modalProps, setModalProps] = useState<PFullModalProps>(undefinedModal);
 	const [selectedVolume, setSelectedVolume] = useState<number | null>(null);
 
-	/*const operation = useMemo(() => {
-		/* op.set(
-					'creator',
-					new NestedUser({
-						// TODO: Remove this when creating ExistingOperation, NewOperation
-						username,
-						email: '',
-
-						firstName: '',
-						lastName: '',
-						extra_fields_json: {}
-					})
-				);
-				op.set(
-					'owner',
-					new NestedUser({
-						// TODO: Remove this when creating ExistingOperation, NewOperation
-						username,
-						email: '',
-
-						firstName: '',
-						lastName: '',
-						extra_fields_json: {}
-					})
-				);
-		return new Operation();
-	}, []);*/
-
 	const [operation, setOperation] = useState<Operation>(new Operation());
 
 	useEffect(() => {
@@ -189,10 +161,6 @@ const OperationEditor = () => {
 	const props = _.filter(_.keys(operation), (key) => key !== 'gufi' && key !== 'state');
 
 	const editorMapViewProps: EditorMapViewProps = {
-		/*handlers: {
-			edit: onPolygonsUpdated,
-			editingPolygonSelect: setSelectedVolume
-		},*/
 		editOptions: {
 			polygons,
 			mode: EditMode.MULTI
@@ -232,6 +200,7 @@ const OperationEditor = () => {
 						</CardGroup>
 					)}
 					<MapViewModeSwitch />
+					``
 				</>
 			}
 			statusOverlay={{
