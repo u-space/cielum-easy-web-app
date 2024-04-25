@@ -29,6 +29,7 @@ export interface LiveMapRfvSelected {
 
 export interface LiveMapUvrSelected {
 	type: LiveMapSelectableType.UVR;
+	message_id: string;
 	id: string;
 }
 

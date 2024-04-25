@@ -94,7 +94,8 @@ const LiveMap = () => {
 		} else if (uvr) {
 			return {
 				type: LiveMapSelectableType.UVR,
-				id: uvr.id
+				message_id: uvr.message_id,
+				id: uvr.message_id
 			} as LiveMapUvrSelected;
 		} else {
 			return null;

@@ -19,7 +19,8 @@ export enum PickableType {
 	GeographicalZone = 'geographical-zone',
 	Operation = 'operation',
 	Vehicle = 'vehicle',
-	Rfv = 'rfv'
+	Rfv = 'rfv',
+	Uvr = 'uvr'
 }
 export function getPickableId(type: PickableType, id: string, name: string) {
 	return `${type}|${id}|${name}`;

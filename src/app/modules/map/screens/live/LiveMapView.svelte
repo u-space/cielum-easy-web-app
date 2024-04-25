@@ -2,30 +2,27 @@
 
 <script lang="ts">
 	import Tokyo from '@tokyo/Tokyo.svelte';
-	import { LiveMapViewProps } from './LiveMapViewProps.ts';
 	import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
-	import { geographicalZoneTokyoConverter } from '@tokyo/converters/fra/geographicalZone';
-	import { EditMode, TokyoPick } from '@tokyo/types';
-	import CButton from '@tokyo/gui/CButton.svelte';
-	import { CTooltipPosition } from '@tokyo/gui/CTooltip';
-	import { createEventDispatcher, onMount } from 'svelte';
-	import { CButtonVariant } from '@tokyo/gui/CButton';
 	import { operationTokyoConverter } from '@tokyo/converters/core/operation';
-	import { rfvTokyoConverter } from '@tokyo/converters/core/rfvDrawer';
-	import { Layer } from '@deck.gl/core/typed';
 	import {
 		vehiclePositionHeadLabelTokyoConverter,
 		vehiclePositionHeadProjectionTokyoConverter,
 		vehiclePositionHeadTokyoConverter,
 		vehiclePositionTailTokyoConverter
 	} from '@tokyo/converters/core/position';
-	import { CSize } from '@tokyo/gui/CSizeWrapper';
-	import CModal from '@tokyo/gui/CModal.svelte';
-	import CPanel from '@tokyo/gui/CPanel.svelte';
-	import CCheckbox from '@tokyo/gui/CCheckbox.svelte';
+	import { rfvTokyoConverter } from '@tokyo/converters/core/rfvDrawer';
+	import { geographicalZoneTokyoConverter } from '@tokyo/converters/fra/geographicalZone';
+	import { CButtonVariant } from '@tokyo/gui/CButton';
+	import CButton from '@tokyo/gui/CButton.svelte';
 	import { CCheckboxCheckedEvent } from '@tokyo/gui/CCheckbox';
-	import { isTouchDevice } from '@tokyo/util';
+	import CCheckbox from '@tokyo/gui/CCheckbox.svelte';
+	import CPanel from '@tokyo/gui/CPanel.svelte';
+	import { CSize } from '@tokyo/gui/CSizeWrapper';
+	import { CTooltipPosition } from '@tokyo/gui/CTooltip';
+	import { EditMode, TokyoPick } from '@tokyo/types';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import LiveMapPick from './LiveMapPick.svelte';
+	import { LiveMapViewProps } from './LiveMapViewProps';
 
 	const dispatch = createEventDispatcher<{
 		picked: TokyoPick; // ID of Picked Entity
@@ -39,6 +36,7 @@
 	export let operations: LiveMapViewProps['operations'] = [];
 	export let vehiclePositions: LiveMapViewProps['vehiclePositions'] = new Map();
 	export let rfvs: LiveMapViewProps['rfvs'] = [];
+	export let uvrs: LiveMapViewProps['uvrs'] = [];
 	$: vehiclePositionsEntries = Array.from(vehiclePositions.entries());
 
 	export let selected: LiveMapViewProps['selected'] = null;
@@ -65,13 +63,15 @@
 		operations: true,
 		rfvs: true,
 		geographical_zones: true,
-		vehicles: true
+		vehicles: true,
+		uvrs: true
 	};
 
 	$: visibleVehiclePositionsEntries = visible.vehicles ? vehiclePositionsEntries : [];
 	$: console.log('visibleVehiclePositionsEntries', visibleVehiclePositionsEntries);
 	$: visibleOperations = visible.operations ? operations : [];
 	$: visibleRfvs = visible.rfvs ? rfvs : [];
+	$: visibleUvrs = visible.uvrs ? uvrs : [];
 	$: visibleGeographicalZones = visible.geographical_zones ? geographicalZones : [];
 
 	function toggleLayersPanel() {
@@ -192,6 +192,12 @@
 			<TokyoGenericMapElement
 				id={rfvTokyoConverter.getId(rfv)}
 				getLayer={rfvTokyoConverter.getConverter(rfv)}
+			/>
+		{/each}
+		{#each visibleUvrs as uvr (uvr.message_id)}
+			<TokyoGenericMapElement
+				id={rfvTokyoConverter.getId(uvr)}
+				getLayer={rfvTokyoConverter.getConverter(uvr)}
 			/>
 		{/each}
 		{#each visibleGeographicalZones as geographicalZone (geographicalZone.id)}

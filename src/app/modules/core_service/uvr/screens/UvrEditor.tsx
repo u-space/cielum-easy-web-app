@@ -20,6 +20,8 @@ import EditorMapViewSvelte from '../../../map/screens/editor/EditorMapView.svelt
 import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewProps';
 import InfoUvr from '../components/InfoUvr';
 import { useQueryUvr, useUpdateUvr } from '../hooks';
+import CardGroup from 'src/app/commons/layouts/dashboard/menu/CardGroup';
+import ContextualInfo from 'src/app/commons/layouts/map/editor_map/ContextualInfo';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -28,7 +30,7 @@ const UvrEditor = () => {
 	const history = useHistory();
 	const queryString = useQueryString();
 
-	const id = queryString.get('id');
+	const id = queryString.get('message_id');
 
 	const queryUvr = useQueryUvr(id || '', !!id);
 	const tokyo = useTokyo();
@@ -106,14 +108,12 @@ const UvrEditor = () => {
 		if (queryUvr.isSuccess && geography) {
 			tokyo.flyToCenterOfGeometry(geography);
 		}
+		console.log('uvr', uvr);
 	}, [queryUvr.data?.data.geography, queryUvr.isSuccess, tokyo]);
 
-	const props = _.filter(_.keys(uvr), (key) => key !== 'id');
+	const props = _.filter(_.keys(uvr), (key) => key !== 'message_id');
 
 	const editorMapViewProps: EditorMapViewProps = {
-		/*handlers: {
-			edit: onPolygonsUpdated
-		},*/
 		geographicalZones: queryGeographicalZones.items,
 		editOptions: {
 			mode: EditMode.SINGLE,
@@ -138,6 +138,19 @@ const UvrEditor = () => {
 				text: `### ${t('You are in EDITOR MODE')} `
 			}}
 			modal={modalProps}
+			contextual={
+				<>
+					{selectedVolume !== null && (
+						<CardGroup header={t('Editar uvr')}>
+							<ContextualInfo
+								entity={uvr}
+								entityName={'uvr'}
+								hiddenProps={['ordinal', 'id']}
+							/>
+						</CardGroup>
+					)}
+				</>
+			}
 		>
 			<EditorMapView
 				{...editorMapViewProps}

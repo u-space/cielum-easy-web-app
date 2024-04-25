@@ -11,12 +11,13 @@ import { buildParametersObject } from './_util';
 import { EntityHasDisplayName } from './types';
 
 export class UvrEntity implements EntityHasDisplayName {
+	id: string | null;
 	message_id: string | null;
 	actual_time_end: Date | null;
 	cause: string;
 	effective_time_begin: Date;
 	effective_time_end: Date;
-	geography: Polygon;
+	geography: Polygon | null;
 	max_altitude: number;
 	min_altitude: number;
 	permitted_uas: string[];
@@ -32,14 +33,12 @@ export class UvrEntity implements EntityHasDisplayName {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	constructor(uvr?: any) {
 		this.message_id = null;
+		this.id = null;
 		this.actual_time_end = null;
 		this.cause = 'SECURITY';
 		this.effective_time_begin = new Date();
 		this.effective_time_end = new Date();
-		this.geography = {
-			type: 'Polygon',
-			coordinates: [[]]
-		};
+		this.geography = null;
 		this.max_altitude = 50;
 		this.min_altitude = 0;
 		this.permitted_uas = [];
@@ -55,7 +54,7 @@ export class UvrEntity implements EntityHasDisplayName {
 					this[prop] = uvr[prop];
 				}
 			}
-
+			this.id = uvr.message_id;
 			this.min_altitude = parseInt(uvr.min_altitude);
 			this.max_altitude = parseInt(uvr.max_altitude);
 			this.effective_time_begin = new Date(uvr.effective_time_begin);
@@ -73,6 +72,14 @@ export class UvrEntity implements EntityHasDisplayName {
 		makeAutoObservable(this);
 	}
 
+	set(prop: keyof UvrEntity, value: UvrEntity[keyof UvrEntity]) {
+		if (prop === '_schema' || prop === 'asBackendFormat' || prop === 'displayName')
+			throw new Error('UvrEntity: Cannot set a readonly property');
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		this[prop] = value;
+	}
+
 	get displayName() {
 		return this.reason;
 	}
@@ -86,18 +93,18 @@ export class UvrEntity implements EntityHasDisplayName {
 			}
 		}
 
-		const newCoordinates = snapshot.geography.coordinates[0].map((lngLat) => [
-			lngLat[1],
-			lngLat[0]
-		]);
-		snapshot.geography.coordinates = [[...newCoordinates, newCoordinates[0]]];
+		// const newCoordinates = snapshot.geography.coordinates[0].map((lngLat) => [
+		// 	lngLat[1],
+		// 	lngLat[0]
+		// ]);
+		// snapshot.geography.coordinates = [[...newCoordinates, newCoordinates[0]]];
 
 		return snapshot;
 	}
 
 	validate() {
 		const errors = [];
-		if (this.geography.coordinates[0].length <= 2) {
+		if (this.geography == null || this.geography.coordinates[0].length <= 2) {
 			errors.push(
 				i18n.t(
 					'The drawn polygon does not have any points, and at least three are required'
@@ -159,7 +166,7 @@ export const getUvrAPIClient = (api: string, token: string | null) => {
 		},
 		getUvr(id: string) {
 			return axiosInstance.get('uasvolume', {
-				params: buildParametersObject(1, 0, 'id', 'ASC', 'id', id),
+				params: buildParametersObject(1, 0, 'message_id', 'ASC', 'message_id', id),
 				headers: { auth: token },
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
