@@ -123,40 +123,6 @@ const LiveMap = () => {
 		}
 	}, [volume]);
 
-	/* const samplePolygon = [
-		[
-			[0, 0],
-			[0, 1],
-			[1, 1],
-			[1, 0],
-			[0, 0]
-		]
-	];
-
-	const simulatedQuery = useSimulatedPositions(
-		operation?.gufi || '',
-		operation?.uas_registrations[0].uvin || '',
-		center(polygon(volume?.operation_geography?.coordinates || samplePolygon) as any).geometry
-			.coordinates[1],
-		center(polygon(volume?.operation_geography?.coordinates || samplePolygon) as any).geometry
-			.coordinates[0]
-	);
-
-	useEffect(() => {
-		let interval: NodeJS.Timer;
-
-		if (operation) {
-			interval = setInterval(() => {
-				simulatedQuery.refetch();
-			}, 2000);
-		}
-		return () => {
-			if (interval) {
-				clearInterval(interval);
-			}
-		};
-	}, [simulatedQuery, operation]); */
-
 	useEffect(() => {
 		if (gz) {
 			tokyo.flyToCenterOfGeometry(gz.geography);
@@ -176,7 +142,6 @@ const LiveMap = () => {
 	}, [rfv]);
 
 	useEffect(() => {
-		console.log('selected', selected);
 		if (!selected) {
 			setCSSVariable('side-width', '0px');
 		} else {
