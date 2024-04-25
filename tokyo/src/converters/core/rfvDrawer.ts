@@ -1,15 +1,7 @@
-import { getPickableId, PickableType } from '../../util';
-import _ from 'lodash';
-import {
-	OPERATION_STATE_COLORS,
-	RFV_FILL_COLOR,
-	RFV_LINE_COLOR,
-	SELECTED_OPERATION_LINE_COLOR,
-	SELECTED_OPERATION_VOLUME_LINE_COLOR
-} from '../../TokyoDefaults';
-import type { ConvertToLayer, RGBA, RGBnumber } from '../../types';
-import { GeoJsonLayer } from '@deck.gl/layers/typed';
 import { PolygonLayer } from '@deck.gl/layers/typed';
+import _ from 'lodash';
+import type { ConvertToLayer, RGBA, RGBnumber } from '../../types';
+import { getPickableId, PickableType } from '../../util';
 
 import type { RfvEntity } from '@utm-entities/rfv';
 import { ELEVATION_MULTIPLIER } from '../util';

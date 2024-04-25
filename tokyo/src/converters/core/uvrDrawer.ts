@@ -29,13 +29,6 @@ function getIdFromUvr(uvr: UvrEntity) {
 function getConverterFromOperation(_uvr: UvrEntity, options?: OperationDrawingProps) {
 	const uvr: UvrEntity = _.cloneDeep(_uvr);
 
-	// No entiendo estas lineas, trato de adaptar
-	// uvr.operation_volumes.forEach((volume) => {
-	// 	if (volume.operation_geography)
-	// 		volume.operation_geography.coordinates[0].forEach((coordinate) => {
-	// 			coordinate[2] = volume.min_altitude * ELEVATION_MULTIPLIER;
-	// 		});
-	// });
 	if (uvr.geography)
 		uvr.geography.coordinates[0].forEach((coordinate) => {
 			coordinate[2] = uvr.min_altitude * ELEVATION_MULTIPLIER;
@@ -45,8 +38,8 @@ function getConverterFromOperation(_uvr: UvrEntity, options?: OperationDrawingPr
 	const fillAlpha = options?.fillAlpha ?? 100;
 	const lineAlpha = options?.lineAlpha ?? 255;
 
-	const fillColor: RGBA = [255, 153, 51, fillAlpha];
-	const lineColor: RGBA = [255, 153, 51, lineAlpha];
+	const fillColor: RGBA = [213, 82, 213, fillAlpha];
+	const lineColor: RGBA = [137, 58, 136, lineAlpha];
 
 	return () =>
 		new PolygonLayer({
