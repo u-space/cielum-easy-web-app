@@ -110,9 +110,6 @@ const RfvEditor = () => {
 	const props = _.filter(_.keys(rfv), (key) => key !== 'id');
 
 	const editorMapViewProps: EditorMapViewProps = {
-		/*handlers: {
-			edit: onPolygonsUpdated
-		},*/
 		geographicalZones: queryGeographicalZones.items,
 		editOptions: {
 			mode: EditMode.SINGLE,

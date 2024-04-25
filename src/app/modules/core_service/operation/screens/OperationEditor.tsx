@@ -200,7 +200,6 @@ const OperationEditor = () => {
 						</CardGroup>
 					)}
 					<MapViewModeSwitch />
-					``
 				</>
 			}
 			statusOverlay={{
