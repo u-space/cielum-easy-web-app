@@ -110,3 +110,7 @@ export const useAuthIsPilot = () => {
 	const role = useAuthStore((state) => state.role);
 	return role === AuthRole.PILOT;
 };
+
+export const useAuthGetRole = () => {
+	return useAuthStore((state) => state.role);
+};

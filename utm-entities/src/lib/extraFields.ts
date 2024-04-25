@@ -11,6 +11,7 @@ export interface SchemaItem {
 	required: boolean;
 	docType?: string;
 	onlyVisibleForAdmin?: boolean;
+	canEdit?: string[];
 	min_lenght?: number; // TODO (sic) rename when backend fixes typo
 	max_lenght?: number;
 	values?: string[];

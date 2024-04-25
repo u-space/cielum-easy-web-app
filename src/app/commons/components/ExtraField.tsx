@@ -8,7 +8,7 @@ import PSelect from '@pcomponents/PSelect';
 import { SchemaItem, SchemaItemType } from '@utm-entities/extraFields';
 import { observer } from 'mobx-react';
 import env from '../../../vendor/environment/env';
-import { useAuthIsAdmin } from '../../modules/auth/store';
+import { AuthRole, useAuthGetRole, useAuthIsAdmin } from '../../modules/auth/store';
 import { useTranslation } from 'react-i18next';
 
 import { extraFieldsFunctions } from '../../../vendor/assets/dinacia/customFunctions';
@@ -24,6 +24,12 @@ interface ExtraFieldProps {
 	ls: any;
 	value: any;
 	schemaValue: SchemaItem;
+}
+
+function canEdit(role: AuthRole, roleEditors: string[] | undefined) {
+	console.log(`canEdit ${role} ${roleEditors} = ${roleEditors?.includes(role)}`);
+	if (!roleEditors) return true;
+	return roleEditors.includes(role);
 }
 
 const ExtraField = observer((props: ExtraFieldProps) => {
@@ -49,6 +55,7 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 	} = schemaValue;
 	const { t } = useTranslation();
 	const isAdmin = useAuthIsAdmin();
+	const role = useAuthGetRole();
 	if (onlyAdmin && !isAdmin) return null;
 	switch (type) {
 		case SchemaItemType.String:
@@ -77,7 +84,7 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 						onChange={(value) => (ls.entity.extra_fields[property] = value)}
 						isRequired={required}
 						isDarkVariant={isDarkVariant}
-						disabled={!isEditing}
+						disabled={!isEditing || !canEdit(role, schemaValue.canEdit)}
 						inline
 						minLength={minLength}
 						maxLength={maxLength}
