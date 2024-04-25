@@ -11,6 +11,8 @@ import env from '../../../vendor/environment/env';
 import { useAuthIsAdmin } from '../../modules/auth/store';
 import { useTranslation } from 'react-i18next';
 
+import { extraFieldsFunctions } from '../../../vendor/assets/dinacia/customFunctions';
+
 interface ExtraFieldProps {
 	property: string;
 	isEditing: boolean;
@@ -67,7 +69,11 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 				return (
 					<PInput
 						{...{ id, label, explanation }}
-						defaultValue={value}
+						defaultValue={
+							schemaValue.population && extraFieldsFunctions[schemaValue.population]
+								? extraFieldsFunctions[schemaValue.population]()
+								: value
+						}
 						onChange={(value) => (ls.entity.extra_fields[property] = value)}
 						isRequired={required}
 						isDarkVariant={isDarkVariant}

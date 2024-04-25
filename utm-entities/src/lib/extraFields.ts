@@ -14,6 +14,7 @@ export interface SchemaItem {
 	min_lenght?: number; // TODO (sic) rename when backend fixes typo
 	max_lenght?: number;
 	values?: string[];
+	population?: string;
 }
 
 export type ExtraFieldSchema = { [key: string]: SchemaItem };
