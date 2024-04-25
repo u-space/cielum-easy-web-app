@@ -11,6 +11,7 @@
 		vehiclePositionTailTokyoConverter
 	} from '@tokyo/converters/core/position';
 	import { rfvTokyoConverter } from '@tokyo/converters/core/rfvDrawer';
+	import { uvrTokyoConverter } from '@tokyo/converters/core/uvrDrawer';
 	import { geographicalZoneTokyoConverter } from '@tokyo/converters/fra/geographicalZone';
 	import { CButtonVariant } from '@tokyo/gui/CButton';
 	import CButton from '@tokyo/gui/CButton.svelte';
@@ -196,8 +197,8 @@
 		{/each}
 		{#each visibleUvrs as uvr (uvr.message_id)}
 			<TokyoGenericMapElement
-				id={rfvTokyoConverter.getId(uvr)}
-				getLayer={rfvTokyoConverter.getConverter(uvr)}
+				id={uvrTokyoConverter.getId(uvr)}
+				getLayer={uvrTokyoConverter.getConverter(uvr)}
 			/>
 		{/each}
 		{#each visibleGeographicalZones as geographicalZone (geographicalZone.id)}
