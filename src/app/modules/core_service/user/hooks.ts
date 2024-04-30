@@ -67,14 +67,6 @@ export function useUpdateUserPasswordByToken() {
 export interface UseSendRecoverUserPasswordMutationParams {
 	email: string;
 }
-export function useSendRecoverUserPassword() {
-	const {
-		user: { recoverUserPassword }
-	} = useCoreServiceAPI();
-	return useMutation<AxiosResponse<void>, AxiosError, UseSendRecoverUserPasswordMutationParams>(
-		(params) => recoverUserPassword(params.email)
-	);
-}
 
 export function useUpdateUserStatus() {
 	const queryClient = useQueryClient();
