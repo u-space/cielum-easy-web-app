@@ -282,6 +282,14 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 			);
 			return response;
 		},
+		updateUserPasswordToken: (email: string, password: string, token: string) => {
+			const response = axiosInstance.post(
+				`auth/reset-password`,
+				{ email, password, format: 'json', token }
+				// { headers: { auth: token } }
+			);
+			return response;
+		},
 		deleteUser: (username: string) => {
 			return axiosInstance.delete(`user/${username}`, { headers: { auth: token } });
 		},
