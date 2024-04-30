@@ -5,7 +5,7 @@ import PModal, { PModalType } from '@pcomponents/PModal';
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useUpdateUserPassword } from '../hooks';
+import { useUpdateUserPassword, useUpdateUserPasswordByToken } from '../hooks';
 
 interface PasswordChangerProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,8 +30,12 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 	const PASSWORD_CHANGE_EXPIRED_ERROR = t('The password change link has expired');
 
 	const updateUserPassword = useUpdateUserPassword();
+	const updateUserPasswordByToken = useUpdateUserPasswordByToken();
 
 	const savePasswordUpdate = () => {
+		if (!ls.entity.email) {
+			setError(t('The email is required'));
+		}
 		if (ls.entity.password && ls.entity.password !== ls.entity._password_verification) {
 			setError(t('The passwords do not match'));
 			return;
@@ -41,7 +45,18 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 			return;
 		}
 		setShowFields(forceShow || false);
-		updateUserPassword.mutate({ username: ls.entity.username, password: ls.entity.password });
+		if (!token) {
+			updateUserPassword.mutate({
+				username: ls.entity.username,
+				password: ls.entity.password
+			});
+		} else {
+			updateUserPasswordByToken.mutate({
+				email: ls.entity.email,
+				token,
+				password: ls.entity.password
+			});
+		}
 	};
 
 	const resetError = () => {
