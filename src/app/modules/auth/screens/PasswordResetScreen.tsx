@@ -19,17 +19,19 @@ const PasswordResetScreen = () => {
 	const schema = useSchemaStore((state) => state.users);
 
 	const { username } = useParams<{ username: string }>();
-	const ls = useLocalStore(() => ({
-		entity: new UserEntity({ username }, schema)
-	}));
 
 	const queryString = useQueryString();
+	const email = queryString.get('email');
 	const token = queryString.get('token');
+
+	const ls = useLocalStore(() => ({
+		entity: new UserEntity({ username: email, email }, schema)
+	}));
 
 	const [secondsLeft, setSecondsLeft] = useState(SECONDS_TO_REDIRECT);
 	const interval = useRef<NodeJS.Timer | null>(null);
 
-	if (!token) {
+	if (!token || !email) {
 		return (
 			<UnloggedLayout>
 				<PModal
@@ -48,6 +50,7 @@ const PasswordResetScreen = () => {
 						<PasswordChanger
 							ls={ls}
 							forceShow
+							email={email}
 							token={token}
 							isCreating={false}
 							onFinish={() => {
