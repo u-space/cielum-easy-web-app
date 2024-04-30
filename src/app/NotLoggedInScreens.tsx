@@ -19,7 +19,7 @@ const NotLoggedInScreens = () => {
 			<Route exact path="/verify/:username">
 				<VerificationScreen />
 			</Route>
-			<Route exact path="/password-reset/request">
+			<Route exact path="/reset-password/request">
 				<PasswordResetRequest />
 			</Route>
 			<Route exact path="/reset-password/">
