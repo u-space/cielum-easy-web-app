@@ -13,7 +13,7 @@ interface PasswordChangerProps {
 const PasswordChangerRequestForm: FC<PasswordChangerProps> = ({ onFinish = null }) => {
 	const { t } = useTranslation();
 	const [error, setError] = useState<string | null>(null);
-	const [email, setEmail] = useState<string>('emialonzo@gmail.com');
+	const [email, setEmail] = useState<string>('');
 
 	const reset = useAuthStore((state) => state.reset);
 
