@@ -5,6 +5,7 @@ import RegisterScreen from './modules/auth/screens/RegisterScreen';
 import LoginScreen from './modules/auth/screens/LoginScreen';
 import { reactify } from 'svelte-preprocess-react';
 import LiveMapSvelte from './modules/map/screens/live/LiveMapV2App.svelte';
+import PasswordResetRequest from './modules/auth/screens/PasswordResetRequest';
 
 const LiveMap = reactify(LiveMapSvelte);
 
@@ -18,7 +19,10 @@ const NotLoggedInScreens = () => {
 			<Route exact path="/verify/:username">
 				<VerificationScreen />
 			</Route>
-			<Route exact path="/password-reset/:username">
+			<Route exact path="/password-reset/request">
+				<PasswordResetRequest />
+			</Route>
+			<Route exact path="/reset-password/">
 				<PasswordResetScreen />
 			</Route>
 			<Route exact path="/register">
