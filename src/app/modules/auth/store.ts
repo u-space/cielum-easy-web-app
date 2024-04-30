@@ -28,6 +28,11 @@ interface AuthState {
 	) => void;
 	relogin: () => Promise<void>;
 	logout: () => Promise<void>;
+	reset: (
+		email: string,
+		onSuccess: () => void,
+		onError: (error: string) => void
+	) => Promise<void>;
 }
 
 const axios = Axios.create({
@@ -95,6 +100,29 @@ export const useAuthStore = create<AuthState>()(
 			logout: async () => {
 				await axios.post('/auth/clear', {}, { withCredentials: true });
 				set({ token: '', username: '', email: '', role: AuthRole.NOT_LOGGED_IN });
+			},
+			reset: async (
+				email: string,
+				onSuccess: () => void,
+				onError: (error: string) => void
+			) => {
+				try {
+					const body = JSON.stringify({
+						email: email,
+						mobileClient: false,
+						format: 'json'
+					});
+					const response = await axios.post('/auth/forgot-password', body, {
+						withCredentials: false
+					});
+					if (onSuccess) onSuccess();
+				} catch (error) {
+					if (error instanceof AxiosError) {
+						if (onError) onError(error.response?.data?.message || error.message);
+					} else {
+						throw error;
+					}
+				}
 			}
 		}),
 		{ name: 'AuthStore' }
