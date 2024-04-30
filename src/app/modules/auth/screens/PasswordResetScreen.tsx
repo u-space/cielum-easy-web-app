@@ -3,12 +3,12 @@ import { UserEntity } from '@utm-entities/user';
 import { useLocalStore } from 'mobx-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory, useParams } from 'react-router-dom';
-import PasswordChanger from '../../core_service/user/components/PasswordChanger';
-import styles from '../auth.module.scss';
-import { useSchemaStore } from '../../schemas/store';
-import UnloggedLayout from '../layouts/UnloggedLayout';
+import { useHistory } from 'react-router-dom';
 import { useQueryString } from '../../../utils';
+import PasswordChanger from '../../core_service/user/components/PasswordChanger';
+import { useSchemaStore } from '../../schemas/store';
+import styles from '../auth.module.scss';
+import UnloggedLayout from '../layouts/UnloggedLayout';
 
 const SECONDS_TO_REDIRECT = 5;
 
@@ -18,7 +18,7 @@ const PasswordResetScreen = () => {
 
 	const schema = useSchemaStore((state) => state.users);
 
-	const { username } = useParams<{ username: string }>();
+	// const { username } = useParams<{ username: string }>();
 
 	const queryString = useQueryString();
 	const email = queryString.get('email');
@@ -50,7 +50,6 @@ const PasswordResetScreen = () => {
 						<PasswordChanger
 							ls={ls}
 							forceShow
-							email={email}
 							token={token}
 							isCreating={false}
 							onFinish={() => {
