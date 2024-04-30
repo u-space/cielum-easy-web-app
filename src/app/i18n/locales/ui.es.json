@@ -252,6 +252,8 @@
 	"Request failed with status code 500": "Ha ocurrido un error interno en el servidor",
 	"The password has been successful and the new password can now be used to log-in": "El cambio de contraseña ha sido ejecutado satisfactoriamente y la nueva contraseña puede ser usada para iniciar sesión",
 	"\"value\" failed custom validation because The passwords do not match": "Las contraseñas ingresadas no son iguales",
+	"Recover password": "Recuperar contraseña",
+	"Enter your email address to receive instructions for changing your password": "Ingresa tu correo electrónico para obtener instrucciones para cambiar tu contraseña",
 	"There is no RFV with the specified id": "No hay RFV con la id especificada",
 	"There is no UVR with the specified id": "No existe una NOTAM con la id especificada",
 	"The user details have been succesfully saved!": "Los datos del usuario han sido guardados correctamente",
