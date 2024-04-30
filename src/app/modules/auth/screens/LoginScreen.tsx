@@ -75,6 +75,11 @@ const LoginScreen = () => {
 					{t('Log-in')}
 				</PButton>
 			</section>
+			<section className={styles.actions}>
+				<PButton onClick={() => history.push('/reset-password/request')}>
+					{t('Recover password')}
+				</PButton>
+			</section>
 			{!hasTriedToRelogin && <StatusLayout isLogin>{t('Please wait')}...</StatusLayout>}
 			{isLoading && <StatusLayout isLogin>{t('Loading')}...</StatusLayout>}
 			{isError && (
