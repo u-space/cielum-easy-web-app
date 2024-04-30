@@ -40,12 +40,39 @@ export interface UseUpdateUserPasswordMutationParams {
 	password: string;
 }
 
+export interface UseUpdateUserPasswordByTokenMutationParams {
+	email: string;
+	password: string;
+	token: string;
+}
+
 export function useUpdateUserPassword() {
 	const {
 		user: { updateUserPassword }
 	} = useCoreServiceAPI();
 	return useMutation<AxiosResponse<void>, AxiosError, UseUpdateUserPasswordMutationParams>(
 		(params) => updateUserPassword(params.username, params.password)
+	);
+}
+
+export function useUpdateUserPasswordByToken() {
+	const {
+		user: { updateUserPasswordToken }
+	} = useCoreServiceAPI();
+	return useMutation<AxiosResponse<void>, AxiosError, UseUpdateUserPasswordByTokenMutationParams>(
+		(params) => updateUserPasswordToken(params.email, params.password, params.token)
+	);
+}
+
+export interface UseSendRecoverUserPasswordMutationParams {
+	email: string;
+}
+export function useSendRecoverUserPassword() {
+	const {
+		user: { recoverUserPassword }
+	} = useCoreServiceAPI();
+	return useMutation<AxiosResponse<void>, AxiosError, UseSendRecoverUserPasswordMutationParams>(
+		(params) => recoverUserPassword(params.email)
 	);
 }
 
