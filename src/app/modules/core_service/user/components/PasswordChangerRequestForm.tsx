@@ -19,7 +19,10 @@ const PasswordChangerRequestForm: FC<PasswordChangerProps> = ({ onFinish = null 
 
 	return (
 		<>
-			<h1>{t('Change password')}!</h1>
+			<h2>{t('Change password')}</h2>
+			<p>
+				{t('Enter your email address to receive instructions for changing your password')}.
+			</p>
 			<OneLine>
 				<>
 					<PInput
@@ -29,9 +32,10 @@ const PasswordChangerRequestForm: FC<PasswordChangerProps> = ({ onFinish = null 
 							setEmail(value);
 						}}
 						type="email"
-						label={t('email')}
+						// label={t('email')}
 						autoComplete="email"
 						isDarkVariant
+						inline={true}
 						minLength={5}
 						defaultValue={email}
 					>
@@ -40,7 +44,7 @@ const PasswordChangerRequestForm: FC<PasswordChangerProps> = ({ onFinish = null 
 						</p>
 					</PInput>
 					<PButton
-						style={{ margin: '1rem auto' }}
+						// style={{ margin: '1rem auto' }}
 						onClick={() => {
 							if (email) {
 								reset(
