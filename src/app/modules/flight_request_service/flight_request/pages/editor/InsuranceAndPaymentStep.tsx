@@ -1,28 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox, DialogStep, MultistepDialog, Spinner, SpinnerSize } from '@blueprintjs/core';
-import { GetVehicleInsuranceSimulationFlySafeParams, VehicleEntity } from '@utm-entities/vehicle';
-import { translateErrors } from '@utm-entities/_util';
+import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import PButton from '@pcomponents/PButton';
-import PModal, { PModalType } from '@pcomponents/PModal';
+import PDropdown from '@pcomponents/PDropdown';
+import PFullModal, { PFullModalProps } from '@pcomponents/PFullModal';
+import { PModalType } from '@pcomponents/PModal';
+import PNumberInput from '@pcomponents/PNumberInput';
+import { translateErrors } from '@utm-entities/_util';
+import { DocumentEntity } from '@utm-entities/document';
+import { GetVehicleInsuranceSimulationFlySafeParams, VehicleEntity } from '@utm-entities/vehicle';
+import { AxiosError, AxiosResponse } from 'axios';
 import { observer } from 'mobx-react-lite';
 import { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
+import { UseMutationResult, useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import styles from '../../../../../commons/Pages.module.scss';
-import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
-import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
-import { DocumentEntity } from '@utm-entities/document';
-import PNumberInput from '@pcomponents/PNumberInput';
-import PDropdown from '@pcomponents/PDropdown';
-import { useGetVehicleInsuranceSimulation } from '../../../../core_service/vehicle/hooks';
-import { useFlightRequestServiceAPI } from '../../../../../utils';
-import PageLayout from '../../../../../commons/layouts/PageLayout';
-import { AxiosError, AxiosResponse } from 'axios';
-import { onOff, onOffMaterializeVariants } from '@pcomponents/anims';
 import DashboardLayout from '../../../../../commons/layouts/DashboardLayout';
-import PFullModal, { PFullModalProps } from '@pcomponents/PFullModal';
+import PageLayout from '../../../../../commons/layouts/PageLayout';
+import { useFlightRequestServiceAPI } from '../../../../../utils';
+import { useGetVehicleInsuranceSimulation } from '../../../../core_service/vehicle/hooks';
+import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
 
 interface InsuranceAndPaymentStepProps {
 	previousStep: () => void;
@@ -221,6 +219,12 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 		}
 	);
 
+	const finishAndPay = (evt: FormEvent) => {
+		evt.preventDefault();
+
+		saveFlightRequestMutation.mutate();
+	};
+
 	const getVehicleInsurancePrices = async (
 		vehicle: VehicleEntity,
 		params: GetVehicleInsuranceSimulationFlySafeParams
@@ -235,12 +239,6 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 			console.error(error);
 			return;
 		}
-	};
-
-	const finishAndPay = (evt: FormEvent) => {
-		evt.preventDefault();
-
-		saveFlightRequestMutation.mutate();
 	};
 
 	const save = (evt: MouseEvent) => {
@@ -363,17 +361,7 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 														{'€'}
 													</p>
 												) : (
-													<>
-														{t('The drone has no valid insurance')}
-														{/* <PButton
-														onClick={() => {
-															setInsuranceFormOpenedFlag(true);
-															setVehicleSelectedForInsurance(uav);
-														}}
-													>
-														{t('Calculate insurance')}
-													</PButton> */}
-													</>
+													<>{t('The drone has no valid insurance')}</>
 												)}
 											</p>
 										</div>

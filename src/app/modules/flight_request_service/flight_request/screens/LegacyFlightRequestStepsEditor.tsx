@@ -117,27 +117,27 @@ const LegacyFlightRequestStepsEditor = () => {
 				});
 				return;
 			}
-			if (checkCoordinations(flightRequest)) {
-				setModalProps({
-					isVisible: true,
-					type: PModalType.INFORMATION,
-					title: t('Information'),
-					content: (
-						<p>{t('As 4 days or more were selected, extra charges can be charged')}</p>
-					),
-					primary: {
-						onClick: () => {
-							_coordinationsStep();
-							setModalProps(undefined);
-						}
-					},
-					secondary: {
-						text: 'Cancelar',
-						onClick: resetError
-					}
-				});
-				return;
-			}
+			// if (checkCoordinations(flightRequest)) {
+			// 	setModalProps({
+			// 		isVisible: true,
+			// 		type: PModalType.INFORMATION,
+			// 		title: t('Information'),
+			// 		content: (
+			// 			<p>{t('As 4 days or more were selected, extra charges can be charged')}</p>
+			// 		),
+			// 		primary: {
+			// 			onClick: () => {
+			// 				_coordinationsStep();
+			// 				setModalProps(undefined);
+			// 			}
+			// 		},
+			// 		secondary: {
+			// 			text: 'Cancelar',
+			// 			onClick: resetError
+			// 		}
+			// 	});
+			// 	return;
+			// }
 			_coordinationsStep();
 		} else if (step === FlightRequestEditorStep.COORDINATIONS) {
 			flightRequest.setGeographicalZones(zonesChecked);
@@ -200,7 +200,9 @@ const LegacyFlightRequestStepsEditor = () => {
 					flightRequest,
 					zonesChecked,
 					setZonesChecked,
-					total
+					total,
+					setModalProps,
+					modalProps
 				}}
 			/>
 		);
