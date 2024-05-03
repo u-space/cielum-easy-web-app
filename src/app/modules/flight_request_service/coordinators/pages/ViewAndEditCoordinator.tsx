@@ -34,7 +34,13 @@ const specialProps = [
 	'automatic_coordinator_procedure',
 	'id'
 ];
-const nonRequiredProps = ['email', 'telephone', 'price', 'discount_Multiple_Dates'];
+const nonRequiredProps = [
+	'liaison',
+	'minimun_coordination_days',
+	'price',
+	'discount_Multiple_Dates'
+];
+const hiddenProps = ['liaison', 'minimun_coordination_days', 'price', 'discount_Multiple_Dates'];
 
 interface BaseCoordinatorDetailsProps {
 	ls: UseLocalStoreEntity<CoordinatorEntity>;
@@ -47,128 +53,130 @@ const BaseCoordinatorDetails: FC<BaseCoordinatorDetailsProps> = ({ ls, isEditing
 	if (ls.entity) {
 		return (
 			<>
-				{Object.keys(ls.entity).map((_prop) => {
-					const prop = _prop as keyof CoordinatorEntity;
-					const id = `input-${prop}`;
-					const label = t(`coordinator.${prop}`);
-					const explanation = t(`coordinator.${prop}_desc`);
-					const isNotEditable = false;
-					if (!isCreating && prop === 'id') {
-						return (
-							<PInput
-								key={prop}
-								id={id}
-								defaultValue={ls.entity[prop] ? ls.entity[prop] : ''}
-								label={label}
-								explanation={explanation}
-								disabled={true}
-								onChange={(value) => (ls.entity[prop] = value)}
-								isRequired
-								isDarkVariant
-								inline
-							/>
-						);
-					} else if (prop === 'geographical_zone') {
-						let geographicalZoneId = '';
-						if (ls.entity.geographical_zone) {
-							if (typeof ls.entity.geographical_zone !== 'string') {
-								geographicalZoneId = ls.entity.geographical_zone.id as string;
-							} else {
-								geographicalZoneId = ls.entity.geographical_zone as string;
-							}
-						}
-						return (
-							<PInput
-								key={prop}
-								id={id}
-								defaultValue={geographicalZoneId}
-								label={label}
-								explanation={explanation}
-								disabled={!isEditing || isNotEditable}
-								onChange={(value) => {
-									if (value === '') {
-										ls.entity.geographical_zone = null;
-									} else {
-										ls.entity.geographical_zone = value;
-									}
-								}}
-								isRequired
-								isDarkVariant
-								inline
-							/>
-						);
-					} else if (prop === 'liaison') {
-						return (
-							<PDropdown
-								key={prop}
-								id={id}
-								defaultValue={ls.entity.liaison ? ls.entity.liaison : ''}
-								label={label}
-								explanation={explanation}
-								disabled={!isEditing || isNotEditable}
-								onChange={(value) => (ls.entity.liaison = value)}
-								options={LiaisonOptions}
-								isRequired
-								isDarkVariant
-								inline
-							/>
-						);
-					} else if (prop === 'type') {
-						return (
-							<PDropdown
-								key={prop}
-								id={id}
-								defaultValue={ls.entity.type ? ls.entity.type : ''}
-								label={label}
-								explanation={explanation}
-								disabled={!isEditing || isNotEditable}
-								onChange={(value) => (ls.entity.type = value)}
-								options={TypeOptions}
-								isRequired
-								isDarkVariant
-								inline
-							/>
-						);
-					} else if (!specialProps.includes(String(prop))) {
-						const value = ls.entity[prop as keyof CoordinatorEntity] ?? '';
-						// is value number
-						if (typeof value === 'number') {
-							return (
-								<PNumberInput
-									key={prop}
-									id={id}
-									defaultValue={value}
-									label={label}
-									explanation={explanation}
-									disabled={!isEditing || isNotEditable}
-									onChange={(value) => ls.setInfo(prop, value)}
-									isRequired={!nonRequiredProps.includes(String(prop))}
-									isDarkVariant
-									inline
-								/>
-							);
-						} else if (typeof value === 'string') {
+				{Object.keys(ls.entity)
+					.filter((p) => hiddenProps.indexOf(p) === -1)
+					.map((_prop) => {
+						const prop = _prop as keyof CoordinatorEntity;
+						const id = `input-${prop}`;
+						const label = t(`coordinator.${prop}`);
+						const explanation = t(`coordinator.${prop}_desc`);
+						const isNotEditable = false;
+						if (!isCreating && prop === 'id') {
 							return (
 								<PInput
 									key={prop}
 									id={id}
-									defaultValue={value}
+									defaultValue={ls.entity[prop] ? ls.entity[prop] : ''}
 									label={label}
 									explanation={explanation}
-									disabled={!isEditing || isNotEditable}
-									onChange={(value) => ls.setInfo(prop, value)}
-									isRequired={!nonRequiredProps.includes(String(prop))}
+									disabled={true}
+									onChange={(value) => (ls.entity[prop] = value)}
+									isRequired
 									isDarkVariant
 									inline
 								/>
 							);
+						} else if (prop === 'geographical_zone') {
+							let geographicalZoneId = '';
+							if (ls.entity.geographical_zone) {
+								if (typeof ls.entity.geographical_zone !== 'string') {
+									geographicalZoneId = ls.entity.geographical_zone.id as string;
+								} else {
+									geographicalZoneId = ls.entity.geographical_zone as string;
+								}
+							}
+							return (
+								<PInput
+									key={prop}
+									id={id}
+									defaultValue={geographicalZoneId}
+									label={label}
+									explanation={explanation}
+									disabled={!isEditing || isNotEditable}
+									onChange={(value) => {
+										if (value === '') {
+											ls.entity.geographical_zone = null;
+										} else {
+											ls.entity.geographical_zone = value;
+										}
+									}}
+									isRequired
+									isDarkVariant
+									inline
+								/>
+							);
+						} else if (prop === 'liaison') {
+							return (
+								<PDropdown
+									key={prop}
+									id={id}
+									defaultValue={ls.entity.liaison ? ls.entity.liaison : ''}
+									label={label}
+									explanation={explanation}
+									disabled={!isEditing || isNotEditable}
+									onChange={(value) => (ls.entity.liaison = value)}
+									options={[{ label: '', value: '' }, ...LiaisonOptions]}
+									isRequired
+									isDarkVariant
+									inline
+								/>
+							);
+						} else if (prop === 'type') {
+							return (
+								<PDropdown
+									key={prop}
+									id={id}
+									defaultValue={ls.entity.type ? ls.entity.type : ''}
+									label={label}
+									explanation={explanation}
+									disabled={!isEditing || isNotEditable}
+									onChange={(value) => (ls.entity.type = value)}
+									options={[{ label: '', value: '' }, ...TypeOptions]}
+									isRequired
+									isDarkVariant
+									inline
+								/>
+							);
+						} else if (!specialProps.includes(String(prop))) {
+							const value = ls.entity[prop as keyof CoordinatorEntity] ?? '';
+							// is value number
+							if (typeof value === 'number') {
+								return (
+									<PNumberInput
+										key={prop}
+										id={id}
+										defaultValue={value}
+										label={label}
+										explanation={explanation}
+										disabled={!isEditing || isNotEditable}
+										onChange={(value) => ls.setInfo(prop, value)}
+										isRequired={!nonRequiredProps.includes(String(prop))}
+										isDarkVariant
+										inline
+									/>
+								);
+							} else if (typeof value === 'string') {
+								return (
+									<PInput
+										key={prop}
+										id={id}
+										defaultValue={value}
+										label={label}
+										explanation={explanation}
+										disabled={!isEditing || isNotEditable}
+										onChange={(value) => ls.setInfo(prop, value)}
+										isRequired={!nonRequiredProps.includes(String(prop))}
+										isDarkVariant
+										inline
+									/>
+								);
+							} else {
+								return null;
+							}
 						} else {
 							return null;
 						}
-					} else {
-						return null;
-					}
-				})}
+					})}
 			</>
 		);
 	}
