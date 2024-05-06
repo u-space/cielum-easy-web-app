@@ -17,7 +17,7 @@ import {
 } from '../../../document/hooks';
 import styles from '../../../../commons/Pages.module.scss';
 import ExtraField from '../../../../commons/components/ExtraField';
-import { useAuthIsAdmin, useAuthStore } from '../../../auth/store';
+import { useAuthGetRole, useAuthIsAdmin, useAuthStore } from '../../../auth/store';
 import { useSchemaStore } from '../../../schemas/store';
 import { VehicleEntity } from '@utm-entities/vehicle';
 import PasswordChanger from '../components/PasswordChanger';
@@ -39,6 +39,7 @@ interface BaseUserDetailsProps {
 const BaseUserDetails = (props: BaseUserDetailsProps) => {
 	const { ls, isEditing, isCreating, isAbleToChangeRole } = props;
 	const { t } = useTranslation('glossary');
+	// const role = useAuthGetRole();
 
 	return (
 		<>
@@ -47,7 +48,10 @@ const BaseUserDetails = (props: BaseUserDetailsProps) => {
 					const id = `input-${prop}`;
 					const label = t(`user.${prop}`);
 					const explanation = t(`user.${prop}_desc`);
-					const isNotEditable = !isCreating && (prop === 'username' || prop === 'email');
+					const isNotEditable =
+						!isCreating &&
+						// role !== 'ADMIN' &&
+						(prop === 'username' || prop === 'email');
 					let autoComplete = 'off';
 					switch (prop) {
 						case 'username':
