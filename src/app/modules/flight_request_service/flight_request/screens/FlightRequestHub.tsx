@@ -68,6 +68,24 @@ const MenuButtons: FC<MenuButtonsProps> = ({ entity, style }) => {
 const ExtraActions: FC<{ data: FlightRequestEntity }> = ({ data }) => {
 	const history = useHistory();
 	const { t } = useTranslation();
+	const getFlightRequestStateColor = (state?: FlightRequestState) => {
+		switch (state) {
+			case FlightRequestState.REQUIRE_APPROVAL:
+				return 'orange';
+			case FlightRequestState.PENDING:
+				return 'yellow';
+			case FlightRequestState.COMPLETED:
+				return 'green';
+			case FlightRequestState.CANCELLED:
+				return 'brown';
+			case FlightRequestState.REJECTED:
+				return 'red';
+			case FlightRequestState.PREFLIGHT:
+				return 'white';
+			default:
+				return 'black';
+		}
+	};
 	return (
 		<>
 			<PButton
@@ -76,10 +94,10 @@ const ExtraActions: FC<{ data: FlightRequestEntity }> = ({ data }) => {
 				variant={PButtonType.SECONDARY}
 				onClick={() => history.push(`/flight-requests/${data.id}`)}
 			/>
-			<PTooltip content={data.paid ? t('Paid') : t('Pending payment')}>
+			<PTooltip content={t(data.state ? data.state.toString() : '')}>
 				<PaidStateCircle
 					style={{
-						backgroundColor: data.paid ? 'green' : 'red'
+						backgroundColor: getFlightRequestStateColor(data.state)
 					}}
 				/>
 			</PTooltip>
