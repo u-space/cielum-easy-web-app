@@ -209,6 +209,10 @@ export const transformUsers = (schema: ExtraFieldSchema) => (data: any) => {
 	};
 };
 
+export const transformExistsUser = () => (data: any) => {
+	return data.exists;
+};
+
 /* API Calls */
 
 export interface ChangeUserConfirmationStatusBody {
@@ -258,6 +262,14 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
 				).concat(transformUser(schema))
+			});
+		},
+		userExists: (username: string) => {
+			return axiosInstance.get(`/user/exists/${username}`, {
+				headers: { auth: token },
+				transformResponse: (
+					Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				).concat(transformExistsUser())
 			});
 		},
 		verifyUser: (username: string, validationToken: string) => {
