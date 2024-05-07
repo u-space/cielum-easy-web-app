@@ -1,18 +1,17 @@
+import PInput from '@pcomponents/PInput';
+import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
+import PVehicleSelect from '@pcomponents/PVehicleSelect';
+import { TrackerEntity } from '@utm-entities/tracker';
+import { UserEntity } from '@utm-entities/user';
+import { VehicleEntity } from '@utm-entities/vehicle';
 import { observer } from 'mobx-react';
 import { CSSProperties, FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PInput from '@pcomponents/PInput';
-import PVehicleSelect from '@pcomponents/PVehicleSelect';
+import env from '../../../../../vendor/environment/env';
 import styles from '../../../../commons/Pages.module.scss';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
-import { TrackerEntity } from '@utm-entities/tracker';
-import { useSchemaStore } from '../../../schemas/store';
-import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
-import env from '../../../../../vendor/environment/env';
-import { UserEntity } from '@utm-entities/user';
-import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
-import { VehicleEntity } from '@utm-entities/vehicle';
+import { useSchemaStore } from '../../../schemas/store';
 
 interface BaseTrackerDetailsProps {
 	ls: UseLocalStoreEntity<TrackerEntity>;
