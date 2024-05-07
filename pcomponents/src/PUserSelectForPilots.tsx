@@ -5,6 +5,9 @@ import { useTranslation } from 'react-i18next';
 import styles from './Kanpur.module.scss';
 import PButton, { PButtonType, PButtonSize } from './PButton';
 import PInput, { PInputProps } from './PInput';
+import { UserEntity, getUserAPIClient } from '@utm-entities/user';
+import { ExtraFieldSchema } from '@utm-entities/extraFields';
+import { useQuery } from 'react-query';
 
 export interface PUserSelectForPilotsProps extends Omit<PInputProps, 'onSelect'> {
 	label: string;
@@ -13,7 +16,17 @@ export interface PUserSelectForPilotsProps extends Omit<PInputProps, 'onSelect'>
 	onSelect: (users: string[]) => void;
 	isDarkVariant?: boolean;
 	preselected?: string[];
+	api: string;
+	token: string;
+	schema: ExtraFieldSchema;
 }
+
+// const userNameAsUsers = (usernames: string[], schema: ExtraFieldSchema): UserEntity[] => {
+// 	return usernames.map((username: string) => {
+// 		const user = new UserEntity({ username: username }, schema);
+// 		return user;
+// 	});
+// };
 
 const PUserSelectForPilots = (props: PUserSelectForPilotsProps) => {
 	const {
@@ -23,11 +36,43 @@ const PUserSelectForPilots = (props: PUserSelectForPilotsProps) => {
 		onSelect,
 		isDarkVariant = false,
 		preselected,
+		api,
+		token,
+		schema,
 		...extra
 	}: PUserSelectForPilotsProps = props;
 
 	const [value, setValue] = useState('');
 	const [selected, setSelected] = useState<string[]>(preselected ? preselected : []);
+	const { userExists } = getUserAPIClient(api, token, schema);
+
+	const [usernameToCheck, setUsernameToCheck] = useState<string | undefined>(undefined);
+
+	useEffect(() => {
+		//check if usernameTocheck exists on selected
+		if (selected.includes(usernameToCheck ? usernameToCheck : '')) {
+			alert('User already selected');
+		} else {
+			userExists(usernameToCheck ? usernameToCheck : '')
+				.then((response) => {
+					if (response.data) {
+						setSelected((current: string[]) => {
+							const selected = [...current, value];
+							onSelect(selected);
+							setUsernameToCheck(undefined);
+							setValue('');
+							return selected;
+						});
+						// alert('User exists');
+					} else {
+						alert('User does not exist');
+					}
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+		}
+	}, [usernameToCheck]);
 
 	useEffect(() => {
 		if (props.preselected) {
@@ -41,6 +86,7 @@ const PUserSelectForPilots = (props: PUserSelectForPilotsProps) => {
 	const remove = (username: string) => {
 		setSelected((current) => {
 			const selected = _.filter(current, (u) => u !== username);
+			// const users = userNameAsUsers(selected, schema);
 			onSelect(selected);
 			return selected;
 		});
@@ -58,7 +104,7 @@ const PUserSelectForPilots = (props: PUserSelectForPilotsProps) => {
 					remove={remove}
 				/>
 			))}
-			{isChoosing && (
+			{isEditing && (
 				<TextFieldSelectUser
 					{...{
 						value,
@@ -69,7 +115,8 @@ const PUserSelectForPilots = (props: PUserSelectForPilotsProps) => {
 
 						isDarkVariant,
 						onSelect,
-						setSelected
+						setSelected,
+						setUsernameToCheck
 					}}
 				/>
 			)}
@@ -111,6 +158,7 @@ interface TextFieldSelectUserProps {
 	isDarkVariant: boolean;
 	onSelect: (users: string[]) => void;
 	setSelected: (fn: (current: string[]) => string[]) => void;
+	setUsernameToCheck: (username: string | undefined) => void;
 }
 
 const TextFieldSelectUser = (props: TextFieldSelectUserProps) => {
@@ -122,7 +170,8 @@ const TextFieldSelectUser = (props: TextFieldSelectUserProps) => {
 
 		isDarkVariant,
 		onSelect,
-		setSelected
+		setSelected,
+		setUsernameToCheck
 	} = props;
 	const { t } = useTranslation();
 	return (
@@ -145,11 +194,12 @@ const TextFieldSelectUser = (props: TextFieldSelectUserProps) => {
 					size={PButtonSize.SMALL}
 					icon="plus"
 					onClick={() => {
-						setSelected((current: string[]) => {
-							const selected = [...current, value];
-							onSelect(selected);
-							return selected;
-						});
+						// setSelected((current: string[]) => {
+						// 	const selected = [...current, value];
+						// 	onSelect(selected);
+						// 	return selected;
+						// });
+						setUsernameToCheck(value);
 					}}
 				>
 					{t('Add user as operator', { user: value })}

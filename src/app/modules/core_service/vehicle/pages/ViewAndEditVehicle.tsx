@@ -23,7 +23,7 @@ import {
 import { DocumentEntity } from '@utm-entities/document';
 import { getWebConsoleLogger } from '../../../../../utils';
 import { useSchemaStore } from '../../../schemas/store';
-import { ExtraFieldSchemas } from '@utm-entities/extraFields';
+import { ExtraFieldSchema, ExtraFieldSchemas } from '@utm-entities/extraFields';
 import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
 import env from '../../../../../vendor/environment/env';
@@ -446,6 +446,13 @@ const ExtraVehicleDetails: FC<ExtraVehicleDetailsProps> = ({ ls, isEditing }) =>
 	});
 };
 
+const userNameAsUsers = (usernames: string[], schema: ExtraFieldSchema): UserEntity[] => {
+	return usernames.map((username: string) => {
+		const user = new UserEntity({ username: username }, schema);
+		return user;
+	});
+};
+
 export interface ViewAndEditVehicleProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
 	isEditing: boolean;
@@ -526,6 +533,9 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								isRequired
 								disabled={!isEditing || !isAdmin || !isCreating}
 								isDarkVariant
+								api={env.core_api}
+								token={token}
+								schema={schema}
 							/>
 						)}
 						{isAdmin && (
@@ -563,14 +573,18 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 							<PUserSelectForPilots
 								label={' '}
 								id="operators"
+								// schema={schema}
 								onSelect={(selected) => {
-									ls.entity.operators = selected;
+									ls.entity.operators = userNameAsUsers(selected, schema);
 								}}
 								preselected={ls.entity.operators.map((o) => o.username)}
 								fill
 								isRequired
-								disabled={!isEditing || !isAdmin || !isCreating}
+								disabled={!isEditing}
 								isDarkVariant
+								api={env.core_api}
+								token={token}
+								schema={schema}
 							/>
 						)}
 						{isAdmin && (

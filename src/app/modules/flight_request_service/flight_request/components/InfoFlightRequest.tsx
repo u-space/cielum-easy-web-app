@@ -214,7 +214,6 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 			<div>
 				{!isDefaultOperator && isAdmin && (
 					<PUserSelectForAdmins
-						api={env.core_api}
 						label={t('glossary:flightRequest.operator')}
 						onSelect={onSelectUserForAdmins}
 						preselected={
@@ -223,6 +222,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 						fill
 						isRequired
 						disabled={isPilot}
+						api={env.core_api}
 						token={token}
 						schema={schemaUsers}
 						id={'editor-select-user-pilot'}
@@ -234,6 +234,9 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 						label={t('glossary:flightRequest.operator')}
 						onSelect={onSelectUserForPilots}
 						id={'editor-select-user-admin'}
+						api={env.core_api}
+						token={token}
+						schema={schemaUsers}
 					/>
 				)}
 			</div>

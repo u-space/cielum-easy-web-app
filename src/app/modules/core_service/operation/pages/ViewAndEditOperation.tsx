@@ -116,38 +116,29 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 
 	const token = useAuthStore((state) => state.token);
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
+	const schemaUsers = useSchemaStore((state) => state.users);
 
 	const flags = { isRequired: true, isDarkVariant: true, fill: true };
-	/* const onSelectUser = (_value: UserEntity) => {
-		if (_value.length > 0) {
-			const value = _value[0];
-
-			ls.setInfo('owner', value);
-
-			if (value.fullName) ls.setInfo('contact', value.fullName);
-			if (value.extra_fields?.phone) ls.setInfo('contact_phone', value.extra_fields.phone);
-		} else {
-			ls.setInfo('owner', null);
-		}
-		ls.setInfo('uas_registrations', []);
-		ls.setInfo('contact', '');
-		ls.setInfo('contact_phone', '');
-	}; */
 
 	return (
 		<>
-			<PUserSelectForPilots
-				id="owner"
-				label={t('glossary:operation.owner')}
-				onSelect={(_users) => {
-					return;
-				}}
-				preselected={ls.entity.owner ? [ls.entity.owner.username] : []}
-				fill
-				isRequired
-				disabled
-				isDarkVariant
-			/>
+			{token && schemaUsers && (
+				<PUserSelectForPilots
+					id="owner"
+					label={t('glossary:operation.owner')}
+					onSelect={(_users) => {
+						return;
+					}}
+					preselected={ls.entity.owner ? [ls.entity.owner.username] : []}
+					fill
+					isRequired
+					disabled
+					isDarkVariant
+					api={env.core_api}
+					schema={schemaUsers}
+					token={token}
+				/>
+			)}
 			<POperationStateSelect
 				id="state"
 				label={t('glossary:operation.state')}
