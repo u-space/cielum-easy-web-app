@@ -66,8 +66,6 @@ const Home = () => {
 	};
 
 	const { countPending, countActivated, countRogue } = useQueryOperationsCounts();
-	/*const countVehiclesPending = useQueryPendingVehiclesCount();
-	const countUsersPending = useQueryPendingUsersCount();*/
 
 	// get css var --yamate-500
 	const colors = {
