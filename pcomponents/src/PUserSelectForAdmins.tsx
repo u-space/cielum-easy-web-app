@@ -53,7 +53,7 @@ const PUserSelectForAdmins = (props: PUserSelectForAdminsProps) => {
 		refetch
 	} = useQuery(
 		['short_users', value],
-		() => getUsers(3, 0, 'username', 'ASC', 'username', value),
+		() => getUsers(7, 0, 'username', 'ASC', 'email,firstName,lastName', value),
 		{ retry: false, enabled: false }
 	);
 
@@ -83,14 +83,11 @@ const PUserSelectForAdmins = (props: PUserSelectForAdminsProps) => {
 			{label && label.length > 0 && <p>{label}</p>}
 			{selected.map((user) => (
 				<DisplaySelectedUser
-					api={api}
-					schema={schema}
 					key={user.username}
-					username={user.username}
+					user={user}
 					isDarkVariant={isDarkVariant}
 					isEditing={isEditing}
 					remove={remove}
-					token={token}
 					isAdmin={isAdmin || false}
 				/>
 			))}
@@ -121,23 +118,13 @@ const PUserSelectForAdmins = (props: PUserSelectForAdminsProps) => {
 interface DisplaySelectedUserProps {
 	isDarkVariant: boolean;
 	isEditing: boolean;
-	username: string;
-	token: string;
+	user: UserEntity;
 	isAdmin: boolean;
 	remove: (username: string) => void;
-	api: string;
-	schema: ExtraFieldSchema;
 }
 
 const DisplaySelectedUser = (props: DisplaySelectedUserProps) => {
-	const { isDarkVariant, api, schema, remove, username, isEditing, token, isAdmin } = props;
-	const { getUser } = getUserAPIClient(api, token, schema);
-	const { data: response } = useQuery([`short_user_${username}`], () => getUser(username), {
-		enabled: isAdmin
-	});
-
-	const user = response?.data;
-
+	const { isDarkVariant, user, remove, isEditing, isAdmin } = props;
 	const history = useHistory();
 
 	return (
@@ -147,18 +134,17 @@ const DisplaySelectedUser = (props: DisplaySelectedUserProps) => {
 					size={PButtonSize.EXTRA_SMALL}
 					icon={'cross'}
 					variant={PButtonType.SECONDARY}
-					onClick={() => remove(username)}
+					onClick={() => remove(user.username)}
 				/>
 			)}
-			{!!user && user.asNiceString}
-			{!user && username}
+			{user.username}, {user.firstName} {user.lastName}
 			{isAdmin && (
 				<PButton
 					icon="info-sign"
 					size={PButtonSize.EXTRA_SMALL}
 					variant={PButtonType.SECONDARY}
 					onClick={() => {
-						history.push(`/users?id=${username}`);
+						history.push(`/users?id=${user.username}`);
 					}}
 				/>
 			)}
@@ -222,7 +208,7 @@ const TextFieldSelectUser = (props: TextFieldSelectUserProps) => {
 							key={user.username}
 							className={classnames(styles.user, { [styles.dark]: isDarkVariant })}
 						>
-							{user.firstName} {user.lastName}
+							{user.firstName} {user.lastName} ({user.email})
 							<PButton
 								size={PButtonSize.EXTRA_SMALL}
 								variant={PButtonType.SECONDARY}
