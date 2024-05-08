@@ -170,7 +170,7 @@ export class UserEntity implements EntityHasDisplayName {
 	}
 
 	get asConcatString() {
-		return `${this.username} ${this.firstName} ${this.lastName} ${this.email} ${this.role}`;
+		return `${this.firstName} ${this.lastName} ${this.email} ${this.role}`;
 	}
 
 	get asNiceString() {
