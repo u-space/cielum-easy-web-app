@@ -106,31 +106,31 @@ export function useDeleteUser() {
 	);
 }
 
-export function useQueryPendingUsersCount() {
-	const {
-		user: { getUsers }
-	} = useCoreServiceAPI();
+// export function useQueryPendingUsersCount() {
+// 	const {
+// 		user: { getUsers }
+// 	} = useCoreServiceAPI();
 
-	const isPilot = useAuthIsPilot();
+// 	const isPilot = useAuthIsPilot();
 
-	const { sortingProperty, sortingOrder, filterProperty, filterMatchingText } = useUserStore(
-		(state) => ({
-			sortingOrder: state.sortingOrder,
-			sortingProperty: state.sortingProperty,
-			filterProperty: state.filterProperty,
-			filterMatchingText: state.filterMatchingText
-		}),
-		shallow
-	);
+// 	const { sortingProperty, sortingOrder, filterProperty, filterMatchingText } = useUserStore(
+// 		(state) => ({
+// 			sortingOrder: state.sortingOrder,
+// 			sortingProperty: state.sortingProperty,
+// 			filterProperty: state.filterProperty,
+// 			filterMatchingText: state.filterMatchingText
+// 		}),
+// 		shallow
+// 	);
 
-	const { isSuccess: isSuccessUsers, data: response } = useQuery(
-		['users_pending_count', sortingProperty, sortingOrder, filterMatchingText],
-		() => getUsers(1, 0, sortingProperty, sortingOrder, filterProperty, '', 'unconfirmed'),
-		{ keepPreviousData: true, enabled: !isPilot }
-	);
+// 	const { isSuccess: isSuccessUsers, data: response } = useQuery(
+// 		['users_pending_count', sortingProperty, sortingOrder, filterMatchingText],
+// 		() => getUsers(1, 0, sortingProperty, sortingOrder, filterProperty, '', 'unconfirmed'),
+// 		{ keepPreviousData: true, enabled: !isPilot }
+// 	);
 
-	return isSuccessUsers ? response.data.count : -1;
-}
+// 	return isSuccessUsers ? response.data.count : -1;
+// }
 
 export function useQueryUser(username: string, enabled = false) {
 	const {
