@@ -62,6 +62,7 @@ interface Env {
 	};
 	redirect_small_screens_url?: string; // If provided, the app will redirect users with small screen size to this url
 	timeout?: number;
+	max_file_size?: number;
 }
 
 const config: Env = {
@@ -74,7 +75,8 @@ const config: Env = {
 	},
 	tenant: defaultTenant,
 	API_keys: {},
-	timeout: 20000
+	timeout: 20000,
+	max_file_size: 5 * 1024 * 1024
 };
 
 try {
@@ -86,4 +88,3 @@ try {
 }
 
 export default config;
-

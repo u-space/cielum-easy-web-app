@@ -19,8 +19,9 @@ import PFileInput from './PFileInput';
 import PInput from './PInput';
 import PNumberInput from './PNumberInput';
 import PTextArea from './PTextArea';
+import env from '../../src/vendor/environment/env';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // TODO: make configurable
+const MAX_FILE_SIZE = env.max_file_size; //5 * 1024 * 1024; // TODO: make configurable
 const byte2MB = (sizeInByte: number) => (sizeInByte / 1024 / 1024).toFixed(1);
 
 export interface PDocumentProps {
