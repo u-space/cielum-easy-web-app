@@ -6,8 +6,8 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 export enum UserVerificationState {
-	CONFIRMED = 'confirmed',
-	UNCONFIRMED = 'unconfirmed',
+	VERIFIED = 'verified',
+	UNVERIFIED = 'notVerified',
 	ALL = 'all'
 }
 export interface UserStoreSpecificState {

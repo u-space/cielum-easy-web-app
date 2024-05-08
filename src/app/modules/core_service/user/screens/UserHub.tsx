@@ -208,7 +208,7 @@ const UserHub = () => {
 	// Effects
 	useEffect(() => {
 		if (shouldShowNonAuthorized) {
-			setFilterStatus(UserVerificationState.UNCONFIRMED);
+			setFilterStatus(UserVerificationState.UNVERIFIED);
 		}
 	}, [shouldShowNonAuthorized]);
 

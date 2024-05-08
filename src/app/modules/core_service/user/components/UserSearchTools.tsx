@@ -38,11 +38,11 @@ const UserSearchToolsExtras = () => {
 					alignItems: 'center'
 				}}
 				label={t('Show only unauthorized')}
-				checked={store.filterStatus === 'unconfirmed'}
+				checked={store.filterStatus === UserVerificationState.UNVERIFIED}
 				onChange={(evt) => {
 					if (evt.currentTarget.checked) {
-						store.setFilterStatus(UserVerificationState.UNCONFIRMED);
-						history.replace('/users?unconfirmed=true');
+						store.setFilterStatus(UserVerificationState.UNVERIFIED);
+						history.replace(`/users?status=${UserVerificationState.UNVERIFIED}`);
 					} else {
 						store.setFilterStatus(UserVerificationState.ALL);
 						history.replace('/users');
@@ -94,15 +94,8 @@ const UserSearchTools: FC = () => {
 		<FilterAndOrderSearchTools
 			useStore={useUserStore}
 			entityName={'user'}
-			searchableProps={['username', 'firstName', 'lastName', 'email']}
-			orderableProps={[
-				'username',
-				'firstName',
-				'lastName',
-				'email',
-				'createdAt',
-				'updatedAt'
-			]}
+			searchableProps={['firstName', 'lastName', 'email']}
+			orderableProps={['firstName', 'lastName', 'email', 'createdAt', 'updatedAt']}
 			extra={UserSearchToolsExtras}
 		/>
 	);
