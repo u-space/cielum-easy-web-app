@@ -16,6 +16,7 @@ export interface SchemaItem {
 	max_lenght?: number;
 	values?: string[];
 	population?: string;
+	placeholder?: string;
 }
 
 export type ExtraFieldSchema = { [key: string]: SchemaItem };
