@@ -17,6 +17,9 @@ export class DocumentEntity {
 	valid: boolean;
 	// frontend use only
 	isBeingAdded?: boolean;
+	notifications?: object;
+	referenced_entity_id?: string;
+	referenced_entity_type?: string;
 
 	constructor(document: any) {
 		this.extra_fields = {};
@@ -29,6 +32,7 @@ export class DocumentEntity {
 		this.valid_until = new Date();
 		this.valid = false;
 		this.isBeingAdded = false;
+		this.notifications = {};
 
 		if (document) {
 			for (const prop in document) {
@@ -77,9 +81,11 @@ export const getDocumentAPIClient = (api: string, token: string | null) => {
 				if (prop === 'upload_time') continue;
 				if (prop === 'whatever') continue;
 				if (prop === 'isBeingAdded') continue;
+				if (prop === 'notifications') continue;
 				formData.append(prop, (document as any)[prop]);
 			}
 			formData.append('extra_fields_str', JSON.stringify(document.extra_fields));
+			formData.append('notifications', JSON.stringify(document.notifications));
 			formData.delete('downloadFileUrl');
 			formData.delete('name');
 			if (document.id.indexOf('TEMP_') === 0) {
