@@ -51,7 +51,8 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 		onlyVisibleForAdmin: onlyAdmin,
 		min_lenght: minLength,
 		max_lenght: maxLength,
-		values
+		values,
+		placeholder
 	} = schemaValue;
 	const { t } = useTranslation();
 	const isAdmin = useAuthIsAdmin();
@@ -69,7 +70,7 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 						isDarkVariant={isDarkVariant}
 						disabled={!isEditing}
 						inline
-						values={values}
+						values={['', ...values]}
 					/>
 				);
 			} else {
@@ -89,6 +90,7 @@ const ExtraField = observer((props: ExtraFieldProps) => {
 						inline
 						minLength={minLength}
 						maxLength={maxLength}
+						placeholder={placeholder || ''}
 					>
 						<p style={{ textAlign: 'right', fontSize: '0.9em' }}>
 							{t('Min length is')} {minLength} (
