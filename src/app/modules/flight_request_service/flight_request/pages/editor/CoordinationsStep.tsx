@@ -82,7 +82,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 					isVisible: true,
 					type: PModalType.SUCCESS,
 					title: t('Flight request saved'),
-					content: t(JSON.stringify(data)),
+					content: t('Flight request was saved successfully'),
 					primary: {
 						onClick: () => {
 							setModalProps(undefined);
@@ -96,7 +96,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 					isVisible: true,
 					type: PModalType.ERROR,
 					title: t('An error ocurred while saving'),
-					content: translateErrors(error, 'operation'),
+					content: translateErrors(error, 'flightRequest'),
 					primary: {
 						onClick: () => {
 							setModalProps(undefined);
@@ -118,7 +118,13 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 			<PageLayout
 				onArrowBack={previousStep}
 				footer={
-					<PButton disabled={totalNumber === 0} onClick={finishAndPay}>
+					<PButton
+						disabled={
+							!geographicalZonesIntersectingVolume ||
+							geographicalZonesIntersectingVolume.length === 0
+						}
+						onClick={finishAndPay}
+					>
 						{t('Continue')}
 					</PButton>
 				}
