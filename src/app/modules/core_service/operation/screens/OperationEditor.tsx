@@ -67,7 +67,10 @@ const OperationEditor = () => {
 					})
 				);
 				operation.set('contact', user.fullName);
-				operation.set('contact_phone', user.phone || t('The user has no known phone'));
+				operation.set(
+					'contact_phone',
+					String(user.extra_fields.phone) || t('The user has no known phone')
+				);
 			}
 		}
 	}, [queryUser, operation]);
