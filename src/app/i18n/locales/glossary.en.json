@@ -372,8 +372,8 @@
 	"gz": {
 		"id": "Id",
 		"name": "Name",
-		"min_altitude": "Minimum applicable altitude",
-		"max_altitude": "Maximum applicable altitude",
+		"min_altitude": "Minimum applicable altitude (m)",
+		"max_altitude": "Maximum applicable altitude (m)",
 		"actions": "Actions to execute",
 		"arg": "Receivers of the action",
 		"on": "When state is"
