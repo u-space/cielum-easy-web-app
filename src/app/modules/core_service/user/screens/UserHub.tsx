@@ -22,9 +22,9 @@ import { UserEntity } from '@utm-entities/user';
 import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
 import i18n from 'src/app/i18n';
 
-interface ExtraActionsProps {
+interface ExtraUserActionsProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	data: Record<string, any>;
+	userData: Record<string, any>;
 	setOverlay: (overlay: ReactNode) => void;
 }
 
@@ -32,18 +32,18 @@ const getExtraActions =
 	(setOverlay: (overlay: ReactNode) => void) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	({ data }: { data: Record<string, any> }) => {
-		return <ExtraActions data={data} setOverlay={setOverlay} />;
+		return <ExtraActions userData={data} setOverlay={setOverlay} />;
 	};
 
-const getStateInformation = (data: Record<string, any>): { text: string; color: string } => {
-	if (data.verified === false) {
+const getStateInformation = (userData: Record<string, any>): { text: string; color: string } => {
+	if (userData.verified === false) {
 		return {
 			text: i18n.t('ui:This user has not validated their email address'),
 			color: 'var(--ramen-500)'
 		};
 	} else if (
-		data.extra_fields?.documents &&
-		data.extra_fields.documents.some(
+		userData.extra_fields?.documents &&
+		userData.extra_fields.documents.some(
 			(doc: { valid: boolean; observations: string }) =>
 				!doc.valid && (!doc.observations || doc.observations.length === 0)
 		)
@@ -61,22 +61,22 @@ const getStateInformation = (data: Record<string, any>): { text: string; color: 
 		};
 	}
 };
-const ExtraActions: FC<ExtraActionsProps> = ({ data, setOverlay }) => {
+const ExtraActions: FC<ExtraUserActionsProps> = ({ userData: userData, setOverlay }) => {
 	const { t } = useTranslation();
 	const updateUserStatus = useUpdateUserStatus();
 
 	return (
 		<>
-			<PTooltip content={data.verified ? t('De-authorize') : t('Authorize')}>
+			<PTooltip content={userData.verified ? t('De-authorize') : t('Authorize')}>
 				<PButton
 					size={PButtonSize.SMALL}
-					icon={data.verified ? 'cross' : 'tick'}
+					icon={userData.verified ? 'cross' : 'tick'}
 					variant={PButtonType.SECONDARY}
 					onClick={() =>
 						updateUserStatus.mutate(
 							{
-								username: data.username,
-								verified: !data.verified
+								username: userData.username,
+								verified: !userData.verified
 							},
 							{
 								onError: (error) => {
@@ -98,8 +98,17 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data, setOverlay }) => {
 					}
 				/>
 			</PTooltip>
-			<PTooltip content={getStateInformation(data).text}>
-				<StateCircle style={{ backgroundColor: getStateInformation(data).color }} />
+			<PTooltip content={getStateInformation(userData).text}>
+				<StateCircle style={{ backgroundColor: getStateInformation(userData).color }} />
+			</PTooltip>
+			<PTooltip
+				content={
+					userData.canOperate
+						? t('Puede crear operaciones')
+						: t('No puede crear operaciones')
+				}
+			>
+				<StateCircle style={{ backgroundColor: userData.canOperate ? 'green' : 'red' }} />
 			</PTooltip>
 		</>
 	);
