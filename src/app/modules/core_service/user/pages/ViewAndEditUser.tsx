@@ -27,6 +27,8 @@ import { UseLocalStoreEntity } from '../../../../commons/utils';
 import styled from 'styled-components';
 import PFullModal, { PFullModalProps, undefinedModal } from '@pcomponents/PFullModal';
 import { PModalType } from '@pcomponents/PModal';
+import { useQuery } from 'react-query';
+import PBooleanInput from '@pcomponents/PBooleanInput';
 
 interface BaseUserDetailsProps {
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,21 +72,38 @@ const BaseUserDetails = (props: BaseUserDetailsProps) => {
 					if (prop === 'username') {
 						return null;
 					} else if (prop !== 'role') {
-						return (
-							<PInput
-								key={prop}
-								id={id}
-								defaultValue={ls.entity[prop]}
-								label={label}
-								autoComplete={autoComplete}
-								explanation={explanation}
-								disabled={!isEditing || isNotEditable}
-								onChange={(value) => (ls.entity[prop as keyof UserEntity] = value)}
-								isRequired
-								isDarkVariant
-								inline
-							/>
-						);
+						if (prop === 'canOperate') {
+							return (
+								<PBooleanInput
+									key={prop}
+									id={prop}
+									defaultValue={ls.entity.canOperate}
+									label={t('glossary:user.canOperate')}
+									disabled={!isEditing || !isAbleToChangeRole}
+									onChange={(value) => (ls.entity.canOperate = value)}
+									// isRequired
+									isDarkVariant
+									inline
+								/>
+							);
+						} else
+							return (
+								<PInput
+									key={prop}
+									id={id}
+									defaultValue={ls.entity[prop]}
+									label={label}
+									autoComplete={autoComplete}
+									explanation={explanation}
+									disabled={!isEditing || isNotEditable}
+									onChange={(value) =>
+										(ls.entity[prop as keyof UserEntity] = value)
+									}
+									isRequired
+									isDarkVariant
+									inline
+								/>
+							);
 					} else if (isAbleToChangeRole) {
 						return (
 							<PUserRoleSelect
@@ -209,6 +228,7 @@ interface ExtraUserFilesProps {
 const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 	const { ls, isEditing } = props;
 	const { t } = useTranslation(['glossary', 'ui']);
+	// useQuery
 
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
@@ -220,7 +240,7 @@ const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 			updateDocumentValidationMutation.isSuccess ||
 			updateDocumentObservationMutation.isSuccess
 		) {
-			window.location.href = `${window.location.href}`;
+			// window.location.href = `${window.location.href}`;
 		}
 	}, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
 
