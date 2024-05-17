@@ -38,6 +38,7 @@ export class UserEntity implements EntityHasDisplayName {
 	settings: unknown;
 	verified: boolean;
 	extra_fields_json: string;
+	canOperate: boolean;
 
 	[key: string]: any;
 
@@ -57,6 +58,7 @@ export class UserEntity implements EntityHasDisplayName {
 		this.verified = user ? (user.verified !== undefined ? user.verified : true) : false;
 		this.id = (user && user.id) ?? '';
 		this.extra_fields_json = (user && user.extra_fields_json) ?? '';
+		this.canOperate = (user && user.canOperate) ?? false;
 		this._userSchema = Joi.object({
 			//username: Joi.string(),
 			firstName: Joi.string(),
@@ -129,6 +131,22 @@ export class UserEntity implements EntityHasDisplayName {
 		return `${this.firstName} ${this.lastName}`;
 	}
 
+	canCreateOperations() {
+		if (this.role === 'admin') {
+			return true;
+		} else {
+			let canCreate = false;
+			if (this.extra_fields.documents && this.extra_fields.documents instanceof Array) {
+				this.extra_fields.documents.forEach((doc: DocumentEntity) => {
+					if (doc.tag === 'pilotLicense' && doc.valid) {
+						canCreate = true;
+					}
+				});
+			}
+			return canCreate;
+		}
+	}
+
 	verify(onSuccess: () => void, onError: (error: ValidationError) => void) {
 		const result = this._userSchema.validate(this, {
 			abortEarly: false,
@@ -162,7 +180,10 @@ export class UserEntity implements EntityHasDisplayName {
 	}
 
 	isBasic(prop: string) {
-		return _.indexOf(['username', 'firstName', 'lastName', 'email', 'role'], prop) >= 0;
+		return (
+			_.indexOf(['username', 'firstName', 'lastName', 'email', 'role', 'canOperate'], prop) >=
+			0
+		);
 	}
 
 	get displayName() {
