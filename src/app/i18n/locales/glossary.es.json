@@ -64,7 +64,8 @@
 		"updatedAt": "Actualizado",
 		"userDocument": "Cédula",
 		"pilotLicense": "Licencia piloto",
-		"aerialWorkPermitResolution": "Resolución de permiso de trabajo aéreo"
+		"aerialWorkPermitResolution": "Resolución de permiso de trabajo aéreo",
+		"canOperate": "Puede crear operaciones"
 	},
 	"operation": {
 		"plural_generic": "Operaciones",
