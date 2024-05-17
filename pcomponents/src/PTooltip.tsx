@@ -5,14 +5,15 @@ import styles from './Kanpur.module.scss';
 export interface PTooltipProps {
 	children: ReactNode;
 	content: string;
+	placement?: 'left' | 'right' | 'top' | 'bottom';
 }
 
-const PTooltip = ({ children, content }: PTooltipProps) => {
+const PTooltip = ({ children, content, placement }: PTooltipProps) => {
 	return (
 		<Tooltip2
 			content={<span className={styles.tooltip}>{content}</span>}
 			openOnTargetFocus={false}
-			placement="bottom"
+			placement={placement ? placement : 'bottom'}
 			usePortal
 			minimal={true}
 		>
