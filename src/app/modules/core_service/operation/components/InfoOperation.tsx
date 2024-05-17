@@ -21,6 +21,7 @@ import { useCoreServiceAPI } from '../../../../utils';
 import env from '../../../../../vendor/environment/env';
 import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import PVehicleSelect from '@pcomponents/PVehicleSelect';
+import PTooltip from '@pcomponents/PTooltip';
 const CVehicleSelector = reactify(CVehicleSelectorSvelte);
 
 interface OperationInfoProps {
@@ -128,12 +129,31 @@ const InfoOperation: FC<InfoOperationProps> = ({
 		}
 	);
 
-	const owner = useMemo(() => {
+	const ownerList = useMemo(() => {
 		if (operation.owner) {
 			return [new UserEntity(operation.owner, {})];
 		}
 		return [];
 	}, [operation.owner]);
+
+	const canCreateOperation = (owner?: UserEntity): boolean => {
+		const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
+		const userCanOperate = owner?.canOperate || false;
+		return hasVehicle && userCanOperate;
+	};
+
+	const canOperateCauseMsj = () => {
+		const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
+		const owner = ownerList && ownerList.length > 0 ? ownerList[0] : undefined;
+		const userCanOperate = owner?.canOperate || false;
+		if (!userCanOperate) {
+			return t('glossary:operation.user_cant_operate');
+		} else if (!hasVehicle) {
+			return t('glossary:operation.no_select_vehicle');
+		} else {
+			return t('glossary:operation.create_operation');
+		}
+	};
 
 	if (!token) return null;
 	return (
@@ -143,7 +163,7 @@ const InfoOperation: FC<InfoOperationProps> = ({
 					<PUserSelectForAdmins
 						label={t('glossary:operation.owner')}
 						onSelect={onSelectUser}
-						preselected={owner}
+						preselected={ownerList}
 						fill
 						isRequired
 						disabled={isPilot}
@@ -211,9 +231,18 @@ const InfoOperation: FC<InfoOperationProps> = ({
 					/>
 				))}
 			</CardGroup>
-			<PButton onClick={save}>
-				{isEditingExisting ? t('Save the operation') : t('Create the operation')}
-			</PButton>
+			<PTooltip content={canOperateCauseMsj()} placement="right">
+				<PButton
+					onClick={save}
+					disabled={
+						!canCreateOperation(
+							ownerList && ownerList.length > 0 ? ownerList[0] : undefined
+						)
+					}
+				>
+					{isEditingExisting ? t('Save the operation') : t('Create the operation')}
+				</PButton>
+			</PTooltip>
 		</>
 	);
 };
