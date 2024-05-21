@@ -36,6 +36,9 @@ const getExtraActions =
 	};
 
 const getStateInformation = (userData: Record<string, any>): { text: string; color: string } => {
+	// const someInvalidRequiredDocument = userData.extra_fields?.documents?.some(
+
+	// )
 	if (userData.verified === false) {
 		return {
 			text: i18n.t('ui:This user has not validated their email address'),
@@ -98,9 +101,9 @@ const ExtraActions: FC<ExtraUserActionsProps> = ({ userData: userData, setOverla
 					}
 				/>
 			</PTooltip>
-			<PTooltip content={getStateInformation(userData).text}>
+			{/* <PTooltip content={getStateInformation(userData).text}>
 				<StateCircle style={{ backgroundColor: getStateInformation(userData).color }} />
-			</PTooltip>
+			</PTooltip> */}
 			<PTooltip
 				content={
 					userData.canOperate
