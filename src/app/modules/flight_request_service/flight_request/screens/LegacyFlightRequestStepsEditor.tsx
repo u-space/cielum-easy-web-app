@@ -39,9 +39,9 @@ const LegacyFlightRequestStepsEditor = () => {
 	const [modalProps, setModalProps] = useState<PFullModalProps | undefined>();
 	const flightRequest = useMemo(() => {
 		const flightRequest = new FlightRequestEntity();
-		flightRequest.operator = env.tenant.features.FlightRequests.enabled
-			? env.tenant.features.FlightRequests.options.defaultOperatorUsername
-			: '';
+		// flightRequest.operator = env.tenant.features.FlightRequests.enabled
+		// 	? env.tenant.features.FlightRequests.options.defaultOperatorUsername
+		// 	: '';
 		const vol = new OperationVolume();
 		vol.set('ordinal', -1);
 		vol.set('effective_time_begin', null);

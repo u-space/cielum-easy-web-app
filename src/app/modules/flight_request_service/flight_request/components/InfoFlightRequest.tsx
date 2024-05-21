@@ -165,7 +165,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 		}
 	};
 
-	const [isDefaultOperator, setDefaultOperatorFlag] = useState<boolean>(true);
+	const [isDefaultOperator, setDefaultOperatorFlag] = useState<boolean>(false);
 
 	if (token === null) return null;
 
@@ -194,7 +194,8 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				api={env.core_api}
 			/>*/}
 
-			<PBooleanInput
+			{/* DISABLE DEFAULT OPERATOR */}
+			{/* <PBooleanInput
 				id={`editor-volume-isDefaultOperator`}
 				defaultValue={isDefaultOperator}
 				label={t('glossary:flightRequest.isDefaultOperator')}
@@ -210,7 +211,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				}}
 				isRequired
 				fill
-			/>
+			/> */}
 			<div>
 				{!isDefaultOperator && isAdmin && (
 					<PUserSelectForAdmins
