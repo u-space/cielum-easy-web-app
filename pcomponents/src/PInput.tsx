@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { ReactNode, useEffect, useState } from 'react';
 import styles from './Kanpur.module.scss';
 import LabelInfo from './form/LabelInfo';
+import PTooltip from './PTooltip';
 
 export interface PInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
 	id: string;
@@ -23,7 +24,18 @@ export interface PInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
 	minLength?: number;
 	maxLength?: number;
 	children?: ReactNode;
+	hasTooltip?: boolean;
 }
+
+interface IWithTooltip {
+	hasTooltip: boolean;
+	content: string;
+	children: React.ReactNode;
+}
+
+const WithTooltip: React.FC<IWithTooltip> = ({ hasTooltip, content, children }) => {
+	return hasTooltip ? <PTooltip content={content}>{children}</PTooltip> : <>{children}</>;
+};
 
 const PInput = (props: PInputProps) => {
 	const {
@@ -43,6 +55,7 @@ const PInput = (props: PInputProps) => {
 		type = 'text',
 		minLength,
 		maxLength,
+		hasTooltip,
 		children, // Only used for showing translated error messages for too short inputs
 		...extraProps
 	} = props;
@@ -90,26 +103,28 @@ const PInput = (props: PInputProps) => {
 			labelFor={id}
 			inline={inline}
 		>
-			<InputGroup
-				{...extraProps}
-				className={classnames({
-					[Classes.SKELETON]: isLoading,
-					[styles.dark]: isDarkVariant
-				})}
-				id={id}
-				placeholder={placeholder}
-				disabled={disabled}
-				onChange={(evt) => {
-					onValueChange(evt.target.value);
-				}}
-				type={type}
-				value={value}
-				intent={intent}
-				minLength={minLength}
-				maxLength={maxLength}
-				onFocus={() => setFocusedFlag(true)}
-				onBlur={() => setFocusedFlag(false)}
-			/>
+			<WithTooltip hasTooltip={!!hasTooltip && !!explanation} content={explanation || ''}>
+				<InputGroup
+					{...extraProps}
+					className={classnames({
+						[Classes.SKELETON]: isLoading,
+						[styles.dark]: isDarkVariant
+					})}
+					id={id}
+					placeholder={placeholder}
+					disabled={disabled}
+					onChange={(evt) => {
+						onValueChange(evt.target.value);
+					}}
+					type={type}
+					value={value}
+					intent={intent}
+					minLength={minLength}
+					maxLength={maxLength}
+					onFocus={() => setFocusedFlag(true)}
+					onBlur={() => setFocusedFlag(false)}
+				/>
+			</WithTooltip>
 			{!isFocused && !disabled && minLengthError && children}
 		</FormGroup>
 	);
