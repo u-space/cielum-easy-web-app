@@ -51,7 +51,9 @@ const CoordinationHub = () => {
 		{ title: ' ', width: rowHeight * 2 },
 		{ title: t('glossary:coordination.reference'), width: 2 },
 		{ title: t('glossary:coordination.state'), width: 2 },
-		{ title: t('glossary:coordination.limit_date'), width: 3 }
+		{ title: t('glossary:coordination.limit_date'), width: 3 },
+		{ title: t('glossary:coordination.flightRequest'), width: 2 },
+		{ title: t('glossary:flightRequest.creator'), width: 2 }
 	];
 
 	// Backend
@@ -79,6 +81,12 @@ const CoordinationHub = () => {
 						bgCell: '#FF00005C'
 					};
 				}
+			} else if (col === 4) {
+				data = coordination.flightRequest ? coordination.flightRequest.name : '';
+			} else if (col === 5) {
+				data = coordination.flightRequest
+					? coordination.flightRequest.creator.username
+					: '';
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;
