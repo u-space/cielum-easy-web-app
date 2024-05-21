@@ -15,16 +15,14 @@
 	font-family: 'Lexend Deca', sans-serif;
 	text-align: right;
 
-	transform: translate3d(
-		0,
-		0,
-		0
-	); // https://stackoverflow.com/questions/48748223/really-weird-box-shadow-transition-bug
+	transform: translate3d(0,
+			0,
+			0); // https://stackoverflow.com/questions/48748223/really-weird-box-shadow-transition-bug
 
 	overflow: hidden;
 	@include no-outline;
 
-	& > * {
+	&>* {
 		&:last-child:not(:only-child) {
 			margin-left: auto;
 		}
@@ -207,7 +205,7 @@
 
 		column-gap: 5px;
 
-		& > * {
+		&>* {
 			width: 100%;
 		}
 
@@ -285,8 +283,7 @@
 		}
 	}
 
-	& label {
-	}
+	& label {}
 
 	& :global(.bp4-html-select) {
 		width: 100%;
@@ -341,7 +338,7 @@
 		}
 	}
 
-	& > .select {
+	&>.select {
 		background: red !important;
 	}
 
@@ -398,6 +395,11 @@
 	}
 }
 
+.selected_inline {
+	justify-content: flex-end;
+
+}
+
 .selected_user,
 .selected_vehicle {
 	display: flex;
@@ -450,7 +452,7 @@
 
 	overflow: visible;
 
-	& > * {
+	&>* {
 		//box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 12px;
 		border-radius: var(--radius-l);
 
@@ -470,7 +472,8 @@
 		box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 12px;
 
 		overflow: hidden;
-		& > header {
+
+		&>header {
 			position: relative;
 
 			display: flex;
@@ -485,7 +488,7 @@
 
 			background-color: var(--primary-800);
 
-			& > p {
+			&>p {
 				display: inline-block;
 
 				margin: auto 0 0;
@@ -494,7 +497,7 @@
 			}
 		}
 
-		& > footer {
+		&>footer {
 			position: relative;
 
 			display: flex;
@@ -511,7 +514,7 @@
 
 			background-color: var(--primary-800);
 
-			& > p {
+			&>p {
 				display: inline-block;
 
 				margin: auto 0 0;
@@ -520,7 +523,7 @@
 			}
 		}
 
-		& > p {
+		&>p {
 			padding: var(--spacing-2);
 		}
 	}
@@ -532,7 +535,7 @@
 
 		background: none;
 
-		& > section {
+		&>section {
 			display: flex;
 			gap: var(--spacing-1);
 			justify-content: center;
@@ -552,7 +555,7 @@
 
 		height: 3rem;
 
-		& > * {
+		&>* {
 			&:not(:last-child) {
 				margin-right: 0.5rem;
 			}
@@ -650,7 +653,7 @@
 	overflow: hidden;
 	@include box-shadow-1;
 
-	& > .title {
+	&>.title {
 		width: 100%;
 		padding: 0 var(--spacing-8 0);
 
@@ -676,7 +679,7 @@
 		}
 	}
 
-	& > .body {
+	&>.body {
 		width: 100%;
 		padding: var(--padding-xs);
 
@@ -685,7 +688,7 @@
 		}
 	}
 
-	& > .actions {
+	&>.actions {
 		display: flex;
 		gap: 0.5px;
 		justify-content: space-between;
@@ -694,7 +697,7 @@
 		margin: auto auto 0;
 		padding: 0 0.5rem var(--padding-xs);
 
-		& > * {
+		&>* {
 			&:last-child {
 				margin-left: auto;
 			}
@@ -722,7 +725,7 @@ h2 {
 
 	padding: 10px;
 
-	> * {
+	>* {
 		&:not(:last-child) {
 			margin-right: 0.5rem;
 		}
