@@ -1,15 +1,14 @@
-import { observer, useLocalStore } from 'mobx-react';
-import { useTranslation } from 'react-i18next';
-import PInput from '@pcomponents/PInput';
-import styles from '../../../../commons/Pages.module.scss';
-import PCoordinationStateSelect from '@pcomponents/PCoordinationStateSelect';
-import { CSSProperties, FC } from 'react';
-import { UseLocalStoreEntity } from '../../../../commons/utils';
 import { CoordinationEntity, CoordinationState } from '@flight-request-entities/coordination';
-import ViewAndEditFlightRequest from '../../flight_request/pages/ViewAndEditFlightRequest';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
-import { Button } from '@blueprintjs/core';
 import PButton from '@pcomponents/PButton';
+import PCoordinationStateSelect from '@pcomponents/PCoordinationStateSelect';
+import PInput from '@pcomponents/PInput';
+import { observer, useLocalStore } from 'mobx-react';
+import { CSSProperties, FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import styles from '../../../../commons/Pages.module.scss';
+import { UseLocalStoreEntity } from '../../../../commons/utils';
+import ViewAndEditFlightRequest from '../../flight_request/pages/ViewAndEditFlightRequest';
 
 const specialProps = ['id', 'state'];
 const nonRequiredProps = ['email', 'telephone', 'price', 'discount_Multiple_Dates'];
@@ -134,15 +133,6 @@ const ViewAndEditCoordination: FC<ViewAndEditCoordinationProps> = ({
 						ls={ls}
 					/>
 				</section>
-				{/* <aside className={styles.flightRequestInfo}>
-					<h2>{t('Flight request information')}</h2>
-				</aside>
-				<section>
-					<ViewAndEditFlightRequest
-						ls={lsFr}
-						isEditing={false}
-					/>
-				</section> */}
 			</div>
 			<div className={styles.flightRequestInfo}>
 				<h2 className={styles.title}>{t('Flight request information')}</h2>
