@@ -37,6 +37,7 @@ const PUserSelectForAdmins = (props: PUserSelectForAdminsProps) => {
 		isAdmin,
 		isPilot,
 		token,
+		inline,
 		...extra
 	}: PUserSelectForAdminsProps = props;
 
@@ -89,6 +90,7 @@ const PUserSelectForAdmins = (props: PUserSelectForAdminsProps) => {
 					isEditing={isEditing}
 					remove={remove}
 					isAdmin={isAdmin || false}
+					inline
 				/>
 			))}
 			{isChoosing && (
@@ -121,14 +123,24 @@ interface DisplaySelectedUserProps {
 	user: UserEntity;
 	isAdmin: boolean;
 	remove: (username: string) => void;
+	inline?: boolean;
 }
 
 const DisplaySelectedUser = (props: DisplaySelectedUserProps) => {
-	const { isDarkVariant, user, remove, isEditing, isAdmin } = props;
+	const { isDarkVariant, user, remove, isEditing, isAdmin, inline } = props;
 	const history = useHistory();
 
 	return (
-		<div className={classnames(styles.selected_user, { [styles.dark]: isDarkVariant })}>
+		<div
+			style={{ justifyContent: inline ? 'flex-end' : 'flex-start' }}
+			className={classnames(
+				styles.selected_user,
+				{
+					[styles.dark]: isDarkVariant
+				}
+				// styles.selected_inline
+			)}
+		>
 			{isEditing && (
 				<PButton
 					size={PButtonSize.EXTRA_SMALL}
