@@ -98,6 +98,7 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								disabled={!isEditing}
 								onChange={(value) => ls.setInfo(prop, value)}
 								isDarkVariant
+								inline
 							/>
 						);
 					}
@@ -128,45 +129,28 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								isRequired
 								disabled={!isEditing}
 								isDarkVariant
+								inline
 							/>
 						);
 					}
 
 					if (prop === 'state') {
 						return (
-							// <PDropdown
-							// 	key={prop}
-							// 	options={Object.values(FlightRequestState).map((value) => ({
-							// 		value: value,
-							// 		label: t(`glossary:flightRequest.flight_state.${value}`)
-							// 	}))}
-							// 	id={`editor-flightRequest-${prop}`}
-							// 	defaultValue={entity[prop]}
-							// 	label={t(`glossary:flightRequest.state`)}
-							// 	onChange={(value) => setInfo(prop, value)}
-							// 	isRequired
-							// 	disabled={!isEditing}
-							// 	isDarkVariant
-							// 	inline
-							// />
-							<>
-								<PInput
-									key={prop}
-									id={`editor-flight-request-${prop}`}
-									defaultValue={t(
-										'glossary:flightRequest.flight_state.' + entity[prop]
-									)}
-									label={t(`glossary:flightRequest.state`)}
-									disabled={true}
-									isDarkVariant
-								/>
-								<StateExplanationText>
-									{t(
-										'glossary:flightRequest.flight_state_explanation.' +
-											entity[prop]
-									)}
-								</StateExplanationText>
-							</>
+							<PInput
+								key={prop}
+								id={`editor-flight-request-${prop}`}
+								defaultValue={t(
+									'glossary:flightRequest.flight_state.' + entity[prop]
+								)}
+								label={t(`glossary:flightRequest.state`)}
+								disabled={true}
+								isDarkVariant
+								inline
+								explanation={t(
+									`glossary:flightRequest.flight_state_explanation.${entity[prop]}`
+								)}
+								hasTooltip={true}
+							/>
 						);
 					}
 					if (typeof value === 'string') {
@@ -180,6 +164,7 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								isRequired
 								disabled={!isEditing}
 								isDarkVariant
+								inline
 							/>
 						);
 					} else if (typeof value === 'boolean') {
@@ -193,6 +178,7 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 								onChange={(value) => ls.setInfo(prop, value)}
 								isRequired
 								isDarkVariant
+								inline
 							/>
 						);
 					} else {
@@ -328,7 +314,8 @@ const OperatorDetails: FC<OperatorDetailsProps> = ({ ls }) => {
 		<PUserSelectForAdmins
 			id="operator"
 			onSelect={(selected) => null}
-			label={t('flightRequest.operator')}
+			// label={t('flightRequest.operator')}
+			label={''}
 			preselected={[entity.operator as UserEntity]}
 			fill
 			disabled={true}
@@ -337,6 +324,7 @@ const OperatorDetails: FC<OperatorDetailsProps> = ({ ls }) => {
 			token={token}
 			schema={schemaUsers}
 			isAdmin={isAdmin}
+			inline
 		/>
 	);
 };
@@ -530,7 +518,8 @@ const CreatorDetails: FC<CreatorDetailsProps> = ({ ls }) => {
 		<PUserSelectForAdmins
 			id="creator"
 			onSelect={(selected) => null}
-			label={t('flightRequest.creator')}
+			// label={t('flightRequest.creator')}
+			label={''}
 			preselected={[entity.creator as UserEntity]}
 			fill
 			disabled={true}
@@ -539,6 +528,7 @@ const CreatorDetails: FC<CreatorDetailsProps> = ({ ls }) => {
 			token={token}
 			schema={schemaUsers}
 			isAdmin={isAdmin}
+			inline
 		/>
 	);
 };
@@ -565,7 +555,7 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 			<div className={styles.content}>
 				<aside className={styles.summary}>
 					<h2>{t('Flight Request information')}</h2>
-					<PTooltip content={t('Paid')}>
+					{/* <PTooltip content={t('Paid')}>
 						<PaymentLine>
 							<PaidStateCircle
 								style={{
@@ -574,7 +564,7 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 							/>
 							{ls.entity.paid ? t('Paid') : t('Pending payment')}
 						</PaymentLine>
-					</PTooltip>
+					</PTooltip> */}
 				</aside>
 				<section className={styles.details}>
 					<PInput
@@ -584,6 +574,7 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 						label={t('glossary:flightRequest.id')}
 						disabled={true}
 						isDarkVariant
+						inline
 					/>
 
 					<BaseFlightRequestDetails isEditing={isEditing} ls={ls} />
