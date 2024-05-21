@@ -1,34 +1,34 @@
 import { Spinner } from '@blueprintjs/core';
+import PBooleanInput from '@pcomponents/PBooleanInput';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import PDocument from '@pcomponents/PDocument';
 import PDocumentTagSelector from '@pcomponents/PDocumentTagSelector';
+import PFullModal, { PFullModalProps } from '@pcomponents/PFullModal';
 import PInput from '@pcomponents/PInput';
+import { PModalType } from '@pcomponents/PModal';
 import PUserRoleSelect from '@pcomponents/PUserRoleSelect';
 import { DocumentEntity } from '@utm-entities/document';
+import { ExtraFieldSchemas } from '@utm-entities/extraFields';
+import { UserEntity } from '@utm-entities/user';
+import { VehicleEntity } from '@utm-entities/vehicle';
 import { observer, useObserver } from 'mobx-react';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
+import { showDate } from 'src/app/commons/displayUtils';
+import styled from 'styled-components';
+import styles from '../../../../commons/Pages.module.scss';
+import ExtraField from '../../../../commons/components/ExtraField';
+import { UseLocalStoreEntity } from '../../../../commons/utils';
+import { useAuthIsAdmin, useAuthStore } from '../../../auth/store';
 import {
 	useDocumentAvailableTags,
 	useDocumentTagSchema,
 	useUpdateDocumentObservation,
 	useUpdateDocumentValidation
 } from '../../../document/hooks';
-import styles from '../../../../commons/Pages.module.scss';
-import ExtraField from '../../../../commons/components/ExtraField';
-import { useAuthGetRole, useAuthIsAdmin, useAuthStore } from '../../../auth/store';
 import { useSchemaStore } from '../../../schemas/store';
-import { VehicleEntity } from '@utm-entities/vehicle';
 import PasswordChanger from '../components/PasswordChanger';
-import { ExtraFieldSchemas } from '@utm-entities/extraFields';
-import { UserEntity } from '@utm-entities/user';
-import { UseLocalStoreEntity } from '../../../../commons/utils';
-import styled from 'styled-components';
-import PFullModal, { PFullModalProps, undefinedModal } from '@pcomponents/PFullModal';
-import { PModalType } from '@pcomponents/PModal';
-import { useQuery } from 'react-query';
-import PBooleanInput from '@pcomponents/PBooleanInput';
 
 interface BaseUserDetailsProps {
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -143,7 +143,10 @@ const PDocumentWithSchema = (props: PDocumentWithSchemaProps) => {
 	const isAdmin = useAuthIsAdmin();
 	const { tag } = document;
 	const name = document.name || document.file?.name;
-	const label = name ? `${t('ui:Type')}: ${t(`user.${tag}`)} (${name})` : t(`user.${tag}`);
+	// const label = name ? `${t('ui:Type')}: ${t(`user.${tag}`)} (${name})` : t(`user.${tag}`);
+	const label = `${t('ui:Type')}: ${t(`user.${tag}`)}, ${t('ui:Valid until')}: ${showDate(
+		document.valid_until
+	)})`;
 	const explanation = t([`user.${tag}_desc`, '']);
 	const id = `input-${tag}-${index}`;
 	const schemaQuery = useDocumentTagSchema('user', tag);
