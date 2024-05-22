@@ -17,6 +17,8 @@
 	"More details": "Más detalles, en inglés",
 	"Save the operation": "Guardar cambios",
 	"Create the operation": "Crear operación",
+	"user_cant_create_operation": "Usuario no habilitado",
+	"no_select_vehicle": "No hay vehículo seleccionado",
 	"Filter by state": "Filtrar por estado",
 	"The entered passwords do not match": "Las contraseñas ingresadas no son iguales",
 	"Invalid data entered": "Los datos ingresados no son válidos",
