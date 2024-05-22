@@ -25,6 +25,7 @@ import { reactify } from 'svelte-preprocess-react';
 import { useCoreServiceAPI } from '../../../../utils';
 import { useQuery } from 'react-query';
 import { ResponseBaseVehicle, ResponseVehicle, UtmVehicle } from '@utm-entities/v2/model/vehicle';
+import { useQueryUser } from 'src/app/modules/core_service/user/hooks';
 const CVehicleSelector = reactify(CVehicleSelectorSvelte);
 
 interface FlightRequestInfoProps {
@@ -123,6 +124,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	const isPilot = useAuthIsPilot();
 	const isAdmin = useAuthIsAdmin();
 	const username = useAuthStore((state) => state.username);
+	const queryUser = useQueryUser(username, true);
 	const schemaUsers = useSchemaStore((state) => state.users);
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
 	const token = useAuthStore((state) => state.token);
@@ -131,6 +133,14 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 			? env.tenant.features.FlightRequests.options.defaultOperatorUsername
 			: ''
 	);
+
+	useEffect(() => {
+		if (queryUser.isSuccess) {
+			const user: UserEntity = queryUser.data?.data;
+			setOperator(username);
+			flightRequest.setOperator(user);
+		}
+	}, [queryUser.isSuccess, username]);
 
 	const {
 		vehicle: { getVehiclesByOperator }
@@ -165,7 +175,18 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 		}
 	};
 
-	const [isDefaultOperator, setDefaultOperatorFlag] = useState<boolean>(false);
+	// const [isDefaultOperator, setDefaultOperatorFlag] = useState<boolean>(false);
+
+	const preSelectedForPilots = (value: UserEntity | string | null | undefined) => {
+		if (value == null || value === undefined) {
+			return '';
+		}
+		if (typeof value === 'string') {
+			return value;
+		} else {
+			return value.username;
+		}
+	};
 
 	if (token === null) return null;
 
@@ -178,42 +199,9 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				onChange={(value) => flightRequest.set('name', value)}
 			/>
 			{children}
-			{/*<PVehicleSelect
-				label={t('glossary:flightRequest.uas_registrations')}
-				onSelect={(value: VehicleEntity[]) => flightRequest.setUavs(value)}
-				preselected={flightRequest.uavs}
-				username={
-					isAdmin
-						? (flightRequest?.operator as UserEntity)?.username || username
-						: username
-				}
-				fill
-				isRequired
-				token={token}
-				schema={schemaVehicles}
-				api={env.core_api}
-			/>*/}
 
-			{/* DISABLE DEFAULT OPERATOR */}
-			{/* <PBooleanInput
-				id={`editor-volume-isDefaultOperator`}
-				defaultValue={isDefaultOperator}
-				label={t('glossary:flightRequest.isDefaultOperator')}
-				onChange={(value: boolean) => {
-					setDefaultOperatorFlag(value);
-					flightRequest.setOperator(
-						value && env.tenant.features.FlightRequests.enabled
-							? env.tenant.features.FlightRequests.options.defaultOperatorUsername
-							: isAdmin
-							? null
-							: username
-					);
-				}}
-				isRequired
-				fill
-			/> */}
 			<div>
-				{!isDefaultOperator && isAdmin && (
+				{isAdmin && (
 					<PUserSelectForAdmins
 						label={t('glossary:flightRequest.operator')}
 						onSelect={onSelectUserForAdmins}
@@ -229,15 +217,16 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 						id={'editor-select-user-pilot'}
 					/>
 				)}
-				{!isDefaultOperator && isPilot && (
+				{isPilot && (
 					<PUserSelectForPilots
-						preselected={[flightRequest.operator as string]}
+						preselected={[preSelectedForPilots(flightRequest.operator)]}
 						label={t('glossary:flightRequest.operator')}
 						onSelect={onSelectUserForPilots}
 						id={'editor-select-user-admin'}
 						api={env.core_api}
 						token={token}
 						schema={schemaUsers}
+						disabled={true}
 					/>
 				)}
 			</div>
@@ -296,12 +285,12 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				</>
 			)}
 
-			<FlightRequestInfo
+			{/* <FlightRequestInfo
 				key={'flight_category'}
 				prop={'flight_category'}
 				entity={flightRequest}
 				setInfo={(prop, value) => flightRequest.setFlightCategory(value as FlightCategory)}
-			/>
+			/> */}
 		</CardGroup>
 	);
 };
