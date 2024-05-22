@@ -17,6 +17,8 @@ import { useMutation } from 'react-query';
 import { PModalType } from '@pcomponents/PModal';
 import { translateErrors } from '@utm-entities/_util';
 import { useHistory } from 'react-router-dom';
+import { UserEntity } from '@utm-entities/user';
+import PTooltip from '@pcomponents/PTooltip';
 
 interface FlightRequestCoordinationsStepProps {
 	previousStep: () => void;
@@ -113,20 +115,42 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		saveFlightRequestMutation.mutate();
 	};
 
+	const canCreateFlightRequest = useMemo(() => {
+		const hasGeographicalZoneIntersections =
+			geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
+		const operatorCanOPerate =
+			flightRequest.operator &&
+			flightRequest.operator instanceof UserEntity &&
+			flightRequest.operator.canOperate;
+		return hasGeographicalZoneIntersections && operatorCanOPerate;
+	}, [geographicalZonesIntersectingVolume, flightRequest.operator]);
+
+	const getCauseMessage = () => {
+		const hasGeographicalZoneIntersections =
+			geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
+		const operatorCanOPerate =
+			flightRequest.operator &&
+			flightRequest.operator instanceof UserEntity &&
+			flightRequest.operator.canOperate;
+		if (!hasGeographicalZoneIntersections) {
+			return t('glossary:flightRequest:noCoordination');
+		} else if (!operatorCanOPerate) {
+			return t('ui:user_cant_create_operation');
+		} else {
+			return t('Create');
+		}
+	};
+
 	return (
 		<DashboardLayout isLoading={isLoading || saveFlightRequestMutation.isLoading}>
 			<PageLayout
 				onArrowBack={previousStep}
 				footer={
-					<PButton
-						disabled={
-							!geographicalZonesIntersectingVolume ||
-							geographicalZonesIntersectingVolume.length === 0
-						}
-						onClick={finishAndPay}
-					>
-						{t('Continue')}
-					</PButton>
+					<PTooltip content={getCauseMessage()}>
+						<PButton disabled={!canCreateFlightRequest} onClick={finishAndPay}>
+							{t('Create')}
+						</PButton>
+					</PTooltip>
 				}
 			>
 				{modalProps && <PFullModal {...modalProps} />}

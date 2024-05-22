@@ -128,11 +128,7 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	const schemaUsers = useSchemaStore((state) => state.users);
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
 	const token = useAuthStore((state) => state.token);
-	const [operator, setOperator] = useState<string>(
-		env.tenant.features.FlightRequests.enabled
-			? env.tenant.features.FlightRequests.options.defaultOperatorUsername
-			: ''
-	);
+	const [operator, setOperator] = useState<string>('');
 
 	useEffect(() => {
 		if (queryUser.isSuccess) {
@@ -284,13 +280,6 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 					/>
 				</>
 			)}
-
-			{/* <FlightRequestInfo
-				key={'flight_category'}
-				prop={'flight_category'}
-				entity={flightRequest}
-				setInfo={(prop, value) => flightRequest.setFlightCategory(value as FlightCategory)}
-			/> */}
 		</CardGroup>
 	);
 };
