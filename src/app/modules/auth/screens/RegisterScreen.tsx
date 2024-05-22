@@ -7,7 +7,7 @@ import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { UserEntity } from '@utm-entities/user';
 import pagesStyles from '../../../commons/Pages.module.scss';
 import styles from '../auth.module.scss';
-import UserPage from '../../core_service/user/pages/ViewAndEditUser';
+import ViewAndEditUser from '../../core_service/user/pages/ViewAndEditUser';
 import { useSchemaStore } from '../../schemas/store';
 import { CoreAPIContext, getAssetPath } from '../../../utils';
 import { AxiosError, AxiosResponse } from 'axios';
@@ -131,7 +131,7 @@ const RegisterScreen = () => {
 					<p>{error ? t(error) : t('Unknown error')}</p>
 				</StatusLayout>
 			)}
-			<UserPage
+			<ViewAndEditUser
 				ls={ls}
 				isEditing={true}
 				isCreating={true}
