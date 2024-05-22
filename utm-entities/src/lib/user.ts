@@ -387,7 +387,7 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 
 				return axiosInstance.post(
 					isLoggedIn ? 'user' : 'user/register',
-					isLoggedIn ? data : { ...data, role: undefined },
+					isLoggedIn ? data : { ...data, role: undefined, canOperate: undefined },
 					{
 						headers: { 'Content-Type': 'application/json', ...{ auth: token } }
 					}
