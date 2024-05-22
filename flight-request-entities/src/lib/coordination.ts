@@ -13,8 +13,8 @@ export enum CoordinationState {
 	REQUESTED = 'REQUESTED',
 	APPROVED = 'APPROVED',
 	IN_NEED_OF_MODIFICATION = 'IN_NEED_OF_MODIFICATION',
-	REJECTED = 'REJECTED',
-	SELF_MANAGED = 'SELF_MANAGED'
+	REJECTED = 'REJECTED'
+	// SELF_MANAGED = 'SELF_MANAGED'
 }
 
 export class CoordinationEntity implements EntityHasDisplayName {

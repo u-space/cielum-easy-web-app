@@ -38,7 +38,7 @@ export const useCoordinationStore = create<CoordinationStoreState>()(
 				[CoordinationState.IN_NEED_OF_MODIFICATION, true],
 				[CoordinationState.REJECTED, true],
 				[CoordinationState.REQUESTED, true],
-				[CoordinationState.SELF_MANAGED, true],
+				// [CoordinationState.SELF_MANAGED, true],
 				[CoordinationState.TO_DO, true]
 			]),
 			filterCoordinatorTypes: filterCoordinatorTypes,
