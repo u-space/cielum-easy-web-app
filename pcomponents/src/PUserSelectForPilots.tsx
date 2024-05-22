@@ -51,7 +51,7 @@ const PUserSelectForPilots = (props: PUserSelectForPilotsProps) => {
 	useEffect(() => {
 		//check if usernameTocheck exists on selected
 		if (selected.includes(usernameToCheck ? usernameToCheck : '')) {
-			alert('User already selected');
+			// alert('User already selected');
 		} else {
 			userExists(usernameToCheck ? usernameToCheck : '')
 				.then((response) => {
