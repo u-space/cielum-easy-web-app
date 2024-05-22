@@ -73,19 +73,21 @@ const BaseUserDetails = (props: BaseUserDetailsProps) => {
 						return null;
 					} else if (prop !== 'role') {
 						if (prop === 'canOperate') {
-							return (
-								<PBooleanInput
-									key={prop}
-									id={prop}
-									defaultValue={ls.entity.canOperate}
-									label={t('glossary:user.canOperate')}
-									disabled={!isEditing || !isAbleToChangeRole}
-									onChange={(value) => (ls.entity.canOperate = value)}
-									// isRequired
-									isDarkVariant
-									inline
-								/>
-							);
+							if (isAbleToChangeRole) {
+								return (
+									<PBooleanInput
+										key={prop}
+										id={prop}
+										defaultValue={ls.entity.canOperate}
+										label={t('glossary:user.canOperate')}
+										disabled={!isEditing || !isAbleToChangeRole}
+										onChange={(value) => (ls.entity.canOperate = value)}
+										// isRequired
+										isDarkVariant
+										inline
+									/>
+								);
+							}
 						} else
 							return (
 								<PInput
