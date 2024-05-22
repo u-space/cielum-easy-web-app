@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import PDateInput from '@pcomponents/PDateInput';
 import PTextArea from '@pcomponents/PTextArea';
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { ExtraFieldSchema } from '@utm-entities/extraFields';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
 import { UserEntity } from '@utm-entities/user';
@@ -96,6 +96,24 @@ const InfoOperation: FC<InfoOperationProps> = ({
 	const isAdmin = useAuthIsAdmin();
 	const isPilot = useAuthIsPilot();
 	const token = useAuthStore((state) => state.token);
+	const [canCreateOperation, setCanCreateOperation] = useState(false);
+	const [reScanVehicles, setReScanVehicles] = useState(false);
+
+	const ownerList = useMemo(() => {
+		if (operation.owner) {
+			return [new UserEntity(operation.owner, {})];
+		}
+		return [];
+	}, [operation.owner]);
+
+	useEffect(() => {
+		console.log(`Effect executed: ${JSON.stringify(operation, null, 2)}`);
+		const owner = ownerList && ownerList.length > 0 ? ownerList[0] : undefined;
+		const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
+		const userCanOperate = owner?.canOperate || false;
+		setCanCreateOperation(hasVehicle && userCanOperate);
+		// }, [operation.uas_registrations, ownerList]);
+	}, [reScanVehicles]);
 	const onSelectUser = (_value: UserEntity[]) => {
 		operation.contact = '';
 		operation.contact_phone = '';
@@ -129,29 +147,24 @@ const InfoOperation: FC<InfoOperationProps> = ({
 		}
 	);
 
-	const ownerList = useMemo(() => {
-		if (operation.owner) {
-			return [new UserEntity(operation.owner, {})];
-		}
-		return [];
-	}, [operation.owner]);
-
-	const canCreateOperation = (owner?: UserEntity): boolean => {
-		const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
-		const userCanOperate = owner?.canOperate || false;
-		return hasVehicle && userCanOperate;
-	};
+	// const canCreateOperation = (owner?: UserEntity): boolean => {
+	// 	console.log('canCreateOp?', JSON.stringify(owner, null, 2));
+	// 	console.log('canCreateOp?', JSON.stringify(operation, null, 2));
+	// 	const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
+	// 	const userCanOperate = owner?.canOperate || false;
+	// 	return hasVehicle && userCanOperate;
+	// };
 
 	const canOperateCauseMsj = () => {
 		const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
 		const owner = ownerList && ownerList.length > 0 ? ownerList[0] : undefined;
 		const userCanOperate = owner?.canOperate || false;
 		if (!userCanOperate) {
-			return t('glossary:operation.user_cant_operate');
+			return t('ui:user_cant_create_operation');
 		} else if (!hasVehicle) {
-			return t('glossary:operation.no_select_vehicle');
+			return t('ui:no_select_vehicle');
 		} else {
-			return t('glossary:operation.create_operation');
+			return t('ui:Create the operation');
 		}
 	};
 
@@ -185,6 +198,7 @@ const InfoOperation: FC<InfoOperationProps> = ({
 								value.map((vehicle) => UtmBaseVehicle.fromVehicleEntity(vehicle))
 							);
 							console.log('operation after changing uas_registrations', operation);
+							setReScanVehicles(!reScanVehicles);
 						}}
 						preselected={operation.uas_registrations}
 						username={operation.owner?.username}
@@ -197,14 +211,15 @@ const InfoOperation: FC<InfoOperationProps> = ({
 				{isPilot && (
 					<CVehicleSelector
 						vehicles={queryVehicles.isSuccess ? queryVehicles.data.data.vehicles : []}
-						onSelect={(event) =>
+						onSelect={(event) => {
 							operation.set(
 								'uas_registrations',
 								(event as CustomEvent<VehicleEntity[]>).detail.map((vehicle) =>
 									UtmBaseVehicle.fromVehicleEntity(vehicle)
 								)
-							)
-						}
+							);
+							setReScanVehicles(!reScanVehicles);
+						}}
 					>
 						{t('Vehicles')}
 					</CVehicleSelector>
@@ -235,9 +250,10 @@ const InfoOperation: FC<InfoOperationProps> = ({
 				<PButton
 					onClick={save}
 					disabled={
-						!canCreateOperation(
-							ownerList && ownerList.length > 0 ? ownerList[0] : undefined
-						)
+						// !canCreateOperation(
+						// 	ownerList && ownerList.length > 0 ? ownerList[0] : undefined
+						// )
+						!canCreateOperation
 					}
 				>
 					{isEditingExisting ? t('Save the operation') : t('Create the operation')}
