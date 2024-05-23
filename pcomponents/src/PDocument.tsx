@@ -66,38 +66,40 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 				inline
 			/>
 
-			{Object.keys(schema).map((key) => {
-				console.log('schema', schema, key, document.extra_fields);
-				const { type, required } = schema[key];
-				const baseInputProps = {
-					id: key,
-					label: t(key),
-					defaultValue: document.extra_fields[key],
-					onChange: (value: string | number | Date | boolean) =>
-						(document.extra_fields[key] = value),
-					isRequired: required,
-					isDarkVariant: true,
-					disabled: !isEditing,
-					inline: true
-				};
-				// from string like 2022-11-03T12:27:36.542Z generate date
-				if (type === 'String') {
-					return <PInput {...baseInputProps} />;
-				} else if (type === 'Number') {
-					return <PNumberInput {...baseInputProps} min={0} />;
-				} else if (type === 'Date') {
-					return (
-						<PDateInput
-							{...baseInputProps}
-							defaultValue={new Date(document.extra_fields[key])}
-						/>
-					);
-				} else if (type === 'Bool') {
-					return <PBooleanInput {...baseInputProps} />;
-				} else {
-					return null;
-				}
-			})}
+			{Object.keys(schema)
+				.filter((d) => d !== '__metadata')
+				.map((key) => {
+					console.log('schema', schema, key, document.extra_fields);
+					const { type, required } = schema[key];
+					const baseInputProps = {
+						id: key,
+						label: t(key),
+						defaultValue: document.extra_fields[key],
+						onChange: (value: string | number | Date | boolean) =>
+							(document.extra_fields[key] = value),
+						isRequired: required,
+						isDarkVariant: true,
+						disabled: !isEditing,
+						inline: true
+					};
+					// from string like 2022-11-03T12:27:36.542Z generate date
+					if (type === 'String') {
+						return <PInput {...baseInputProps} />;
+					} else if (type === 'Number') {
+						return <PNumberInput {...baseInputProps} min={0} />;
+					} else if (type === 'Date') {
+						return (
+							<PDateInput
+								{...baseInputProps}
+								defaultValue={new Date(document.extra_fields[key])}
+							/>
+						);
+					} else if (type === 'Bool') {
+						return <PBooleanInput {...baseInputProps} />;
+					} else {
+						return null;
+					}
+				})}
 			<PTextArea
 				id={'observations'}
 				label={t('Observations')}
