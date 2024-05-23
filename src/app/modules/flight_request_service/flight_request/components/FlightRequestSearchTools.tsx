@@ -7,6 +7,7 @@ import PDateInput from '@pcomponents/PDateInput';
 import { useTranslation } from 'react-i18next';
 import PButton from '@pcomponents/PButton';
 import { FlightRequestState } from '@flight-request-entities/flightRequest';
+import { useAuthIsAdmin } from 'src/app/modules/auth/store';
 
 function dateToYYYYMMDD(date: Date) {
 	return [
@@ -18,6 +19,7 @@ function dateToYYYYMMDD(date: Date) {
 
 const FlightRequestSearchTools: FC = () => {
 	const { t } = useTranslation(['ui', 'glossary']);
+	const isAdmin = useAuthIsAdmin();
 	const store = useFlightRequestStore((state) => ({
 		// filterShowPaid: state.filterShowPaid,
 		// setFilterShowPaid: state.setFilterShowPaid,
@@ -57,7 +59,7 @@ const FlightRequestSearchTools: FC = () => {
 				searchableProps={['id', 'name', 'starting_time', 'createdAt']}
 				orderableProps={['createdAt', 'name', 'starting_time']}
 			/>
-			<CardGroup header="Filter by date">
+			{/* <CardGroup header="Filter by date">
 				{store.filterProperty === 'starting_time' && (
 					<PDateInput
 						id="starting_time"
@@ -94,11 +96,13 @@ const FlightRequestSearchTools: FC = () => {
 						{t('Filter by creation date')}
 					</PButton>
 				)}
-			</CardGroup>
+			</CardGroup> */}
 
-			<CardGroup header="Filter by state">
-				<GridCheckboxes gridItems={gridItems} />
-			</CardGroup>
+			{isAdmin && (
+				<CardGroup header="Filter by state">
+					<GridCheckboxes gridItems={gridItems} />
+				</CardGroup>
+			)}
 		</>
 	);
 };
