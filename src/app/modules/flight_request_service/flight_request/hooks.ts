@@ -54,7 +54,8 @@ export function useQueryFlightRequests(all = false) {
 		filterProperty,
 		filterMatchingText,
 		filterShowPaid,
-		filterShowNotPaid
+		filterShowNotPaid,
+		filterState
 	} = useFlightRequestStore(
 		(state) => ({
 			pageTake: state.pageTake,
@@ -64,7 +65,8 @@ export function useQueryFlightRequests(all = false) {
 			filterProperty: state.filterProperty,
 			filterMatchingText: state.filterMatchingText,
 			filterShowPaid: state.filterShowPaid,
-			filterShowNotPaid: state.filterShowNotPaid
+			filterShowNotPaid: state.filterShowNotPaid,
+			filterState: state.filterState
 		}),
 		shallow
 	);
@@ -79,7 +81,8 @@ export function useQueryFlightRequests(all = false) {
 			filterProperty,
 			filterMatchingText,
 			filterShowPaid,
-			filterShowNotPaid
+			filterShowNotPaid,
+			filterState
 		],
 		() =>
 			getFlightRequests(
@@ -90,7 +93,8 @@ export function useQueryFlightRequests(all = false) {
 				filterProperty,
 				filterMatchingText,
 				filterShowPaid,
-				filterShowNotPaid
+				filterShowNotPaid,
+				filterState
 			)
 	);
 	const { data: response } = query;

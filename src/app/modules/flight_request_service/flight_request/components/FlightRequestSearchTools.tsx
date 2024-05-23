@@ -6,6 +6,7 @@ import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
 import PDateInput from '@pcomponents/PDateInput';
 import { useTranslation } from 'react-i18next';
 import PButton from '@pcomponents/PButton';
+import { FlightRequestState } from '@flight-request-entities/flightRequest';
 
 function dateToYYYYMMDD(date: Date) {
 	return [
@@ -18,25 +19,33 @@ function dateToYYYYMMDD(date: Date) {
 const FlightRequestSearchTools: FC = () => {
 	const { t } = useTranslation(['ui', 'glossary']);
 	const store = useFlightRequestStore((state) => ({
-		filterShowPaid: state.filterShowPaid,
-		setFilterShowPaid: state.setFilterShowPaid,
-		filterShowNotPaid: state.filterShowNotPaid,
-		setFilterShowNotPaid: state.setFilterShowNotPaid,
+		// filterShowPaid: state.filterShowPaid,
+		// setFilterShowPaid: state.setFilterShowPaid,
+		// filterShowNotPaid: state.filterShowNotPaid,
+		// setFilterShowNotPaid: state.setFilterShowNotPaid,
 		filterProperty: state.filterProperty,
 		filterMatchingText: state.filterMatchingText,
 		setFilterProperty: state.setFilterProperty,
-		setFilterByText: state.setFilterByText
+		setFilterByText: state.setFilterByText,
+		filterState: state.filterState,
+		setFilterState: state.setFilterState
 	}));
 	const gridItems = [
+		// {
+		// 	checked: store.filterShowPaid,
+		// 	onChange: (check: boolean) => store.setFilterShowPaid(check),
+		// 	label: 'Show paid flight requests'
+		// },
+		// {
+		// 	checked: store.filterShowNotPaid,
+		// 	onChange: (check: boolean) => store.setFilterShowNotPaid(check),
+		// 	label: 'Show pending payment flight requests'
+		// },
 		{
-			checked: store.filterShowPaid,
-			onChange: (check: boolean) => store.setFilterShowPaid(check),
-			label: 'Show paid flight requests'
-		},
-		{
-			checked: store.filterShowNotPaid,
-			onChange: (check: boolean) => store.setFilterShowNotPaid(check),
-			label: 'Show pending payment flight requests'
+			checked: store.filterState === FlightRequestState.PENDING,
+			onChange: (check: boolean) =>
+				store.setFilterState(check ? FlightRequestState.PENDING : undefined),
+			label: 'Show pending flight requests'
 		}
 	];
 
