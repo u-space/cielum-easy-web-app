@@ -210,7 +210,7 @@
 	// Edit mode
 	let editPolygons: Polygon[] = []; // Currently being edited polygons
 	$: {
-		if (editOptions.polygons) {
+		if (editOptions && editOptions.polygons) {
 			editPolygons = editOptions.polygons;
 		}
 	}
