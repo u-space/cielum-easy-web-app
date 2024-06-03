@@ -26,14 +26,14 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 	const { t } = useTranslation();
 	return (
 		<>
-			{/*<PTooltip content={t('View in map')}>
+			<PTooltip content={t('View in map')}>
 				<PButton
 					size={PButtonSize.SMALL}
-					icon="eye-open"
+					icon="map"
 					variant={PButtonType.SECONDARY}
 					onClick={() => history.push(`/map?operation=${data.gufi}`)}
 				/>
-			</PTooltip>*/}
+			</PTooltip>
 			<PTooltip content={t('View past flights')}>
 				<PButton
 					size={PButtonSize.SMALL}
