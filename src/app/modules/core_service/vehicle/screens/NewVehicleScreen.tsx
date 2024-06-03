@@ -96,6 +96,17 @@ const NewVehicleScreen = () => {
 											ls.entity.extra_fields[key] = value;
 										}
 									}
+								} else {
+									setHasSelectedAnAircraftType(false);
+									for (const _key of Object.keys(ls.entity)) {
+										const key = _key as keyof VehicleEntity;
+										const value = ls.entity[key];
+										if (value) {
+											ls.entity.manufacturer = '';
+											ls.entity.model = '';
+											ls.entity.class = '';
+										}
+									}
 								}
 								setStep(FormStep.COMPLETE_DATA);
 							}}
