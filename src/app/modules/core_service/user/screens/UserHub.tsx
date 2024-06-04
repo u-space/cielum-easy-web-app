@@ -8,7 +8,13 @@ import PTooltip from '@pcomponents/PTooltip';
 import PModal, { PModalType } from '@pcomponents/PModal';
 import GenericHub, { rowHeight } from '../../../../commons/screens/GenericHub';
 import { useQueryString } from '../../../../utils';
-import { useDeleteUser, useQueryUsers, useUpdateUser, useUpdateUserStatus } from '../hooks';
+import {
+	useDeleteUser,
+	useQueryUsers,
+	useUpdateCanOperate,
+	useUpdateUser,
+	useUpdateUserStatus
+} from '../hooks';
 import { useUpdateDocumentValidation } from '../../../document/hooks';
 import { useGetVehiclesByOperator } from '../../vehicle/hooks';
 import { UserVerificationState, useUserStore } from '../store';
@@ -67,19 +73,51 @@ const getStateInformation = (userData: Record<string, any>): { text: string; col
 const ExtraActions: FC<ExtraUserActionsProps> = ({ userData: userData, setOverlay }) => {
 	const { t } = useTranslation();
 	const updateUserStatus = useUpdateUserStatus();
+	const updateCanOperate = useUpdateCanOperate();
 
 	return (
 		<>
 			<PTooltip content={userData.verified ? t('De-authorize') : t('Authorize')}>
 				<PButton
 					size={PButtonSize.SMALL}
-					icon={userData.verified ? 'cross' : 'tick'}
+					icon={userData.verified ? 'lock' : 'unlock'}
 					variant={PButtonType.SECONDARY}
 					onClick={() =>
 						updateUserStatus.mutate(
 							{
 								username: userData.username,
 								verified: !userData.verified
+							},
+							{
+								onError: (error) => {
+									setOverlay(
+										<PModal
+											key={'errorOnUpdateUserStatus'}
+											title={t('Error')}
+											content={t('ui:' + error.response?.data?.message)}
+											type={PModalType.ERROR}
+											primary={{
+												onClick: () => setOverlay(undefined),
+												text: t('Ok')
+											}}
+										/>
+									);
+								}
+							}
+						)
+					}
+				/>
+			</PTooltip>
+			<PTooltip content={userData.verified ? t('Operate') : t('Cantoperate')}>
+				<PButton
+					size={PButtonSize.SMALL}
+					icon={userData.canOperate ? 'cross' : 'tick'}
+					variant={PButtonType.SECONDARY}
+					onClick={() =>
+						updateCanOperate.mutate(
+							{
+								username: userData.username,
+								canOperate: !userData.canOperate
 							},
 							{
 								onError: (error) => {
