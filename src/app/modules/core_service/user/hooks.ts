@@ -88,6 +88,26 @@ export function useUpdateUserStatus() {
 	});
 }
 
+export function useUpdateCanOperate() {
+	const queryClient = useQueryClient();
+
+	const {
+		user: { updateCanOperate }
+	} = useCoreServiceAPI();
+
+	return useMutation<
+		AxiosResponse<void>,
+		ChangeUserConfirmationStatusError,
+		{ username: string; canOperate: boolean }
+	>(({ username, canOperate }) => updateCanOperate(username, canOperate), {
+		onSuccess: () => {
+			// TODO: We probably only want to invalidate the data of the updated user
+			queryClient.invalidateQueries('users');
+			window.location.href = `${window.location.href}`;
+		}
+	});
+}
+
 export function useDeleteUser() {
 	const queryClient = useQueryClient();
 
