@@ -238,7 +238,7 @@ export const transformExistsUser = () => (data: any) => {
 
 export interface ChangeUserConfirmationStatusBody {
 	username: string;
-	verified: boolean;
+	canOperate: boolean;
 }
 
 export type ChangeUserConfirmationStatusResponse = AxiosResponse<
@@ -305,7 +305,18 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 				void,
 				ChangeUserConfirmationStatusResponse,
 				ChangeUserConfirmationStatusBody
-			>('user/updateUserStatus', { username, verified }, { headers: { auth: token } });
+			>(
+				'user/updateUserStatus',
+				{ username, canOperate: verified },
+				{ headers: { auth: token } }
+			);
+		},
+		updateCanOperate: (username: string, canOperate: boolean) => {
+			return axiosInstance.post<
+				void,
+				ChangeUserConfirmationStatusResponse,
+				ChangeUserConfirmationStatusBody
+			>('user/updateCanOperate', { username, canOperate }, { headers: { auth: token } });
 		},
 		updateUserPassword: (username: string, password: string) => {
 			const response = axiosInstance.put(
