@@ -1,35 +1,34 @@
-import { observer, useObserver } from 'mobx-react';
-import { useTranslation } from 'react-i18next';
-import PInput from '@pcomponents/PInput';
-import styles from '../../../../commons/Pages.module.scss';
-import PDropdown from '@pcomponents/PDropdown';
-import PVehiclePayloadSelect from '@pcomponents/PVehiclePayloadSelect';
-import PDocument from '@pcomponents/PDocument';
-import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { Spinner } from '@blueprintjs/core';
-import { PayloadType } from '@utm-entities/payloadType';
+import PDocument from '@pcomponents/PDocument';
 import PDocumentTagSelector from '@pcomponents/PDocumentTagSelector';
-import { UseLocalStoreEntity } from '../../../../commons/utils';
+import PDropdown from '@pcomponents/PDropdown';
+import PInput from '@pcomponents/PInput';
+import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
+import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
+import { DocumentEntity } from '@utm-entities/document';
+import { ExtraFieldSchema, ExtraFieldSchemas } from '@utm-entities/extraFields';
+import { UserEntity } from '@utm-entities/user';
 import { VehicleEntity } from '@utm-entities/vehicle';
+import { observer, useObserver } from 'mobx-react';
+import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { getWebConsoleLogger } from '../../../../../utils';
+import env from '../../../../../vendor/environment/env';
+import styles from '../../../../commons/Pages.module.scss';
+import ExtraField from '../../../../commons/components/ExtraField';
+import { UseLocalStoreEntity } from '../../../../commons/utils';
+import { getFeatureOption } from '../../../../utils';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
 import {
+	UseUpdateDocumentObservationParams,
+	UseUpdateDocumentValidationParams,
 	useDocumentAvailableTags,
 	useDocumentTagSchema,
 	useUpdateDocumentObservation,
-	UseUpdateDocumentObservationParams,
-	useUpdateDocumentValidation,
-	UseUpdateDocumentValidationParams
+	useUpdateDocumentValidation
 } from '../../../document/hooks';
-import { DocumentEntity } from '@utm-entities/document';
-import { getWebConsoleLogger } from '../../../../../utils';
 import { useSchemaStore } from '../../../schemas/store';
-import { ExtraFieldSchema, ExtraFieldSchemas } from '@utm-entities/extraFields';
-import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
-import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
-import env from '../../../../../vendor/environment/env';
-import { UserEntity } from '@utm-entities/user';
-import ExtraField from '../../../../commons/components/ExtraField';
-import { getFeatureOption } from '../../../../utils';
 
 export interface BaseVehicleDetailsProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -147,8 +146,10 @@ const PDocumentWithSchema: FC<PDocumentWithSchemaProps> = ({ ls, document, isEdi
 	const { tag } = document;
 	const label = t(`vehicle.${tag}`);
 	const explanation = t([`vehicle.${tag}_desc`, '']);
-	const id = `input-${tag}-${index}`;
+	// const id = `input-${tag}-${index}`;
+	const id = `input-${document.name || 'new'}`;
 	const schemaQuery = useDocumentTagSchema('vehicle', tag);
+	const queryClient = useQueryClient();
 
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
@@ -239,7 +240,7 @@ interface _ExtraVehicleFilesProps {
 	isEditing: boolean;
 }
 
-const _ExtraVehicleFiles: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
+const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 	const { t } = useTranslation('glossary');
 
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
@@ -304,13 +305,15 @@ const _ExtraVehicleFiles: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 						{(ls.entity.extra_fields.documents as DocumentEntity[]).map(
 							(document: DocumentEntity, index: number) => {
 								return (
-									<PDocumentWithSchema
-										key={document.id}
-										ls={ls}
-										document={document}
-										isEditing={isEditing}
-										index={index}
-									/>
+									<div style={{ order: document.valid ? 1 : 2 }}>
+										<PDocumentWithSchema
+											key={document.id}
+											ls={ls}
+											document={document}
+											isEditing={isEditing}
+											index={index}
+										/>
+									</div>
 								);
 							}
 						)}
@@ -347,7 +350,7 @@ const _ExtraVehicleFiles: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 		)
 	);
 };
-const ExtraVehicleFiles = observer(_ExtraVehicleFiles);
+const VehicleDocuments = observer(_VehicleDocuments);
 
 interface ExtraVehicleDetailsProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -358,7 +361,7 @@ const ExtraVehicleDetailsValues = ({
 	ls,
 	schema,
 	property,
-	required,
+	required: isRequired,
 	isEditing
 }: {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -375,7 +378,7 @@ const ExtraVehicleDetailsValues = ({
 
 	const schemaValue = schema[property];
 
-	if (schemaValue.required === required) {
+	if (schemaValue.required === isRequired) {
 		return (
 			<ExtraField
 				key={property}
@@ -383,7 +386,7 @@ const ExtraVehicleDetailsValues = ({
 				isEditing={isEditing}
 				{...{
 					property: property,
-					required,
+					required: isRequired,
 					label,
 					explanation,
 					id,
@@ -613,8 +616,16 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 						<h2>{t('Images')}</h2>
 						{t('Images explanation')}
 					</aside>
-					<section className={styles.details}>
-						<ExtraVehicleFiles isEditing={isEditing} ls={ls} />
+					<section
+						className={styles.details}
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'flex-start',
+							width: '100%'
+						}}
+					>
+						<VehicleDocuments isEditing={isEditing} ls={ls} />
 					</section>
 				</div>
 			</div>

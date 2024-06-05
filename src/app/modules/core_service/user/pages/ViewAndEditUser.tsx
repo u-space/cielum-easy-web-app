@@ -177,7 +177,8 @@ const PDocumentWithSchema = (props: PDocumentWithSchemaProps) => {
 			<div
 				style={{
 					backgroundColor: 'var(--mirai-150)',
-					flex: 1
+					flex: 1,
+					order: document.valid ? 1 : 2
 				}}
 			>
 				<PDocument
@@ -294,7 +295,10 @@ const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 						(document: DocumentEntity, index: number) => {
 							return (
 								<>
-									<DocumentContainer key={document.id}>
+									<DocumentContainer
+										key={document.id}
+										style={{ order: document.valid ? 1 : 2 }}
+									>
 										<PDocumentWithSchema
 											key={document.id}
 											ls={ls}
@@ -309,7 +313,8 @@ const ExtraUserFiles = observer((props: ExtraUserFilesProps) => {
 											height: 1,
 											marginBottom: '1rem',
 											marginTop: '1rem',
-											backgroundColor: 'var(--mirai-200)'
+											backgroundColor: 'var(--mirai-200)',
+											order: document.valid ? 1 : 2
 										}}
 									/>
 								</>

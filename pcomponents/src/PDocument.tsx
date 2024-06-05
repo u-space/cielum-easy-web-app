@@ -134,6 +134,8 @@ const EditingModal = (props: EditingModalProps) => {
 		onClick: () => {
 			const errors: string[] = [];
 			for (const [key, value] of Object.entries(schema)) {
+				console.log(`key: ${key}, value: ${value}`);
+				if (key === '__metadata') continue; // skip metadata
 				if (value.required && !document.extra_fields[key]) {
 					errors.push(`Field ${t(key)} is required`);
 				} else {
@@ -412,7 +414,14 @@ const PDocument = (props: PDocumentProps) => {
 
 	const Line: FC<{ children: ReactNode }> = ({ children }) => {
 		return (
-			<FormGroup {...formGroupProps}>
+			<FormGroup
+				{...formGroupProps}
+				style={{
+					backgroundColor: document.valid
+						? 'rgba(0, 255, 0, 0.1)'
+						: 'rgba(255, 0, 0, 0.1)'
+				}}
+			>
 				<div style={buttonsStyle}>{children}</div>
 			</FormGroup>
 		);
