@@ -9,7 +9,7 @@ import {
 } from '@blueprintjs/core';
 import { DocumentEntity } from '@utm-entities/document';
 import classNames from 'classnames';
-import { CSSProperties, FC, ReactNode, useState } from 'react';
+import { CSSProperties, FC, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Kanpur.module.scss';
 import PBooleanInput from './PBooleanInput';
@@ -27,6 +27,7 @@ const byte2MB = (sizeInByte: number) => (sizeInByte / 1024 / 1024).toFixed(1);
 export interface PDocumentProps {
 	document: DocumentEntity;
 	explanation?: string;
+	title: string;
 	label: string;
 	id: string;
 	isDarkVariant?: boolean;
@@ -52,19 +53,31 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 	const { t } = useTranslation();
 	const { document, id, schema, isEditing = false } = props;
 
+	useEffect(() => {
+		if (schema && schema.__metadata && schema.__metadata.expirable === false) {
+			document['valid_until'] = new Date('2070-01-01');
+		}
+	}, [schema, schema.__metadata]);
+
+	const showDateInput =
+		(schema && !schema.__metadata) ||
+		(schema && schema.__metadata && !(schema.__metadata.expirable === false));
+
 	return (
 		<div className={classNames(styles.addFile)}>
-			<PDateInput
-				key={'valid_until'}
-				id={id}
-				defaultValue={new Date(document['valid_until'])}
-				label={t('Valid until')}
-				onChange={(value) => (document['valid_until'] = value)}
-				disabled={!isEditing}
-				isRequired
-				isDarkVariant
-				inline
-			/>
+			{showDateInput && (
+				<PDateInput
+					key={'valid_until'}
+					id={id}
+					defaultValue={new Date(document['valid_until'])}
+					label={t('Valid until')}
+					onChange={(value) => (document['valid_until'] = value)}
+					disabled={!isEditing}
+					isRequired
+					isDarkVariant
+					inline
+				/>
+			)}
 
 			{Object.keys(schema)
 				.filter((d) => d !== '__metadata')
@@ -223,7 +236,8 @@ const EditingModal = (props: EditingModalProps) => {
 						<div className={styles.content}>
 							<section className={styles.details}>
 								<PFileInput
-									{...{ id, label, explanation }}
+									{...{ id, label, explanation: '' }}
+									// {...{ id, label, explanation }}
 									defaultValue={file}
 									onChange={handleFileChange}
 									isDarkVariant
@@ -284,7 +298,7 @@ const ViewingModal = (props: ViewingModalProps) => {
 					}}
 				>
 					<PFileInput
-						{...{ id, label, explanation }}
+						{...{ id, label, explanation: '' }}
 						defaultValue={document.downloadFileUrl}
 						disabled
 						onChange={() => {}}
@@ -368,6 +382,7 @@ const ViewingModal = (props: ViewingModalProps) => {
 const PDocument = (props: PDocumentProps) => {
 	const { t } = useTranslation();
 	const {
+		title,
 		label,
 		explanation,
 		id,
@@ -403,7 +418,8 @@ const PDocument = (props: PDocumentProps) => {
 			flex: 1,
 			width: '100%'
 		} as CSSProperties,
-		helperText: explanation,
+		// helperText: explanation,
+		helperText: '',
 		label: label,
 		labelFor: id,
 		inline: true,
@@ -435,7 +451,7 @@ const PDocument = (props: PDocumentProps) => {
 						schema={schema}
 						document={document}
 						id={id}
-						label={label}
+						label={title}
 						onClose={() => {
 							setShowingEditingModalFlag(false);
 							onClose();
@@ -490,7 +506,7 @@ const PDocument = (props: PDocumentProps) => {
 					document={document}
 					id={id}
 					schema={schema}
-					label={label}
+					label={title}
 					onClose={() => setShowingViewingModalFlag(false)}
 					isAdmin={isAdmin}
 				/>

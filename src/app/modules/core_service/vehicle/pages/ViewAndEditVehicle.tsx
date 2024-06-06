@@ -29,6 +29,7 @@ import {
 	useUpdateDocumentValidation
 } from '../../../document/hooks';
 import { useSchemaStore } from '../../../schemas/store';
+import { showDate } from 'src/app/commons/displayUtils';
 
 export interface BaseVehicleDetailsProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -140,16 +141,33 @@ export interface PDocumentWithSchemaProps {
 	index: number;
 }
 
+const showExpiredDate = (schema: any) => {
+	return (
+		(schema && !schema.__metadata) ||
+		(schema && schema.__metadata && !(schema.__metadata.expirable === false))
+	);
+};
+
+const labelDate = (schema: any) => {
+	if (showExpiredDate(schema)) {
+		return 'ui:Valid until';
+	} else {
+		return 'ui:Not_expirable';
+	}
+};
+
 const PDocumentWithSchema: FC<PDocumentWithSchemaProps> = ({ ls, document, isEditing, index }) => {
 	const { t } = useTranslation('glossary');
 	const isAdmin = useAuthIsAdmin();
 	const { tag } = document;
-	const label = t(`vehicle.${tag}`);
-	const explanation = t([`vehicle.${tag}_desc`, '']);
-	// const id = `input-${tag}-${index}`;
-	const id = `input-${document.name || 'new'}`;
 	const schemaQuery = useDocumentTagSchema('vehicle', tag);
-	const queryClient = useQueryClient();
+
+	const title = `${t(`vehicle.${tag}`)}`;
+	const label = `${t('ui:Type')}: ${t(`vehicle.${tag}`)}, ${t(labelDate(schemaQuery.data))}${
+		showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''
+	}`;
+	const explanation = t([`vehicle.${tag}_desc`, '']);
+	const id = `input-${document.name || 'new'}`;
 
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
@@ -185,6 +203,7 @@ const PDocumentWithSchema: FC<PDocumentWithSchemaProps> = ({ ls, document, isEdi
 			return <Spinner size={8} />;
 		return (
 			<PDocument
+				title={title}
 				isEditing={isEditing}
 				document={document}
 				id={id}

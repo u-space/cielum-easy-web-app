@@ -139,19 +139,34 @@ interface PDocumentWithSchemaProps {
 	index: number;
 }
 
+const showExpiredDate = (schema: any) => {
+	return (
+		(schema && !schema.__metadata) ||
+		(schema && schema.__metadata && !(schema.__metadata.expirable === false))
+	);
+};
+
+const labelDate = (schema: any) => {
+	if (showExpiredDate(schema)) {
+		return 'ui:Valid until';
+	} else {
+		return 'ui:Not expirable';
+	}
+};
+
 const PDocumentWithSchema = (props: PDocumentWithSchemaProps) => {
 	const { ls, document, isEditing, index } = props;
 	const { t } = useTranslation(['glossary', 'ui']);
 	const isAdmin = useAuthIsAdmin();
 	const { tag } = document;
-	const name = document.name || document.file?.name;
-	// const label = name ? `${t('ui:Type')}: ${t(`user.${tag}`)} (${name})` : t(`user.${tag}`);
-	const label = `${t('ui:Type')}: ${t(`user.${tag}`)}, ${t('ui:Valid until')}: ${showDate(
-		document.valid_until
-	)})`;
+	const schemaQuery = useDocumentTagSchema('user', tag);
+
+	const title = `${t(`user.${tag}`)}`;
+	const label = `${t('ui:Type')}: ${t(`user.${tag}`)}, ${t(labelDate(schemaQuery.data))}${
+		showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''
+	}`;
 	const explanation = t([`user.${tag}_desc`, '']);
 	const id = `input-${tag}-${index}`;
-	const schemaQuery = useDocumentTagSchema('user', tag);
 
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
@@ -182,6 +197,7 @@ const PDocumentWithSchema = (props: PDocumentWithSchemaProps) => {
 				}}
 			>
 				<PDocument
+					title={title}
 					isEditing={isEditing}
 					document={document}
 					id={id}
