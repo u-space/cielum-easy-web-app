@@ -260,6 +260,7 @@
 		"remote_sensor_file_path": "Permiso en Sensores Remotos",
 		"remote_sensor_file_path_desc": " ",
 		"remote_sensor_file": "Foto de sensores remotos",
+		"vehicle_photo": "Foto de la aeronave",
 		"insurance_file_path": "Seguro de responsabilidad civil",
 		"insurance_file_path_desc": " ",
 		"logbook_file_path": "Logbook",
