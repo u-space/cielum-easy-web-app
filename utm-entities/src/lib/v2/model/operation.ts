@@ -1,21 +1,15 @@
 import { Static, Type } from '@sinclair/typebox';
-import { NestedUser, ResponseNestedUser } from './user';
-import { UtmEntity } from '../utm-entity';
 import { Value } from '@sinclair/typebox/value';
+import { dateOptions } from '../util';
+import { UtmEntity } from '../utm-entity';
 import {
 	OperationVolume,
 	RequestOperationVolume,
 	ResponseOperationVolume
 } from './operation_volume';
-import {
-	RequestVehicle,
-	ResponseBaseVehicle,
-	ResponseVehicle,
-	UtmBaseVehicle,
-	UtmVehicle,
-	RequestOperationVehicle
-} from './vehicle';
-import { dateOptions } from '../util';
+import { NestedUser, ResponseNestedUser } from './user';
+import { RequestOperationVehicle, ResponseBaseVehicle, UtmBaseVehicle } from './vehicle';
+
 export const OPERATION_LOCALES_OPTIONS = {
 	year: 'numeric' as const,
 	month: 'numeric' as const,

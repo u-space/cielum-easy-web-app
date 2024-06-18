@@ -1,9 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Axios, { AxiosResponseTransformer } from 'axios';
-import { Point } from 'geojson';
+import { Point, Polygon } from 'geojson';
 import { makeAutoObservable } from 'mobx';
 import env from '../../../src/vendor/environment/env';
+
+export interface IResponseRidPosition {
+	id: number;
+	operator_username?: string;
+	uas_id: string;
+	operation_id?: string;
+	ua_type?: number;
+	timestamp: Date;
+	operational_status?: number;
+	position: Point;
+	geodetic_altitude: number;
+	horizontal_accuracy?: number;
+	vertical_accuracy?: number;
+	speed?: number;
+	direction: number;
+	vertical_speed?: number;
+	operator_location?: Point;
+	operating_area_radius?: number;
+	operating_area_polygon?: Polygon;
+	operating_area_floor?: number;
+	operating_area_ceiling?: number;
+	operating_area_start_time?: Date;
+	operating_area_end_time?: Date;
+}
 
 export class PositionEntity {
 	id: number;
@@ -63,6 +87,21 @@ const transformPosition = (data: any) => {
 	return data.map((position: any) => new PositionEntity(position));
 };
 
+const transformPositionRid = (data: IResponseRidPosition[]) => {
+	return data.map((position: IResponseRidPosition) => {
+		const p = new PositionEntity(position);
+		p.id = position.id;
+		p.altitude_gps = position.geodetic_altitude;
+		p.location = position.position;
+		p.time_sent = new Date(position.timestamp);
+		p.heading = position.direction;
+		p.added_from_dat_file = null;
+		p.gufi = position.operation_id || '';
+		p.uvin = position.uas_id;
+		return p;
+	});
+};
+
 export const getPositionAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
@@ -82,6 +121,35 @@ export const getPositionAPIClient = (api: string, token: string | null) => {
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]
 				).concat(transformPosition)
+			});
+		},
+		postSimulatedPosition(position: PositionEntity) {
+			return axiosInstance.post('position', position, {
+				headers: { auth: token }
+			});
+		}
+	};
+};
+
+export const getPositionRidAPIClient = (api: string, token: string | null) => {
+	const axiosInstance = Axios.create({
+		baseURL: 'https://localhost:3030/',
+		timeout: env.tiemeout || 50000,
+		headers: { 'Content-Type': 'application/json' }
+	});
+
+	return {
+		getPastPositions(gufi: string, rangeFrom: Date, rangeTo: Date) {
+			return axiosInstance.get('position/operation', {
+				headers: { auth: token },
+				params: {
+					gufi: gufi,
+					time_start: rangeFrom.toISOString(),
+					time_end: rangeTo.toISOString()
+				},
+				transformResponse: (
+					Axios.defaults.transformResponse as AxiosResponseTransformer[]
+				).concat(transformPositionRid)
 			});
 		},
 		postSimulatedPosition(position: PositionEntity) {
