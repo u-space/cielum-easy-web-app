@@ -18,7 +18,7 @@
 
 	let currentTime = 0;
 
-	const positionAPIClient = getPositionRidAPIClient(env.core_api, token); // TODO: move to root of new app
+	const positionAPIClient = getPositionAPIClient(env.core_api, token); // TODO: move to root of new app
 	const queryPosition = createQuery({
 		queryKey: ['positions'],
 		queryFn: () => positionAPIClient.getPastPositions(gufi, from, to)
