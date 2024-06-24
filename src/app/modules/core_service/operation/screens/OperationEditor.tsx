@@ -1,34 +1,34 @@
-import { observer } from 'mobx-react';
-import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useQueryClient } from 'react-query';
-import _ from 'lodash';
+import { PButtonProps } from '@pcomponents/PButton';
 import { PModalType } from '@pcomponents/PModal';
-import { translateErrors } from '@utm-entities/_util';
-import { useHistory } from 'react-router-dom';
-import { useQueryGeographicalZones } from '../../../flight_request_service/geographical_zone/hooks';
 import { useTokyo } from '@tokyo/store';
-import { useQueryOperation, useSaveOperation } from '../hooks';
-import { useQueryString } from '../../../../utils';
-import { useSchemaStore } from '../../../schemas/store';
+import { translateErrors } from '@utm-entities/_util';
 import { Polygon } from 'geojson';
+import _ from 'lodash';
+import { observer } from 'mobx-react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { useHistory } from 'react-router-dom';
 import MapLayout from '../../../../commons/layouts/MapLayout';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
-import { PButtonProps } from '@pcomponents/PButton';
-import InfoOperation from '../components/InfoOperation';
 import ContextualInfo from '../../../../commons/layouts/map/editor_map/ContextualInfo';
+import { useQueryString } from '../../../../utils';
+import { useQueryGeographicalZones } from '../../../flight_request_service/geographical_zone/hooks';
 import MapViewModeSwitch from '../../../map/components/MapViewModeSwitch';
 import EditorMapViewSvelte from '../../../map/screens/editor/EditorMapView.svelte';
+import { useSchemaStore } from '../../../schemas/store';
+import InfoOperation from '../components/InfoOperation';
+import { useQueryOperation, useSaveOperation } from '../hooks';
 
-import { reactify } from 'svelte-preprocess-react';
 import { PFullModalProps, undefinedModal } from '@pcomponents/PFullModal';
-import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewProps';
 import { EditMode } from '@tokyo/types';
+import { UserEntity } from '@utm-entities/user';
 import { Operation } from '@utm-entities/v2/model/operation';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
-import { useAuthStore } from '../../../auth/store';
-import { UserEntity } from '@utm-entities/user';
 import { NestedUser } from '@utm-entities/v2/model/user';
+import { reactify } from 'svelte-preprocess-react';
+import { useAuthStore } from '../../../auth/store';
+import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewProps';
 import { useQueryUser } from '../../user/hooks';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
@@ -194,7 +194,31 @@ const OperationEditor = () => {
 			contextual={
 				<>
 					{selectedVolume !== null && (
-						<CardGroup header={t('Operation volume x', { x: selectedVolume + 1 })}>
+						<CardGroup
+							header={t('Operation volume x', { x: selectedVolume + 1 })}
+							headerTooltipContent={
+								<div
+									style={{
+										padding: '10px',
+										backgroundColor: 'white',
+										borderRadius: '5px'
+									}}
+								>
+									<p>{t('Select the volume')}</p>
+									<select>
+										{operation.operation_volumes.map((volume, index) => (
+											<option
+												selected={index === selectedVolume}
+												value={index}
+												onClick={() => setSelectedVolume(index)}
+											>
+												{t('Operation volume x', { x: index + 1 })}
+											</option>
+										))}
+									</select>
+								</div>
+							}
+						>
 							<ContextualInfo
 								entity={operation.operation_volumes[selectedVolume]}
 								entityName={'volume'}

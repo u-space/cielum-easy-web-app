@@ -5,17 +5,8 @@ import styles from './CardGroup.module.scss';
 import classnames from 'classnames';
 import { Collapse } from '@blueprintjs/core';
 import { useState, ReactNode, CSSProperties } from 'react';
-
-export interface CardGroupProps {
-	header?: string; // Should be a i18n key
-	children?: ReactNode;
-	isDanger?: boolean;
-	expandable?: boolean;
-	defaultOpen?: boolean;
-	style?: CSSProperties;
-	extraClassNames?: string;
-	hasSeparators?: boolean;
-}
+import PTooltip from '@pcomponents/PTooltip';
+import { Popover2 } from '@blueprintjs/popover2';
 
 export interface CardGroupDetailLineProps {
 	prop: string; // Should be a i18n key
@@ -34,6 +25,17 @@ export const CardGroupDetailLine = (props: CardGroupDetailLineProps) => {
 	);
 };
 
+export interface CardGroupProps {
+	header?: string; // Should be a i18n key
+	children?: ReactNode;
+	isDanger?: boolean;
+	expandable?: boolean;
+	defaultOpen?: boolean;
+	style?: CSSProperties;
+	extraClassNames?: string;
+	hasSeparators?: boolean;
+	headerTooltipContent?: JSX.Element;
+}
 const CardGroup = (props: CardGroupProps) => {
 	const { t } = useTranslation();
 	const {
@@ -44,7 +46,8 @@ const CardGroup = (props: CardGroupProps) => {
 		expandable,
 		defaultOpen = false,
 		style,
-		hasSeparators = false
+		hasSeparators = false,
+		headerTooltipContent
 	} = props;
 
 	const tHeader = t(header || '');
@@ -64,7 +67,18 @@ const CardGroup = (props: CardGroupProps) => {
 					onClick={expandable ? () => setOpened(!opened) : () => {}}
 					className={classnames(styles.header, { [styles.expand]: expandable })}
 				>
-					{tHeader}
+					{!headerTooltipContent && tHeader}
+					{headerTooltipContent && (
+						<Popover2
+							content={headerTooltipContent}
+							placement="top"
+							fill={true}
+							transitionDuration={1000}
+							interactionKind="hover"
+						>
+							<div style={{ cursor: 'pointer' }}>{tHeader}</div>
+						</Popover2>
+					)}
 				</div>
 			)}
 
