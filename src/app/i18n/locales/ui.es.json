@@ -366,6 +366,7 @@
 	"The operation name can only contain alphanumeric characters": "El nombre de la operación solo puede contener caracteres alfanuméricos",
 	"Volume x of y": "Volúmen {{x}} de {{y}}",
 	"Operation volume x": "Volúmen de operación {{x}}",
+	"Select the volume": "Selecciones el volúmen",
 	"Operation must have at least 1 volume and has none": "La operación debe tener por lo menos un volumen y no tiene ninguno. Por favor, dibuja en el mapa un volumen y cliquea sobre el para cambiar las propiedades",
 	"Many possible elements clicked": "Seleccione",
 	"operation": "Operación",
