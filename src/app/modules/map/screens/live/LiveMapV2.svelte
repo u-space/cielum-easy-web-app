@@ -1,26 +1,27 @@
 <script lang="ts">
-	import Dashboard from '../../../../commons/layouts/v2/dashboard/Dashboard.svelte';
-	import LiveMapView from './LiveMapView.svelte';
-	import env from '../../../../../vendor/environment/env';
-	import {getOperationAPIClient} from '@utm-entities/v2/api/operation';
-	import {createQuery} from '@tanstack/svelte-query';
-	import {BaseOperation, OperationStateEnum} from '@utm-entities/v2/model/operation';
-	import * as H from 'history';
-	import {PickableType} from '@tokyo/util';
-	import {TokyoPick} from '@tokyo/types';
-	import OperationDetails from '../../../core_service/operation/components/OperationDetails.svelte';
-	import CLoading from '@tokyo/gui/CLoading.svelte';
-	import {flyToCenterOfGeometry} from '@tokyo/store';
-	import {feature, featureCollection} from '@turf/helpers';
-	import {bbox, bboxPolygon} from '@turf/turf';
-	import {Geometry} from 'geojson';
-	import i18n from '../../../../i18n'
-	import {getQueryStringSelection, QueryStringSelection} from '../../../core_service/query_string_selection_load';
-	import {onMount} from 'svelte';
-	import {PositionEntity} from '@utm-entities/position';
-	import io from 'socket.io-client';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { CModalVariant } from '@tokyo/gui/CModal';
 	import CModal from '@tokyo/gui/CModal.svelte';
-	import {CModalVariant} from '@tokyo/gui/CModal';
+	import { flyToCenterOfGeometry } from '@tokyo/store';
+	import { TokyoPick } from '@tokyo/types';
+	import { PickableType } from '@tokyo/util';
+	import { feature, featureCollection } from '@turf/helpers';
+	import { bbox, bboxPolygon } from '@turf/turf';
+	import { PositionEntity } from '@utm-entities/position';
+	import { getOperationAPIClient } from '@utm-entities/v2/api/operation';
+	import { BaseOperation, OperationStateEnum } from '@utm-entities/v2/model/operation';
+	import { Geometry } from 'geojson';
+	import io from 'socket.io-client';
+	import { onMount } from 'svelte';
+	import env from '../../../../../vendor/environment/env';
+	import Dashboard from '../../../../commons/layouts/v2/dashboard/Dashboard.svelte';
+	import i18n from '../../../../i18n';
+	import OperationDetails from '../../../core_service/operation/components/OperationDetails.svelte';
+	import {
+		QueryStringSelection,
+		getQueryStringSelection
+	} from '../../../core_service/query_string_selection_load';
+	import LiveMapView from './LiveMapView.svelte';
 
 	interface Telemetry {
 		timestamp: number;
@@ -42,15 +43,20 @@
 
 	//export let history: H.History;
 
-	const states = [OperationStateEnum.PROPOSED, OperationStateEnum.ACCEPTED,
+	const states = [
+		OperationStateEnum.PROPOSED,
+		OperationStateEnum.ACCEPTED,
 		OperationStateEnum.NOT_ACCEPTED,
-		OperationStateEnum.ACTIVATED, OperationStateEnum.CLOSED,
-		OperationStateEnum.PENDING, OperationStateEnum.ROGUE];
+		OperationStateEnum.ACTIVATED,
+		OperationStateEnum.CLOSED,
+		OperationStateEnum.PENDING,
+		OperationStateEnum.ROGUE
+	];
 
 	const operationAPIClient = getOperationAPIClient(env.core_api, null); // TODO: move to root of new app
 	const query = createQuery({
 		queryKey: ['operations'],
-		queryFn: () => operationAPIClient.getOperations<BaseOperation>('', states),
+		queryFn: () => operationAPIClient.getOperations<BaseOperation>('', states)
 	});
 
 	$: operations = $query.isSuccess ? $query.data.ops : [];
@@ -60,7 +66,7 @@
 		const socket = io(env.core_api + '/public'); // TODO: use private if logged in
 		socket.on('new-position', (position: PositionEntity) => {
 			const id = position.gufi + position.uvin;
-			let positionsOfOneVehicle = vehiclePositions.get(id) || [] as PositionEntity[];
+			let positionsOfOneVehicle = vehiclePositions.get(id) || ([] as PositionEntity[]);
 			positionsOfOneVehicle = [...positionsOfOneVehicle, position];
 			vehiclePositions = new Map(vehiclePositions).set(id, positionsOfOneVehicle);
 		});
@@ -79,7 +85,7 @@
 				},
 				time_sent: new Date(telemetry.timestamp),
 				heading: telemetry.heading,
-				altitude_gps: telemetry.calculatedData.altitudeAGLInMeters,
+				altitude_gps: telemetry.calculatedData.altitudeAGLInMeters
 			});
 			console.log('pseudoPosition', pseudoPosition, telemetry);
 
@@ -89,19 +95,19 @@
 		return () => {
 			socket.disconnect();
 		};
-	})
+	});
 
 	// Entity selection logic
 	let selected: QueryStringSelection = getQueryStringSelection();
 
 	function onPick(pick: Partial<TokyoPick>) {
-		const {type, id, volume} = pick;
+		const { type, id, volume } = pick;
 		if (!id) {
 			selected = null;
 		} else if (type === PickableType.Operation && volume === undefined) {
-			selected = null
+			selected = null;
 		} else {
-			selected = {type, id, volume};
+			selected = { type, id, volume };
 		}
 	}
 
@@ -109,10 +115,12 @@
 		return selected?.type === type;
 	}
 
-	$: selectedOperation = selected?.type === PickableType.Operation ? operations.find(op => op.gufi === selected?.id) : null;
+	$: selectedOperation =
+		selected?.type === PickableType.Operation
+			? operations.find((op) => op.gufi === selected?.id)
+			: null;
 	$: idOperation = selected?.type === PickableType.Operation ? selected.id : null;
 	$: idVolume = selected?.volume;
-
 
 	function centerOnVolume() {
 		if (idVolume === undefined) return;
@@ -125,7 +133,13 @@
 	function centerOnOperationVolumesBbox() {
 		const volumes = selectedOperation?.operation_volumes;
 		if (volumes) {
-			const volumesBbox = bbox(featureCollection(Object.values(volumes).map(volume => feature(volume.operation_geography as Geometry))));
+			const volumesBbox = bbox(
+				featureCollection(
+					Object.values(volumes).map((volume) =>
+						feature(volume.operation_geography as Geometry)
+					)
+				)
+			);
 			flyToCenterOfGeometry(bboxPolygon(volumesBbox).geometry);
 		}
 	}
@@ -156,7 +170,6 @@
 			}
 		}
 	};
-
 </script>
 
 <Dashboard canMenuOpen={!!selected} {isLoading}>
@@ -166,20 +179,21 @@
 				<!-- TODO: Do it how it should be done
 				<ViewOperationDetails gufi={selected.id}/> -->
 				<h1>{i18n.t('Operation')}</h1>
-				<OperationDetails operation={selectedOperation}/>
+				<OperationDetails operation={selectedOperation} />
 			{/if}
 		{/if}
 	</slot>
-	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onPick(event.detail)}/>
+	<LiveMapView {...liveMapViewsProps} on:picked={(event) => onPick(event.detail)} />
 </Dashboard>
 
 {#if isError}
 	<CModal
-			title={i18n.t('There is no operation with the specified id')}
-			variant={CModalVariant.ERROR}
-			closeText={i18n.t('Close') || 'Close'}
-			on:close={() => window.location.href = window.location.origin + '/map'}>
+		title={i18n.t('There is no operation with the specified id')}
+		variant={CModalVariant.ERROR}
+		closeText={i18n.t('Close') || 'Close'}
+		on:close={() => (window.location.href = window.location.origin + '/map')}
+	>
 		<!-- TODO: Update this call when using a Svelte router -->
-		{i18n.t("Please check that no characters are missing from the URL and try again")}
+		{i18n.t('Please check that no characters are missing from the URL and try again')}
 	</CModal>
 {/if}
