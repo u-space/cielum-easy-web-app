@@ -67,7 +67,7 @@ function getConverterFromGeographicalZone(
 			extruded: threeDimensional,
 			parameters: {
 				depthMask: false
-			}
-			//getElevation: 400
+			},
+			getElevation: 120
 		});
 }
