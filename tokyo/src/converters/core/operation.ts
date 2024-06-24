@@ -99,8 +99,6 @@ function getConverterFromOperation(_operation: BaseOperation, options?: Operatio
 				};
 			}),
 			id,
-			//getElevation: (polygon) =>
-			//	polygon.properties?.volume.max_altitude * ELEVATION_MULTIPLIER,
 			getElevation: (polygon) =>
 				polygon.properties?.volume.max_altitude * ELEVATION_MULTIPLIER,
 			pickable: true,
@@ -121,7 +119,5 @@ function getConverterFromOperation(_operation: BaseOperation, options?: Operatio
 					return lineColor;
 				}
 			}
-			/*extruded: true, TODO: 3D mode
-        getElevation: 50*/
 		});
 }

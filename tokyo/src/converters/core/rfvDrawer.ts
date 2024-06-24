@@ -66,8 +66,10 @@ function getConverterFromOperation(_rfv: RfvEntity, options?: OperationDrawingPr
 			extruded: true,
 			parameters: {
 				depthMask: false
+			},
+			getElevation: (rfv) => {
+				return rfv.properties.max_altitude * ELEVATION_MULTIPLIER;
 			}
-			//getElevation: 400
 		});
 
 	// return () =>

@@ -55,7 +55,9 @@ function getConverterFromOperation(_uvr: UvrEntity, options?: OperationDrawingPr
 			extruded: true,
 			parameters: {
 				depthMask: false
+			},
+			getElevation: (uvr) => {
+				return uvr.properties.max_altitude * ELEVATION_MULTIPLIER;
 			}
-			//getElevation: 400
 		});
 }
