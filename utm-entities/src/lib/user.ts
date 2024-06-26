@@ -17,7 +17,7 @@ import { buildParametersObject } from './_util';
 import { ExtraFields, ExtraFieldSchema } from './extraFields';
 import { EntityHasDisplayName } from './types';
 
-const RolesType = Joi.string().valid('admin', 'monitor', 'pilot');
+const RolesType = Joi.string().valid('admin', 'monitor', 'pilot', 'coa', 'remote_sensor');
 
 export class UserEntity implements EntityHasDisplayName {
 	username: string;
@@ -238,6 +238,11 @@ export const transformExistsUser = () => (data: any) => {
 
 export interface ChangeUserConfirmationStatusBody {
 	username: string;
+	verified: boolean;
+}
+
+export interface ChangeUserCanOperateStatusBody {
+	username: string;
 	canOperate: boolean;
 }
 
@@ -307,7 +312,7 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 				ChangeUserConfirmationStatusBody
 			>(
 				'user/updateUserStatus',
-				{ username, canOperate: verified },
+				{ username, verified: verified },
 				{ headers: { auth: token } }
 			);
 		},
@@ -315,7 +320,7 @@ export function getUserAPIClient(api: string, token: string | null, schema: Extr
 			return axiosInstance.post<
 				void,
 				ChangeUserConfirmationStatusResponse,
-				ChangeUserConfirmationStatusBody
+				ChangeUserCanOperateStatusBody
 			>('user/updateCanOperate', { username, canOperate }, { headers: { auth: token } });
 		},
 		updateUserPassword: (username: string, password: string) => {

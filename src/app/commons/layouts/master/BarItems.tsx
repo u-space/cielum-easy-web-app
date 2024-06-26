@@ -20,7 +20,7 @@ const BarItems = () => {
 					label={t('REALTIME MAP')}
 					isActive={active === 'map'}
 					onClick={() => history.push('/map')}
-					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR, AuthRole.COA]}
 				/>
 			)}
 
@@ -39,7 +39,12 @@ const BarItems = () => {
 					label={t('VEHICLES')}
 					isActive={active === 'vehicles'}
 					onClick={() => history.push('/vehicles')}
-					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
+					roles={[
+						AuthRole.ADMIN,
+						AuthRole.MONITOR,
+						AuthRole.PILOT,
+						AuthRole.REMOTE_SENSOR
+					]}
 				/>
 			)}
 			{env.tenant.features.FlightRequests.enabled && (
@@ -49,21 +54,21 @@ const BarItems = () => {
 						label={t('COORDINATORS')}
 						isActive={active === 'coordinators'}
 						onClick={() => history.push('/coordinators')}
-						roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+						roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.COA]}
 					/>
 					<BarItem
 						icon="folder-open"
 						label={t('COORDINATIONS')}
 						isActive={active === 'coordinations'}
 						onClick={() => history.push('/coordinations')}
-						roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+						roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.COA]}
 					/>
 					<BarItem
 						icon="polygon-filter"
 						label={t('FLIGHT REQUESTS')}
 						isActive={active === 'flight-requests'}
 						onClick={() => history.push('/flight-requests')}
-						roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
+						roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT, AuthRole.COA]}
 					/>
 				</>
 			)}
@@ -105,7 +110,7 @@ const BarItems = () => {
 					label={t('UVRS')}
 					isActive={active === 'uvrs'}
 					onClick={() => history.push('/uvrs')}
-					roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.COA]}
 				/>
 			)}
 			{env.tenant.features.Rfvs.enabled && (
@@ -133,7 +138,13 @@ const BarItems = () => {
 				label={'PERFIL'}
 				isActive={active === 'profile'}
 				onClick={() => history.push('/profile')}
-				roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
+				roles={[
+					AuthRole.ADMIN,
+					AuthRole.MONITOR,
+					AuthRole.PILOT,
+					AuthRole.COA,
+					AuthRole.REMOTE_SENSOR
+				]}
 			/>
 
 			{/*<BarItem

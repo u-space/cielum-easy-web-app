@@ -8,6 +8,8 @@ export enum AuthRole {
 	ADMIN = 'ADMIN',
 	MONITOR = 'MONITOR',
 	PILOT = 'PILOT',
+	COA = 'COA',
+	REMOTE_SENSOR = 'REMOTE_SENSOR',
 	NOT_LOGGED_IN = 'NOT_LOGGED_IN'
 }
 

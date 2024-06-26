@@ -52,17 +52,33 @@ const LoggedInScreens = () => {
 				<RoleGatedRoute
 					exact
 					path={'/'}
-					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+					roles={[
+						AuthRole.ADMIN,
+						AuthRole.PILOT,
+						AuthRole.MONITOR,
+						AuthRole.COA,
+						AuthRole.REMOTE_SENSOR
+					]}
 				>
 					<Home />
 				</RoleGatedRoute>
 				<RoleGatedRoute
 					path={'/profile'}
-					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+					roles={[
+						AuthRole.ADMIN,
+						AuthRole.PILOT,
+						AuthRole.MONITOR,
+						AuthRole.COA,
+						AuthRole.REMOTE_SENSOR
+					]}
 				>
 					<UserProfileScreen />
 				</RoleGatedRoute>
-				<RoleGatedRoute exact path={'/editor'} roles={[AuthRole.ADMIN, AuthRole.PILOT]}>
+				<RoleGatedRoute
+					exact
+					path={'/editor'}
+					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA, AuthRole.REMOTE_SENSOR]}
+				>
 					<Editors />
 				</RoleGatedRoute>
 				<RoleGatedRoute exact path={'/editor/user'} roles={[AuthRole.ADMIN]}>
@@ -73,7 +89,13 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('RealtimeMap') && (
 					<RoleGatedRoute
 						path={'/map'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+						roles={[
+							AuthRole.ADMIN,
+							AuthRole.PILOT,
+							AuthRole.MONITOR,
+							AuthRole.COA,
+							AuthRole.REMOTE_SENSOR
+						]}
 					>
 						<LiveMap />
 					</RoleGatedRoute>
@@ -91,7 +113,12 @@ const LoggedInScreens = () => {
 					<RoleGatedRoute
 						exact
 						path={'/vehicles/:uvin'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+						roles={[
+							AuthRole.ADMIN,
+							AuthRole.PILOT,
+							AuthRole.MONITOR,
+							AuthRole.REMOTE_SENSOR
+						]}
 					>
 						<Vehicle />
 					</RoleGatedRoute>
@@ -99,7 +126,12 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('Vehicles') && (
 					<RoleGatedRoute
 						path={'/vehicles'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+						roles={[
+							AuthRole.ADMIN,
+							AuthRole.PILOT,
+							AuthRole.MONITOR,
+							AuthRole.REMOTE_SENSOR
+						]}
 					>
 						<VehiclesHub />
 					</RoleGatedRoute>
@@ -109,7 +141,7 @@ const LoggedInScreens = () => {
 					<RoleGatedRoute
 						exact
 						path={'/editor/vehicle'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.REMOTE_SENSOR]}
 					>
 						<NewVehicleScreen />
 					</RoleGatedRoute>
@@ -120,7 +152,7 @@ const LoggedInScreens = () => {
 					<RoleGatedRoute
 						exact
 						path={'/operations'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR, AuthRole.COA]}
 					>
 						<OperationHub />
 					</RoleGatedRoute>
@@ -129,7 +161,7 @@ const LoggedInScreens = () => {
 					<RoleGatedRoute
 						exact
 						path={'/historical'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR, AuthRole.COA]}
 					>
 						<HistoricalMap token={token} />
 					</RoleGatedRoute>
@@ -177,13 +209,13 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('Uvrs') && (
 					<RoleGatedRoute
 						path={'/uvrs'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR]}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR, AuthRole.COA]}
 					>
 						<UvrsHub />
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('Uvrs') && (
-					<RoleGatedRoute path={'/editor/uvr'} roles={[AuthRole.ADMIN]}>
+					<RoleGatedRoute path={'/editor/uvr'} roles={[AuthRole.ADMIN, AuthRole.COA]}>
 						<UvrEditor />
 					</RoleGatedRoute>
 				)}
@@ -211,7 +243,7 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('FlightRequests') && (
 					<RoleGatedRoute
 						path={'/coordinators'}
-						roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+						roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.COA]}
 					>
 						<CoordinatorsHub />
 					</RoleGatedRoute>
@@ -219,7 +251,7 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('FlightRequests') && (
 					<RoleGatedRoute
 						path={'/coordinations'}
-						roles={[AuthRole.ADMIN, AuthRole.MONITOR]}
+						roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.COA]}
 					>
 						<CoordinationHub />
 					</RoleGatedRoute>
