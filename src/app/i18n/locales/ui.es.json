@@ -549,5 +549,8 @@
 	"This user has at least a document that is not valid and without observations": "Este usuario tiene al menos un documento que no es válido y sin observaciones",
 	"This user has no documents that are not valid without observation": "Este usuario no tiene documentos que no sean válidos sin observaciones",
 	"This aircraft has at least a document that is not valid and without observations": "Esta aeronave tiene al menos un documento que no es válido y sin observaciones",
-	"This aircraft has no documents that are not valid without observation": "Esta aeronave no tiene documentos que no sean válidos sin observaciones"
+	"This aircraft has no documents that are not valid without observation": "Esta aeronave no tiene documentos que no sean válidos sin observaciones",
+	"x days": "{{x}} días",
+	"x months": "{{x}} meses",
+	"x years": "{{x}} años"
 }
