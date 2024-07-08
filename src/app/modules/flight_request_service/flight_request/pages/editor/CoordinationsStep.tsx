@@ -141,6 +141,46 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		}
 	};
 
+	function getStartTime(flightRequest: FlightRequestEntity): Date | undefined {
+		if (!flightRequest || flightRequest.volumes.length === 0) {
+			return undefined;
+		}
+		return flightRequest.volumes
+			.filter((volume) => volume.effective_time_begin !== null)
+			.reduce(
+				(minDate, volume) =>
+					volume.effective_time_begin !== null && volume.effective_time_begin < minDate
+						? volume.effective_time_begin
+						: minDate,
+				flightRequest.volumes[0].effective_time_begin as Date
+			);
+	}
+
+	function checkTimeInterval(
+		minimun_coordination_days: number,
+		flightRequest: FlightRequestEntity
+	) {
+		const startTime = getStartTime(flightRequest);
+		if (startTime) {
+			const now = new Date();
+			// const difference = now.getTime() - startTime.getTime();
+			// const days = Math.ceil(difference / (1000 * 3600 * 24));
+			const days = daysBetween(now, startTime);
+			console.log(
+				`Difference in days: ${days} - ${minimun_coordination_days} - ${now} - ${startTime}`
+			);
+			return days >= minimun_coordination_days;
+			// if (days <= minimun_coordination_days) {
+			// 	return false;
+			// }
+		}
+	}
+
+	function daysBetween(startDate: Date, endDate: Date) {
+		const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+		return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	}
+
 	return (
 		<DashboardLayout isLoading={isLoading || saveFlightRequestMutation.isLoading}>
 			<PageLayout
@@ -184,24 +224,54 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 							{isLoading && <Spinner />}
 							{geographicalZonesIntersectingVolume?.map(
 								(zone: GeographicalZone, index: number) => (
-									<Checkbox
-										id={`coordination-${index}`}
-										key={zone.id}
-										label={`${zone.name} (${zone.id}) - ${zone.coordinator?.email}`}
-										checked={
-											true //zonesChecked.find((z) => z.id === zone.id) !== undefined
-										}
-										onChange={(value) => {
-											console.log('zone::', zonesChecked);
-											// if (value.currentTarget.checked) {
-											// 	setZonesChecked([...zonesChecked, zone]);
-											// } else {
-											// 	setZonesChecked(
-											// 		zonesChecked.filter((z) => z.id !== zone.id)
-											// 	);
-											// }
-										}}
-									></Checkbox>
+									<>
+										<Checkbox
+											id={`coordination-${index}`}
+											key={zone.id}
+											label={`${zone.name} (${zone.id}) - ${zone.coordinator?.email}`}
+											checked={
+												true //zonesChecked.find((z) => z.id === zone.id) !== undefined
+											}
+											onChange={(value) => {
+												// console.log('zone::', zonesChecked);
+												// if (value.currentTarget.checked) {
+												// 	setZonesChecked([...zonesChecked, zone]);
+												// } else {
+												// 	setZonesChecked(
+												// 		zonesChecked.filter((z) => z.id !== zone.id)
+												// 	);
+												// }
+											}}
+										></Checkbox>
+										{!checkTimeInterval(
+											zone.coordinator?.minimun_coordination_days || 0,
+											flightRequest
+										) &&
+											getStartTime !== undefined && (
+												<div className={styles.alert}>
+													La coordinación requiere{' '}
+													<strong>
+														{
+															zone.coordinator
+																?.minimun_coordination_days
+														}
+													</strong>{' '}
+													días para realizarse y la coordinación
+													solicitada comienza el{' '}
+													{(
+														getStartTime(flightRequest) as Date
+													).toLocaleString()}{' '}
+													en{' '}
+													<strong>
+														{daysBetween(
+															new Date(),
+															getStartTime(flightRequest) as Date
+														)}
+													</strong>{' '}
+													días.
+												</div>
+											)}
+									</>
 								)
 							)}
 						</section>
