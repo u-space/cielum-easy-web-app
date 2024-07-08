@@ -34,13 +34,8 @@ const specialProps = [
 	'automatic_coordinator_procedure',
 	'id'
 ];
-const nonRequiredProps = [
-	'liaison',
-	'minimun_coordination_days',
-	'price',
-	'discount_Multiple_Dates'
-];
-const hiddenProps = ['liaison', 'minimun_coordination_days', 'price', 'discount_Multiple_Dates'];
+const nonRequiredProps = ['liaison', 'price', 'discount_Multiple_Dates'];
+const hiddenProps = ['liaison', 'price', 'discount_Multiple_Dates'];
 
 interface BaseCoordinatorDetailsProps {
 	ls: UseLocalStoreEntity<CoordinatorEntity>;
