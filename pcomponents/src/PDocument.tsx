@@ -183,7 +183,8 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 				/>
 			)}
 
-			{showDateInput &&
+			{isEditing &&
+				showDateInput &&
 				!notExpirable &&
 				schema &&
 				schema.__metadata &&
