@@ -11,7 +11,13 @@ import { useQueryVehicles, useUpdateVehicle, useUpdateVehicleAuthorization } fro
 import { VehicleAuthorizationStatus, VehicleEntity } from '@utm-entities/vehicle';
 import { useVehicleStore } from '../store';
 import { shallow } from 'zustand/shallow';
-import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
+import {
+	AuthRole,
+	useAuthGetRole,
+	useAuthIsAdmin,
+	useAuthIsPilot,
+	useAuthStore
+} from '../../../auth/store';
 import VehicleSearchTools from '../components/VehicleSearchTools';
 import ViewAndEditVehicle from '../pages/ViewAndEditVehicle';
 import { UseMutationResult } from 'react-query';
@@ -62,19 +68,21 @@ const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const updateVehicleAuthorization = useUpdateVehicleAuthorization();
 
 	// Pilot users can de-authorize their own vehicles, but not authorize them
-	if (isAdmin) {
-		let newAuthorizationStatus: VehicleAuthorizationStatus;
-		if (isAdmin) {
-			newAuthorizationStatus = data.isAuthorized
-				? VehicleAuthorizationStatus.NOT_AUTHORIZED
-				: VehicleAuthorizationStatus.AUTHORIZED;
-		} else {
-			newAuthorizationStatus = data.isAuthorized
-				? VehicleAuthorizationStatus.NOT_AUTHORIZED
-				: VehicleAuthorizationStatus.PENDING;
-		}
-		return (
-			<>
+	// if (isAdmin) {
+	let newAuthorizationStatus: VehicleAuthorizationStatus;
+	// if (isAdmin) {
+	// eslint-disable-next-line prefer-const
+	newAuthorizationStatus = data.isAuthorized
+		? VehicleAuthorizationStatus.NOT_AUTHORIZED
+		: VehicleAuthorizationStatus.AUTHORIZED;
+	// } else {
+	// 	newAuthorizationStatus = data.isAuthorized
+	// 		? VehicleAuthorizationStatus.NOT_AUTHORIZED
+	// 		: VehicleAuthorizationStatus.PENDING;
+	// }
+	return (
+		<>
+			{isAdmin && (
 				<PTooltip content={data.isAuthorized ? t('De-authorize') : t('Authorize')}>
 					<PButton
 						size={PButtonSize.SMALL}
@@ -88,14 +96,15 @@ const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 						}}
 					/>
 				</PTooltip>
-				<PTooltip content={getStateInformation(data).text}>
-					<StateCircle style={{ backgroundColor: getStateInformation(data).color }} />
-				</PTooltip>
-			</>
-		);
-	} else {
-		return null;
-	}
+			)}
+			<PTooltip content={getStateInformation(data).text}>
+				<StateCircle style={{ backgroundColor: getStateInformation(data).color }} />
+			</PTooltip>
+		</>
+	);
+	// } else {
+	// 	return null;
+	// }
 };
 
 const VehicleHub = () => {
@@ -115,6 +124,7 @@ const VehicleHub = () => {
 	const username = useAuthStore((state) => state.username);
 	const isAdmin = useAuthIsAdmin();
 	const isPilot = useAuthIsPilot();
+	const role = useAuthGetRole();
 	const token = useAuthStore((state) => state.token);
 
 	// Props
@@ -234,7 +244,9 @@ const VehicleHub = () => {
 			updateQuery={updateVehicle as UseMutationResult}
 			extraIsLoading={updateVehicleAuthorization.isLoading}
 			query={{ ...query, count }}
-			canEdit={(vehicle) => vehicle?.owner?.username === username || isAdmin}
+			canEdit={(vehicle) =>
+				vehicle?.owner?.username === username || isAdmin || role === AuthRole.REMOTE_SENSOR
+			}
 		/>
 	);
 };
