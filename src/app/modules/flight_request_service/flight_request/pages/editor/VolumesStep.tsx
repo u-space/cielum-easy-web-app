@@ -18,6 +18,8 @@ import { PFullModalProps } from '@pcomponents/PFullModal';
 import { EditMode, EditOptions } from '@tokyo/types';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 
+const ONE_VOLUME_PER_DAY = false;
+
 const EditorMapView = reactify(EditorMapViewSvelte);
 interface VolumesStepProps {
 	polygon: Polygon;
@@ -100,18 +102,30 @@ const VolumesStep = (props: VolumesStepProps) => {
 		primary: {
 			text: t('Add'),
 			onClick: () => {
-				// For each day in the range, create a new volume
-				// with the start and end time
-				getDatesBetween(start.current, end.current).forEach((date) => {
+				if (ONE_VOLUME_PER_DAY) {
+					// For each day in the range, create a new volume
+					// with the start and end time
+					getDatesBetween(start.current, end.current).forEach((date) => {
+						const newVolume = new OperationVolume();
+						newVolume.set('ordinal', flightRequest.volumes.length - 1);
+						const startDate = setHoursMinutesSeconds(start.current, new Date(date));
+						const endDate = setHoursMinutesSeconds(end.current, new Date(date));
+						newVolume.set('max_altitude', maxAltitude);
+						newVolume.set('effective_time_begin', startDate);
+						newVolume.set('effective_time_end', endDate);
+						flightRequest.volumes.push(newVolume);
+					});
+				} else {
+					validateDatesTimeVolumes(flightRequest, start.current, end.current);
 					const newVolume = new OperationVolume();
 					newVolume.set('ordinal', flightRequest.volumes.length - 1);
-					const startDate = setHoursMinutesSeconds(start.current, new Date(date));
-					const endDate = setHoursMinutesSeconds(end.current, new Date(date));
+					const startDate = start.current;
+					const endDate = end.current;
 					newVolume.set('max_altitude', maxAltitude);
 					newVolume.set('effective_time_begin', startDate);
 					newVolume.set('effective_time_end', endDate);
 					flightRequest.volumes.push(newVolume);
-				});
+				}
 				setModalProps(undefined);
 			}
 		},
@@ -291,3 +305,24 @@ const setHoursAndReturnDate = (date: Date, hours: number, minutes: number) => {
 };
 
 export default observer(VolumesStep);
+
+function validateDatesTimeVolumes(
+	flightRequest: FlightRequestEntity,
+	start: Date,
+	end: Date
+): boolean {
+	flightRequest.volumes.forEach((volume) => {
+		if (volume.effective_time_begin !== null && volume.effective_time_end !== null) {
+			if (
+				volume.effective_time_begin > volume.effective_time_end ||
+				volume.effective_time_begin < start ||
+				volume.effective_time_end > end
+			) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	});
+	return true;
+}
