@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import styles from './Kanpur.module.scss';
 
-const maxDate = new Date();
-maxDate.setFullYear(maxDate.getFullYear() + 5);
+export const MAX_DATE = new Date();
+MAX_DATE.setFullYear(MAX_DATE.getFullYear() + 20);
 
 export interface PDateInputProps {
 	id: string;
@@ -23,6 +23,7 @@ export interface PDateInputProps {
 	isRequired?: boolean;
 	isTime?: boolean;
 	isDate?: boolean;
+	value?: Date;
 }
 
 const PDateInput = ({
@@ -40,18 +41,19 @@ const PDateInput = ({
 	isRequired = false,
 	isTime = false,
 	isDate = true,
+	value,
 	...extraProps
 }: PDateInputProps) => {
-	const [value, setValue] = useState(defaultValue ? defaultValue : new Date());
+	const [dateValue, setDateValue] = useState(defaultValue ? defaultValue : new Date());
 
 	const onValueChange = (value: Date) => {
-		setValue(value);
+		setDateValue(value);
 		onChange(value);
 	};
 
 	useEffect(() => {
 		if (defaultValue !== undefined) {
-			setValue(defaultValue);
+			setDateValue(defaultValue);
 		}
 	}, [defaultValue]);
 
@@ -95,9 +97,9 @@ const PDateInput = ({
 					}
 				}}
 				placeholder={placeholder}
-				value={value}
+				value={value ? value : dateValue}
 				minDate={new Date(1577833200000)}
-				maxDate={maxDate}
+				maxDate={MAX_DATE}
 				disabled={disabled}
 				canClearSelection={false}
 				timePrecision={isTime ? TimePrecision.MINUTE : undefined}
