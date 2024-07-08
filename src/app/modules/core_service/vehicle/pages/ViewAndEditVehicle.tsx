@@ -1,11 +1,7 @@
-import { Spinner } from '@blueprintjs/core';
-import PDocument from '@pcomponents/PDocument';
-import PDocumentTagSelector from '@pcomponents/PDocumentTagSelector';
 import PDropdown from '@pcomponents/PDropdown';
 import PInput from '@pcomponents/PInput';
 import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
-import { DocumentEntity } from '@utm-entities/document';
 import { ExtraFieldSchema, ExtraFieldSchemas } from '@utm-entities/extraFields';
 import { UserEntity } from '@utm-entities/user';
 import { VehicleEntity } from '@utm-entities/vehicle';
@@ -13,23 +9,20 @@ import { observer, useObserver } from 'mobx-react';
 import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
-import { getWebConsoleLogger } from '../../../../../utils';
 import env from '../../../../../vendor/environment/env';
 import styles from '../../../../commons/Pages.module.scss';
 import ExtraField from '../../../../commons/components/ExtraField';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import { getFeatureOption } from '../../../../utils';
-import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
 import {
-	UseUpdateDocumentObservationParams,
-	UseUpdateDocumentValidationParams,
-	useDocumentAvailableTags,
-	useDocumentTagSchema,
-	useUpdateDocumentObservation,
-	useUpdateDocumentValidation
-} from '../../../document/hooks';
+	AuthRole,
+	useAuthGetRole,
+	useAuthIsAdmin,
+	useAuthIsPilot,
+	useAuthStore
+} from '../../../auth/store';
 import { useSchemaStore } from '../../../schemas/store';
-import { showDate } from 'src/app/commons/displayUtils';
+import { VehicleDocuments } from './VehicleDocuments';
 
 export interface BaseVehicleDetailsProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -110,266 +103,10 @@ const BaseVehicleDetails: FC<BaseVehicleDetailsProps> = observer(
 					isDarkVariant
 					inline
 				/>
-				{/* <PVehiclePayloadSelect
-					id={'payload'}
-					disabled={!isEditing}
-					label={t('vehicle.payload')}
-					onItemSelect={(value) => {
-						const arr = [...payloadTypesDrop];
-						arr.push(value);
-						ls.entity.payload = arr.map((item) => item.id);
-						setPayloadTypesDrop(arr);
-					}}
-					onItemDelete={(index) => {
-						const arr = [...payloadTypesDrop];
-						if (index > -1) {
-							arr.splice(index, 1);
-						}
-						setPayloadTypesDrop(arr);
-					}}
-					selected={payloadTypesDrop}
-				/> */}
 			</>
 		);
 	}
 );
-
-export interface PDocumentWithSchemaProps {
-	ls: UseLocalStoreEntity<VehicleEntity>;
-	document: DocumentEntity;
-	isEditing: boolean;
-	index: number;
-}
-
-const showExpiredDate = (schema: any) => {
-	return (
-		(schema && !schema.__metadata) ||
-		(schema && schema.__metadata && !(schema.__metadata.expirable === false))
-	);
-};
-
-const labelDate = (schema: any) => {
-	if (showExpiredDate(schema)) {
-		return 'ui:Valid until';
-	} else {
-		return 'ui:Not_expirable';
-	}
-};
-
-const PDocumentWithSchema: FC<PDocumentWithSchemaProps> = ({ ls, document, isEditing, index }) => {
-	const { t } = useTranslation('glossary');
-	const isAdmin = useAuthIsAdmin();
-	const { tag } = document;
-	const schemaQuery = useDocumentTagSchema('vehicle', tag);
-
-	const title = `${t(`vehicle.${tag}`)}`;
-	const label = `${t('ui:Type')}: ${t(`vehicle.${tag}`)}, ${t(labelDate(schemaQuery.data))}${
-		showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''
-	}`;
-	const explanation = t([`vehicle.${tag}_desc`, '']);
-	const id = `input-${document.name || 'new'}`;
-
-	const updateDocumentObservationMutation = useUpdateDocumentObservation();
-	const updateDocumentValidationMutation = useUpdateDocumentValidation();
-
-	const onSaveObservation = (
-		observation: UseUpdateDocumentObservationParams['body']['observation']
-	) =>
-		updateDocumentObservationMutation.mutate({
-			docId: document.id,
-			body: { observation, userToNotify: ls.entity.owner?.username || '' }
-		});
-	const onSaveValidation = (validation: UseUpdateDocumentValidationParams['valid']) =>
-		updateDocumentValidationMutation.mutate({
-			docId: document.id,
-			valid: validation
-		});
-
-	useEffect(() => {
-		if (
-			updateDocumentValidationMutation.isSuccess ||
-			updateDocumentObservationMutation.isSuccess
-		) {
-			//document.valid = updateDocumentValidationMutation.data.data.valid;
-			window.location.href = `${window.location.href}`;
-		}
-	}, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
-
-	if (!schemaQuery.isLoading && schemaQuery.data) {
-		if (
-			updateDocumentObservationMutation.isLoading ||
-			updateDocumentValidationMutation.isLoading
-		)
-			return <Spinner size={8} />;
-		return (
-			<PDocument
-				title={title}
-				isEditing={isEditing}
-				document={document}
-				id={id}
-				label={label}
-				explanation={explanation}
-				isDarkVariant
-				schema={schemaQuery.data}
-				onClose={() => {
-					if (document.isBeingAdded) {
-						if (!ls.documents) {
-							getWebConsoleLogger().getErrorForDeveloperToFix(
-								'ls.documents is undefined in VehiclesViewAndEdit PDocumentWithSchema'
-							);
-						} else {
-							ls.documents.delete(document.id);
-						}
-					}
-				}}
-				onSave={(document) => {
-					if (!ls.documents) {
-						getWebConsoleLogger().getErrorForDeveloperToFix(
-							'ls.documents is undefined in VehiclesViewAndEdit PDocumentWithSchema'
-						);
-					} else {
-						ls.documents.set(document.id, document);
-					}
-				}}
-				onDelete={
-					document.id.indexOf('TEMP_') === 0
-						? () => {
-								if (!ls.documents) {
-									getWebConsoleLogger().getErrorForDeveloperToFix(
-										'ls.documents is undefined in VehiclesViewAndEdit PDocumentWithSchema'
-									);
-								} else {
-									ls.documents.delete(document.id);
-								}
-						  }
-						: undefined
-				}
-				onSaveObservation={onSaveObservation}
-				onSaveValidation={onSaveValidation}
-				isAdmin={isAdmin}
-			/>
-		);
-	} else {
-		return <Spinner size={8} />;
-	}
-};
-
-interface _ExtraVehicleFilesProps {
-	ls: UseLocalStoreEntity<VehicleEntity>;
-	isEditing: boolean;
-}
-
-const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
-	const { t } = useTranslation('glossary');
-
-	const updateDocumentValidationMutation = useUpdateDocumentValidation();
-	const updateDocumentObservationMutation = useUpdateDocumentObservation();
-	const vehicleDocumentAvailableTagsQuery = useDocumentAvailableTags('vehicle');
-
-	const isLoading =
-		updateDocumentValidationMutation.isLoading || updateDocumentObservationMutation.isLoading;
-
-	useEffect(() => {
-		if (
-			updateDocumentValidationMutation.isSuccess ||
-			updateDocumentObservationMutation.isSuccess
-		) {
-			window.location.href = `${window.location.href}`;
-		}
-	}, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
-
-	return (
-		ls.entity && (
-			<>
-				{isEditing && (
-					<>
-						{vehicleDocumentAvailableTagsQuery.isLoading && <Spinner />}
-						{vehicleDocumentAvailableTagsQuery.isSuccess && (
-							<PDocumentTagSelector
-								onItemSelect={(item) => {
-									const tempId = `TEMP_${Math.random()
-										.toString(36)
-										.substr(2, 9)}`;
-									if (!ls.documents) {
-										getWebConsoleLogger().getErrorForDeveloperToFix(
-											'ls.documents is undefined in VehiclesViewAndEdit _ExtraVehicleFiles'
-										);
-									} else {
-										ls.documents.set(
-											tempId,
-											new DocumentEntity({
-												id: tempId,
-												tag: item.value,
-												isBeingAdded: true
-											})
-										);
-									}
-								}}
-								tags={vehicleDocumentAvailableTagsQuery.data.map((tag: string) => ({
-									label: t(`vehicle.${tag}`),
-									value: tag
-								}))}
-							/>
-						)}
-					</>
-				)}
-				{isLoading && (
-					<div style={{ margin: '0 auto' }}>
-						<Spinner />
-					</div>
-				)}
-				{isEditing && !isLoading && <h3>{t('ui:Existing documents')}</h3>}
-				{!isLoading && ls.entity?.extra_fields?.documents && (
-					<>
-						{(ls.entity.extra_fields.documents as DocumentEntity[]).map(
-							(document: DocumentEntity, index: number) => {
-								return (
-									<div style={{ order: document.valid ? 1 : 2 }}>
-										<PDocumentWithSchema
-											key={document.id}
-											ls={ls}
-											document={document}
-											isEditing={isEditing}
-											index={index}
-										/>
-									</div>
-								);
-							}
-						)}
-					</>
-				)}
-				{isEditing && !isLoading && <h3>{t('ui:New documents to be added')}</h3>}
-				{!isLoading && ls.documents && Array.from(ls.documents.values()).length > 0 && (
-					<>
-						{Array.from(ls.documents.values()).map((document, index) => {
-							if (document.id.indexOf('TEMP_') === 0) {
-								return (
-									<PDocumentWithSchema
-										key={document.id}
-										ls={ls}
-										document={document}
-										isEditing={isEditing}
-										index={index}
-									/>
-								);
-							} else {
-								return null;
-							}
-						})}
-					</>
-				)}
-				{!isLoading && ls.documents && Array.from(ls.documents.values()).length > 0 && (
-					<h3 style={{ color: 'darkred' }}>
-						{t(
-							'ui:There are modified or new documents to be saved, please save the changes to the user to store these changes'
-						)}
-					</h3>
-				)}
-			</>
-		)
-	);
-};
-const VehicleDocuments = observer(_VehicleDocuments);
 
 interface ExtraVehicleDetailsProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -397,27 +134,21 @@ const ExtraVehicleDetailsValues = ({
 
 	const schemaValue = schema[property];
 
-	if (schemaValue.required === isRequired) {
-		return (
-			<ExtraField
-				key={property}
-				isDarkVariant
-				isEditing={isEditing}
-				{...{
-					property: property,
-					required: isRequired,
-					label,
-					explanation,
-					id,
-					value,
-					ls,
-					schemaValue
-				}}
-			/>
-		);
-	} else {
-		return null;
-	}
+	return (
+		<ExtraField
+			key={property}
+			isDarkVariant
+			isEditing={isEditing}
+			id={id}
+			label={label}
+			explanation={explanation}
+			ls={ls}
+			value={value}
+			schemaValue={schemaValue}
+			property={property}
+			required={isRequired}
+		/>
+	);
 };
 
 interface ExtraVehicleDetailsProps {
@@ -426,41 +157,29 @@ interface ExtraVehicleDetailsProps {
 	showAllPropertiesRegardlessOfSchema?: boolean;
 }
 const ExtraVehicleDetails: FC<ExtraVehicleDetailsProps> = ({ ls, isEditing }) => {
-	const { t } = useTranslation('glossary');
-	const [insuranceCheckbox, setInsuranceCheckbox] = useState(false);
-	// console.log(JSON.stringify(ls, null, 2));
-
-	// TODO: Emprolijar esto que basicamente
-	//  hace lo mismo dos veces pero para tener todos los requeridos al principio
-
 	const schema = useSchemaStore((state) => state.vehicles);
 	const keys = useMemo(() => Array.from(Object.keys(schema)), [schema]);
 
 	return useObserver(() => {
 		if (ls.entity) {
 			return (
-				<>
+				<div
+					className={styles.extraVehicleDetails}
+					style={{ display: 'flex', flexDirection: 'column', margin: 0 }}
+				>
 					{keys.map((key) => (
-						<ExtraVehicleDetailsValues
-							key={key}
-							property={key}
-							ls={ls}
-							schema={schema}
-							required={true}
-							isEditing={isEditing}
-						/>
+						<div style={{ order: schema[key].required ? 1 : 2 }}>
+							<ExtraVehicleDetailsValues
+								key={key}
+								property={key}
+								ls={ls}
+								schema={schema}
+								required={schema[key].required}
+								isEditing={isEditing}
+							/>
+						</div>
 					))}
-					{keys.map((key) => (
-						<ExtraVehicleDetailsValues
-							key={key}
-							property={key}
-							ls={ls}
-							schema={schema}
-							required={false}
-							isEditing={isEditing}
-						/>
-					))}
-				</>
+				</div>
 			);
 		} else {
 			return null;
@@ -495,6 +214,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 	const { t } = useTranslation();
 	const isPilot = useAuthIsPilot();
 	const isAdmin = useAuthIsAdmin();
+	const role = useAuthGetRole();
 
 	const token = useAuthStore((state) => state.token);
 	const schema = useSchemaStore((state) => state.users);
@@ -519,13 +239,13 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 					</aside>
 					<section className={styles.details}>
 						<BaseVehicleDetails
-							isEditing={isEditing}
-							isCreating={isCreating}
+							isEditing={isEditing && role !== AuthRole.REMOTE_SENSOR}
+							isCreating={isCreating && role !== AuthRole.REMOTE_SENSOR}
 							ls={ls}
 							hasSelectedAnAircraftType={hasSelectedAnAircraftType}
 						/>
 						<ExtraVehicleDetails
-							isEditing={isEditing}
+							isEditing={isEditing && role !== AuthRole.REMOTE_SENSOR}
 							ls={ls}
 							showAllPropertiesRegardlessOfSchema={
 								showAllPropertiesRegardlessOfSchema
