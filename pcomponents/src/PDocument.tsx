@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import styles from './Kanpur.module.scss';
 import PBooleanInput from './PBooleanInput';
 import PButton, { PButtonSize, PButtonType } from './PButton';
-import PDateInput from './PDateInput';
+import PDateInput, { MAX_DATE } from './PDateInput';
 import PFileInput from './PFileInput';
 import PInput from './PInput';
 import PNumberInput from './PNumberInput';
@@ -49,13 +49,60 @@ export interface ExtraInfoPanelProps {
 	isEditing?: boolean;
 }
 
+const parsePredefinedExpiration = (
+	predefinedExpiration: string
+): { date: Date; label: string; count: number } => {
+	const date = new Date();
+	// format NumberLetter regex: \d+\w
+	const regexExtractor = /\d+\w/g;
+	const match = regexExtractor.exec(predefinedExpiration);
+	if (!match) {
+		return { date: date, label: '', count: 0 };
+	}
+	const number = parseInt(match[0].slice(0, -1));
+	const unit = match[0].slice(-1);
+	let label = '';
+	switch (unit) {
+		case 'd':
+			date.setDate(date.getDate() + number);
+			label = 'days';
+			break;
+		case 'w':
+			date.setDate(date.getDate() + number * 7);
+			label = 'weeks';
+			break;
+		case 'm':
+			date.setMonth(date.getMonth() + number);
+			label = 'months';
+			break;
+		case 'y':
+			date.setFullYear(date.getFullYear() + number);
+			label = 'years';
+			break;
+	}
+
+	return { date: date, label: label, count: number };
+};
+
 const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 	const { t } = useTranslation();
 	const { document, id, schema, isEditing = false } = props;
+	const [notExpirable, setNotExpirable] = useState(false);
+	//agregar fecha al estado local para manejarla en el input y x los botones, agregar un efecto q actualice el documento
+	const [validUntil, setValidUntil] = useState<Date>(new Date());
+
+	useEffect(() => {
+		if (notExpirable) {
+			document['valid_until'] = new Date(MAX_DATE);
+		} else {
+			document['valid_until'] = new Date();
+		}
+		setValidUntil(document['valid_until']);
+	}, [notExpirable, document]);
 
 	useEffect(() => {
 		if (schema && schema.__metadata && schema.__metadata.expirable === false) {
-			document['valid_until'] = new Date('2070-01-01');
+			document['valid_until'] = new Date(MAX_DATE);
 		}
 	}, [schema, schema.__metadata]);
 
@@ -63,26 +110,94 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 		(schema && !schema.__metadata) ||
 		(schema && schema.__metadata && !(schema.__metadata.expirable === false));
 
+	const PredefinedExpirations = ({
+		predefinedExpirations,
+		document,
+		setValidUntil
+	}: {
+		predefinedExpirations: string[];
+		document: DocumentEntity;
+		setValidUntil: (value: Date) => void;
+	}) => {
+		return (
+			<FormGroup
+				className={classNames(styles.form, {
+					[styles.dark]: true
+				})}
+				// label={t('Valid until')}
+				style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}
+			>
+				<div
+					style={{
+						display: 'flex',
+						flexWrap: 'wrap',
+						flexDirection: 'row',
+						justifyContent: 'flex-end',
+						margin: '0 1rem 0 0'
+					}}
+				>
+					{predefinedExpirations.map(parsePredefinedExpiration).map((exp) => (
+						<PButton
+							style={{ margin: '0 0.5rem 0.5rem 0' }}
+							intent={Intent.PRIMARY}
+							key={`${exp?.count}-${exp?.label}`}
+							text={t(`x ${exp?.label}`, { x: exp.count })}
+							onClick={() => {
+								document['valid_until'] = new Date(exp.date);
+								setValidUntil(document['valid_until']);
+							}}
+						/>
+					))}
+				</div>
+			</FormGroup>
+		);
+	};
+
 	return (
 		<div className={classNames(styles.addFile)}>
-			{showDateInput && (
+			<PBooleanInput
+				key={'not_expirable'}
+				id={'not_expirable'}
+				label={t('Not_expirable')}
+				inline
+				defaultValue={notExpirable}
+				onChange={setNotExpirable}
+				disabled={!isEditing}
+				isDarkVariant
+			/>
+			{showDateInput && !notExpirable && (
 				<PDateInput
 					key={'valid_until'}
 					id={id}
 					defaultValue={new Date(document['valid_until'])}
 					label={t('Valid until')}
-					onChange={(value) => (document['valid_until'] = value)}
+					onChange={(value) => {
+						document['valid_until'] = value;
+						setValidUntil(value);
+					}}
 					disabled={!isEditing}
 					isRequired
 					isDarkVariant
 					inline
+					value={validUntil}
 				/>
 			)}
+
+			{showDateInput &&
+				!notExpirable &&
+				schema &&
+				schema.__metadata &&
+				schema.__metadata.predefinedExpirations && (
+					<PredefinedExpirations
+						predefinedExpirations={schema.__metadata.predefinedExpirations}
+						document={document}
+						setValidUntil={setValidUntil}
+					/>
+				)}
 
 			{Object.keys(schema)
 				.filter((d) => d !== '__metadata')
 				.map((key) => {
-					console.log('schema', schema, key, document.extra_fields);
 					const { type, required } = schema[key];
 					const baseInputProps = {
 						id: key,
@@ -95,7 +210,6 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 						disabled: !isEditing,
 						inline: true
 					};
-					// from string like 2022-11-03T12:27:36.542Z generate date
 					if (type === 'String') {
 						return <PInput {...baseInputProps} />;
 					} else if (type === 'Number') {
@@ -147,7 +261,6 @@ const EditingModal = (props: EditingModalProps) => {
 		onClick: () => {
 			const errors: string[] = [];
 			for (const [key, value] of Object.entries(schema)) {
-				console.log(`key: ${key}, value: ${value}`);
 				if (key === '__metadata') continue; // skip metadata
 				if (value.required && !document.extra_fields[key]) {
 					errors.push(`Field ${t(key)} is required`);
@@ -195,8 +308,6 @@ const EditingModal = (props: EditingModalProps) => {
 	);
 
 	const handleFileChange = (file: File | null) => {
-		console.log('file::', file);
-		console.log('document', JSON.stringify(document, null, 2));
 		if (file) {
 			if (file?.size < MAX_FILE_SIZE) {
 				setFile(file);
