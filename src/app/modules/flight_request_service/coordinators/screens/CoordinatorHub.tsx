@@ -49,7 +49,7 @@ const CoordinatorHub = () => {
 	const columns = [
 		{ title: ' ', width: rowHeight * 2 },
 		{ title: t('glossary:coordinator.infrastructure'), width: 2 },
-		{ title: t('glossary:coordinator.liaison'), width: 2 },
+		{ title: t('glossary:coordinator.minimun_coordination_days'), width: 2 },
 		{ title: t('glossary:coordinator.telephone'), width: 3 },
 		{ title: t('glossary:coordinator.email'), width: 3 }
 	];
@@ -69,7 +69,9 @@ const CoordinatorHub = () => {
 			if (col === 1) {
 				data = coordinator.infrastructure ? coordinator.infrastructure : '';
 			} else if (col === 2) {
-				data = coordinator.liaison ? coordinator.liaison : '';
+				data = coordinator.minimun_coordination_days
+					? String(coordinator.minimun_coordination_days)
+					: '';
 			} else if (col === 3) {
 				data = coordinator.telephone ? coordinator.telephone : '';
 			} else if (col === 4) {
