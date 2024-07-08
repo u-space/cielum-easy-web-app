@@ -44,6 +44,10 @@
 				margin: var(--spacing-2) 0;
 			}
 
+			&>.extraVehicleDetails>* {
+				margin: var(--spacing-2) 0;
+			}
+
 			& .centered_line {
 				display: flex;
 				justify-content: center;
@@ -146,4 +150,17 @@ h1 {
 
 .state {
 	margin-bottom: 1rem;
+}
+
+.alert {
+	background-color: var(--ramen-200);
+
+	margin-bottom: 1rem;
+
+	padding: 0.5rem;
+
+	border-radius: var(--radius-l);
+
+	width: 80%;
+	margin-left: 1.3rem !important;
 }
