@@ -87,28 +87,28 @@ const parsePredefinedExpiration = (
 const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 	const { t } = useTranslation();
 	const { document, id, schema, isEditing = false } = props;
-	const [notExpirable, setNotExpirable] = useState(false);
+	const [expirable, setExpirable] = useState(true);
 	//agregar fecha al estado local para manejarla en el input y x los botones, agregar un efecto q actualice el documento
 	const [validUntil, setValidUntil] = useState<Date>(new Date());
 
 	useEffect(() => {
-		if (notExpirable) {
+		if (!expirable) {
 			document['valid_until'] = new Date(MAX_DATE);
 		} else {
 			document['valid_until'] = new Date();
 		}
 		setValidUntil(document['valid_until']);
-	}, [notExpirable, document]);
+	}, [expirable, document]);
 
 	useEffect(() => {
-		if (schema && schema.__metadata && schema.__metadata.expirable === false) {
+		if (schema && schema.__metadata && schema.__metadata.expirable === true) {
 			document['valid_until'] = new Date(MAX_DATE);
 		}
 	}, [schema, schema.__metadata]);
 
 	const showDateInput =
 		(schema && !schema.__metadata) ||
-		(schema && schema.__metadata && !(schema.__metadata.expirable === false));
+		(schema && schema.__metadata && !(schema.__metadata.expirable === true));
 
 	const PredefinedExpirations = ({
 		predefinedExpirations,
@@ -156,16 +156,16 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 	return (
 		<div className={classNames(styles.addFile)}>
 			<PBooleanInput
-				key={'not_expirable'}
-				id={'not_expirable'}
-				label={t('Not_expirable')}
+				key={'expirable'}
+				id={'expirable'}
+				label={t('Expirable')}
 				inline
-				defaultValue={notExpirable}
-				onChange={setNotExpirable}
+				defaultValue={expirable}
+				onChange={setExpirable}
 				disabled={!isEditing}
 				isDarkVariant
 			/>
-			{showDateInput && !notExpirable && (
+			{showDateInput && expirable && (
 				<PDateInput
 					key={'valid_until'}
 					id={id}
@@ -185,7 +185,7 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 
 			{isEditing &&
 				showDateInput &&
-				!notExpirable &&
+				expirable &&
 				schema &&
 				schema.__metadata &&
 				schema.__metadata.predefinedExpirations && (
