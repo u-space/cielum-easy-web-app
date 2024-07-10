@@ -1,3 +1,5 @@
+import { MAX_DATE } from '@pcomponents/PDateInput';
+
 export const showDate = (date: Date | string) => {
 	const format = (date: Date) => {
 		const day = date.getDate();
@@ -6,11 +8,18 @@ export const showDate = (date: Date | string) => {
 		return day + '/' + month + '/' + year;
 	};
 	if (!date) return '';
+	let auxDate: Date;
 
 	if (typeof date === 'string') {
-		const auxDate = new Date(date);
-		return format(auxDate);
+		auxDate = new Date(date);
 	} else if (date instanceof Date) {
-		return format(date);
+		auxDate = date;
+	} else {
+		return '';
+	}
+	if (auxDate < MAX_DATE) {
+		return format(auxDate);
+	} else {
+		return '';
 	}
 };
