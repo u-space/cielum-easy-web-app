@@ -168,9 +168,9 @@ const ExtraVehicleDetails: FC<ExtraVehicleDetailsProps> = ({ ls, isEditing }) =>
 					style={{ display: 'flex', flexDirection: 'column', margin: 0 }}
 				>
 					{keys.map((key) => (
-						<div style={{ order: schema[key].required ? 1 : 2 }}>
+						<div key={key} style={{ order: schema[key].required ? 1 : 2 }}>
 							<ExtraVehicleDetailsValues
-								key={key}
+								// key={key}
 								property={key}
 								ls={ls}
 								schema={schema}

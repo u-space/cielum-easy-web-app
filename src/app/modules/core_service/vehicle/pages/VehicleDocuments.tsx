@@ -102,9 +102,12 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 						{(ls.entity.extra_fields.documents as DocumentEntity[]).map(
 							(document: DocumentEntity, index: number) => {
 								return (
-									<div style={{ order: document.valid ? 1 : 2 }}>
+									<div
+										key={document.id}
+										style={{ order: document.valid ? 1 : 2 }}
+									>
 										<PDocumentWithSchema
-											key={document.id}
+											// key={document.id}
 											ls={ls}
 											document={document}
 											isEditing={canEdit}
