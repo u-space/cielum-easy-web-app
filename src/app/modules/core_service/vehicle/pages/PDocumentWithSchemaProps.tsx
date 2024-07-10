@@ -16,6 +16,7 @@ import {
 	useUpdateDocumentValidation
 } from '../../../document/hooks';
 import { showDate } from 'src/app/commons/displayUtils';
+import { MAX_DATE } from '@pcomponents/PDateInput';
 
 export interface PDocumentWithSchemaProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -29,9 +30,13 @@ const showExpiredDate = (schema: any) => {
 		(schema && schema.__metadata && !(schema.__metadata.expirable === false))
 	);
 };
-const labelDate = (schema: any) => {
+const labelDate = (schema: any, document: DocumentEntity) => {
 	if (showExpiredDate(schema)) {
-		return 'ui:Valid until';
+		if (new Date(document.valid_until) < new Date(MAX_DATE)) {
+			return 'ui:Valid until';
+		} else {
+			return 'ui:Not_expirable';
+		}
 	} else {
 		return 'ui:Not_expirable';
 	}
@@ -49,9 +54,9 @@ export const PDocumentWithSchema: FC<PDocumentWithSchemaProps> = ({
 	const schemaQuery = useDocumentTagSchema('vehicle', tag);
 
 	const title = `${t(`vehicle.${tag}`)}`;
-	const label = `${t('ui:Type')}: ${t(`vehicle.${tag}`)}, ${t(labelDate(schemaQuery.data))}${
-		showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''
-	}`;
+	const label = `${t('ui:Type')}: ${t(`vehicle.${tag}`)}, ${t(
+		labelDate(schemaQuery.data, document)
+	)}${showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''}`;
 	const explanation = t([`vehicle.${tag}_desc`, '']);
 	const id = `input-${document.name || 'new'}`;
 
