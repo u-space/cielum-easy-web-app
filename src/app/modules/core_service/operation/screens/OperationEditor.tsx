@@ -111,8 +111,10 @@ const OperationEditor = () => {
 			operation.operation_volumes = polygons.map((polygon, index) => {
 				const volume = new OperationVolume();
 				volume.set('ordinal', index);
-				volume.set('effective_time_begin', new Date());
-				volume.set('effective_time_end', new Date());
+				// changed so it takes a deffault time window
+				// default values defined in operation_volume.ts
+				// volume.set('effective_time_begin', new Date());
+				// volume.set('effective_time_end', new Date());
 				if (index < operation.operation_volumes.length) {
 					const existingVolume = operation.operation_volumes[index];
 					for (const prop in existingVolume) {

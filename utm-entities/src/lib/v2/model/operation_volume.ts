@@ -3,6 +3,10 @@ import { GeojsonPolygon } from '@utm-entities/v2/model/geojson';
 import { UtmEntity } from '@utm-entities/v2/utm-entity';
 import { Polygon } from 'geojson';
 
+const DEFAULT_MAX_ALTITUDE = 120;
+const DEFAULT_MIN_ALTITUDE = 20;
+const DEFAULT_DIFF_HOURS = 2;
+
 export const RequestOperationVolume = Type.Object({
 	id: Type.Optional(Type.Number()),
 	max_altitude: Type.String(), // TODO: Backend should return this as a number
@@ -52,13 +56,17 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 			this.beyond_visual_line_of_sight = backendOperationVolume.beyond_visual_line_of_sight;
 			this.operation_geography = backendOperationVolume.operation_geography;
 		} else {
+			// default values
 			this.id = null;
 			this.ordinal = 0;
 			this.near_structure = false;
-			this.effective_time_begin = null;
-			this.effective_time_end = null;
-			this.min_altitude = 0;
-			this.max_altitude = 0;
+			// this.effective_time_begin = null;
+			// this.effective_time_end = null;
+			this.effective_time_begin = new Date();
+			this.effective_time_end = new Date();
+			this.effective_time_end.setHours(this.effective_time_begin.getHours()+DEFAULT_DIFF_HOURS);
+			this.min_altitude = DEFAULT_MIN_ALTITUDE;
+			this.max_altitude = DEFAULT_MAX_ALTITUDE;
 			this.beyond_visual_line_of_sight = false;
 			this.operation_geography = null;
 		}
