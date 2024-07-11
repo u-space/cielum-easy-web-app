@@ -84,31 +84,26 @@ const parsePredefinedExpiration = (
 	return { date: date, label: label, count: number };
 };
 
+const expirable = (document: DocumentEntity) => {
+	return new Date(document['valid_until']) < MAX_DATE;
+};
+
 const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 	const { t } = useTranslation();
 	const { document, id, schema, isEditing = false } = props;
-	const [notExpirable, setNotExpirable] = useState(false);
-	//agregar fecha al estado local para manejarla en el input y x los botones, agregar un efecto q actualice el documento
-	const [validUntil, setValidUntil] = useState<Date>(new Date());
+
+	//FIXME this is for fire re render
+	const [validUntil, setValidUntil] = useState<Date>(new Date(document['valid_until']));
 
 	useEffect(() => {
-		if (notExpirable) {
-			document['valid_until'] = new Date(MAX_DATE);
-		} else {
-			document['valid_until'] = new Date();
-		}
-		setValidUntil(document['valid_until']);
-	}, [notExpirable, document]);
-
-	useEffect(() => {
-		if (schema && schema.__metadata && schema.__metadata.expirable === false) {
+		if (schema && schema.__metadata && schema.__metadata.expirable === true) {
 			document['valid_until'] = new Date(MAX_DATE);
 		}
 	}, [schema, schema.__metadata]);
 
 	const showDateInput =
 		(schema && !schema.__metadata) ||
-		(schema && schema.__metadata && !(schema.__metadata.expirable === false));
+		(schema && schema.__metadata && !(schema.__metadata.expirable === true));
 
 	const PredefinedExpirations = ({
 		predefinedExpirations,
@@ -124,7 +119,6 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 				className={classNames(styles.form, {
 					[styles.dark]: true
 				})}
-				// label={t('Valid until')}
 				style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}
 			>
 				<div
@@ -155,17 +149,26 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 
 	return (
 		<div className={classNames(styles.addFile)}>
-			<PBooleanInput
-				key={'not_expirable'}
-				id={'not_expirable'}
-				label={t('Not_expirable')}
-				inline
-				defaultValue={notExpirable}
-				onChange={setNotExpirable}
-				disabled={!isEditing}
-				isDarkVariant
-			/>
-			{showDateInput && !notExpirable && (
+			{(isEditing || (!isEditing && !expirable(document))) && (
+				<PBooleanInput
+					key={'expirable'}
+					id={'expirable'}
+					label={t('Expirable')}
+					inline
+					defaultValue={expirable(document)}
+					onChange={(exp: boolean) => {
+						if (!exp) {
+							document['valid_until'] = new Date(MAX_DATE);
+						} else {
+							document['valid_until'] = new Date();
+						}
+						setValidUntil(document['valid_until']);
+					}}
+					disabled={!isEditing}
+					isDarkVariant
+				/>
+			)}
+			{showDateInput && expirable(document) && (
 				<PDateInput
 					key={'valid_until'}
 					id={id}
@@ -173,19 +176,19 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 					label={t('Valid until')}
 					onChange={(value) => {
 						document['valid_until'] = value;
-						setValidUntil(value);
+						// setValidUntil(value);
 					}}
 					disabled={!isEditing}
 					isRequired
 					isDarkVariant
 					inline
-					value={validUntil}
+					value={new Date(document['valid_until'])}
 				/>
 			)}
 
 			{isEditing &&
 				showDateInput &&
-				!notExpirable &&
+				expirable(document) &&
 				schema &&
 				schema.__metadata &&
 				schema.__metadata.predefinedExpirations && (
@@ -417,7 +420,12 @@ const ViewingModal = (props: ViewingModalProps) => {
 						isDarkVariant
 						isRequired={true}
 						API={'changeme'}
-						style={{ marginLeft: 'auto', width: 'auto' }}
+						style={{
+							// marginLeft: 'auto',
+							// width: 'auto',
+							display: 'flex',
+							flexDirection: 'row'
+						}}
 					/>
 					<ExtraInfoPanel
 						{...{

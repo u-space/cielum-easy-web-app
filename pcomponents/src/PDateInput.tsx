@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import styles from './Kanpur.module.scss';
 
-export const MAX_DATE = new Date();
-MAX_DATE.setFullYear(MAX_DATE.getFullYear() + 20);
+export const MAX_DATE = new Date('12/31/2099');
 
 export interface PDateInputProps {
 	id: string;
