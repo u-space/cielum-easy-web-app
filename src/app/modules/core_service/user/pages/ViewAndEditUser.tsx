@@ -120,14 +120,6 @@ const BaseUserDetails = (props: BaseUserDetailsProps) => {
 	);
 };
 
-export interface PDocumentWithSchemaProps {
-	//eslint-disable-next-line @typescript-eslint/no-explicit-any
-	ls: any;
-	document: DocumentEntity;
-	isEditing: boolean;
-	index: number;
-}
-
 export const showExpiredDate = (schema: any) => {
 	return (
 		(schema && !schema.__metadata) ||

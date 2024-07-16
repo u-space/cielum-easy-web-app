@@ -2,18 +2,29 @@ import { Spinner } from '@blueprintjs/core';
 import PDocument from '@pcomponents/PDocument';
 import { useTranslation } from 'react-i18next';
 import { showDate } from 'src/app/commons/displayUtils';
-import { useAuthIsAdmin } from '../../../auth/store';
+import { useAuthIsAdmin, useAuthGetRole } from '../../../auth/store';
 import {
 	useDocumentTagSchema,
 	useUpdateDocumentObservation,
 	useUpdateDocumentValidation
 } from '../../../document/hooks';
-import { PDocumentWithSchemaProps, labelDate, showExpiredDate } from './ViewAndEditUser';
+import { labelDate, showExpiredDate } from './ViewAndEditUser';
+import { DocumentEntity } from '@utm-entities/document';
 
-export const PDocumentWithSchema = (props: PDocumentWithSchemaProps) => {
-	const { ls, document, isEditing, index } = props;
+export interface UserDocumentProps {
+	//eslint-disable-next-line @typescript-eslint/no-explicit-any
+	ls: any;
+	document: DocumentEntity;
+	isEditing: boolean;
+	index: number;
+	canValidate?: boolean;
+}
+
+export const UserDocument = (props: UserDocumentProps) => {
+	const { ls, document, isEditing, index, canValidate } = props;
 	const { t } = useTranslation(['glossary', 'ui']);
 	const isAdmin = useAuthIsAdmin();
+	const role = useAuthGetRole();
 	const { tag } = document;
 	const schemaQuery = useDocumentTagSchema('user', tag);
 
@@ -77,6 +88,7 @@ export const PDocumentWithSchema = (props: PDocumentWithSchemaProps) => {
 					onSaveObservation={onSaveObservation}
 					onSaveValidation={onSaveValidation}
 					isAdmin={isAdmin}
+					canValidate={canValidate}
 				/>
 			</div>
 		);

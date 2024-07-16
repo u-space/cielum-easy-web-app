@@ -11,8 +11,9 @@ import {
 	useUpdateDocumentObservation,
 	useUpdateDocumentValidation
 } from '../../../document/hooks';
-import { PDocumentWithSchema } from './PDocumentWithSchema';
+import { UserDocument } from './UserDocument';
 import { ExtraUserFilesProps, DocumentContainer, DocumentStatusLabel } from './ViewAndEditUser';
+import { AuthRole, useAuthGetRole } from 'src/app/modules/auth/store';
 
 export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 	const { ls, isEditing } = props;
@@ -21,6 +22,7 @@ export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
 	const userDocumentAvailableTagsQuery = useDocumentAvailableTags('user');
+	const role = useAuthGetRole();
 
 	// TODO: Improve this after generic hub fetches entity by entity
 	useEffect(() => {
@@ -53,6 +55,19 @@ export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 		}
 	};
 
+	const canValidateUserDocument = (role: AuthRole, document: DocumentEntity) => {
+		if (role === AuthRole.ADMIN) {
+			return true;
+		}
+		// if (role === AuthRole.REMOTE_SENSOR) {
+		// 	return document.tag === 'remote_sensor_id';
+		// }
+		if (role === AuthRole.PILOT) {
+			return false;
+		}
+		return false;
+	};
+
 	const [modalProps, setModalProps] = useState<PFullModalProps>(defaultModal);
 
 	return (
@@ -80,12 +95,13 @@ export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 										key={document.id}
 										style={{ order: document.valid ? 1 : 2 }}
 									>
-										<PDocumentWithSchema
+										<UserDocument
 											key={document.id}
 											ls={ls}
 											document={document}
 											isEditing={isEditing}
 											index={index}
+											canValidate={canValidateUserDocument(role, document)}
 										/>
 									</DocumentContainer>
 									<div
@@ -112,7 +128,7 @@ export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 								<>
 									<DocumentContainer key={document.id}>
 										<DocumentStatusLabel>({t('ui:NEW')})</DocumentStatusLabel>
-										<PDocumentWithSchema
+										<UserDocument
 											key={document.id}
 											ls={ls}
 											document={document}
