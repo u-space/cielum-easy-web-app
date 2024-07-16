@@ -1,16 +1,22 @@
 import { CustomCell, GridCell, GridCellKind, TextCell } from '@glideapps/glide-data-grid';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
+import PTooltip from '@pcomponents/PTooltip';
+import { getCSSVariable } from '@pcomponents/utils';
+import { DocumentEntity } from '@utm-entities/document';
+import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
+import { VehicleAuthorizationStatus, VehicleEntity } from '@utm-entities/vehicle';
+import i18n from 'i18next';
 import { observer } from 'mobx-react';
 import { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { UseMutationResult } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
-import PTooltip from '@pcomponents/PTooltip';
+import { reactify } from 'svelte-preprocess-react';
+import { shallow } from 'zustand/shallow';
+import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
+import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
 import GenericHub, { GenericHubProps, rowHeight } from '../../../../commons/screens/GenericHub';
 import { setCSSVariable, useQueryString } from '../../../../utils';
-import { useQueryVehicles, useUpdateVehicle, useUpdateVehicleAuthorization } from '../hooks';
-import { VehicleAuthorizationStatus, VehicleEntity } from '@utm-entities/vehicle';
-import { useVehicleStore } from '../store';
-import { shallow } from 'zustand/shallow';
 import {
 	AuthRole,
 	useAuthGetRole,
@@ -19,15 +25,10 @@ import {
 	useAuthStore
 } from '../../../auth/store';
 import VehicleSearchTools from '../components/VehicleSearchTools';
+import { useQueryVehicles, useUpdateVehicle, useUpdateVehicleAuthorization } from '../hooks';
 import ViewAndEditVehicle from '../pages/ViewAndEditVehicle';
-import { UseMutationResult } from 'react-query';
-import { getCSSVariable } from '@pcomponents/utils';
+import { useVehicleStore } from '../store';
 import VehicleHubForPilotsSvelte from './VehicleHubForPilots.svelte';
-import { reactify } from 'svelte-preprocess-react';
-import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
-import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
-import i18n from 'i18next';
-import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 
 const VehicleHubForPilots = reactify(VehicleHubForPilotsSvelte);
 
@@ -60,6 +61,15 @@ const getStateInformation = (data: Record<string, any>): { text: string; color: 
 	}
 };
 
+export function getValidRemoteSensor(data: VehicleEntity) {
+	const doucments = data.extra_fields.documents as DocumentEntity[];
+	const filterDocuments = doucments.filter((doc, i) => {
+		return doc.tag === 'remote_sensor_id' && doc.valid;
+	});
+	console.log('filterDocuments:', filterDocuments);
+	return filterDocuments.length > 0;
+}
+
 const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	const { t } = useTranslation();
 
@@ -75,6 +85,7 @@ const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 	newAuthorizationStatus = data.isAuthorized
 		? VehicleAuthorizationStatus.NOT_AUTHORIZED
 		: VehicleAuthorizationStatus.AUTHORIZED;
+
 	// } else {
 	// 	newAuthorizationStatus = data.isAuthorized
 	// 		? VehicleAuthorizationStatus.NOT_AUTHORIZED
@@ -99,6 +110,19 @@ const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 			)}
 			<PTooltip content={getStateInformation(data).text}>
 				<StateCircle style={{ backgroundColor: getStateInformation(data).color }} />
+			</PTooltip>
+			<PTooltip
+				content={
+					getValidRemoteSensor(data)
+						? 'Validado por sensor remoto'
+						: 'No vlidad por sensor remoto'
+				}
+			>
+				<StateCircle
+					style={{
+						backgroundColor: getValidRemoteSensor(data) ? 'yellowgreen' : 'black'
+					}}
+				/>
 			</PTooltip>
 		</>
 	);
