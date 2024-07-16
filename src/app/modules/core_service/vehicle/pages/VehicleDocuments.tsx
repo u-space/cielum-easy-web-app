@@ -3,7 +3,7 @@ import PDocumentTagSelector from '@pcomponents/PDocumentTagSelector';
 import { DocumentEntity } from '@utm-entities/document';
 import { VehicleEntity } from '@utm-entities/vehicle';
 import { observer } from 'mobx-react';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getWebConsoleLogger } from '../../../../../utils';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
@@ -12,8 +12,10 @@ import {
 	useUpdateDocumentObservation,
 	useUpdateDocumentValidation
 } from '../../../document/hooks';
-import { PDocumentWithSchema } from './PDocumentWithSchemaProps';
+import { VehicleDocument } from './VehicleDocument';
 import { AuthRole, useAuthGetRole } from 'src/app/modules/auth/store';
+import { useVehicleStore } from '../store';
+import { useQueryClient } from 'react-query';
 
 interface _ExtraVehicleFilesProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
@@ -22,22 +24,86 @@ interface _ExtraVehicleFilesProps {
 const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 	const { t } = useTranslation('glossary');
 
+	const [fireRender, setFireRender] = useState(false);
+
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
 	const vehicleDocumentAvailableTagsQuery = useDocumentAvailableTags('vehicle');
+
+	const queryClient = useQueryClient();
+	const {
+		pageTake,
+		pageSkip,
+		sortingProperty,
+		sortingOrder,
+		filterProperty,
+		filterMatchingText
+	} = useVehicleStore((state) => ({
+		pageTake: state.pageTake,
+		pageSkip: state.pageSkip,
+		sortingProperty: state.sortingProperty,
+		sortingOrder: state.sortingOrder,
+		filterProperty: state.filterProperty,
+		filterMatchingText: state.filterMatchingText
+	}));
 
 	const role = useAuthGetRole();
 	const filterRemoteSensor = (tag: string) => {
 		// return true;
 		if (role === AuthRole.REMOTE_SENSOR) {
-			console.log('filterRemoteSensor', tag, tag === 'remote_sensor_id');
+			// console.log('filterRemoteSensor', tag, tag === 'remote_sensor_id');
 			return tag === 'remote_sensor_id';
 		} else {
 			return true;
 		}
 	};
 
+	const filterPilot = (tag: string) => {
+		// return true;
+		if (role === AuthRole.PILOT) {
+			// console.log('filterRemoteSensor', tag, tag !== 'remote_sensor_id');
+			return tag !== 'remote_sensor_id';
+		} else {
+			return true;
+		}
+	};
+
 	const canEdit = isEditing && role !== AuthRole.REMOTE_SENSOR;
+
+	const canEditVehicleDocument = (
+		role: AuthRole,
+		document: DocumentEntity,
+		isEditing: boolean
+	) => {
+		if (!isEditing) {
+			return false;
+		} else {
+			if (role === AuthRole.ADMIN) {
+				return true;
+			}
+			if (role === AuthRole.REMOTE_SENSOR) {
+				return document.tag === 'remote_sensor_id';
+			}
+			if (role === AuthRole.PILOT) {
+				return document.tag !== 'remote_sensor_id';
+			}
+
+			return false;
+		}
+	};
+
+	const canValidateVehicleDocument = (role: AuthRole, document: DocumentEntity) => {
+		if (role === AuthRole.ADMIN) {
+			return true;
+		}
+		if (role === AuthRole.REMOTE_SENSOR) {
+			return document.tag === 'remote_sensor_id';
+		}
+		if (role === AuthRole.PILOT) {
+			return false;
+		}
+		return false;
+	};
 
 	const isLoading =
 		updateDocumentValidationMutation.isLoading || updateDocumentObservationMutation.isLoading;
@@ -47,7 +113,23 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 			updateDocumentValidationMutation.isSuccess ||
 			updateDocumentObservationMutation.isSuccess
 		) {
-			window.location.href = `${window.location.href}`;
+			console.log('Update validation or observation success ');
+			queryClient
+				.invalidateQueries([
+					'vehicles',
+					pageTake,
+					pageSkip,
+					sortingProperty,
+					sortingOrder,
+					filterProperty,
+					filterMatchingText
+				])
+				.then((a: any) => {
+					console.log('Invalidate queries', JSON.stringify(a, null, 2));
+					setFireRender(!fireRender);
+				});
+			//document.valid = updateDocumentValidationMutation.data.data.valid;
+			// window.location.href = `${window.location.href}`;
 		}
 	}, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
 
@@ -80,6 +162,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 								}}
 								tags={vehicleDocumentAvailableTagsQuery.data
 									.filter(filterRemoteSensor)
+									.filter(filterPilot)
 									.map((tag: string) => {
 										console.log('map:', tag);
 										return {
@@ -103,14 +186,19 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 							(document: DocumentEntity, index: number) => {
 								return (
 									<div
-										key={document.id}
+										key={`${document.id}-${String(document.valid)}`}
 										style={{ order: document.valid ? 1 : 2 }}
 									>
-										<PDocumentWithSchema
-											// key={document.id}
+										<VehicleDocument
 											ls={ls}
 											document={document}
-											isEditing={canEdit}
+											// isEditing={canEdit}
+											isEditing={canEditVehicleDocument(
+												role,
+												document,
+												isEditing
+											)}
+											canValidate={canValidateVehicleDocument(role, document)}
 											index={index}
 										/>
 									</div>
@@ -125,7 +213,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 						{Array.from(ls.documents.values()).map((document, index) => {
 							if (document.id.indexOf('TEMP_') === 0) {
 								return (
-									<PDocumentWithSchema
+									<VehicleDocument
 										key={document.id}
 										ls={ls}
 										document={document}
