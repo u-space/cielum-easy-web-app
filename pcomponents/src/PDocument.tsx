@@ -39,6 +39,7 @@ export interface PDocumentProps {
 	onDelete?: () => void;
 	onSaveObservation?: (observation: string) => void;
 	onSaveValidation?: (isValid: boolean) => void;
+	canValidate?: boolean;
 	isAdmin?: boolean;
 }
 
@@ -515,6 +516,7 @@ const PDocument = (props: PDocumentProps) => {
 		onSave,
 		onSaveObservation,
 		onSaveValidation,
+		canValidate,
 		isAdmin = false
 	} = props;
 	const [isShowingEditingModal, setShowingEditingModalFlag] = useState(
@@ -644,8 +646,9 @@ const PDocument = (props: PDocumentProps) => {
 							>
 								{t('View')}
 							</PButton>
-							{isAdmin && onSaveValidation && (
+							{canValidate && onSaveValidation && (
 								<PButton
+									disabled={new Date(document.valid_until) < new Date()}
 									variant={PButtonType.SECONDARY}
 									size={PButtonSize.SMALL}
 									onClick={() => {
