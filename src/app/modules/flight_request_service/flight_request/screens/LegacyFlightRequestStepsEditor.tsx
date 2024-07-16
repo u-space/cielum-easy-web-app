@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { observer } from 'mobx-react';
-import { useEffect, useMemo, useState } from 'react';
-import { PModalType } from '@pcomponents/PModal';
 import { FlightCategory, FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { GeographicalZone } from '@flight-request-entities/geographicalZone';
-import { Polygon } from 'geojson';
-import { useTranslation } from 'react-i18next';
-import CoordinationsStep from '../pages/editor/CoordinationsStep';
 import { PFullModalProps } from '@pcomponents/PFullModal';
-import InsuranceAndPaymentStep from '../pages/editor/InsuranceAndPaymentStep';
-import i18n from '../../../../i18n';
-import env from '../../../../../vendor/environment/env';
+import { PModalType } from '@pcomponents/PModal';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
-import VolumesStep from '../pages/editor/VolumesStep';
+import { Polygon } from 'geojson';
+import { observer } from 'mobx-react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { getVehicleAPIClient } from '@utm-entities/vehicle';
-import { useQuery } from 'react-query';
-import { useCoreServiceAPI } from '../../../../utils';
+import i18n from '../../../../i18n';
+import CoordinationsStep from '../pages/editor/CoordinationsStep';
+import VolumesStep from '../pages/editor/VolumesStep';
 
 export interface SubTotals {
 	amount: number;
@@ -39,9 +34,6 @@ const LegacyFlightRequestStepsEditor = () => {
 	const [modalProps, setModalProps] = useState<PFullModalProps | undefined>();
 	const flightRequest = useMemo(() => {
 		const flightRequest = new FlightRequestEntity();
-		// flightRequest.operator = env.tenant.features.FlightRequests.enabled
-		// 	? env.tenant.features.FlightRequests.options.defaultOperatorUsername
-		// 	: '';
 		const vol = new OperationVolume();
 		vol.set('ordinal', -1);
 		vol.set('effective_time_begin', null);
@@ -76,7 +68,6 @@ const LegacyFlightRequestStepsEditor = () => {
 
 	const resetError = () => {
 		setModalProps(undefined);
-		// saveFlightRequestMutation.reset();
 	};
 
 	const _coordinationsStep = () => {
@@ -117,27 +108,6 @@ const LegacyFlightRequestStepsEditor = () => {
 				});
 				return;
 			}
-			// if (checkCoordinations(flightRequest)) {
-			// 	setModalProps({
-			// 		isVisible: true,
-			// 		type: PModalType.INFORMATION,
-			// 		title: t('Information'),
-			// 		content: (
-			// 			<p>{t('As 4 days or more were selected, extra charges can be charged')}</p>
-			// 		),
-			// 		primary: {
-			// 			onClick: () => {
-			// 				_coordinationsStep();
-			// 				setModalProps(undefined);
-			// 			}
-			// 		},
-			// 		secondary: {
-			// 			text: 'Cancelar',
-			// 			onClick: resetError
-			// 		}
-			// 	});
-			// 	return;
-			// }
 			_coordinationsStep();
 		} else if (step === FlightRequestEditorStep.COORDINATIONS) {
 			flightRequest.setGeographicalZones(zonesChecked);
@@ -151,7 +121,8 @@ const LegacyFlightRequestStepsEditor = () => {
 				// eslint-disable-next-line no-restricted-globals
 				confirm(t('Are you sure you want to go back? All the information will be lost'))
 			) {
-				window.location.href = '/editor/flightrequest';
+				// window.location.href = '/editor/flightrequest';
+				setStep(FlightRequestEditorStep.VOLUME_AND_INFO);
 			}
 			//setStep(FlightRequestEditorStep.VOLUME_AND_INFO);
 		} else if (step === FlightRequestEditorStep.INSURANCE_AND_PAYMENT) {
@@ -206,18 +177,6 @@ const LegacyFlightRequestStepsEditor = () => {
 				}}
 			/>
 		);
-	} else if (step === FlightRequestEditorStep.INSURANCE_AND_PAYMENT) {
-		return (
-			<InsuranceAndPaymentStep
-				{...{
-					previousStep,
-					flightRequest,
-					total,
-					modalProps,
-					setModalProps
-				}}
-			/>
-		);
 	} else {
 		return null;
 	}
@@ -244,36 +203,6 @@ function validateFlightRequest(flightRequest: FlightRequestEntity) {
 		}
 	}
 	return errors;
-}
-
-//this function given a flightRequest checks if there are coordinations for more than 4 days
-function checkCoordinations(flightRequest: FlightRequestEntity) {
-	let days = 0;
-	let lastDate = null;
-	const deepCopy = JSON.parse(JSON.stringify(flightRequest));
-	(deepCopy.volumes as Array<any>).sort((a, b) => {
-		return (
-			new Date(a.effective_time_begin).getTime() - new Date(b.effective_time_begin).getTime()
-		);
-	});
-
-	for (const volume of deepCopy.volumes) {
-		if (volume.ordinal === -1) continue;
-		if (!volume.effective_time_begin || !volume.effective_time_end) {
-			continue;
-		}
-		const date = new Date(volume.effective_time_begin);
-		if (lastDate === null) {
-			lastDate = date;
-			days++;
-		} else {
-			if (date.getDate() !== lastDate.getDate()) {
-				days++;
-			}
-			lastDate = date;
-		}
-	}
-	return days >= 4;
 }
 
 export default observer(LegacyFlightRequestStepsEditor);
