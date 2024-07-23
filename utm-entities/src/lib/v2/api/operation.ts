@@ -93,7 +93,7 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 		if (fromDate) parameters.fromDate = fromDate;
 		if (toDate) parameters.toDate = toDate;
 
-		if (role === AdesRole.ADMIN || role === AdesRole.MONITOR) {
+		if (role === AdesRole.ADMIN || role === AdesRole.MONITOR || role === AdesRole.COA) {
 			return axiosInstance
 				.get<GetOperationsResponse<T>>('operation', {
 					params: parameters,
