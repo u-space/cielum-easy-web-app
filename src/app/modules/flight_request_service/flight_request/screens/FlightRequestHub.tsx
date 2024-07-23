@@ -122,7 +122,8 @@ const FlightRequestHub: FC = () => {
 		{ title: t('glossary:flightRequest.creator'), width: 2 },
 		{ title: t('glossary:flightRequest.state'), width: 2 },
 		{ title: t('glossary:flightRequest.starting_time'), width: 2 },
-		{ title: t('glossary:flightRequest.createdAt'), width: 2 }
+		{ title: t('glossary:flightRequest.createdAt'), width: 2 },
+		{ title: t('glossary:flightRequest.vlos'), width: 2 }
 	];
 
 	// Backend
@@ -161,10 +162,14 @@ const FlightRequestHub: FC = () => {
 							OPERATION_LOCALES_OPTIONS
 					  )
 					: '';
+			} else if (col === 7) {
+				data = String(flightRequest.vlos);
+				// kind = GridCellKind.Boolean;
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;
 			}
+
 			if (kind === GridCellKind.Text) {
 				return {
 					kind: GridCellKind.Text,
@@ -188,6 +193,16 @@ const FlightRequestHub: FC = () => {
 					allowOverlay: false
 				};
 			}
+			// else if (kind === GridCellKind.Boolean) {
+			// 	return {
+			// 		kind: GridCellKind.Boolean,
+			// 		data: data,
+			// 		displayData: String(data),
+			// 		copyData: data,
+			// 		allowOverlay: false
+			// 	};
+			// 	}
+			// }
 		}
 		return {
 			kind: GridCellKind.Text,
