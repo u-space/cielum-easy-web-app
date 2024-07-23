@@ -260,7 +260,7 @@ const LoggedInScreens = () => {
 					<RoleGatedRoute
 						exact
 						path={'/flight-requests'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA]}
 					>
 						<FlightRequestHub />
 					</RoleGatedRoute>
@@ -268,7 +268,7 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('FlightRequests') && (
 					<RoleGatedRoute
 						path={'/flight-requests/:id'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA]}
 					>
 						<PlanningMap />
 					</RoleGatedRoute>
@@ -277,7 +277,7 @@ const LoggedInScreens = () => {
 					<RoleGatedRoute
 						exact
 						path={'/editor/flightrequest/:polygon'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA]}
 					>
 						<LegacyFlightRequestStepsEditor />
 					</RoleGatedRoute>
@@ -286,7 +286,7 @@ const LoggedInScreens = () => {
 					<RoleGatedRoute
 						exact
 						path={'/editor/flightrequest'}
-						roles={[AuthRole.ADMIN, AuthRole.PILOT]}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA]}
 					>
 						<FlightRequestEditor token={token} history={history} />
 					</RoleGatedRoute>
@@ -302,7 +302,10 @@ const LoggedInScreens = () => {
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('FlightRequests') && (
-					<RoleGatedRoute path={'/editor/coordinator'} roles={[AuthRole.ADMIN]}>
+					<RoleGatedRoute
+						path={'/editor/coordinator'}
+						roles={[AuthRole.ADMIN, AuthRole.COA]}
+					>
 						<NewCoordinatorScreen />
 					</RoleGatedRoute>
 				)}
