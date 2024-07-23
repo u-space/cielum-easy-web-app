@@ -4,7 +4,6 @@
 	import {VehicleEntity} from '@utm-entities/vehicle';
 	import CButton from '@tokyo/gui/CButton.svelte';
 
-
 	export let history: any; // TODO: remove when we have proper standalone frontend
 	export let vehicles: VehicleEntity[];
 
@@ -33,7 +32,7 @@
 		{/each}
 	</ul>
 	<svelte:fragment slot="footer">
-		<CButton icon="plus" on:click={() => history.push('/editor/vehicle')}>Add new</CButton>
+		<CButton icon="plus" on:click={() => history.push('/editor/vehicle')}>{i18n.t('Add new')}</CButton>
 	</svelte:fragment>
 </Page>
 

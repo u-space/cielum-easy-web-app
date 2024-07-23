@@ -313,7 +313,7 @@
 		"plural_generic": "Reservaciones de Volumenes para UAS (UVRs)",
 		"reason": "Motivo",
 		"reason_desc": "",
-		"singular_generic": "Reserva de volúmen para UAS (UVR)",
+		"singular_generic": "Reserva de volumen para UAS (UVR)",
 		"cause": "Causa",
 		"cause_desc": "",
 		"type": "Tipo",
@@ -338,7 +338,7 @@
 		"min_altitude": "Altura mínima (m)",
 		"effective_time_begin": "Inicio",
 		"effective_time_end": "Fin",
-		"selected": "Volúmen de vuelo restringido",
+		"selected": "Volumen de vuelo restringido",
 		"success": {
 			"save": "El RFV se guardó satifactoriamente"
 		},
