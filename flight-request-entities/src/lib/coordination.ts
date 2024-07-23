@@ -26,6 +26,7 @@ export class CoordinationEntity implements EntityHasDisplayName {
 	coordinator: CoordinatorEntity;
 	geographical_zone: GeographicalZone;
 	flightRequest: FlightRequestEntity;
+	role_manager: string;
 	//flightRequest: string;
 
 	constructor(
@@ -36,6 +37,7 @@ export class CoordinationEntity implements EntityHasDisplayName {
 		coordinator: CoordinatorEntity,
 		flightRequest: FlightRequestEntity,
 		geographical_zone: GeographicalZone,
+		role_manager: string,
 		id?: string
 	) {
 		this.id = id;
@@ -46,6 +48,7 @@ export class CoordinationEntity implements EntityHasDisplayName {
 		this.coordinator = coordinator;
 		this.flightRequest = flightRequest;
 		this.geographical_zone = geographical_zone;
+		this.role_manager = role_manager;
 		makeAutoObservable(this);
 	}
 
@@ -79,6 +82,7 @@ const transformCoordination = (data: any) => {
 					coordination.coordinator,
 					coordination.flightRequest,
 					coordination.coordinator?.geographical_zone,
+					coordination.role_manager,
 					coordination.id
 				)
 		),
@@ -89,7 +93,7 @@ const transformCoordination = (data: any) => {
 export const getCoordinationAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 

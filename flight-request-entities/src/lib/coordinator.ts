@@ -33,6 +33,7 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 	price?: number;
 	discount_Multiple_Dates?: number;
 	geographical_zone?: Partial<GeographicalZone> | string | null;
+	role_manager?: string;
 	manual_coordinator_procedure?: ManualProcedure | null;
 	automatic_coordinator_procedure?: AutomaticProcedure | null;
 
@@ -56,7 +57,8 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 				template_url: ''
 			},*/
 			manual_coordinator_procedure = null,
-			automatic_coordinator_procedure = null
+			automatic_coordinator_procedure = null,
+			role_manager
 		} = coordinator;
 		this.id = id || undefined;
 		this.infrastructure = infrastructure || '';
@@ -72,6 +74,7 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 		this.geographical_zone = geographical_zone;
 		this.automatic_coordinator_procedure = automatic_coordinator_procedure;
 		this.manual_coordinator_procedure = manual_coordinator_procedure;
+		this.role_manager = role_manager;
 		makeAutoObservable(this);
 	}
 
@@ -108,11 +111,11 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 
 export const APICoordinatorSchema = Joi.object({
 	id: Joi.string(),
-	liaison: Joi.string().required(),
+	liaison: Joi.string().optional().allow('').allow(null),
 	type: Joi.string().required(),
 	telephone: Joi.string().optional().allow(''),
 	email: Joi.string().optional().allow(''),
-	minimun_coordination_days: Joi.number().required(),
+	minimun_coordination_days: Joi.number(),
 	price: Joi.number(),
 	discount_Multiple_Dates: Joi.number().optional(),
 	geographical_zone: Joi.string(),
@@ -132,7 +135,7 @@ const transformCoordinators = (data: any) => {
 export const getCoordinatorAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 5000,
+		timeout: 50000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
