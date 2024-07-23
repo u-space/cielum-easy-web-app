@@ -49,6 +49,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 	createdAt: Date;
 	flight_category: FlightCategory;
 	geographicalZones?: GeographicalZone[] = [];
+	vlos?: boolean;
 
 	[key: string]: FlightRequestEntity[keyof FlightRequestEntity];
 
@@ -72,7 +73,8 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 			geographicalZones,
 			id,
 			paid,
-			createdAt
+			createdAt,
+			vlos
 		} = existing;
 
 		this.name = name;
@@ -96,6 +98,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		this.creator = creator;
 		this.paid = paid;
 		this.createdAt = createdAt;
+		this.vlos = vlos;
 
 		makeAutoObservable(this);
 	}
@@ -226,14 +229,14 @@ const transformFlightRequests = (data: any) => {
 export const getFlightRequestAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: 120000,
+		timeout: 1200000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 
 	return {
 		async saveFlightRequest(flightRequest: FlightRequestEntity) {
 			const { data } = await axiosInstance.post(
-				'/flightRequest?includePaymentLink=true',
+				'/flightRequest',
 				flightRequest.asBackendFormat,
 				{
 					headers: { auth: token }
