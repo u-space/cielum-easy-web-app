@@ -51,7 +51,8 @@ const CoordinatorHub = () => {
 		{ title: t('glossary:coordinator.infrastructure'), width: 2 },
 		{ title: t('glossary:coordinator.minimun_coordination_days'), width: 2 },
 		{ title: t('glossary:coordinator.telephone'), width: 3 },
-		{ title: t('glossary:coordinator.email'), width: 3 }
+		{ title: t('glossary:coordinator.email'), width: 3 },
+		{ title: t('glossary:coordinator.role_manager'), width: 3 }
 	];
 
 	// Backend
@@ -76,6 +77,8 @@ const CoordinatorHub = () => {
 				data = coordinator.telephone ? coordinator.telephone : '';
 			} else if (col === 4) {
 				data = coordinator.email ? coordinator.email : '';
+			} else if (col === 5) {
+				data = coordinator.role_manager ? coordinator.role_manager : '';
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;
