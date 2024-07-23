@@ -90,7 +90,7 @@ const BarItems = () => {
 					label={t('OPERATIONS')}
 					isActive={active === 'operations'}
 					onClick={() => history.push('/operations')}
-					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT]}
+					roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.PILOT, AuthRole.COA]}
 				/>
 			)}
 
