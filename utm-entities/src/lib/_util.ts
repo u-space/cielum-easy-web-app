@@ -98,7 +98,9 @@ export const AdesRole = {
 	ADMIN: 'ADMIN',
 	MONITOR: 'MONITOR',
 	GUEST: 'guest',
-	NOTLOGGED: 'NOTLOGGED'
+	NOTLOGGED: 'NOTLOGGED',
+	COA: 'COA',
+	REMOTE_SENSOR: 'REMOTE_SENSOR'
 };
 
 export function saveExtraFields(entity: any, schema: any, current: any) {
@@ -115,11 +117,6 @@ export function saveExtraFields(entity: any, schema: any, current: any) {
 		}
 	}
 	if (entity.extra_fields?.documents) {
-		console.log(
-			'entity.extra_fields.documents',
-			entity.extra_fields.documents,
-			Array.isArray(entity.extra_fields.documents)
-		);
 		current.extra_fields.documents = entity.extra_fields.documents.map((doc: any) => {
 			return new DocumentEntity(doc);
 		});
