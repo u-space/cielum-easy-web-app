@@ -6,7 +6,6 @@
 	import { CButtonVariant } from '@tokyo/gui/CButton';
 	import { createEventDispatcher } from 'svelte';
 	import { DocumentEntity } from '@utm-entities/document';
-	// import {} from ''
 
 	const dispatch = createEventDispatcher<{ select: VehicleEntity[] }>(); // Temporal until parents are all Svelte (for prop binding)
 
@@ -22,7 +21,6 @@
 		const filterDocuments = doucments.filter((doc, i) => {
 			return doc.tag === 'remote_sensor_id' && doc.valid;
 		});
-		console.log('vehicleName:', data.vehicleName, 'filterDocuments:', filterDocuments);
 		return filterDocuments.length > 0;
 	};
 
