@@ -6,7 +6,7 @@ import PNumberInput from '@pcomponents/PNumberInput';
 import PTimeInput from '@pcomponents/PTimeInput';
 import { Polygon } from 'geojson';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
@@ -30,8 +30,16 @@ interface VolumesStepProps {
 	setModalProps: (modalProps: PFullModalProps | undefined) => void;
 }
 
+// const function useIsOnNight()
+
 const VolumesStep = (props: VolumesStepProps) => {
 	const { polygon, nextStep, flightRequest, setPolygon, modalProps, setModalProps } = props;
+
+	// const [startDate, setStartDate] = useState<Date | null>(null);
+	// const [endDate, setEndDate] = useState<Date | null>(null);
+	const { sunrise, fetchSunrise, isFetchingSunrise } = useSunrise();
+	const [isOnNith, setIsOnNight] = useState<boolean>(false);
+	const [dateTimeChange, setDateTimeChange] = useState<boolean>(false);
 
 	const start = useRef(setHoursAndReturnDate(addDays(new Date(), 10), 9, 0));
 	const end = useRef(
@@ -48,6 +56,71 @@ const VolumesStep = (props: VolumesStepProps) => {
 	const onPolygonsUpdated = useCallback((polygons: Polygon[]) => {
 		setPolygon(polygons[0]);
 	}, []);
+
+	useEffect(() => {
+		console.log('isOnNight', isOnNith);
+		console.log('polygon', polygon);
+		if (polygon && flightRequest.volumes.length > 0) {
+			for (let i = 0; i < flightRequest.volumes.length; i++) {
+				console.log(
+					`flightRequest.volumes[i].effective_time_begin:`,
+					flightRequest.volumes[i].effective_time_begin
+				);
+				if (flightRequest.volumes[i].effective_time_begin) {
+					const start = new Date(flightRequest.volumes[i].effective_time_begin || '');
+					// const end = new Date(flightRequest.volumes[i].effective_time_end || "");
+					const position = polygon.coordinates[0]; //flightRequest.volumes[0].operation_geography?.coordinates[0];
+					console.log(
+						`flightRequest.volumes:${JSON.stringify(flightRequest.volumes, null, 2)}`
+					);
+					console.log(`start:${start} position:${position}`);
+					if (position) {
+						fetchSunrise(
+							start.toISOString().split('T')[0],
+							position[0][0],
+							position[0][1]
+						);
+					}
+				}
+			}
+		}
+	}, [dateTimeChange]);
+
+	useEffect(() => {
+		if (sunrise) {
+			console.log('sunrise', sunrise);
+			const volumenes = flightRequest.volumes.filter((f) => f.ordinal === 0);
+			if (
+				volumenes.length > 0 &&
+				volumenes[0].effective_time_begin &&
+				volumenes[0].effective_time_end
+			) {
+				console.log('start:', volumenes[0].effective_time_begin);
+				console.log('end:', volumenes[0].effective_time_end);
+				const start = new Date(volumenes[0].effective_time_begin);
+				const end = new Date(volumenes[0].effective_time_end);
+				const sunriseDate = new Date(start);
+				setDateTime(sunriseDate, sunrise.sunrise);
+				const sunsetDate = new Date(start);
+				setDateTime(sunsetDate, sunrise.sunset);
+
+				// if (start && end) {
+				console.log(
+					`${sunriseDate.toLocaleString()} > ${start.toLocaleString()} = ${
+						sunriseDate < start
+					}`
+				);
+				console.log(
+					`${end.toLocaleString()} > ${sunsetDate.toLocaleString()} = ${end < sunsetDate}`
+				);
+				if (sunriseDate < start && start < end && end < sunsetDate) {
+					setIsOnNight(false);
+				} else {
+					setIsOnNight(true);
+				}
+			}
+		}
+	}, [sunrise]);
 
 	const getUserSelectIntervalModalProps = (): PFullModalProps => ({
 		isVisible: true,
@@ -126,6 +199,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 					newVolume.set('effective_time_end', endDate);
 					flightRequest.volumes.push(newVolume);
 				}
+				setDateTimeChange(!dateTimeChange);
 				setModalProps(undefined);
 			}
 		},
@@ -235,6 +309,12 @@ const VolumesStep = (props: VolumesStepProps) => {
 						</div>
 					</div>
 					<div>
+						<p>Test sunrise</p>
+						{sunrise && <pre>${JSON.stringify(sunrise, null, 2)}</pre>}
+						<pre>is fetching {String(isFetchingSunrise)}</pre>
+						<pre>is en noche {String(isOnNith)}</pre>
+					</div>
+					<div>
 						<PNumberInput
 							id="operation-height"
 							label={t('Maximum altitude')}
@@ -326,3 +406,67 @@ function validateDatesTimeVolumes(
 	});
 	return true;
 }
+
+interface SunriseData {
+	sunrise: SunriseSunsetResults | null;
+	fetchSunrise: (date: string, latitude: number, longitude: number) => Promise<void>;
+	isFetchingSunrise: boolean;
+}
+
+export interface SunriseSunsetResults {
+	sunrise: string;
+	sunset: string;
+	solar_noon: string;
+	day_length: string;
+	civil_twilight_begin: string;
+	civil_twilight_end: string;
+	nautical_twilight_begin: string;
+	nautical_twilight_end: string;
+	astronomical_twilight_begin: string;
+	astronomical_twilight_end: string;
+}
+
+export interface SunriseSunsetResponse {
+	results: SunriseSunsetResults;
+	status: string;
+}
+
+export const useSunrise = (): SunriseData => {
+	const [sunrise, setSunrise] = useState<SunriseSunsetResults | null>(null);
+	const [isFetchingSunrise, setIsFetchingSunrise] = useState<boolean>(false);
+
+	const fetchSunrise = async (date: string, latitude: number, longitude: number) => {
+		setIsFetchingSunrise(true);
+		try {
+			const apiStr = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&date=${date}&tzid=America/Montevideo`;
+			console.log(apiStr);
+			const response = await fetch(apiStr);
+			const data: SunriseSunsetResponse = await response.json();
+
+			if (data.status === 'OK') {
+				setSunrise(data.results);
+			} else {
+				setSunrise(null);
+			}
+		} catch (error) {
+			console.error('Error fetching sunrise data:', error);
+			setSunrise(null);
+		} finally {
+			setIsFetchingSunrise(false);
+		}
+	};
+
+	return { sunrise, fetchSunrise, isFetchingSunrise };
+};
+
+const setDateTime = (d: Date, timeStr: string) => {
+	const [time, period] = timeStr.split(' ');
+	// eslint-disable-next-line prefer-const
+	let [hours, minutes, seconds] = time.split(':').map(Number);
+	if (period.toLowerCase() === 'pm' && hours !== 12) {
+		hours += 12;
+	} else if (period.toLowerCase() === 'am' && hours === 12) {
+		hours = 0;
+	}
+	d.setHours(hours, minutes, seconds, 0);
+};
