@@ -1,22 +1,21 @@
+import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import PButton, { PButtonSize } from '@pcomponents/PButton';
-import PDateInput from '@pcomponents/PDateInput';
 import PDateRangeInput from '@pcomponents/PDateRangeInput';
+import { PFullModalProps } from '@pcomponents/PFullModal';
 import { PModalType } from '@pcomponents/PModal';
 import PNumberInput from '@pcomponents/PNumberInput';
 import PTimeInput from '@pcomponents/PTimeInput';
+import { EditMode, EditOptions } from '@tokyo/types';
+import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 import { Polygon } from 'geojson';
 import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
-import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
-import MapLayout from '../../../../../commons/layouts/MapLayout';
-import InfoFlightRequest from '../../components/InfoFlightRequest';
 import { reactify } from 'svelte-preprocess-react';
+import MapLayout from '../../../../../commons/layouts/MapLayout';
 import EditorMapViewSvelte from '../../../../map/screens/editor/EditorMapView.svelte';
-import { PFullModalProps } from '@pcomponents/PFullModal';
-import { EditMode, EditOptions } from '@tokyo/types';
-import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
+import InfoFlightRequest from '../../components/InfoFlightRequest';
 
 const ONE_VOLUME_PER_DAY = false;
 
@@ -30,15 +29,10 @@ interface VolumesStepProps {
 	setModalProps: (modalProps: PFullModalProps | undefined) => void;
 }
 
-// const function useIsOnNight()
-
 const VolumesStep = (props: VolumesStepProps) => {
 	const { polygon, nextStep, flightRequest, setPolygon, modalProps, setModalProps } = props;
-
-	// const [startDate, setStartDate] = useState<Date | null>(null);
-	// const [endDate, setEndDate] = useState<Date | null>(null);
-	const { sunrise, fetchSunrise, isFetchingSunrise } = useSunrise();
-	const [isOnNith, setIsOnNight] = useState<boolean>(false);
+	const { sunrise: sunriseList, fetchSunrise, isFetchingSunrise } = useSunrise();
+	const [isOnNight, setIsOnNight] = useState<boolean>(false);
 	const [dateTimeChange, setDateTimeChange] = useState<boolean>(false);
 
 	const start = useRef(setHoursAndReturnDate(addDays(new Date(), 10), 9, 0));
@@ -58,69 +52,47 @@ const VolumesStep = (props: VolumesStepProps) => {
 	}, []);
 
 	useEffect(() => {
-		console.log('isOnNight', isOnNith);
-		console.log('polygon', polygon);
-		if (polygon && flightRequest.volumes.length > 0) {
+		if (polygon && flightRequest.volumes.length > 1) {
+			//FIXME Bydefault thre are a dummy volume in the list
+			const position = polygon.coordinates[0]; //flightRequest.volumes[0].operation_geography?.coordinates[0];
+			const dateStartList = [];
 			for (let i = 0; i < flightRequest.volumes.length; i++) {
-				console.log(
-					`flightRequest.volumes[i].effective_time_begin:`,
-					flightRequest.volumes[i].effective_time_begin
-				);
 				if (flightRequest.volumes[i].effective_time_begin) {
 					const start = new Date(flightRequest.volumes[i].effective_time_begin || '');
-					// const end = new Date(flightRequest.volumes[i].effective_time_end || "");
-					const position = polygon.coordinates[0]; //flightRequest.volumes[0].operation_geography?.coordinates[0];
-					console.log(
-						`flightRequest.volumes:${JSON.stringify(flightRequest.volumes, null, 2)}`
-					);
-					console.log(`start:${start} position:${position}`);
-					if (position) {
-						fetchSunrise(
-							start.toISOString().split('T')[0],
-							position[0][0],
-							position[0][1]
-						);
-					}
+					const startString = start.toISOString().split('T')[0];
+					dateStartList.push(startString);
 				}
 			}
+			if (position) {
+				fetchSunrise(dateStartList, position[0][0], position[0][1]);
+			}
+		} else {
+			setIsOnNight(false);
 		}
 	}, [dateTimeChange]);
 
 	useEffect(() => {
-		if (sunrise) {
-			console.log('sunrise', sunrise);
-			const volumenes = flightRequest.volumes.filter((f) => f.ordinal === 0);
-			if (
-				volumenes.length > 0 &&
-				volumenes[0].effective_time_begin &&
-				volumenes[0].effective_time_end
-			) {
-				console.log('start:', volumenes[0].effective_time_begin);
-				console.log('end:', volumenes[0].effective_time_end);
-				const start = new Date(volumenes[0].effective_time_begin);
-				const end = new Date(volumenes[0].effective_time_end);
-				const sunriseDate = new Date(start);
-				setDateTime(sunriseDate, sunrise.sunrise);
-				const sunsetDate = new Date(start);
-				setDateTime(sunsetDate, sunrise.sunset);
-
-				// if (start && end) {
-				console.log(
-					`${sunriseDate.toLocaleString()} > ${start.toLocaleString()} = ${
-						sunriseDate < start
-					}`
-				);
-				console.log(
-					`${end.toLocaleString()} > ${sunsetDate.toLocaleString()} = ${end < sunsetDate}`
-				);
-				if (sunriseDate < start && start < end && end < sunsetDate) {
-					setIsOnNight(false);
-				} else {
-					setIsOnNight(true);
+		if (sunriseList && sunriseList.length > 0) {
+			const volumenes = flightRequest.volumes.filter((f) => f.ordinal >= 0);
+			const someOnNight = volumenes.some((v: OperationVolume, i: number) => {
+				const sunrise = sunriseList[i];
+				if (v.effective_time_begin && v.effective_time_end && sunrise) {
+					const start = new Date(v.effective_time_begin);
+					const end = new Date(v.effective_time_end);
+					const sunriseDate = new Date(start);
+					setDateTime(sunriseDate, sunrise.sunrise);
+					const sunsetDate = new Date(start);
+					setDateTime(sunsetDate, sunrise.sunset);
+					if (sunriseDate < start && end < sunsetDate) {
+						return false;
+					} else {
+						return true;
+					}
 				}
-			}
+			});
+			setIsOnNight(someOnNight);
 		}
-	}, [sunrise]);
+	}, [sunriseList]);
 
 	const getUserSelectIntervalModalProps = (): PFullModalProps => ({
 		isVisible: true,
@@ -192,8 +164,8 @@ const VolumesStep = (props: VolumesStepProps) => {
 					validateDatesTimeVolumes(flightRequest, start.current, end.current);
 					const newVolume = new OperationVolume();
 					newVolume.set('ordinal', flightRequest.volumes.length - 1);
-					const startDate = start.current;
-					const endDate = end.current;
+					const startDate = new Date(start.current);
+					const endDate = new Date(end.current);
 					newVolume.set('max_altitude', maxAltitude);
 					newVolume.set('effective_time_begin', startDate);
 					newVolume.set('effective_time_end', endDate);
@@ -288,6 +260,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 													} else {
 														flightRequest.volumes.splice(index, 1);
 													}
+													setDateTimeChange(!dateTimeChange);
 												}}
 											/>
 										</div>
@@ -308,12 +281,11 @@ const VolumesStep = (props: VolumesStepProps) => {
 							</PButton>
 						</div>
 					</div>
-					<div>
-						<p>Test sunrise</p>
-						{sunrise && <pre>${JSON.stringify(sunrise, null, 2)}</pre>}
-						<pre>is fetching {String(isFetchingSunrise)}</pre>
-						<pre>is en noche {String(isOnNith)}</pre>
-					</div>
+					{isOnNight && (
+						<div>
+							<p>{t('Night time')}</p>
+						</div>
+					)}
 					<div>
 						<PNumberInput
 							id="operation-height"
@@ -408,8 +380,8 @@ function validateDatesTimeVolumes(
 }
 
 interface SunriseData {
-	sunrise: SunriseSunsetResults | null;
-	fetchSunrise: (date: string, latitude: number, longitude: number) => Promise<void>;
+	sunrise: (SunriseSunsetResults | null)[];
+	fetchSunrise: (dates: string[], latitude: number, longitude: number) => Promise<void>;
 	isFetchingSunrise: boolean;
 }
 
@@ -432,28 +404,24 @@ export interface SunriseSunsetResponse {
 }
 
 export const useSunrise = (): SunriseData => {
-	const [sunrise, setSunrise] = useState<SunriseSunsetResults | null>(null);
+	const [sunrise, setSunrise] = useState<(SunriseSunsetResults | null)[]>([]);
 	const [isFetchingSunrise, setIsFetchingSunrise] = useState<boolean>(false);
 
-	const fetchSunrise = async (date: string, latitude: number, longitude: number) => {
+	const fetchSunrise = async (dates: string[], latitude: number, longitude: number) => {
 		setIsFetchingSunrise(true);
-		try {
+		const promises = dates.map(async (date) => {
 			const apiStr = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&date=${date}&tzid=America/Montevideo`;
-			console.log(apiStr);
 			const response = await fetch(apiStr);
 			const data: SunriseSunsetResponse = await response.json();
 
 			if (data.status === 'OK') {
-				setSunrise(data.results);
-			} else {
-				setSunrise(null);
+				return data.results;
 			}
-		} catch (error) {
-			console.error('Error fetching sunrise data:', error);
-			setSunrise(null);
-		} finally {
-			setIsFetchingSunrise(false);
-		}
+			return null;
+		});
+		const results = await Promise.all(promises);
+		setSunrise(results);
+		setIsFetchingSunrise(false);
 	};
 
 	return { sunrise, fetchSunrise, isFetchingSunrise };
