@@ -29,6 +29,8 @@ interface FlightRequestCoordinationsStepProps {
 	total: SubTotals[];
 	setModalProps: (props: PFullModalProps | undefined) => void;
 	modalProps: PFullModalProps | undefined;
+	isOnNight: boolean;
+	setIsOnNight: (isOnNight: boolean) => void;
 }
 
 const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
@@ -43,7 +45,8 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		setZonesChecked,
 		total,
 		setModalProps,
-		modalProps
+		modalProps,
+		isOnNight
 	} = props;
 
 	const [isShowingExplanation, setShowingExplanation] = useState(false);
@@ -229,19 +232,8 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 											id={`coordination-${index}`}
 											key={zone.id}
 											label={`${zone.name} (${zone.id}) - ${zone.coordinator?.email}`}
-											checked={
-												true //zonesChecked.find((z) => z.id === zone.id) !== undefined
-											}
-											onChange={(value) => {
-												// console.log('zone::', zonesChecked);
-												// if (value.currentTarget.checked) {
-												// 	setZonesChecked([...zonesChecked, zone]);
-												// } else {
-												// 	setZonesChecked(
-												// 		zonesChecked.filter((z) => z.id !== zone.id)
-												// 	);
-												// }
-											}}
+											checked={true}
+											onChange={(value) => {}}
 										></Checkbox>
 										{!checkTimeInterval(
 											zone.coordinator?.minimun_coordination_days || 0,
@@ -274,27 +266,48 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 									</>
 								)
 							)}
+							{needVlosCoordination(flightRequest) && (
+								<Checkbox
+									id={`coordination-vlos`}
+									label={`VLOS - ${flightRequest.vlos}`}
+									checked={true}
+								/>
+							)}
+
+							{needAltitudeCoordination(flightRequest) && (
+								<Checkbox
+									id={`coordination-altitude`}
+									label={`Altitude`}
+									checked={true}
+								/>
+							)}
+							{isOnNight && (
+								<Checkbox
+									id={`coordination-night`}
+									label={`is ngith fly`}
+									checked={true}
+								/>
+							)}
 						</section>
 					</div>
-					{/* <div className={styles.content}>
-						<aside className={styles.summary}>
-							<h2>{t('Sub-total')}</h2>
-							<h1>{totalNumber}€</h1>
-						</aside>
-						<section className={styles.details}>
-							<ul>
-								{total.map((item, index) => (
-									<li key={item.reason}>
-										{item.amount}€ {item.reason}
-									</li>
-								))}
-							</ul>
-						</section>
-					</div> */}
 				</div>
 			</PageLayout>
 		</DashboardLayout>
 	);
+};
+
+const needAltitudeCoordination = (flightRequest: FlightRequestEntity) => {
+	return flightRequest.volumes
+		.filter((vol) => vol.effective_time_begin)
+		.some((vol) => vol.max_altitude > 120);
+};
+
+// const needNightFlyCoordination = (isOnNight) => {
+// 	return isOnNight;
+// };
+
+const needVlosCoordination = (flightRequest: FlightRequestEntity) => {
+	return flightRequest.vlos;
 };
 
 export default observer(CoordinationsStep);

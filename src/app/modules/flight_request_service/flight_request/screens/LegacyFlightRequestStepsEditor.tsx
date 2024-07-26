@@ -30,6 +30,7 @@ const LegacyFlightRequestStepsEditor = () => {
 	const params = useParams<{ polygon: string }>();
 	const existingPolygon = JSON.parse(params.polygon) as Polygon;
 
+	const [isOnNight, setIsOnNight] = useState<boolean>(false);
 	const [polygon, setPolygon] = useState<Polygon>(existingPolygon);
 	const [modalProps, setModalProps] = useState<PFullModalProps | undefined>();
 	const flightRequest = useMemo(() => {
@@ -158,7 +159,9 @@ const LegacyFlightRequestStepsEditor = () => {
 					flightRequest,
 					setPolygon,
 					modalProps,
-					setModalProps
+					setModalProps,
+					isOnNight,
+					setIsOnNight
 				}}
 			/>
 		);
@@ -173,7 +176,9 @@ const LegacyFlightRequestStepsEditor = () => {
 					setZonesChecked,
 					total,
 					setModalProps,
-					modalProps
+					modalProps,
+					isOnNight,
+					setIsOnNight
 				}}
 			/>
 		);

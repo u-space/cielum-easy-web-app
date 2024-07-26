@@ -27,12 +27,23 @@ interface VolumesStepProps {
 	setPolygon: (polygon: Polygon) => void;
 	modalProps: PFullModalProps | undefined;
 	setModalProps: (modalProps: PFullModalProps | undefined) => void;
+	isOnNight: boolean;
+	setIsOnNight: (isOnNight: boolean) => void;
 }
 
 const VolumesStep = (props: VolumesStepProps) => {
-	const { polygon, nextStep, flightRequest, setPolygon, modalProps, setModalProps } = props;
+	const {
+		polygon,
+		nextStep,
+		flightRequest,
+		setPolygon,
+		modalProps,
+		setModalProps,
+		isOnNight,
+		setIsOnNight
+	} = props;
 	const { sunrise: sunriseList, fetchSunrise, isFetchingSunrise } = useSunrise();
-	const [isOnNight, setIsOnNight] = useState<boolean>(false);
+	// const [isOnNight, setIsOnNight] = useState<boolean>(false);
 	const [dateTimeChange, setDateTimeChange] = useState<boolean>(false);
 
 	const start = useRef(setHoursAndReturnDate(addDays(new Date(), 10), 9, 0));
