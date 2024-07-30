@@ -449,7 +449,8 @@
 			"REQUESTED": "Solicitado",
 			"TODO": "Por hacer",
 			"SELF_MANAGED": "Auto gestionado"
-		}
+		},
+		"role_manager": "Rol gestor"
 	},
 	"flightRequest": {
 		"name": "Nombre de la solicitud",
@@ -495,7 +496,8 @@
 		"noOperator": "Sin operador",
 		"noUavs": "Sin aeronaves",
 		"noCreator": "Sin creador",
-		"starting_time": "Comienzo"
+		"starting_time": "Comienzo",
+		"vlos": "Fuera de línea de visión"
 	},
 	"flight-request": {
 		"name": "Nombre de la solicitud",

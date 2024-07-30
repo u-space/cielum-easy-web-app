@@ -58,5 +58,6 @@
 	"Your changes to VEHICLE have been saved": "Your changes to {{vehicle}} have been saved",
 	"document_number": "Document number",
 	"pilotLicenseType": "Pilot permit type",
-	"companyCertificationDescription": "Company certification description"
+	"companyCertificationDescription": "Company certification description",
+	"Night Fly": "Vuelo nocturno"
 }

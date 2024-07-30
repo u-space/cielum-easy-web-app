@@ -43,7 +43,6 @@ const VolumesStep = (props: VolumesStepProps) => {
 		setIsOnNight
 	} = props;
 	const { sunrise: sunriseList, fetchSunrise, isFetchingSunrise } = useSunrise();
-	// const [isOnNight, setIsOnNight] = useState<boolean>(false);
 	const [dateTimeChange, setDateTimeChange] = useState<boolean>(false);
 
 	const start = useRef(setHoursAndReturnDate(addDays(new Date(), 10), 9, 0));
@@ -294,7 +293,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 					</div>
 					{isOnNight && (
 						<div>
-							<p>{t('Night time')}</p>
+							<p>{t('Night Fly')}</p>
 						</div>
 					)}
 					<div>
