@@ -13,7 +13,6 @@ import { FC, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useQueryUser } from 'src/app/modules/core_service/user/hooks';
-import styled from 'styled-components';
 import { reactify } from 'svelte-preprocess-react';
 import env from '../../../../../vendor/environment/env';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
@@ -96,21 +95,14 @@ interface InfoFlightRequestProps {
 	flightRequest: FlightRequestEntity;
 	isEditingExisting: boolean;
 	volumeProps: string[];
-
 	setBlockingCenter: (value: boolean) => void;
 	children: ReactNode;
 }
-
-const DivStepButtons = styled.div`
-	display: flex;
-	justify-content: space-between;
-`;
 
 const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 	flightRequest,
 	isEditingExisting,
 	volumeProps,
-
 	setBlockingCenter,
 	children
 }) => {
@@ -164,8 +156,6 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 			flightRequest.setOperator(null);
 		}
 	};
-
-	// const [isDefaultOperator, setDefaultOperatorFlag] = useState<boolean>(false);
 
 	const preSelectedForPilots = (value: UserEntity | string | null | undefined) => {
 		if (value == null || value === undefined) {
@@ -237,43 +227,11 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				setInfo={(prop, value) => flightRequest.setFlightComments(value as string)}
 			/>
 			<FlightRequestInfo
-				key={'urban_flight'}
-				prop={'urban_flight'}
+				key={'vlos'}
+				prop={'vlos'}
 				entity={flightRequest}
-				setInfo={(prop, value) => flightRequest.setUrbanFlight(value as boolean)}
+				setInfo={(prop, value) => flightRequest.setVlos(value as boolean)}
 			/>
-			{flightRequest.urban_flight && (
-				<FlightRequestInfo
-					key={'parachute_model'}
-					prop={'parachute_model'}
-					entity={flightRequest}
-					setInfo={(prop, value) => flightRequest.setParachuteModel(value as string)}
-				/>
-			)}
-			<FlightRequestInfo
-				key={'dji_blocked'}
-				prop={'dji_blocked'}
-				entity={flightRequest}
-				setInfo={(prop, value) => flightRequest.setDjiBlocked(value as boolean)}
-			/>
-			{flightRequest.dji_blocked && (
-				<>
-					<FlightRequestInfo
-						key={'dji_controller_number'}
-						prop={'dji_controller_number'}
-						entity={flightRequest}
-						setInfo={(prop, value) =>
-							flightRequest.setDjiControllerNumber(value as string)
-						}
-					/>
-					<FlightRequestInfo
-						key={'dji_email'}
-						prop={'dji_email'}
-						entity={flightRequest}
-						setInfo={(prop, value) => flightRequest.setDjiEmail(value as string)}
-					/>
-				</>
-			)}
 		</CardGroup>
 	);
 };
