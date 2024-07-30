@@ -1,16 +1,15 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import { makeAutoObservable } from 'mobx';
+import { UserEntity } from '@utm-entities/user';
+import { Operation } from '@utm-entities/v2/model/operation';
+import { OperationVolume, ResponseOperationVolume } from '@utm-entities/v2/model/operation_volume';
+import { VehicleEntity } from '@utm-entities/vehicle';
 import Axios, { AxiosResponseTransformer } from 'axios';
 import Joi from 'joi';
-import { GeographicalZone } from './geographicalZone';
-import { CoordinatorEntity } from './coordinator';
-import { VehicleEntity } from '@utm-entities/vehicle';
-import { UserEntity } from '@utm-entities/user';
+import { makeAutoObservable } from 'mobx';
 import { buildFilterAndOrderParametersObject } from './_util';
-import { EntityHasDisplayName } from './types';
 import { CoordinationEntity } from './coordination';
-import { OperationVolume, ResponseOperationVolume } from '@utm-entities/v2/model/operation_volume';
-import { Operation } from '@utm-entities/v2/model/operation';
+import { GeographicalZone } from './geographicalZone';
+import { EntityHasDisplayName } from './types';
 
 export enum FlightRequestState {
 	REQUIRE_APPROVAL = 'REQUIRE_APPROVAL',
@@ -49,7 +48,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 	createdAt: Date;
 	flight_category: FlightCategory;
 	geographicalZones?: GeographicalZone[] = [];
-	vlos?: boolean;
+	vlos: boolean;
 
 	[key: string]: FlightRequestEntity[keyof FlightRequestEntity];
 
@@ -98,7 +97,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		this.creator = creator;
 		this.paid = paid;
 		this.createdAt = createdAt;
-		this.vlos = vlos;
+		this.vlos = vlos || false;
 
 		makeAutoObservable(this);
 	}
@@ -145,6 +144,10 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 
 	setUrbanFlight(urban_flight: boolean) {
 		this.urban_flight = urban_flight;
+	}
+
+	setVlos(vlos: boolean) {
+		this.vlos = vlos;
 	}
 
 	setParachuteModel(parachute_model: string) {

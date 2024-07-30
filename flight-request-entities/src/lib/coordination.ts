@@ -23,7 +23,7 @@ export class CoordinationEntity implements EntityHasDisplayName {
 	state: CoordinationState;
 	limit_date: Date;
 	last_state_change_reason: string;
-	coordinator: CoordinatorEntity;
+	coordinator?: CoordinatorEntity;
 	geographical_zone: GeographicalZone;
 	flightRequest: FlightRequestEntity;
 	role_manager: string;
@@ -41,7 +41,11 @@ export class CoordinationEntity implements EntityHasDisplayName {
 		id?: string
 	) {
 		this.id = id;
-		this.reference = `${coordinator.infrastructure} (${coordinator.liaison})`;
+		this.reference = reference
+			? reference
+			: coordinator
+			? `${coordinator.infrastructure} (${coordinator.liaison})`
+			: 'Sin coordinador?';
 		this.state = state;
 		this.limit_date = limit_date;
 		this.last_state_change_reason = last_state_change_reason;
@@ -63,8 +67,9 @@ export const APICoordinationSchema = Joi.object({
 	state: Joi.string(),
 	limit_date: Joi.date(),
 	last_state_change_reason: Joi.string(),
-	coordinator: Joi.object(),
-	flightRequest: Joi.object()
+	coordinator: Joi.object().optional().allow(null),
+	flightRequest: Joi.object(),
+	role_manager: Joi.string()
 });
 
 // API
