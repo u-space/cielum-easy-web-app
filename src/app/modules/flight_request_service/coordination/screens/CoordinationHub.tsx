@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import PTooltip from '@pcomponents/PTooltip';
 import { useQueryString } from '../../../../utils';
-import { useAuthIsAdmin } from '../../../auth/store';
+import { useAuthGetRole, useAuthIsAdmin } from '../../../auth/store';
 import useQueryCoordinations, { useUpdateCoordination } from '../hooks';
 import GenericHub, { GenericHubProps, rowHeight } from '../../../../commons/screens/GenericHub';
 import { CoordinationEntity } from '@flight-request-entities/coordination';
@@ -46,6 +46,8 @@ const CoordinationHub = () => {
 
 	// Props
 	const isAdmin = useAuthIsAdmin();
+	const role = useAuthGetRole();
+	const canEdit = role === 'ADMIN' || role === 'COA' || role === 'AIR_TRAFIC';
 	const idSelected = queryString.get('id');
 	const columns = [
 		{ title: ' ', width: rowHeight * 2 },
@@ -142,7 +144,7 @@ const CoordinationHub = () => {
 			idSelected={idSelected}
 			updateQuery={updateCoordination as UseMutationResult}
 			query={{ ...query, count: count as number }}
-			canEdit={() => isAdmin}
+			canEdit={() => canEdit}
 		/>
 	);
 };
