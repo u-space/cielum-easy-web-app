@@ -17,7 +17,14 @@ import { buildParametersObject } from './_util';
 import { ExtraFields, ExtraFieldSchema } from './extraFields';
 import { EntityHasDisplayName } from './types';
 
-const RolesType = Joi.string().valid('admin', 'monitor', 'pilot', 'coa', 'remote_sensor');
+const RolesType = Joi.string().valid(
+	'admin',
+	'monitor',
+	'pilot',
+	'coa',
+	'remote_sensor',
+	'air_trafic'
+);
 
 export class UserEntity implements EntityHasDisplayName {
 	username: string;

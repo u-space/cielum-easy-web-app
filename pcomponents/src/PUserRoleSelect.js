@@ -59,6 +59,7 @@ const PUserRoleSelect = ({
 				<option value="admin">{t('ADMIN')}</option>
 				<option value="coa">{t('COA')}</option>
 				<option value="remote_sensor">{t('REMOTE_SENSOR')}</option>
+				<option value="air_trafic">{t('AIR_TRAFIC')}</option>
 			</HTMLSelect>
 		</FormGroup>
 	);

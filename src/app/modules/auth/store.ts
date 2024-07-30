@@ -10,6 +10,7 @@ export enum AuthRole {
 	PILOT = 'PILOT',
 	COA = 'COA',
 	REMOTE_SENSOR = 'REMOTE_SENSOR',
+	AIR_TRAFIC = 'AIR_TRAFIC',
 	NOT_LOGGED_IN = 'NOT_LOGGED_IN'
 }
 

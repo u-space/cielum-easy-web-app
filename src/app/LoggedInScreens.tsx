@@ -57,7 +57,8 @@ const LoggedInScreens = () => {
 						AuthRole.PILOT,
 						AuthRole.MONITOR,
 						AuthRole.COA,
-						AuthRole.REMOTE_SENSOR
+						AuthRole.REMOTE_SENSOR,
+						AuthRole.AIR_TRAFIC
 					]}
 				>
 					<Home />
@@ -69,7 +70,8 @@ const LoggedInScreens = () => {
 						AuthRole.PILOT,
 						AuthRole.MONITOR,
 						AuthRole.COA,
-						AuthRole.REMOTE_SENSOR
+						AuthRole.REMOTE_SENSOR,
+						AuthRole.AIR_TRAFIC
 					]}
 				>
 					<UserProfileScreen />
@@ -94,7 +96,8 @@ const LoggedInScreens = () => {
 							AuthRole.PILOT,
 							AuthRole.MONITOR,
 							AuthRole.COA,
-							AuthRole.REMOTE_SENSOR
+							AuthRole.REMOTE_SENSOR,
+							AuthRole.AIR_TRAFIC
 						]}
 					>
 						<LiveMap />
@@ -251,7 +254,12 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('FlightRequests') && (
 					<RoleGatedRoute
 						path={'/coordinations'}
-						roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.COA]}
+						roles={[
+							AuthRole.ADMIN,
+							AuthRole.MONITOR,
+							AuthRole.COA,
+							AuthRole.AIR_TRAFIC
+						]}
 					>
 						<CoordinationHub />
 					</RoleGatedRoute>

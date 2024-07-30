@@ -20,7 +20,13 @@ const BarItems = () => {
 					label={t('REALTIME MAP')}
 					isActive={active === 'map'}
 					onClick={() => history.push('/map')}
-					roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.MONITOR, AuthRole.COA]}
+					roles={[
+						AuthRole.ADMIN,
+						AuthRole.PILOT,
+						AuthRole.MONITOR,
+						AuthRole.COA,
+						AuthRole.AIR_TRAFIC
+					]}
 				/>
 			)}
 
@@ -61,7 +67,12 @@ const BarItems = () => {
 						label={t('COORDINATIONS')}
 						isActive={active === 'coordinations'}
 						onClick={() => history.push('/coordinations')}
-						roles={[AuthRole.ADMIN, AuthRole.MONITOR, AuthRole.COA]}
+						roles={[
+							AuthRole.ADMIN,
+							AuthRole.MONITOR,
+							AuthRole.COA,
+							AuthRole.AIR_TRAFIC
+						]}
 					/>
 					<BarItem
 						icon="polygon-filter"
@@ -143,7 +154,8 @@ const BarItems = () => {
 					AuthRole.MONITOR,
 					AuthRole.PILOT,
 					AuthRole.COA,
-					AuthRole.REMOTE_SENSOR
+					AuthRole.REMOTE_SENSOR,
+					AuthRole.AIR_TRAFIC
 				]}
 			/>
 
