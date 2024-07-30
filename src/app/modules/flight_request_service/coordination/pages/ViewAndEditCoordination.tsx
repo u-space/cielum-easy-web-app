@@ -12,6 +12,15 @@ import ViewAndEditFlightRequest from '../../flight_request/pages/ViewAndEditFlig
 
 const specialProps = ['id', 'state'];
 const nonRequiredProps = ['email', 'telephone', 'price', 'discount_Multiple_Dates'];
+const editable = ['state', 'last_state_change_reason'];
+const showProps = [
+	'id',
+	'reference',
+	'state',
+	'last_state_change_reason',
+	'limit_date',
+	'role_manager'
+];
 
 interface BaseCoordinationDetailsProps {
 	ls: UseLocalStoreEntity<CoordinationEntity>;
@@ -35,7 +44,7 @@ const BaseCoordinationDetails: FC<BaseCoordinationDetailsProps> = ({
 				const id = `input-${prop}`;
 				const label = t(`coordination.${prop}`);
 				const explanation = t(`coordination.${prop}_desc`);
-				const isNotEditable = false;
+				const isNotEditable = !editable.includes(prop);
 				if (!isCreating && prop === 'id') {
 					return (
 						<PInput
@@ -62,7 +71,7 @@ const BaseCoordinationDetails: FC<BaseCoordinationDetailsProps> = ({
 							id={'coordination-state-select'}
 						/>
 					);
-				} else if (!specialProps.includes(prop)) {
+				} else if (showProps.includes(prop)) {
 					const value = ls.entity[prop] || '';
 					// is value number
 					if (typeof value === 'string') {
