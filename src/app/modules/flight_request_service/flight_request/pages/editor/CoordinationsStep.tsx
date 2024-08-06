@@ -118,24 +118,50 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		saveFlightRequestMutation.mutate();
 	};
 
-	const canCreateFlightRequest = useMemo(() => {
+	// const canCreateFlightRequest = useMemo(() => {
+	// 	const hasGeographicalZoneIntersections =
+	// 		geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
+
+	// 	const specialCoordinations =
+	// 		needVlosCoordination(flightRequest) &&
+	// 		needAltitudeCoordination(flightRequest) &&
+	// 		isOnNight;
+
+	// 	const operatorCanOPerate =
+	// 		flightRequest.operator &&
+	// 		flightRequest.operator instanceof UserEntity &&
+	// 		flightRequest.operator.canOperate;
+	// 	return hasGeographicalZoneIntersections && operatorCanOPerate && specialCoordinations;
+	// }, [geographicalZonesIntersectingVolume, flightRequest, flightRequest.operator]);
+
+	const canCreateFlightRequest = () => {
 		const hasGeographicalZoneIntersections =
 			geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
+
+		const specialCoordinations =
+			needVlosCoordination(flightRequest) &&
+			needAltitudeCoordination(flightRequest) &&
+			isOnNight;
+
 		const operatorCanOPerate =
 			flightRequest.operator &&
 			flightRequest.operator instanceof UserEntity &&
 			flightRequest.operator.canOperate;
-		return hasGeographicalZoneIntersections && operatorCanOPerate;
-	}, [geographicalZonesIntersectingVolume, flightRequest.operator]);
+		return hasGeographicalZoneIntersections && operatorCanOPerate && specialCoordinations;
+	};
 
 	const getCauseMessage = () => {
 		const hasGeographicalZoneIntersections =
 			geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
+		const specialCoordinations =
+			needVlosCoordination(flightRequest) &&
+			needAltitudeCoordination(flightRequest) &&
+			isOnNight;
 		const operatorCanOPerate =
 			flightRequest.operator &&
 			flightRequest.operator instanceof UserEntity &&
 			flightRequest.operator.canOperate;
-		if (!hasGeographicalZoneIntersections) {
+		if (!(hasGeographicalZoneIntersections && specialCoordinations)) {
 			return t('glossary:flightRequest:noCoordination');
 		} else if (!operatorCanOPerate) {
 			return t('ui:user_cant_create_operation');
@@ -273,7 +299,6 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 									checked={true}
 								/>
 							)}
-
 							{needAltitudeCoordination(flightRequest) && (
 								<Checkbox
 									id={`coordination-altitude`}
