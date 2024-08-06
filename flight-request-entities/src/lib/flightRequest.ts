@@ -78,9 +78,9 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 
 		this.name = name;
 		this.id = id;
-		this.volumes = volumes.map(
-			(volume: ResponseOperationVolume) => new OperationVolume(volume)
-		);
+		this.volumes = volumes
+			? volumes.map((volume: ResponseOperationVolume) => new OperationVolume(volume))
+			: [];
 		this.uavs = uavs;
 		this.state = state;
 		this.operation = operation;
