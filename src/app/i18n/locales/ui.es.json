@@ -265,6 +265,9 @@
 	"PILOT": "PILOTO",
 	"MONITOR": "MONITOR",
 	"ADMIN": "ADMINISTRADOR",
+	"COA": "COA",
+	"REMOTE_SENSOR": "SENSORES REMOTOS",
+	"AIR_TRAFIC": "TRÁNSITO AÉREO",
 	"Find a specific tracker": "Buscar un dispositivo",
 	"Search for a tracker": "Buscar un dispositivo",
 	"Create new tracker": "Crear nuevo dispositivo",
@@ -373,6 +376,7 @@
 	"geographical-zone": "Zona de información geográfica",
 	"rfv": "Zona de vuelo restringido",
 	"uvr": "Volumen reservado, vuelos limitados",
+	"Coordination": "Coordinación",
 	"Coordination required for operations in this geographical zone": "Requiere coordinación con la infraestructura",
 	"MAP INCOMPLETE": "ATENCIÓN",
 	"Loading information from the server": "Cargando información del servidor...",
@@ -554,5 +558,9 @@
 	"x days": "{{x}} días",
 	"x months": "{{x}} meses",
 	"x years": "{{x}} años",
-	"Add new": "Agregar Nuevo"
+	"Add new": "Agregar Nuevo",
+	"VLOS": "Fuera de línea de vuelo",
+	"IS_ON_NIGHT": "Vuelo nocturno",
+	"ALTITUDE": "Vuelo de altura",
+	"role_manager": "Rol gestor"
 }

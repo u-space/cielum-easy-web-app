@@ -75,7 +75,7 @@ const CoordinationHub = () => {
 			if (col === 1) {
 				data = coordination.reference ? coordination.reference : '';
 			} else if (col === 2) {
-				data = coordination.state;
+				data = t(`glossary:coordination.states.${coordination.state}`);
 			} else if (col === 3) {
 				data = new Date(coordination.limit_date).toLocaleString();
 				if (new Date(coordination.limit_date) < new Date()) {
@@ -91,7 +91,7 @@ const CoordinationHub = () => {
 					? coordination.flightRequest.creator.username
 					: '';
 			} else if (col === 6) {
-				data = coordination.role_manager ? coordination.role_manager : '';
+				data = coordination.role_manager ? t(coordination.role_manager) : '';
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;

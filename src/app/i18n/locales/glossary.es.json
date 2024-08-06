@@ -450,7 +450,10 @@
 			"TODO": "Por hacer",
 			"SELF_MANAGED": "Auto gestionado"
 		},
-		"role_manager": "Rol gestor"
+		"role_manager": "Rol gestor",
+		"VLOS": "Fuera de línea de vuelo",
+		"IS_ON_NIGHT": "Vuelo nocturno",
+		"ALTITUDE": "Vuelo de altura"
 	},
 	"flightRequest": {
 		"name": "Nombre de la solicitud",
@@ -497,7 +500,8 @@
 		"noUavs": "Sin aeronaves",
 		"noCreator": "Sin creador",
 		"starting_time": "Comienzo",
-		"vlos": "Fuera de línea de visión"
+		"vlos": "Fuera de línea de visión",
+		"role_manager": "Rol gestor"
 	},
 	"flight-request": {
 		"name": "Nombre de la solicitud",
