@@ -12,7 +12,7 @@ import { CustomCell, GridCell, GridCellKind, TextCell } from '@glideapps/glide-d
 import ViewAndEditFlightRequest from '../pages/ViewAndEditFlightRequest';
 import { useFlightRequestStore } from '../store';
 import { UseMutationResult } from 'react-query';
-import { useAuthIsAdmin } from '../../../auth/store';
+import { AuthRole, useAuthGetRole, useAuthIsAdmin } from '../../../auth/store';
 import { FlightRequestEntity, FlightRequestState } from '@flight-request-entities/flightRequest';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { observer } from 'mobx-react';
@@ -112,6 +112,7 @@ const FlightRequestHub: FC = () => {
 
 	// State
 	const isAdmin = useAuthIsAdmin();
+	const role = useAuthGetRole();
 
 	// Props
 	const idSelected = queryString.get('id');
@@ -149,12 +150,13 @@ const FlightRequestHub: FC = () => {
 					? t(`glossary:flightRequest.flight_state.${flightRequest.state}`)
 					: '';
 			} else if (col === 5) {
-				data = flightRequest.volumes[0].effective_time_begin
-					? new Date(flightRequest.volumes[0].effective_time_begin).toLocaleString(
-							[],
-							OPERATION_LOCALES_OPTIONS
-					  )
-					: '';
+				data =
+					flightRequest.volumes[0] && flightRequest.volumes[0].effective_time_begin
+						? new Date(flightRequest.volumes[0].effective_time_begin).toLocaleString(
+								[],
+								OPERATION_LOCALES_OPTIONS
+						  )
+						: '';
 			} else if (col === 6) {
 				data = flightRequest.createdAt
 					? new Date(flightRequest.createdAt).toLocaleString(
@@ -217,6 +219,10 @@ const FlightRequestHub: FC = () => {
 			flightRequest ? `/flight-requests?id=${flightRequest.id}` : '/flight-requests'
 		);
 
+	function canEdit(): boolean {
+		return role === AuthRole.ADMIN || role === AuthRole.COA;
+	}
+
 	return (
 		<GenericHub<FlightRequestEntity>
 			idProperty={'id'}
@@ -232,7 +238,7 @@ const FlightRequestHub: FC = () => {
 			idSelected={idSelected}
 			updateQuery={updateFlightRequest as UseMutationResult}
 			query={{ ...query, count }}
-			canEdit={() => false}
+			canEdit={() => canEdit()}
 			extraMenuButtons={MenuButtons}
 		/>
 	);
