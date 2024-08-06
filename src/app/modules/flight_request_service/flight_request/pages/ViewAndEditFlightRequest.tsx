@@ -5,8 +5,12 @@ import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import styles from '../../../../commons/Pages.module.scss';
 import { Spinner } from '@blueprintjs/core';
-import { CoordinationState } from '@flight-request-entities/coordination';
-import { FlightCategory, FlightRequestEntity } from '@flight-request-entities/flightRequest';
+import { CoordinationEntity, CoordinationState } from '@flight-request-entities/coordination';
+import {
+	FlightCategory,
+	FlightRequestEntity,
+	FlightRequestState
+} from '@flight-request-entities/flightRequest';
 import PBooleanInput from '@pcomponents/PBooleanInput';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import PDateInput from '@pcomponents/PDateInput';
@@ -22,7 +26,7 @@ import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 import { Polygon } from 'geojson';
 import { CSSProperties, FC, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAuthStore } from 'src/app/modules/auth/store';
+import { AuthRole, useAuthGetRole, useAuthStore } from 'src/app/modules/auth/store';
 import { useSchemaStore } from 'src/app/modules/schemas/store';
 import styled from 'styled-components';
 import { reactify } from 'svelte-preprocess-react';
@@ -47,23 +51,33 @@ const StateExplanationText = styled.div`
 	padding: var(--padding-s);
 `;
 
-const PaidStateCircle = styled.div`
-	height: 1rem;
-	width: 1rem;
-	border-radius: 100%;
-	margin-right: 0.5rem;
-	border: 1px solid rgb(var(--mirai-900-rgb), 0.25);
-	box-shadow: 0 1px 1px 0 rgba (0, 0, 0, 0.25);
-	filter: saturate(0.75);
-`;
+const showProp = ['id', 'name', 'state', 'flight_comments', 'createdAt', 'vlos'];
+const editable = ['name', 'state', 'flight_comments'];
+const possibleStates = (initialState?: FlightRequestState) => {
+	if (!initialState) {
+		return [];
+	}
+	switch (initialState) {
+		case FlightRequestState.PREFLIGHT:
+			return [FlightRequestState.CANCELLED];
+		case FlightRequestState.COMPLETED:
+			return [FlightRequestState.REJECTED, FlightRequestState.CANCELLED];
+		case FlightRequestState.REJECTED:
+			return [FlightRequestState.CANCELLED];
+		case FlightRequestState.CANCELLED:
+			return [];
+		case FlightRequestState.PENDING:
+			return [FlightRequestState.REJECTED, FlightRequestState.CANCELLED];
+		case FlightRequestState.REQUIRE_APPROVAL:
+			return [FlightRequestState.COMPLETED];
+		default:
+			return [];
+	}
+};
 
-const PaymentLine = styled.div`
-	display: flex;
-	justify-content: space-between;
-	width: 100%;
-	text-transform: uppercase;
-	color: var(--primary-900);
-`;
+const canEdit = (prop: string, isEditing: boolean) => {
+	return editable.includes(prop) && isEditing;
+};
 
 const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 	({ ls, isEditing }) => {
@@ -71,116 +85,109 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 		if (!ls.entity) {
 			return null;
 		}
+		const initialState = ls.entity.state;
 
 		return (
 			<>
-				{Object.keys(ls.entity).map((_prop) => {
-					const prop = _prop as keyof FlightRequestEntity;
-					if (specialProps.includes(prop as string)) {
-						return null;
-					}
-					const entity = ls.entity;
-					const value = entity[prop];
-
-					if (prop === 'creator' || prop === 'id') return null;
-					if (prop === 'flight_comments') {
-						return (
-							<PTextArea
-								style={{ width: '100%' }}
-								key={prop}
-								id={`editor-flight-request-${prop}`}
-								defaultValue={entity[prop]}
-								label={t(`glossary:flightRequest.${prop}`)}
-								disabled={!isEditing}
-								onChange={(value) => ls.setInfo(prop, value)}
-								isDarkVariant
-								inline
-							/>
-						);
-					}
-					// If user selected not dji blocked then hide dji blocked fields
-					if (['dji_controller_number', 'dji_email'].includes(prop as string)) {
-						if (!entity.dji_blocked) {
+				{Object.keys(ls.entity)
+					.filter((prop) => showProp.includes(prop))
+					.map((_prop) => {
+						const prop = _prop as keyof FlightRequestEntity;
+						if (specialProps.includes(prop as string)) {
 							return null;
 						}
-					}
-					// If user said is not a urban flight then hide parachute model
-					if (prop === 'parachute_model') {
-						if (!entity.urban_flight) {
+						const entity = ls.entity;
+						const value = entity[prop];
+
+						if (prop === 'creator' || prop === 'id') return null;
+						if (prop === 'flight_comments') {
+							return (
+								<PTextArea
+									style={{ width: '100%' }}
+									key={prop}
+									id={`editor-flight-request-${prop}`}
+									defaultValue={entity[prop]}
+									label={t(`glossary:flightRequest.${prop}`)}
+									disabled={!isEditing}
+									onChange={(value) => ls.setInfo(prop, value)}
+									isDarkVariant
+									inline
+								/>
+							);
+						}
+						if (prop === 'state') {
+							return (
+								<PDropdown
+									key={prop}
+									options={[initialState, ...possibleStates(initialState)].map(
+										(value) => ({
+											value: value,
+											label: t(`glossary:flightRequest.flight_state.${value}`)
+										})
+									)}
+									id={`editor-flight-request-${prop}`}
+									defaultValue={entity[prop]}
+									label={t(`glossary:flightRequest.state`)}
+									onChange={(value) => ls.setInfo(prop, value)}
+									isRequired
+									disabled={!isEditing}
+									isDarkVariant
+									inline
+								/>
+							);
+						}
+						if (prop === 'createdAt') {
+							console.log('createdAt:', entity[prop]);
+							const date = new Date(entity[prop]);
+							const dateStr = date.toLocaleString([], {
+								year: 'numeric',
+								month: 'numeric',
+								day: 'numeric'
+							});
+							return (
+								<PInput
+									key={prop}
+									id={`editor-flight-request-${prop}`}
+									defaultValue={dateStr}
+									label={t(`glossary:flightRequest.${prop}`)}
+									disabled={true}
+									isDarkVariant
+									inline
+								/>
+							);
+						}
+						if (typeof value === 'string') {
+							return (
+								<PInput
+									key={prop}
+									id={`editor-flight-request-${prop}`}
+									defaultValue={value}
+									label={t(`glossary:flightRequest.${prop}`)}
+									onChange={(value) => ls.setInfo(prop, value)}
+									isRequired
+									disabled={!canEdit(_prop, isEditing)}
+									isDarkVariant
+									inline
+								/>
+							);
+						} else if (typeof value === 'boolean') {
+							return (
+								<PBooleanInput
+									key={prop}
+									id={`editor-volume-${prop}`}
+									defaultValue={value}
+									label={t(`flightRequest.${prop}`)}
+									disabled={!canEdit(_prop, isEditing)}
+									onChange={(value) => ls.setInfo(prop, value)}
+									isRequired
+									isDarkVariant
+									inline
+								/>
+							);
+						} else {
 							return null;
 						}
-					}
-					if (prop === 'flight_category') {
-						return (
-							<PDropdown
-								key={prop}
-								options={Object.values(FlightCategory).map((value) => ({
-									value: value,
-									label: t(`glossary:flightRequest.flight_category.${value}`)
-								}))}
-								id={`editor-flight-request-${prop}`}
-								defaultValue={entity[prop]}
-								label={t(`glossary:flightRequest.flightCategory`)}
-								onChange={(value) => ls.setInfo(prop, value)}
-								isRequired
-								disabled={!isEditing}
-								isDarkVariant
-								inline
-							/>
-						);
-					}
-
-					if (prop === 'state') {
-						return (
-							<PInput
-								key={prop}
-								id={`editor-flight-request-${prop}`}
-								defaultValue={t(
-									'glossary:flightRequest.flight_state.' + entity[prop]
-								)}
-								label={t(`glossary:flightRequest.state`)}
-								disabled={true}
-								isDarkVariant
-								inline
-								explanation={t(
-									`glossary:flightRequest.flight_state_explanation.${entity[prop]}`
-								)}
-								hasTooltip={true}
-							/>
-						);
-					}
-					if (typeof value === 'string') {
-						return (
-							<PInput
-								key={prop}
-								id={`editor-flight-request-${prop}`}
-								defaultValue={value}
-								label={t(`glossary:flightRequest.${prop}`)}
-								onChange={(value) => ls.setInfo(prop, value)}
-								isRequired
-								disabled={!isEditing}
-								isDarkVariant
-								inline
-							/>
-						);
-					} else if (typeof value === 'boolean') {
-						return (
-							<PBooleanInput
-								key={prop}
-								id={`editor-volume-${prop}`}
-								defaultValue={value}
-								label={t(`flightRequest.${prop}`)}
-								disabled={!isEditing}
-								onChange={(value) => ls.setInfo(prop, value)}
-								isRequired
-								isDarkVariant
-								inline
-							/>
-						);
-					} else {
-						return null;
-					}
-				})}
+					})}
 			</>
 		);
 	}
@@ -199,11 +206,18 @@ const Coordination = styled.div`
 `;
 
 const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, isEditing }) => {
-	const { t } = useTranslation('glossary');
+	const { t } = useTranslation();
 	const [edit, setEdit] = useState<string[]>([]);
 	const updateCoordination = useUpdateCoordination();
 	const history = useHistory();
 	const entity = ls.entity;
+	const role = useAuthGetRole();
+
+	function canEditCoordination(coordination: CoordinationEntity): boolean {
+		if (role === AuthRole.ADMIN) {
+			return true;
+		} else return coordination.role_manager.toLowerCase() === role.toLowerCase();
+	}
 	if (!entity) {
 		return null;
 	}
@@ -214,7 +228,7 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 		<div>
 			{entity.coordination.map((coordination, index) => {
 				return (
-					<Coordination>
+					<Coordination key={coordination.id}>
 						<div className={styles.info_table}>
 							<PButton
 								icon="info-sign"
@@ -228,6 +242,7 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 									edit.find((e) => e === coordination.id) ? 'floppy-disk' : 'edit'
 								}
 								size={PButtonSize.SMALL}
+								disabled={!canEditCoordination(coordination)}
 								onClick={() => {
 									//If it is editing, then save and change to not editing mode
 									if (edit.find((e) => e === coordination.id)) {
@@ -251,8 +266,12 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 						</div>
 						<div key={coordination.id} className={styles.info_table}>
 							<div className={styles.id}>
-								{coordination.coordinator?.infrastructure}
+								{t('Coordination')}:{' '}
+								{coordination.reference
+									? ` ${t(`${coordination.reference}`)}`
+									: coordination.coordinator?.infrastructure}
 							</div>
+
 							<div className={styles.date}>
 								{new Date(coordination.limit_date as Date).toLocaleString(
 									[],
@@ -260,6 +279,9 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 								)}
 							</div>
 						</div>
+						<p>
+							{t('role_manager')}: {t(coordination.role_manager)}
+						</p>
 						<div className={styles.state}>
 							<PDropdown
 								key={'coordination-state'}
@@ -430,7 +452,11 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 				<h3>{t('Coordinates')}</h3>
 				{ls.entity.volumes[volume].asDMS?.map((coord) => {
 					return (
-						<div className={styles.leftbalancedline} style={{ padding: '0.25rem' }}>
+						<div
+							key={coord}
+							className={styles.leftbalancedline}
+							style={{ padding: '0.25rem' }}
+						>
 							{coord}
 						</div>
 					);
