@@ -296,7 +296,8 @@ const LoggedInScreens = () => {
 						path={'/editor/flightrequest'}
 						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA]}
 					>
-						<FlightRequestEditor token={token} history={history} />
+						<LegacyFlightRequestStepsEditor />
+						{/* <FlightRequestEditor token={token} history={history} /> */}
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('FlightRequests') && (
