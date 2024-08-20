@@ -33,6 +33,17 @@ import { useQueryUser } from '../../user/hooks';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
+const transformOperationCheckError = (input: string): [string, string] => {
+	console.log('transformOperationCheckError: ', input);
+	const regex = /Need coordination for zone (.+)/;
+	const match = input.match(regex);
+	if (match) {
+		const zone = match[1];
+		const transformed = input.replace(zone, 'x');
+		return [transformed, zone];
+	} else return [input, ''];
+};
+
 const OperationEditor = () => {
 	const { t } = useTranslation(['ui', 'glossary']);
 	const history = useHistory();
@@ -139,16 +150,42 @@ const OperationEditor = () => {
 					}
 				}
 			}),
-		(error) =>
+		(error: any) => {
+			// console.log(error);
+			const msg = '';
+			const aux = error.response?.data.message.split(',').map((errorTextSplited: string) => {
+				const [errorText, zone] = transformOperationCheckError(errorTextSplited);
+				console.log('erors: ', errorText, '|', zone);
+				if (zone === '') {
+					// msg.concat('e' + t(errorText) + '\n');
+					return t(errorText);
+				} else {
+					// msg.concat('e' + t(errorText, { x: zone }) + '\n');
+					return t(errorText, { x: zone });
+				}
+			});
+			console.log(aux);
+			console.log(msg);
+			// error.response.data.message = translateErrors(error, 'operation');
 			setModalProps({
 				isVisible: true,
 				type: PModalType.ERROR,
 				title: t('An error ocurred while saving'),
-				content: translateErrors(error, 'operation'),
+				// content: translateErrors(error, 'operation'),
+				content: aux,
 				primary: {
-					onClick: resetError
+					onClick: () => {
+						resetError();
+						const msg = error.response?.data.message as string;
+						if (msg.search('Need coordination') !== -1) {
+							const vol: OperationVolume = operation.operation_volumes[0];
+							const geo = vol.operation_geography;
+							history.push(`/editor/flightRequest/${JSON.stringify(geo)}`);
+						}
+					}
 				}
-			})
+			});
+		}
 	);
 
 	const save: PButtonProps['onClick'] = (evt) => {

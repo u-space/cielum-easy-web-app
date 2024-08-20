@@ -559,8 +559,12 @@
 	"x months": "{{x}} meses",
 	"x years": "{{x}} años",
 	"Add new": "Agregar Nuevo",
-	"VLOS": "Fuera de línea de vuelo",
+	"VLOS": "Fuera de línea de vista",
 	"IS_ON_NIGHT": "Vuelo nocturno",
 	"ALTITUDE": "Vuelo de altura",
-	"role_manager": "Rol gestor"
+	"role_manager": "Rol gestor",
+	"Need coordination for altitude flight.": "Necesita coordinación para vuelo de altura.",
+	"Need coordination for night flight.": "Necesita coordinación para vuelo nocturno.",
+	"Need coordination for vlos flight.": "Necesita coordinación por vuelo fuera de línea de vista.",
+	"Need coordination for zone x": "Necesita coodinación para zona {{x}}."
 }
