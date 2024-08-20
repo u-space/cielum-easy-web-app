@@ -4,6 +4,7 @@ import PButton from '@pcomponents/PButton';
 import PNumberInput from '@pcomponents/PNumberInput';
 import { FC } from 'react';
 import PDateInput from '@pcomponents/PDateInput';
+import PBooleanInput from '@pcomponents/PBooleanInput';
 
 export interface ContextualInfoProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,6 +45,17 @@ const ContextualInfo: FC<ContextualInfoProps> = (props) => {
 						isRequired
 						onChange={(value: number) => (entity[prop] = value)}
 						disabled={!editable}
+					/>
+				);
+			} else if (typeof entity[prop] === 'boolean') {
+				toDisplay.push(
+					<PBooleanInput
+						key={key}
+						id={id}
+						label={label}
+						defaultValue={entity[prop]}
+						onChange={(value) => (entity[prop] = value)}
+						fill
 					/>
 				);
 			} else if (entity[prop] instanceof Date) {
