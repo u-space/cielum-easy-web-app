@@ -284,6 +284,15 @@ const LoggedInScreens = () => {
 				{isFeatureEnabled('FlightRequests') && (
 					<RoleGatedRoute
 						exact
+						path={'/editor/flightrequest/:polygon/:volumeData'}
+						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA]}
+					>
+						<LegacyFlightRequestStepsEditor />
+					</RoleGatedRoute>
+				)}
+				{isFeatureEnabled('FlightRequests') && (
+					<RoleGatedRoute
+						exact
 						path={'/editor/flightrequest/:polygon'}
 						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA]}
 					>
@@ -297,7 +306,6 @@ const LoggedInScreens = () => {
 						roles={[AuthRole.ADMIN, AuthRole.PILOT, AuthRole.COA]}
 					>
 						<LegacyFlightRequestStepsEditor />
-						{/* <FlightRequestEditor token={token} history={history} /> */}
 					</RoleGatedRoute>
 				)}
 				{isFeatureEnabled('FlightRequests') && (
