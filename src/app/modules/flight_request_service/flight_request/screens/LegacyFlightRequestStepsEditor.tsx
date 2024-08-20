@@ -29,10 +29,10 @@ const LegacyFlightRequestStepsEditor = () => {
 
 	const params = useParams<{ polygon: string }>();
 
-	// const existingPolygon = params.polygon? JSON.parse(params.polygon) as Polygon : undefined;
+	const existingPolygon = params.polygon ? (JSON.parse(params.polygon) as Polygon) : undefined;
 
 	const [isOnNight, setIsOnNight] = useState<boolean>(false);
-	const [polygon, setPolygon] = useState<Polygon | undefined>(undefined);
+	const [polygon, setPolygon] = useState<Polygon | undefined>(existingPolygon);
 	const [modalProps, setModalProps] = useState<PFullModalProps | undefined>();
 	const flightRequest = useMemo(() => {
 		const flightRequest = new FlightRequestEntity();
