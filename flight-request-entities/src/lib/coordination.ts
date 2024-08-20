@@ -17,6 +17,12 @@ export enum CoordinationState {
 	// SELF_MANAGED = 'SELF_MANAGED'
 }
 
+export enum CoordinationReference {
+	ALTITUDE = 'ALTITUDE',
+	IS_ON_NIGHT = 'IS_ON_NIGHT',
+	VLOS = 'VLOS'
+}
+
 export class CoordinationEntity implements EntityHasDisplayName {
 	id?: string;
 	reference: string;
