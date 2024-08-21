@@ -30,6 +30,7 @@ interface VolumesStepProps {
 	setModalProps: (modalProps: PFullModalProps | undefined) => void;
 	isOnNight: boolean;
 	setIsOnNight: (isOnNight: boolean) => void;
+	defaultAltitude?: number;
 }
 
 const VolumesStep = (props: VolumesStepProps) => {
@@ -41,7 +42,8 @@ const VolumesStep = (props: VolumesStepProps) => {
 		modalProps,
 		setModalProps,
 		isOnNight,
-		setIsOnNight
+		setIsOnNight,
+		defaultAltitude
 	} = props;
 	const { sunrise: sunriseList, fetchSunrise, isFetchingSunrise } = useSunrise();
 	const [dateTimeChange, setDateTimeChange] = useState<boolean>(false);
@@ -53,7 +55,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 
 	const { t } = useTranslation();
 
-	const [maxAltitude, setMaxAltitude] = useState<number>(120);
+	const [maxAltitude, setMaxAltitude] = useState<number>(defaultAltitude || 100);
 	const [isBlockingCenter, setBlockingCenterFlag] = useState<boolean>(false);
 
 	const queryGeographicalZones = useQueryGeographicalZones(true);
@@ -301,7 +303,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 						<PNumberInput
 							id="operation-height"
 							label={t('Maximum altitude')}
-							defaultValue={flightRequest.volumes[0]?.max_altitude ?? 120}
+							defaultValue={flightRequest.volumes[0]?.max_altitude ?? defaultAltitude}
 							onChange={(value) => {
 								setMaxAltitude(value);
 								flightRequest.volumes.forEach((volume) => {
