@@ -1,20 +1,13 @@
-import PDropdown from '@pcomponents/PDropdown';
-import PInput from '@pcomponents/PInput';
-import PTextArea from '@pcomponents/PTextArea';
-import { observer } from 'mobx-react';
-import { useTranslation } from 'react-i18next';
-import styles from '../../../../commons/Pages.module.scss';
 import { Spinner } from '@blueprintjs/core';
 import { CoordinationEntity, CoordinationState } from '@flight-request-entities/coordination';
-import {
-	FlightCategory,
-	FlightRequestEntity,
-	FlightRequestState
-} from '@flight-request-entities/flightRequest';
+import { FlightRequestEntity, FlightRequestState } from '@flight-request-entities/flightRequest';
 import PBooleanInput from '@pcomponents/PBooleanInput';
 import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import PDateInput from '@pcomponents/PDateInput';
+import PDropdown from '@pcomponents/PDropdown';
+import PInput from '@pcomponents/PInput';
 import PNumberInput from '@pcomponents/PNumberInput';
+import PTextArea from '@pcomponents/PTextArea';
 import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import Tokyo from '@tokyo/Tokyo.svelte';
 import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
@@ -24,16 +17,20 @@ import { EditMode, TokyoProps } from '@tokyo/types';
 import { UserEntity } from '@utm-entities/user';
 import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 import { Polygon } from 'geojson';
+import { observer } from 'mobx-react';
 import { CSSProperties, FC, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { AuthRole, useAuthGetRole, useAuthStore } from 'src/app/modules/auth/store';
 import { useSchemaStore } from 'src/app/modules/schemas/store';
 import styled from 'styled-components';
 import { reactify } from 'svelte-preprocess-react';
 import env from '../../../../../vendor/environment/env';
+import styles from '../../../../commons/Pages.module.scss';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import { useQueryVehicle } from '../../../core_service/vehicle/hooks';
 import { useUpdateCoordination } from '../../coordination/hooks';
+import { useUpdateFlightRequestState } from '../hooks';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -52,7 +49,8 @@ const StateExplanationText = styled.div`
 `;
 
 const showProp = ['id', 'name', 'state', 'flight_comments', 'createdAt', 'vlos'];
-const editable = ['name', 'state', 'flight_comments'];
+// const editable = ['name', 'state', 'flight_comments'];
+const editable = ['state'];
 const possibleStates = (initialState?: FlightRequestState) => {
 	if (!initialState) {
 		return [];
@@ -82,6 +80,7 @@ const canEdit = (prop: string, isEditing: boolean) => {
 const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 	({ ls, isEditing }) => {
 		const { t } = useTranslation('glossary');
+		const updateFlightRequestState = useUpdateFlightRequestState();
 		if (!ls.entity) {
 			return null;
 		}
@@ -116,25 +115,36 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 							);
 						}
 						if (prop === 'state') {
-							return (
-								<PDropdown
-									key={prop}
-									options={[initialState, ...possibleStates(initialState)].map(
-										(value) => ({
+							if (updateFlightRequestState.isLoading) {
+								return <Spinner />;
+							} else {
+								return (
+									<PDropdown
+										key={prop}
+										options={[
+											initialState,
+											...possibleStates(initialState)
+										].map((value) => ({
 											value: value,
 											label: t(`glossary:flightRequest.flight_state.${value}`)
-										})
-									)}
-									id={`editor-flight-request-${prop}`}
-									defaultValue={entity[prop]}
-									label={t(`glossary:flightRequest.state`)}
-									onChange={(value) => ls.setInfo(prop, value)}
-									isRequired
-									disabled={!isEditing}
-									isDarkVariant
-									inline
-								/>
-							);
+										}))}
+										id={`editor-flight-request-${prop}`}
+										defaultValue={entity[prop]}
+										label={t(`glossary:flightRequest.state`)}
+										onChange={(value) => {
+											updateFlightRequestState.mutate({
+												id: ls.entity.id || '',
+												state: value
+											});
+											ls.setInfo(prop, value);
+										}}
+										isRequired
+										disabled={!isEditing}
+										isDarkVariant
+										inline
+									/>
+								);
+							}
 						}
 						if (prop === 'createdAt') {
 							console.log('createdAt:', entity[prop]);
@@ -577,16 +587,6 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 			<div className={styles.content}>
 				<aside className={styles.summary}>
 					<h2>{t('Flight Request information')}</h2>
-					{/* <PTooltip content={t('Paid')}>
-						<PaymentLine>
-							<PaidStateCircle
-								style={{
-									backgroundColor: ls.entity.paid ? 'green' : 'red'
-								}}
-							/>
-							{ls.entity.paid ? t('Paid') : t('Pending payment')}
-						</PaymentLine>
-					</PTooltip> */}
 				</aside>
 				<section className={styles.details}>
 					<PInput
