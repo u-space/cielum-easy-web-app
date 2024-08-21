@@ -27,9 +27,12 @@ enum FlightRequestEditorStep {
 const LegacyFlightRequestStepsEditor = () => {
 	const { t } = useTranslation();
 
-	const params = useParams<{ polygon: string }>();
-
+	const params = useParams<any>();
 	const existingPolygon = params.polygon ? (JSON.parse(params.polygon) as Polygon) : undefined;
+	const volumeData = params.volumeData
+		? (JSON.parse(params.volumeData) as Partial<OperationVolume>)
+		: undefined;
+	const defaultAltitude = volumeData?.max_altitude || 120;
 
 	const [isOnNight, setIsOnNight] = useState<boolean>(false);
 	const [polygon, setPolygon] = useState<Polygon | undefined>(existingPolygon);
@@ -41,8 +44,21 @@ const LegacyFlightRequestStepsEditor = () => {
 		vol.set('effective_time_begin', null);
 		vol.set('effective_time_end', null);
 		vol.set('operation_geography', polygon);
+		vol.set('max_altitude', defaultAltitude);
 
 		flightRequest.volumes = [vol];
+
+		if (volumeData) {
+			const volParam = new OperationVolume();
+			volParam.set('ordinal', 0);
+			volParam.set('operation_geography', polygon);
+			volParam.set('effective_time_begin', new Date(volumeData?.effective_time_begin || ''));
+			volParam.set('effective_time_begin', new Date(volumeData?.effective_time_end || ''));
+			vol.set('max_altitude', defaultAltitude);
+			flightRequest.volumes.push(volParam);
+			flightRequest.vlos = volumeData.beyond_visual_line_of_sight || false;
+		}
+
 		return flightRequest;
 	}, []);
 
@@ -162,7 +178,8 @@ const LegacyFlightRequestStepsEditor = () => {
 					modalProps,
 					setModalProps,
 					isOnNight,
-					setIsOnNight
+					setIsOnNight,
+					defaultAltitude
 				}}
 			/>
 		);
