@@ -115,7 +115,7 @@ const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
 				content={
 					getValidRemoteSensor(data)
 						? 'Validado por sensor remoto'
-						: 'No vlidad por sensor remoto'
+						: 'No validado por sensor remoto'
 				}
 			>
 				<StateCircle
