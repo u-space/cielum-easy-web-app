@@ -260,7 +260,7 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 			// Api ask us to delete the state bacause state change has separated endpoint
 			const body = flightRequest.asBackendFormat;
 			delete body.state;
-			const { data } = await axiosInstance.put(`/flightRequest/${body.id}`, body, {
+			const { data } = await axiosInstance.post(`/flightRequest/${body.id}`, body, {
 				headers: { auth: token }
 			});
 			return data;
