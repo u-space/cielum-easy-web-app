@@ -151,36 +151,54 @@ const OperationEditor = () => {
 				}
 			}),
 		(error: any) => {
-			// console.log(error);
-			const msg = '';
-			const aux = error.response?.data.message.split(',').map((errorTextSplited: string) => {
-				const [errorText, zone] = transformOperationCheckError(errorTextSplited);
-				console.log('erors: ', errorText, '|', zone);
-				if (zone === '') {
-					// msg.concat('e' + t(errorText) + '\n');
-					return t(errorText);
-				} else {
-					// msg.concat('e' + t(errorText, { x: zone }) + '\n');
-					return t(errorText, { x: zone });
-				}
-			});
-			console.log(aux);
-			console.log(msg);
-			// error.response.data.message = translateErrors(error, 'operation');
+			const msg = error.response?.data.message as string;
+			const aux: string[] = error.response?.data.message
+				.split(',')
+				.map((errorTextSplited: string) => {
+					const [errorText, zone] = transformOperationCheckError(errorTextSplited);
+					console.log('erors: ', errorText, '|', zone);
+					if (zone === '') {
+						return t(errorText);
+					} else {
+						return t(errorText, { x: zone });
+					}
+				});
+			let needCoordination = false;
+			if (msg.search('Need coordination') !== -1) {
+				needCoordination = true;
+				aux.push(t('You will be redirected to the soca creation'));
+			}
 			setModalProps({
 				isVisible: true,
 				type: PModalType.ERROR,
 				title: t('An error ocurred while saving'),
-				// content: translateErrors(error, 'operation'),
-				content: aux,
+				content: needCoordination ? aux : translateErrors(error, 'operation'),
 				primary: {
 					onClick: () => {
 						resetError();
 						const msg = error.response?.data.message as string;
 						if (msg.search('Need coordination') !== -1) {
 							const vol: OperationVolume = operation.operation_volumes[0];
-							const geo = vol.operation_geography;
-							history.push(`/editor/flightRequest/${JSON.stringify(geo)}`);
+							const geo =
+								operation.operation_volumes.length === 1
+									? vol.operation_geography
+									: '';
+							const volumeData =
+								operation.operation_volumes.length === 1
+									? {
+											effective_time_begin: vol.effective_time_begin,
+											effective_time_end: vol.effective_time_end,
+											min_altitude: vol.min_altitude,
+											max_altitude: vol.max_altitude,
+											beyond_visual_line_of_sight:
+												vol.beyond_visual_line_of_sight
+									  }
+									: undefined;
+							history.push(
+								`/editor/flightRequest/${JSON.stringify({ ...geo })}${
+									volumeData ? `/${JSON.stringify(volumeData)}` : ''
+								}`
+							);
 						}
 					}
 				}
@@ -261,7 +279,7 @@ const OperationEditor = () => {
 							<ContextualInfo
 								entity={operation.operation_volumes[selectedVolume]}
 								entityName={'volume'}
-								hiddenProps={['ordinal', 'id']}
+								hiddenProps={['ordinal', 'id', 'near_structure']}
 							/>
 						</CardGroup>
 					)}

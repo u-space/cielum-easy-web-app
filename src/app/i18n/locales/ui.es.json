@@ -566,5 +566,6 @@
 	"Need coordination for altitude flight.": "Necesita coordinación para vuelo de altura.",
 	"Need coordination for night flight.": "Necesita coordinación para vuelo nocturno.",
 	"Need coordination for vlos flight.": "Necesita coordinación por vuelo fuera de línea de vista.",
-	"Need coordination for zone x": "Necesita coodinación para zona {{x}}."
+	"Need coordination for zone x": "Necesita coodinación para zona {{x}}.",
+	"You will be redirected to the soca creation": "Serás redirigido a la creación de soca"
 }
