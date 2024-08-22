@@ -59,7 +59,7 @@ const possibleStates = (initialState?: FlightRequestState) => {
 		case FlightRequestState.PREFLIGHT:
 			return [FlightRequestState.CANCELLED];
 		case FlightRequestState.COMPLETED:
-			return [FlightRequestState.REJECTED, FlightRequestState.CANCELLED];
+			return [FlightRequestState.CANCELLED];
 		case FlightRequestState.REJECTED:
 			return [FlightRequestState.CANCELLED];
 		case FlightRequestState.CANCELLED:
