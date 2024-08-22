@@ -105,7 +105,7 @@ const transformPositionRid = (data: IResponseRidPosition[]) => {
 export const getPositionAPIClient = (api: string, token: string | null) => {
 	const axiosInstance = Axios.create({
 		baseURL: api,
-		timeout: env.tiemeout || 50000,
+		timeout: env.tiemeout || 500000,
 		headers: { 'Content-Type': 'application/json' }
 	});
 

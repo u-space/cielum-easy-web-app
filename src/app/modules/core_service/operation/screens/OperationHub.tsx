@@ -1,21 +1,20 @@
-import { FC } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import PTooltip from '@pcomponents/PTooltip';
-import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
-import { getFeatureOption, useQueryString } from '../../../../utils';
-import { UseMutationResult, useQueryClient } from 'react-query';
-import GenericHub, { GenericHubProps, rowHeight } from '../../../../commons/screens/GenericHub';
-import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
-import { useDeleteOperation, useQueryOperations, useSaveOperation } from '../hooks';
 import { GridCell, GridCellKind } from '@glideapps/glide-data-grid';
-import { useOperationStore } from '../store';
-import ViewAndEditOperation from '../pages/ViewAndEditOperation';
-import OperationSearchTools from '../components/OperationSearchTools';
-import styled from 'styled-components';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
+import PTooltip from '@pcomponents/PTooltip';
 import { OPERATION_STATE_COLORS_CSS } from '@tokyo/TokyoDefaults';
 import { Operation, OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { UseMutationResult, useQueryClient } from 'react-query';
+import { useHistory } from 'react-router-dom';
 import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
+import GenericHub, { GenericHubProps, rowHeight } from '../../../../commons/screens/GenericHub';
+import { getFeatureOption, useQueryString } from '../../../../utils';
+import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
+import OperationSearchTools from '../components/OperationSearchTools';
+import { useDeleteOperation, useQueryOperations, useSaveOperation } from '../hooks';
+import ViewAndEditOperation from '../pages/ViewAndEditOperation';
+import { useOperationStore } from '../store';
 
 interface ExtraActionsProps {
 	data: Operation;
