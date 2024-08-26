@@ -13,10 +13,10 @@ import i18n from '../../../../i18n';
 import CoordinationsStep from '../pages/editor/CoordinationsStep';
 import VolumesStep from '../pages/editor/VolumesStep';
 
-export interface SubTotals {
-	amount: number;
-	reason: string;
-}
+// export interface SubTotals {
+// 	amount: number;
+// 	reason: string;
+// }
 
 enum FlightRequestEditorStep {
 	VOLUME_AND_INFO,
@@ -65,24 +65,6 @@ const LegacyFlightRequestStepsEditor = () => {
 	const [zonesChecked, setZonesChecked] = useState<GeographicalZone[]>([]);
 
 	const [step, setStep] = useState(FlightRequestEditorStep.VOLUME_AND_INFO);
-
-	const zonesCheckedTotal = useMemo(() => {
-		return zonesChecked.reduce((acc, zone) => acc + (zone.coordinator?.price ?? 0), 0);
-	}, [zonesChecked]);
-	const [total, setTotal] = useState<SubTotals[]>([]);
-
-	useEffect(() => {
-		const aux = [];
-		aux.push({
-			reason: t('Coordinations'),
-			amount: zonesCheckedTotal
-		});
-		if (flightRequest.urban_flight) {
-			aux.push({ reason: t('Coordination fee for flying in an urban area'), amount: 30 });
-		}
-		aux.push({ reason: t('Base fee'), amount: 20 });
-		setTotal(aux);
-	}, [zonesCheckedTotal, flightRequest.urban_flight, t]);
 
 	const resetError = () => {
 		setModalProps(undefined);
@@ -192,7 +174,7 @@ const LegacyFlightRequestStepsEditor = () => {
 					flightRequest,
 					zonesChecked,
 					setZonesChecked,
-					total,
+					// total,
 					setModalProps,
 					modalProps,
 					isOnNight,

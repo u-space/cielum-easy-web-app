@@ -20,12 +20,12 @@ import DashboardLayout from '../../../../../commons/layouts/DashboardLayout';
 import PageLayout from '../../../../../commons/layouts/PageLayout';
 import { useFlightRequestServiceAPI } from '../../../../../utils';
 import { useGetVehicleInsuranceSimulation } from '../../../../core_service/vehicle/hooks';
-import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
+// import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
 
 interface InsuranceAndPaymentStepProps {
 	previousStep: () => void;
 	flightRequest: FlightRequestEntity;
-	total: SubTotals[];
+	// total: SubTotals[];
 	modalProps: PFullModalProps | undefined;
 	setModalProps: (props: PFullModalProps | undefined) => void;
 }
@@ -169,7 +169,7 @@ const InsuranceConfirmation: FC<{
 };
 
 const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
-	const { previousStep, flightRequest, total, modalProps, setModalProps } = props;
+	const { previousStep, flightRequest, modalProps, setModalProps } = props;
 	const { t } = useTranslation();
 	const history = useHistory();
 
@@ -249,9 +249,9 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 		saveFlightRequestMutation.mutate(flightRequest);
 	};
 
-	const totalNumber = useMemo(() => {
-		return total.reduce((acc, obj) => acc + obj.amount, 0);
-	}, [total]);
+	// const totalNumber = useMemo(() => {
+	// 	return total.reduce((acc, obj) => acc + obj.amount, 0);
+	// }, [total]);
 
 	const droneInsuranceTotal = useMemo(() => {
 		return insurancePrices.reduce((acc, sim) => acc + (sim.premium_total ?? 0), 0);
@@ -373,11 +373,11 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 					<div className={styles.content}>
 						<aside className={styles.summary}>
 							<h2>{t('Sub-total')}</h2>
-							<h1>{totalNumber}€</h1>
+							{/* <h1>{totalNumber}€</h1> */}
 						</aside>
 						<section className={styles.details}>
 							<ul>
-								{total.map((item) => {
+								{/* {total.map((item) => {
 									return (
 										<li>
 											<p>
@@ -386,7 +386,7 @@ const InsuranceAndPaymentStep = (props: InsuranceAndPaymentStepProps) => {
 											</p>
 										</li>
 									);
-								})}
+								})} */}
 							</ul>
 						</section>
 					</div>

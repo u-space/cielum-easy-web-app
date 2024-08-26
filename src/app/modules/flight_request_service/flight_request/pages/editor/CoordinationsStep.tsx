@@ -9,7 +9,7 @@ import { useQueryGeographicalZonesIntersectingPolygon } from '../../../geographi
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { Polygon } from 'geojson';
 import styles from '../../../../../commons/Pages.module.scss';
-import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
+// import { SubTotals } from '../../screens/LegacyFlightRequestStepsEditor';
 import DashboardLayout from '../../../../../commons/layouts/DashboardLayout';
 import PFullModal, { PFullModalProps } from '@pcomponents/PFullModal';
 import { useFlightRequestServiceAPI } from 'src/app/utils';
@@ -19,6 +19,7 @@ import { translateErrors } from '@utm-entities/_util';
 import { useHistory } from 'react-router-dom';
 import { UserEntity } from '@utm-entities/user';
 import PTooltip from '@pcomponents/PTooltip';
+import { CoordinatorEntity } from '@flight-request-entities/coordinator';
 
 interface FlightRequestCoordinationsStepProps {
 	previousStep: () => void;
@@ -26,7 +27,7 @@ interface FlightRequestCoordinationsStepProps {
 	flightRequest: FlightRequestEntity;
 	zonesChecked: GeographicalZone[];
 	setZonesChecked: (zones: GeographicalZone[]) => void;
-	total: SubTotals[];
+	// total: SubTotals[];
 	setModalProps: (props: PFullModalProps | undefined) => void;
 	modalProps: PFullModalProps | undefined;
 	isOnNight: boolean;
@@ -43,13 +44,14 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		flightRequest,
 		zonesChecked,
 		setZonesChecked,
-		total,
+		// total,
 		setModalProps,
 		modalProps,
 		isOnNight
 	} = props;
 
 	const [isShowingExplanation, setShowingExplanation] = useState(false);
+	const [coordinators, setCoordinators] = useState<CoordinatorEntity[]>([]);
 
 	useEffect(() => {
 		if (flightRequest.volumes[0].operation_geography === null) alert('Error occured');
@@ -60,16 +62,28 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 			flightRequest.volumes[0]?.operation_geography as Polygon // This is checked on FlightRequestEditor
 		);
 
-	const totalNumber = useMemo(() => {
-		return total.reduce((acc, obj) => acc + obj.amount, 0);
-	}, [total]);
+	// const totalNumber = useMemo(() => {
+	// 	return total.reduce((acc, obj) => acc + obj.amount, 0);
+	// }, [total]);
 
 	useEffect(() => {
 		if (geographicalZonesIntersectingVolume) {
 			setZonesChecked(
-				geographicalZonesIntersectingVolume.map((zone: GeographicalZone) => zone.id)
+				geographicalZonesIntersectingVolume.map((zone: GeographicalZone) => zone)
 			);
 		}
+		const coordinatorsList = [];
+		if (geographicalZonesIntersectingVolume) {
+			for (const zone of geographicalZonesIntersectingVolume) {
+				if (
+					zone.coordinator &&
+					coordinatorsList.findIndex((c) => c?.id === zone.coordinator?.id) === -1
+				) {
+					coordinatorsList.push(zone.coordinator);
+				}
+			}
+		}
+		setCoordinators(coordinatorsList);
 	}, [geographicalZonesIntersectingVolume]);
 
 	const {
@@ -117,22 +131,6 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		evt.preventDefault();
 		saveFlightRequestMutation.mutate();
 	};
-
-	// const canCreateFlightRequest = useMemo(() => {
-	// 	const hasGeographicalZoneIntersections =
-	// 		geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
-
-	// 	const specialCoordinations =
-	// 		needVlosCoordination(flightRequest) &&
-	// 		needAltitudeCoordination(flightRequest) &&
-	// 		isOnNight;
-
-	// 	const operatorCanOPerate =
-	// 		flightRequest.operator &&
-	// 		flightRequest.operator instanceof UserEntity &&
-	// 		flightRequest.operator.canOperate;
-	// 	return hasGeographicalZoneIntersections && operatorCanOPerate && specialCoordinations;
-	// }, [geographicalZonesIntersectingVolume, flightRequest, flightRequest.operator]);
 
 	const canCreateFlightRequest = () => {
 		const hasGeographicalZoneIntersections =
@@ -251,7 +249,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 						</aside>
 						<section className={styles.details}>
 							{isLoading && <Spinner />}
-							{geographicalZonesIntersectingVolume?.map(
+							{/* {geographicalZonesIntersectingVolume?.map(
 								(zone: GeographicalZone, index: number) => (
 									<>
 										<Checkbox
@@ -291,7 +289,46 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 											)}
 									</>
 								)
-							)}
+							)} */}
+							{coordinators &&
+								coordinators.map((coordinationZone, index) => (
+									<>
+										<Checkbox
+											id={`coordinatorZone-${index}`}
+											key={coordinationZone.id}
+											label={`${coordinationZone.infrastructure} (${coordinationZone.id}) - ${coordinationZone.email}`}
+											checked={true}
+											// onChange={(value) => {}}
+										></Checkbox>
+										{!checkTimeInterval(
+											coordinationZone?.minimun_coordination_days || 0,
+											flightRequest
+										) &&
+											getStartTime !== undefined && (
+												<div className={styles.alert}>
+													La coordinación requiere{' '}
+													<strong>
+														{
+															coordinationZone?.minimun_coordination_days
+														}
+													</strong>{' '}
+													días para realizarse y la coordinación
+													solicitada comienza el{' '}
+													{(
+														getStartTime(flightRequest) as Date
+													).toLocaleString()}{' '}
+													en{' '}
+													<strong>
+														{daysBetween(
+															new Date(),
+															getStartTime(flightRequest) as Date
+														)}
+													</strong>{' '}
+													días.
+												</div>
+											)}
+									</>
+								))}
 							{needVlosCoordination(flightRequest) && (
 								<Checkbox
 									id={`coordination-vlos`}

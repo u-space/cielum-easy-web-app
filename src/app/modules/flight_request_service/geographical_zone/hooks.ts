@@ -9,6 +9,7 @@ import { useGeographicalZoneStore } from './store';
 import { Polygon } from 'geojson';
 import { useDebounce } from '@uidotdev/usehooks';
 import { WebMercatorViewport } from '@deck.gl/core/typed';
+import { GeographicalZone } from '@flight-request-entities/geographicalZone';
 
 export function useSelectedGeographicalZone() {
 	const queryString = useQueryString();
@@ -52,7 +53,7 @@ export function useQueryGeographicalZonesIntersectingPolygon(polygon: Polygon) {
 			enabled: !!polygon
 		}
 	);
-	const intersections = query.data?.data.geographicalZones;
+	const intersections = query.data?.data.geographicalZones as GeographicalZone[];
 	return { intersections, isLoading: query.isLoading };
 }
 

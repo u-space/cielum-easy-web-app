@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { Polygon } from 'geojson';
-import Axios, { AxiosResponseTransformer } from 'axios';
+import Axios, { AxiosResponse, AxiosResponseTransformer } from 'axios';
 import Joi from 'joi';
 import _ from 'lodash';
 import { CoordinatorEntity } from './coordinator';
@@ -34,7 +34,7 @@ export class GeographicalZone implements Record<string, number | any> {
 		makeAutoObservable(this);
 	}
 
-	static createFromAPI(existing: any, withoutGeography = false) {
+	static createFromAPI(existing: any, withoutGeography = false): GeographicalZone | null {
 		//FIXME: we are having problem here with multipolygons
 		if (!withoutGeography) {
 			if (!existing?.geography) {
@@ -113,13 +113,17 @@ export const getGeographicalZoneAPIClient = (api: string, token: string | null) 
 				throw new Error('Polygon is required');
 			}
 			const params = { 'polygon[]': JSON.stringify(polygon.coordinates[0]) };
-			return axiosInstance.get(`geographicalzones/intersecting`, {
-				headers: { auth: token },
-				params,
-				transformResponse: (
-					Axios.defaults.transformResponse as AxiosResponseTransformer[]
-				).concat(transformGeographicalZone)
-			});
+			const res = axiosInstance.get<GetGeographicalZonesParsedResponseType>(
+				`geographicalzones/intersecting`,
+				{
+					headers: { auth: token },
+					params,
+					transformResponse: (
+						Axios.defaults.transformResponse as AxiosResponseTransformer[]
+					).concat(transformGeographicalZone)
+				}
+			);
+			return res;
 		},
 		getGeographicalZones(
 			take: number,
