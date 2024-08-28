@@ -1,10 +1,10 @@
-import { makeAutoObservable } from 'mobx';
+import { buildParametersObject } from '@utm-entities/_util';
+import Axios, { AxiosResponseTransformer } from 'axios';
 import { Polygon } from 'geojson';
-import Axios, { AxiosResponse, AxiosResponseTransformer } from 'axios';
 import Joi from 'joi';
 import _ from 'lodash';
+import { makeAutoObservable } from 'mobx';
 import { CoordinatorEntity } from './coordinator';
-import { buildParametersObject } from '@utm-entities/_util';
 
 export class GeographicalZone implements Record<string, number | any> {
 	id?: string;
@@ -14,6 +14,8 @@ export class GeographicalZone implements Record<string, number | any> {
 	layer_id: string;
 	object_id: string;
 	last_update: Date;
+	min_altitude: number;
+	max_altitude: number;
 
 	constructor(
 		id: string | undefined,
@@ -22,7 +24,9 @@ export class GeographicalZone implements Record<string, number | any> {
 		coordinator: CoordinatorEntity | null,
 		layer_id: string,
 		object_id: string,
-		last_update: Date
+		last_update: Date,
+		min_altitude: number,
+		max_altitude: number
 	) {
 		this.id = id;
 		this.name = name;
@@ -31,6 +35,8 @@ export class GeographicalZone implements Record<string, number | any> {
 		this.layer_id = layer_id;
 		this.object_id = object_id;
 		this.last_update = last_update;
+		this.min_altitude = min_altitude;
+		this.max_altitude = max_altitude;
 		makeAutoObservable(this);
 	}
 
@@ -62,7 +68,9 @@ export class GeographicalZone implements Record<string, number | any> {
 			existing.coordinator ? CoordinatorEntity.createFromGeozone(existing.coordinator) : null,
 			existing.layer_id,
 			existing.object_id,
-			existing.last_update
+			existing.last_update,
+			existing.min_altitude,
+			existing.max_altitude
 		);
 	}
 }
@@ -108,11 +116,19 @@ export const getGeographicalZoneAPIClient = (api: string, token: string | null) 
 				transformResponse: Axios.defaults.transformResponse as AxiosResponseTransformer[]
 			});
 		},
-		getGeographicalZonesIntersecting(polygon: Polygon) {
+		getGeographicalZonesIntersecting(
+			polygon: Polygon,
+			min_altitude: number,
+			max_altitude: number
+		) {
 			if (!polygon) {
 				throw new Error('Polygon is required');
 			}
-			const params = { 'polygon[]': JSON.stringify(polygon.coordinates[0]) };
+			const params = {
+				min_altitude,
+				max_altitude,
+				'polygon[]': JSON.stringify(polygon.coordinates[0])
+			};
 			const res = axiosInstance.get<GetGeographicalZonesParsedResponseType>(
 				`geographicalzones/intersecting`,
 				{

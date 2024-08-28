@@ -42,13 +42,17 @@ export function useSelectedGeographicalZone() {
 	};
 }
 
-export function useQueryGeographicalZonesIntersectingPolygon(polygon: Polygon) {
+export function useQueryGeographicalZonesIntersectingPolygon(
+	polygon: Polygon,
+	min_altitude: number,
+	max_altitude: number
+) {
 	const {
 		geographicalZone: { getGeographicalZonesIntersecting }
 	} = useFlightRequestServiceAPI();
 	const query = useQuery(
 		['intersectingPolygonCoordinations', polygon],
-		() => getGeographicalZonesIntersecting(polygon),
+		() => getGeographicalZonesIntersecting(polygon, min_altitude, max_altitude),
 		{
 			enabled: !!polygon
 		}

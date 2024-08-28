@@ -59,7 +59,9 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 
 	const { intersections: geographicalZonesIntersectingVolume, isLoading } =
 		useQueryGeographicalZonesIntersectingPolygon(
-			flightRequest.volumes[0]?.operation_geography as Polygon // This is checked on FlightRequestEditor
+			flightRequest.volumes[0]?.operation_geography as Polygon,
+			flightRequest.volumes[0]?.min_altitude || 0,
+			flightRequest.volumes[0]?.max_altitude || 0
 		);
 
 	// const totalNumber = useMemo(() => {
