@@ -1,14 +1,14 @@
+import { CoordinatorEntity } from '@flight-request-entities/coordinator';
 import { observer } from 'mobx-react';
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useUpdateCoordinator } from '../hooks';
-import { useQueryString } from '../../../../utils';
-import { CoordinatorEntity } from '@flight-request-entities/coordinator';
-import NewEntity from '../../../../commons/pages/NewEntity';
-import { useAuthIsAdmin } from '../../../auth/store';
-import ViewAndEditCoordinator from '../pages/ViewAndEditCoordinator';
-import { useLs } from '../../../../commons/utils';
 import { UseMutationResult } from 'react-query';
+import { useHistory } from 'react-router-dom';
+import NewEntity from '../../../../commons/pages/NewEntity';
+import { useLs } from '../../../../commons/utils';
+import { useQueryString } from '../../../../utils';
+import { useAuthIsAdmin } from '../../../auth/store';
+import { useUpdateCoordinator } from '../hooks';
+import ViewAndEditCoordinator from '../pages/ViewAndEditCoordinator';
 
 const NewCoordinatorScreen = () => {
 	const queryString = useQueryString();
