@@ -28,6 +28,8 @@ function getIdFromGeographicalZone(geographicalZone: GeographicalZone) {
 	);
 }
 
+// class PolygonTextLayer extends CompositeLayer {
+
 function getConverterFromGeographicalZone(
 	_geographicalZone: GeographicalZone,
 	options?: GeographicalZoneDrawingProps
@@ -36,6 +38,9 @@ function getConverterFromGeographicalZone(
 	const id = getIdFromGeographicalZone(geographicalZone);
 	const fillAlpha = options?.fillAlpha ?? 50;
 	const threeDimensional = options?.threeDimensional ?? true;
+
+	const tooltipConent = `${geographicalZone.min_altitude}/${geographicalZone.max_altitude}`;
+	// geographicalZone.tooltip = tooltipConent;
 
 	let fillColor: RGBA = [GZ_FILL_COLOR[0], GZ_FILL_COLOR[1], GZ_FILL_COLOR[2], fillAlpha];
 	// if (false) {
@@ -57,17 +62,23 @@ function getConverterFromGeographicalZone(
 		new PolygonLayer({
 			pickable: true,
 			id,
-			data: [{ ...geographicalZone.geography, properties: geographicalZone }],
+			data: [
+				{
+					...geographicalZone.geography,
+					properties: { ...geographicalZone, tooltip: tooltipConent }
+				}
+			],
 			getPolygon: (d) => d.coordinates,
 			getFillColor: fillColor,
 			getLineColor: lineColor,
 			lineWidthUnits: 'pixels',
 			getLineWidth: 1,
 			filled: true,
-			extruded: threeDimensional,
+			extruded: false,
+
 			parameters: {
 				depthMask: false
 			},
-			getElevation: 120
+			getElevation: 0
 		});
 }
