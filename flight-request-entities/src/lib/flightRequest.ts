@@ -284,12 +284,12 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 		getFlightRequests(
 			take: number,
 			skip: number,
-			orderBy: string,
-			order: string,
+			orderBy?: string,
+			order?: string,
 			filterBy?: string,
 			filter?: string,
-			showPaid?: boolean,
-			showNotPaid?: boolean,
+			// showPaid?: boolean,
+			// showNotPaid?: boolean,
 			filterState?: FlightRequestState
 		) {
 			return axiosInstance.get('flightRequest', {
@@ -302,8 +302,8 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 						filterBy,
 						filter
 					),
-					paid: showPaid,
-					unpaid: showNotPaid,
+					// paid: showPaid,
+					// unpaid: showNotPaid,
 					filterState: filterState
 				},
 				headers: { auth: token },
