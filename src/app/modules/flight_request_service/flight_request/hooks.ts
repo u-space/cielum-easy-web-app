@@ -6,6 +6,7 @@ import { shallow } from 'zustand/shallow';
 import { useFlightRequestStore } from './store';
 import { FlightRequestEntity, FlightRequestState } from '@flight-request-entities/flightRequest';
 import { AxiosError, AxiosResponse } from 'axios';
+import { useAuthStore } from '../../auth/store';
 
 export function useSelectedFlightRequest() {
 	const { id } = useParams() as { id: string | undefined };
@@ -41,7 +42,52 @@ export function useSelectedFlightRequest() {
 	};
 }
 
-export function useQueryFlightRequests(all = false) {
+export interface IUseQueryFlightRequests {
+	// data: AxiosResponse<FlightRequestEntity[]> ;
+	flightRequests: FlightRequestEntity[];
+	count: number;
+}
+
+export function useOwnedFlightRequests(): IUseQueryFlightRequests & any {
+	const {
+		flightRequest: { getFlightRequests }
+	} = useFlightRequestServiceAPI();
+
+	const { role, email } = useAuthStore(
+		(state) => ({
+			role: state.role,
+			email: state.email
+		}),
+		shallow
+	);
+
+	const query = useQuery(['flightRequest'], () =>
+		getFlightRequests(
+			9999,
+			0,
+			undefined,
+			undefined,
+			'operator',
+			email,
+			// false,
+			// false,
+			FlightRequestState.COMPLETED
+		)
+	);
+	const { data: response } = query;
+
+	const data = query.isSuccess && response ? response.data : null;
+	const flightRequests = data ? data.flightRequests : [];
+	const count = data ? data.count : 0;
+
+	return {
+		...query,
+		flightRequests,
+		count
+	};
+}
+
+export function useQueryFlightRequests(all = false): IUseQueryFlightRequests & any {
 	const {
 		flightRequest: { getFlightRequests }
 	} = useFlightRequestServiceAPI();
@@ -53,8 +99,8 @@ export function useQueryFlightRequests(all = false) {
 		sortingOrder,
 		filterProperty,
 		filterMatchingText,
-		filterShowPaid,
-		filterShowNotPaid,
+		// filterShowPaid,
+		// filterShowNotPaid,
 		filterState
 	} = useFlightRequestStore(
 		(state) => ({
@@ -80,8 +126,8 @@ export function useQueryFlightRequests(all = false) {
 			sortingOrder,
 			filterProperty,
 			filterMatchingText,
-			filterShowPaid,
-			filterShowNotPaid,
+			// filterShowPaid,
+			// filterShowNotPaid,
 			filterState
 		],
 		() =>
@@ -92,8 +138,8 @@ export function useQueryFlightRequests(all = false) {
 				sortingOrder,
 				filterProperty,
 				filterMatchingText,
-				filterShowPaid,
-				filterShowNotPaid,
+				// filterShowPaid,
+				// filterShowNotPaid,
 				filterState
 			)
 	);
