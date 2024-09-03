@@ -1,15 +1,9 @@
 import type { MapViewState } from '@deck.gl/core/typed';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { get, Unsubscriber, writable } from 'svelte/store';
 import type { Geometry } from 'geojson';
+import { useEffect, useState } from 'react';
+import { get, writable } from 'svelte/store';
+import { BackgroundMode, DestroyHandler, UpdateHandler, type FlyToPosition } from './types';
 import { getNewViewport } from './util';
-import {
-	BackgroundMode,
-	type FlyToPosition,
-	EditMode,
-	UpdateHandler,
-	DestroyHandler
-} from './types';
 
 const initialPosition = {
 	latitude: -34.89712784173059,

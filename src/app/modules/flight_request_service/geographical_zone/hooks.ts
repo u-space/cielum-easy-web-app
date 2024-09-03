@@ -1,15 +1,14 @@
+import { useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useFlightRequestServiceAPI, useQueryString } from '../../../utils';
-import { useEffect, useMemo } from 'react';
-
-import { useTranslation } from 'react-i18next';
-import { tokyoViewState, useTokyo } from '@tokyo/store';
-import { polygon } from '@turf/helpers';
-import { useGeographicalZoneStore } from './store';
-import { Polygon } from 'geojson';
-import { useDebounce } from '@uidotdev/usehooks';
 import { WebMercatorViewport } from '@deck.gl/core/typed';
 import { GeographicalZone } from '@flight-request-entities/geographicalZone';
+import { useTokyo } from '@tokyo/store';
+import { polygon } from '@turf/helpers';
+import { useDebounce } from '@uidotdev/usehooks';
+import { Polygon } from 'geojson';
+import { useTranslation } from 'react-i18next';
+import { useGeographicalZoneStore } from './store';
 
 export function useSelectedGeographicalZone() {
 	const queryString = useQueryString();
