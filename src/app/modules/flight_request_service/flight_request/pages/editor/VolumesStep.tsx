@@ -17,6 +17,7 @@ import EditorMapViewSvelte from '../../../../map/screens/editor/EditorMapView.sv
 import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
 import InfoFlightRequest from '../../components/InfoFlightRequest';
 import { useSunrise } from './SunriseSunsetHook';
+import { useOwnedFlightRequests } from '../../hooks';
 
 const ONE_VOLUME_PER_DAY = false;
 
@@ -59,6 +60,9 @@ const VolumesStep = (props: VolumesStepProps) => {
 	const [isBlockingCenter, setBlockingCenterFlag] = useState<boolean>(false);
 
 	const queryGeographicalZones = useQueryGeographicalZones(true);
+
+	const frQuery = useOwnedFlightRequests();
+	const flightRequests: FlightRequestEntity[] = frQuery.flightRequests;
 
 	const onPolygonsUpdated = useCallback((polygons: Polygon[]) => {
 		setPolygon(polygons[0]);
@@ -321,6 +325,8 @@ const VolumesStep = (props: VolumesStepProps) => {
 				editOptions={editOptions}
 				geographicalZones={queryGeographicalZones.items}
 				onEdit={(event: any) => onPolygonsUpdated(event.detail)}
+				flightRequests={flightRequests}
+
 			/>
 			<PButton
 				style={{

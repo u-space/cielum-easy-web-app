@@ -30,6 +30,8 @@ import { reactify } from 'svelte-preprocess-react';
 import { useAuthStore } from '../../../auth/store';
 import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewProps';
 import { useQueryUser } from '../../user/hooks';
+import { useOwnedFlightRequests } from 'src/app/modules/flight_request_service/flight_request/hooks';
+import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -61,6 +63,8 @@ const OperationEditor = () => {
 	const schemaUsers = useSchemaStore((state) => state.users);
 
 	const queryGeographicalZones = useQueryGeographicalZones(true);
+	const frQuery = useOwnedFlightRequests();
+	const flightRequests: FlightRequestEntity[] = frQuery.flightRequests;
 
 	const [modalProps, setModalProps] = useState<PFullModalProps>(undefinedModal);
 	const [selectedVolume, setSelectedVolume] = useState<number | null>(null);
@@ -225,7 +229,8 @@ const OperationEditor = () => {
 			polygons,
 			mode: EditMode.MULTI
 		},
-		geographicalZones: queryGeographicalZones.items
+		geographicalZones: queryGeographicalZones.items,
+		flightRequests:flightRequests
 	};
 
 	return (

@@ -7,11 +7,15 @@
 		GeographicalZoneDrawingProps,
 		geographicalZoneTokyoConverter
 	} from '@tokyo/converters/fra/geographicalZone';
+	import { flightRequestTokyoConverter } from '@tokyo/converters/fra/flightRequest';
+
 	import { EditorMapViewProps } from './EditorMapViewProps';
 
 	export let editOptions: EditorMapViewProps['editOptions'];
 	export let geographicalZones: EditorMapViewProps['geographicalZones'];
+	export let flightRequests: EditorMapViewProps['flightRequests'];
 
+	
 	const alphas: GeographicalZoneDrawingProps = {
 		lineAlpha: 255,
 		fillAlpha: 15,
@@ -26,4 +30,11 @@
 			getLayer={geographicalZoneTokyoConverter.getConverter(geographicalZone, alphas)}
 		/>
 	{/each}
+
+	{#each flightRequests as flightRequest (flightRequest.id)}
+			<TokyoGenericMapElement
+				id={flightRequestTokyoConverter.getId(flightRequest)}
+				getLayer={flightRequestTokyoConverter.getConverter(flightRequest)}
+			/>
+		{/each}
 </Tokyo>

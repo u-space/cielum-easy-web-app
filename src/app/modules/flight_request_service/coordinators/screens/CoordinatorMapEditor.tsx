@@ -122,7 +122,8 @@ const CoordinatorMapEditor = () => {
 		editOptions: {
 			mode: EditMode.SINGLE,
 			polygons
-		}
+		},
+		flightRequests:[]
 	};
 	return (
 		<MapLayout

@@ -4,6 +4,7 @@ import { UvrEntity } from '@utm-entities/uvr';
 import { PositionEntity } from '@utm-entities/position';
 import { ControlsOptions, TokyoPick } from '@tokyo/types';
 import { BaseOperation } from '@utm-entities/v2/model/operation';
+import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 
 export enum LiveMapSelectableType {
 	OPERATION = 'operation',
@@ -43,6 +44,7 @@ export type LiveMapSelected =
 export interface LiveMapViewProps {
 	rfvs: RfvEntity[];
 	uvrs: UvrEntity[];
+	flightRequests: FlightRequestEntity[];
 
 	handlers: {
 		vehicleClick?: (vehicle: PositionEntity[]) => void;

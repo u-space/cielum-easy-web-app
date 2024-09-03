@@ -13,6 +13,8 @@
 	import { rfvTokyoConverter } from '@tokyo/converters/core/rfvDrawer';
 	import { uvrTokyoConverter } from '@tokyo/converters/core/uvrDrawer';
 	import { geographicalZoneTokyoConverter } from '@tokyo/converters/fra/geographicalZone';
+	import { flightRequestTokyoConverter } from '@tokyo/converters/fra/flightRequest';
+
 	import { CButtonVariant } from '@tokyo/gui/CButton';
 	import CButton from '@tokyo/gui/CButton.svelte';
 	import { CCheckboxCheckedEvent } from '@tokyo/gui/CCheckbox';
@@ -38,6 +40,7 @@
 	export let vehiclePositions: LiveMapViewProps['vehiclePositions'] = new Map();
 	export let rfvs: LiveMapViewProps['rfvs'] = [];
 	export let uvrs: LiveMapViewProps['uvrs'] = [];
+	export let flightRequests: LiveMapViewProps['flightRequest'] = [];
 	$: vehiclePositionsEntries = Array.from(vehiclePositions.entries());
 
 	export let selected: LiveMapViewProps['selected'] = null;
@@ -65,7 +68,8 @@
 		rfvs: true,
 		geographical_zones: true,
 		vehicles: true,
-		uvrs: true
+		uvrs: true,
+		flightRequests: true
 	};
 
 	$: visibleVehiclePositionsEntries = visible.vehicles ? vehiclePositionsEntries : [];
@@ -74,6 +78,7 @@
 	$: visibleRfvs = visible.rfvs ? rfvs : [];
 	$: visibleUvrs = visible.uvrs ? uvrs : [];
 	$: visibleGeographicalZones = visible.geographical_zones ? geographicalZones : [];
+	$: visibleFlightRequests = visible.flightRequests ? flightRequests : [];
 
 	function toggleLayersPanel() {
 		isShowingLayersPanel = !isShowingLayersPanel;
@@ -207,6 +212,12 @@
 				getLayer={geographicalZoneTokyoConverter.getConverter(geographicalZone)}
 			/>
 		{/each}
+		{#each visibleFlightRequests as flightRequest (flightRequest.id)}
+			<TokyoGenericMapElement
+				id={flightRequestTokyoConverter.getId(flightRequest)}
+				getLayer={flightRequestTokyoConverter.getConverter(flightRequest)}
+			/>
+		{/each}
 
 		<div class="controls" slot="extra_controls">
 			{#if isShowingLayersPanel}
@@ -244,6 +255,13 @@
 							id="toggle-vehicles"
 							label={t('Vehicles')}
 							checked={visible.vehicles}
+							on:check={onLayerChecked}
+						/>
+						<CCheckbox
+							fill
+							id="toggle-flightRequests"
+							label={t('Soca')}
+							checked={visible.flightRequests}
 							on:check={onLayerChecked}
 						/>
 					</div>

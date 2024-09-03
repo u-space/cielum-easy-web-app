@@ -1,10 +1,10 @@
+import { useTokyo } from '@tokyo/store';
+import { PositionEntity } from '@utm-entities/position';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { reactify } from 'svelte-preprocess-react';
 import MapLayout from '../../../../commons/layouts/MapLayout';
-import { useTokyo } from '@tokyo/store';
-import { PositionEntity } from '@utm-entities/position';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	useQueryOperations,
 	useSelectedOperationAndVolume
@@ -18,9 +18,21 @@ import {
 import Contextual from '../../components/Contextual';
 import Menu from '../../components/Menu';
 
+import { IconName } from '@blueprintjs/core';
+import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
+import PButton from '@pcomponents/PButton';
+import { getCSSVariable } from '@pcomponents/utils';
+import { TokyoPick } from '@tokyo/types';
+import { Polygon } from 'geojson';
+import {
+	useOwnedFlightRequests
+} from 'src/app/modules/flight_request_service/flight_request/hooks';
+import styled from 'styled-components';
+import env from '../../../../../vendor/environment/env';
+import { setCSSVariable, useQueryString } from '../../../../utils';
+import { usePositionStore } from '../../../core_service/position/store';
 import LiveMapViewSvelte from './LiveMapView.svelte';
 import {
-	LiveMapGeographicalZoneSelected,
 	LiveMapOperationSelected,
 	LiveMapRfvSelected,
 	LiveMapSelectableType,
@@ -28,15 +40,6 @@ import {
 	LiveMapUvrSelected,
 	LiveMapViewProps
 } from './LiveMapViewProps';
-import styled from 'styled-components';
-import { setCSSVariable, useQueryString } from '../../../../utils';
-import env from '../../../../../vendor/environment/env';
-import { TokyoPick } from '@tokyo/types';
-import { usePositionStore } from '../../../core_service/position/store';
-import { getCSSVariable } from '@pcomponents/utils';
-import { Polygon } from 'geojson';
-import PButton from '@pcomponents/PButton';
-import { IconName } from '@blueprintjs/core';
 
 const LiveMapView = reactify(LiveMapViewSvelte);
 
@@ -69,6 +72,8 @@ const LiveMap = () => {
 	const { gz, selected: gzSelection } = useSelectedGeographicalZone();
 	const { rfv, selected: rfvSelection } = useSelectedRfv();
 	const { uvr, selected: uvrSelection } = useSelectedUvr();
+	const frQuery = useOwnedFlightRequests();
+	const flightRequests: FlightRequestEntity[] = frQuery.flightRequests;
 	const queryString = useQueryString();
 	const isPrevious = queryString.get('is-previous');
 
@@ -174,6 +179,7 @@ const LiveMap = () => {
 		rfvs: queryRfvs.rfvs,
 		uvrs: isShowingUvrs ? queryUvrs.uvrs : uvr ? [uvr] : [],
 		vehiclePositions: positions || new Map(),
+		flightRequests: flightRequests,
 		t,
 		controlsOptions: {
 			geocoder: {
