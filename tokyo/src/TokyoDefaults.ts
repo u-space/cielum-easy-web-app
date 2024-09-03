@@ -40,9 +40,9 @@ export const UVR_FILL_COLOR: RGBA = [244, 102, 0, 100];
 export const UVR_LINE_COLOR: RGBA = [244, 102, 0, 255];
 
 // Flight Request
-export const FR_SELECTED_FILL_COLOR: RGBA = [100, 150, 100, 150];
-export const FR_FILL_COLOR: RGBA = [100, 100, 100, 50];
-export const FR_LINE_COLOR: RGBA = [100, 100, 100, 255];
+export const FR_SELECTED_FILL_COLOR: RGBA = [50, 82, 150, 150];
+export const FR_FILL_COLOR: RGBA = [50, 82, 150, 50];
+export const FR_LINE_COLOR: RGBA = [50, 82, 200, 255];
 
 // Drone Marker
 export const ACTIVE_DRONE_MARKER_COLOR: RGB = [62, 223, 62];
