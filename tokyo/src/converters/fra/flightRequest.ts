@@ -1,12 +1,8 @@
-import type { GeographicalZone } from '@flight-request-entities/geographicalZone';
-import { ClipExtension } from '@deck.gl/extensions/typed';
-
-import { getPickableId, PickableType } from '../../util';
-import _ from 'lodash';
-import type { ConvertToLayer, RGBA, RGBnumber } from '../../types';
 import { PolygonLayer } from '@deck.gl/layers/typed';
 import type { FlightRequestEntity } from '@flight-request-entities/flightRequest';
 import { FR_FILL_COLOR, FR_LINE_COLOR } from '../../TokyoDefaults';
+import type { ConvertToLayer, RGBA, RGBnumber } from '../../types';
+import { getPickableId, PickableType } from '../../util';
 
 export interface FlightRequestDrawingProps {
 	fillAlpha: RGBnumber; // 0-255
@@ -55,7 +51,7 @@ function getConverterFromFlightRequest(
 			extruded: threeDimensional,
 			parameters: {
 				depthMask: false
-			}
-			//getElevation: 400
+			},
+			getElevation: flightRequest.volumes[0].max_altitude
 		});
 }
