@@ -11,8 +11,6 @@ export class GeographicalZone implements Record<string, number | any> {
 	name: string;
 	geography: Polygon;
 	coordinator: CoordinatorEntity | null;
-	layer_id: string;
-	object_id: string;
 	last_update: Date;
 	min_altitude: number;
 	max_altitude: number;
@@ -22,8 +20,6 @@ export class GeographicalZone implements Record<string, number | any> {
 		name: string,
 		geography: Polygon,
 		coordinator: CoordinatorEntity | null,
-		layer_id: string,
-		object_id: string,
 		last_update: Date,
 		min_altitude: number,
 		max_altitude: number
@@ -32,8 +28,6 @@ export class GeographicalZone implements Record<string, number | any> {
 		this.name = name;
 		this.geography = geography;
 		this.coordinator = coordinator;
-		this.layer_id = layer_id;
-		this.object_id = object_id;
 		this.last_update = last_update;
 		this.min_altitude = min_altitude;
 		this.max_altitude = max_altitude;
@@ -66,8 +60,6 @@ export class GeographicalZone implements Record<string, number | any> {
 			existing.name,
 			existing.geography,
 			existing.coordinator ? CoordinatorEntity.createFromGeozone(existing.coordinator) : null,
-			existing.layer_id,
-			existing.object_id,
 			existing.last_update,
 			existing.min_altitude,
 			existing.max_altitude
@@ -80,8 +72,6 @@ export const APIGeographicalZoneSchema = Joi.object({
 	name: Joi.string().required().optional().allow(''),
 	geography: Joi.object(),
 	coordinator: Joi.object().optional().allow(null),
-	layer_id: Joi.string(),
-	object_id: Joi.string(),
 	last_update: Joi.date().optional().allow(null)
 });
 

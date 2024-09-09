@@ -6,6 +6,7 @@ import { GeographicalZone } from './geographicalZone';
 import _ from 'lodash';
 import { buildFilterAndOrderParametersObject } from './_util';
 import { EntityHasDisplayName } from './types';
+import { Feature, FeatureCollection, GeoJsonProperties, Polygon } from 'geojson';
 
 type ManualProcedure = {
 	id?: string;
@@ -32,7 +33,7 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 	minimun_coordination_days: number;
 	price?: number;
 	discount_Multiple_Dates?: number;
-	geographical_zone?: Partial<GeographicalZone> | string | null;
+	geographical_zone?: Partial<GeographicalZone>[];
 	role_manager?: string;
 	manual_coordinator_procedure?: ManualProcedure | null;
 	automatic_coordinator_procedure?: AutomaticProcedure | null;
@@ -50,7 +51,7 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 			minimun_coordination_days = 0,
 			price = 0,
 			discount_Multiple_Dates = 0,
-			geographical_zone = null,
+			geographical_zone = [],
 			/*manual_coordinator_procedure = {
 				text_description: '',
 				procedure_url: '',
@@ -107,20 +108,62 @@ export class CoordinatorEntity implements EntityHasDisplayName {
 			template_url: ''
 		};
 	}
+
+	getFeatureCollectionFromGeographicalZones() {
+		return {
+			type: 'FeatureCollection',
+			features: this.geographical_zone?.map((gz) => {
+				const properties = {
+					...gz
+				}
+				delete properties.geography
+				delete properties.coordinator
+				return {
+					type: 'Feature',
+					properties: { ...properties },
+					geometry: gz.geography
+				}
+			})
+		}
+	}
+
+	static getGeographicalZonesFromFeatureCollection(fc: FeatureCollection): GeographicalZone[] {
+		return fc?.features?.filter((f: Feature) => f.properties !== null && f.geometry !== null).map((feature: Feature) => {
+			const properties: GeoJsonProperties = feature.properties
+			const geometry = feature.geometry as Polygon
+			if (!properties || !geometry) return null
+			return new GeographicalZone(properties.id, properties.name, geometry, null, properties.last_update, properties.min_altitude, properties.max_altitude);
+		}).filter((gz) => gz !== null) as GeographicalZone[]
+	}
 }
+
+
+const polygonSchema = Joi.object({
+	type: Joi.string().valid('Polygon').required(),
+	coordinates: Joi.array().items(
+		Joi.array().items(
+			Joi.array().items(Joi.number()).length(2) // Cada punto es un array de dos números [longitud, latitud]
+		)
+	).min(1).required()
+});
+
+const geographicalZoneSchema = Joi.object({
+	id: Joi.string().optional(),
+	name: Joi.string().min(2).required(),
+	geography: polygonSchema.required(),
+	last_update: Joi.date().optional(),
+	min_altitude: Joi.number().required(),
+	max_altitude: Joi.number().required()
+});
+
 
 export const APICoordinatorSchema = Joi.object({
 	id: Joi.string(),
-	liaison: Joi.string().optional().allow('').allow(null),
-	type: Joi.string().required(),
-	telephone: Joi.string().optional().allow(''),
-	email: Joi.string().optional().allow(''),
+	telephone: Joi.string(),
+	email: Joi.string(),
 	minimun_coordination_days: Joi.number(),
-	price: Joi.number(),
 	discount_Multiple_Dates: Joi.number().optional(),
-	geographical_zone: Joi.string(),
-	manual_coordinator_procedure: Joi.object().allow(null),
-	automatic_coordinator_procedure: Joi.object().allow(null)
+	geographical_zone: Joi.array().items(geographicalZoneSchema),
 });
 
 // API
@@ -167,13 +210,14 @@ export const getCoordinatorAPIClient = (api: string, token: string | null) => {
 		saveCoordinator(_coordinator: CoordinatorEntity, isCreating: boolean) {
 			const aux = _.cloneDeep(_coordinator);
 			if (!aux.geographical_zone) return Promise.reject('Missing geographical zone');
-			if (typeof aux.geographical_zone !== 'string') {
-				aux.geographical_zone = aux.geographical_zone.id;
-			}
+			// if (typeof aux.geographical_zone !== 'string') {
+			// 	aux.geographical_zone = aux.geographical_zone.id;
+			// }
 			const validation = APICoordinatorSchema.validate(aux, {
 				abortEarly: false,
 				allowUnknown: true
 			});
+
 			const errors: string[] = [];
 			if (validation.error) {
 				validation.error.details.forEach((error) => {
@@ -183,9 +227,9 @@ export const getCoordinatorAPIClient = (api: string, token: string | null) => {
 			}
 
 			if (isCreating) {
-				if (typeof aux.geographical_zone === 'string') {
-					aux.geographical_zone = { id: aux.geographical_zone };
-				}
+				// if (typeof aux.geographical_zone === 'string') {
+				// 	aux.geographical_zone = { id: aux.geographical_zone };
+				// }
 				return axiosInstance.post('coordinator', aux, {
 					headers: { auth: token }
 				});

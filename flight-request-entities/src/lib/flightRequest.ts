@@ -288,9 +288,8 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 			order?: string,
 			filterBy?: string,
 			filter?: string,
-			// showPaid?: boolean,
-			// showNotPaid?: boolean,
-			filterState?: FlightRequestState
+			filterState?: FlightRequestState,
+			validDate?: boolean
 		) {
 			return axiosInstance.get('flightRequest', {
 				params: {
@@ -302,9 +301,8 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 						filterBy,
 						filter
 					),
-					// paid: showPaid,
-					// unpaid: showNotPaid,
-					filterState: filterState
+					filterState: filterState,
+					validDate
 				},
 				headers: { auth: token },
 				transformResponse: (
