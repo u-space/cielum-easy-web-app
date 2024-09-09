@@ -179,10 +179,10 @@
 	position: relative;
 
 	display: flex;
-	flex-wrap: wrap;
+	// flex-wrap: wrap;
 	justify-content: flex-end;
 
-	width: 100%;
+	// width: 100%;
 	margin: 0;
 
 	color: var(--primary-100);
@@ -221,8 +221,24 @@
 		margin-bottom: 1rem;
 	}
 
+	input {
+		width: 200px !important;
+		margin-left: auto;
+		padding: 0 0.5rem;
+		// background-color: red;
+
+		&:disabled {
+			color: var(--primary-100);
+
+			background-color: transparent !important;
+
+			cursor: text;
+		}
+	}
+
 	& textarea {
 		resize: vertical;
+		width: 500px;
 
 		&:disabled {
 			color: black;
@@ -283,7 +299,6 @@
 		}
 	}
 
-	& label {}
 
 	& :global(.bp4-html-select) {
 		width: 100%;
@@ -299,19 +314,7 @@
 		}
 	}
 
-	& input {
-		width: 100%;
-		margin-left: auto;
-		padding: 0 0.5rem;
 
-		&:disabled {
-			color: var(--primary-100);
-
-			background-color: transparent !important;
-
-			cursor: text;
-		}
-	}
 
 	& select {
 		width: 100%;
