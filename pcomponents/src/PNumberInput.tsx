@@ -19,6 +19,7 @@ export interface PNumberInputProps extends NumericInputProps {
 	min?: number;
 	disabled?: boolean;
 	isDarkVariant?: boolean;
+	style?: React.CSSProperties;
 }
 
 const PNumberInput = (props: PNumberInputProps) => {
@@ -36,6 +37,7 @@ const PNumberInput = (props: PNumberInputProps) => {
 		isRequired = false,
 		isDarkVariant = false,
 		min,
+		style,
 		...extraProps
 	} = props;
 	const [value, setValue] = useState(defaultValue);
@@ -61,6 +63,7 @@ const PNumberInput = (props: PNumberInputProps) => {
 			labelInfo={<LabelInfo isRequired={isRequired} labelInfo={labelInfo} isHidden={false} />}
 			labelFor={id}
 			inline={inline}
+			style={style}
 		>
 			<NumericInput
 				className={classnames({

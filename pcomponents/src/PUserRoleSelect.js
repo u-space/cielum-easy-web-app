@@ -15,7 +15,8 @@ const PUserRoleSelect = ({
 	fill = false,
 	isDarkVariant,
 	disabled = false,
-	onChange
+	onChange,
+	style
 }) => {
 	const { t } = useTranslation();
 	const [value, setValue] = useState(
@@ -45,6 +46,7 @@ const PUserRoleSelect = ({
 			labelFor={id}
 			inline={inline}
 			fill
+			style={style}
 		>
 			<HTMLSelect
 				id={id}

@@ -25,6 +25,7 @@ export interface PInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
 	maxLength?: number;
 	children?: ReactNode;
 	hasTooltip?: boolean;
+	style?: React.CSSProperties;
 }
 
 interface IWithTooltip {
@@ -57,6 +58,7 @@ const PInput = (props: PInputProps) => {
 		maxLength,
 		hasTooltip,
 		children, // Only used for showing translated error messages for too short inputs
+		style,
 		...extraProps
 	} = props;
 
@@ -102,6 +104,7 @@ const PInput = (props: PInputProps) => {
 			}
 			labelFor={id}
 			inline={inline}
+			style={style}
 		>
 			<WithTooltip hasTooltip={!!hasTooltip && !!explanation} content={explanation || ''}>
 				<InputGroup
@@ -126,7 +129,7 @@ const PInput = (props: PInputProps) => {
 				/>
 			</WithTooltip>
 			{!isFocused && !disabled && minLengthError && children}
-		</FormGroup>
+		</FormGroup >
 	);
 };
 

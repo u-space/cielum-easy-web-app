@@ -76,6 +76,7 @@ const PTextArea = ({
 			}
 			labelFor={id}
 			inline={inline}
+			style={style}
 		>
 			<TextArea
 				className={classnames({
@@ -90,7 +91,6 @@ const PTextArea = ({
 				onChange={(evt) => {
 					onValueChange(evt.target.value);
 				}}
-				style={style}
 				{...extraProps}
 			/>
 		</FormGroup>
