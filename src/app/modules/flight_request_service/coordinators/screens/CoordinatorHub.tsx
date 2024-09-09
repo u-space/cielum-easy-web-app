@@ -16,23 +16,23 @@ import { UseMutationResult } from 'react-query';
 import { observer } from 'mobx-react';
 
 const ExtraActions: FC<{ data: CoordinatorEntity }> = ({ data }) => {
-	const history = useHistory();
-	const geographicalZone = data.geographical_zone;
-	if (geographicalZone && typeof geographicalZone === 'object') {
-		return (
-			<PTooltip content={data.geographical_zone ? 'Show on map' : 'No geographical zone'}>
-				<PButton
-					size={PButtonSize.SMALL}
-					icon={'eye-open'}
-					variant={PButtonType.SECONDARY}
-					disabled={!data.geographical_zone}
-					onClick={() => history.replace('/map?geographical-zone=' + geographicalZone.id)}
-				/>
-			</PTooltip>
-		);
-	} else {
-		return null;
-	}
+	// const history = useHistory();
+	// const geographicalZone = data.geographical_zone;
+	// if (geographicalZone && typeof geographicalZone === 'object') {
+	// 	return (
+	// 		<PTooltip content={data.geographical_zone ? 'Show on map' : 'No geographical zone'}>
+	// 			<PButton
+	// 				size={PButtonSize.SMALL}
+	// 				icon={'eye-open'}
+	// 				variant={PButtonType.SECONDARY}
+	// 				disabled={!data.geographical_zone}
+	// 			// onClick={() => history.replace('/map?geographical-zone=' + geographicalZone.id)}
+	// 			/>
+	// 		</PTooltip>
+	// 	);
+	// } else {
+	return null;
+	// }
 };
 
 const CoordinatorHub = () => {

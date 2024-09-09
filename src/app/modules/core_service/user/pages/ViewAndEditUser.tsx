@@ -107,6 +107,7 @@ const BaseUserDetails = (props: BaseUserDetailsProps) => {
 								inline
 								isRequired
 								disabled={!isEditing}
+								style={{}}
 							/>
 						);
 					} else {

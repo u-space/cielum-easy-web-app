@@ -71,7 +71,8 @@ export function useOwnedFlightRequests(): IUseQueryFlightRequests & any {
 			email,
 			// false,
 			// false,
-			FlightRequestState.COMPLETED
+			FlightRequestState.COMPLETED,
+			true,
 		)
 	);
 	const { data: response } = query;
@@ -126,8 +127,6 @@ export function useQueryFlightRequests(all = false): IUseQueryFlightRequests & a
 			sortingOrder,
 			filterProperty,
 			filterMatchingText,
-			// filterShowPaid,
-			// filterShowNotPaid,
 			filterState
 		],
 		() =>
@@ -138,9 +137,8 @@ export function useQueryFlightRequests(all = false): IUseQueryFlightRequests & a
 				sortingOrder,
 				filterProperty,
 				filterMatchingText,
-				// filterShowPaid,
-				// filterShowNotPaid,
-				filterState
+				filterState,
+				false
 			)
 	);
 	const { data: response } = query;

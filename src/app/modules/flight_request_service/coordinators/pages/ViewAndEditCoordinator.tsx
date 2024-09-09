@@ -12,36 +12,57 @@ import PDropdown from '@pcomponents/PDropdown';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import PNumberInput from '@pcomponents/PNumberInput';
 import env from '../../../../../vendor/environment/env';
+import PUserRoleSelect from '@pcomponents/PUserRoleSelect';
+import { GeographicalZone } from '@flight-request-entities/geographicalZone';
 
 const LiaisonOptions = env.tenant.features.FlightRequests.enabled
 	? [...Object.values(env.tenant.features.FlightRequests.options.liaisons)].map((key) => ({
-			value: key,
-			label: key
-	  }))
+		value: key,
+		label: key
+	}))
 	: [];
 const TypeOptions = env.tenant.features.FlightRequests.enabled
 	? [...Object.values(env.tenant.features.FlightRequests.options.coordinatorTypes)].map(
-			(key) => ({
-				value: key,
-				label: key
-			})
-	  )
+		(key) => ({
+			value: key,
+			label: key
+		})
+	)
 	: [];
 
 const specialProps = [
 	'geographical_zone',
 	'manual_coordinator_procedure',
 	'automatic_coordinator_procedure',
-	'id'
+	'id',
+	'role_manager'
 ];
 const nonRequiredProps = ['liaison', 'price', 'discount_Multiple_Dates'];
-const hiddenProps = ['liaison', 'price', 'discount_Multiple_Dates'];
+const hiddenProps = ['liaison', 'price', 'discount_Multiple_Dates', 'type'];
 
 interface BaseCoordinatorDetailsProps {
 	ls: UseLocalStoreEntity<CoordinatorEntity>;
 	isEditing: boolean;
 	isCreating: boolean;
 }
+
+const getGeographicalZone = (ls: UseLocalStoreEntity<CoordinatorEntity>) => {
+	const geographicalZone = ls.entity.geographical_zone;
+	console.log('getGeographicalZone: ', JSON.stringify(geographicalZone, null, 2));
+	let toReturn = '';
+	if (geographicalZone === null) {
+		toReturn = '';
+	}
+	else if (typeof geographicalZone === 'string') {
+		toReturn = geographicalZone;
+	}
+	else if (typeof geographicalZone === 'object') {
+		toReturn = JSON.stringify(ls.entity.getFeatureCollectionFromGeographicalZones());
+	}
+	console.log('toReturn: ', toReturn);
+	return toReturn
+
+};
 
 const BaseCoordinatorDetails: FC<BaseCoordinatorDetailsProps> = ({ ls, isEditing, isCreating }) => {
 	const { t } = useTranslation(['glossary', 'ui']);
@@ -69,85 +90,65 @@ const BaseCoordinatorDetails: FC<BaseCoordinatorDetailsProps> = ({ ls, isEditing
 									isRequired
 									isDarkVariant
 									inline
+									style={{ order: 1 }}
+
 								/>
 							);
 						} else if (prop === 'geographical_zone') {
-							let geographicalZoneId = '';
-							if (ls.entity.geographical_zone) {
-								if (typeof ls.entity.geographical_zone !== 'string') {
-									geographicalZoneId = ls.entity.geographical_zone.id as string;
-								} else {
-									geographicalZoneId = ls.entity.geographical_zone as string;
-								}
-							}
 							return (
-								<PInput
+
+								<PTextArea
 									key={prop}
 									id={id}
-									defaultValue={geographicalZoneId}
-									label={label}
-									explanation={explanation}
-									disabled={!isEditing || isNotEditable}
+									label={t('Geographical zone')}
+									defaultValue={getGeographicalZone(ls)}
+									isDarkVariant
 									onChange={(value) => {
-										if (value === '') {
-											ls.entity.geographical_zone = null;
-										} else {
-											ls.entity.geographical_zone = value;
+										try {
+											ls.entity.geographical_zone = CoordinatorEntity.getGeographicalZonesFromFeatureCollection(JSON.parse(value));
+										} catch (e) {
+											ls.entity.geographical_zone = []
 										}
 									}}
-									isRequired
-									isDarkVariant
 									inline
+									style={{ order: 5 }}
 								/>
 							);
-						} else if (prop === 'liaison') {
+						}
+						else if (prop === 'role_manager') {
 							return (
-								<PDropdown
+								<PUserRoleSelect
 									key={prop}
-									id={id}
-									defaultValue={ls.entity.liaison ? ls.entity.liaison : ''}
-									label={label}
-									explanation={explanation}
-									disabled={!isEditing || isNotEditable}
-									onChange={(value) => (ls.entity.liaison = value)}
-									options={[{ label: '', value: '' }, ...LiaisonOptions]}
-									isRequired
+									id={prop}
+									label={t('glossary:user.role')}
+									defaultValue={ls.entity.role_manager}
+									onChange={(value: string) => (ls.entity.role_manager = value)}
 									isDarkVariant
 									inline
-								/>
-							);
-						} else if (prop === 'type') {
-							return (
-								<PDropdown
-									key={prop}
-									id={id}
-									defaultValue={ls.entity.type ? ls.entity.type : ''}
-									label={label}
-									explanation={explanation}
-									disabled={!isEditing || isNotEditable}
-									onChange={(value) => (ls.entity.type = value)}
-									options={[{ label: '', value: '' }, ...TypeOptions]}
 									isRequired
-									isDarkVariant
-									inline
+									disabled={!isEditing}
+									style={{ order: 1 }}
 								/>
 							);
-						} else if (!specialProps.includes(String(prop))) {
+						}
+						else if (!specialProps.includes(String(prop))) {
 							const value = ls.entity[prop as keyof CoordinatorEntity] ?? '';
 							// is value number
 							if (typeof value === 'number') {
 								return (
-									<PNumberInput
+									<PInput
 										key={prop}
 										id={id}
-										defaultValue={value}
+										defaultValue={String(value)}
 										label={label}
 										explanation={explanation}
 										disabled={!isEditing || isNotEditable}
-										onChange={(value) => ls.setInfo(prop, value)}
+										onChange={(value) => ls.setInfo(prop, Number(value))}
 										isRequired={!nonRequiredProps.includes(String(prop))}
 										isDarkVariant
 										inline
+										style={{ order: 3 }}
+
 									/>
 								);
 							} else if (typeof value === 'string') {
@@ -163,6 +164,8 @@ const BaseCoordinatorDetails: FC<BaseCoordinatorDetailsProps> = ({ ls, isEditing
 										isRequired={!nonRequiredProps.includes(String(prop))}
 										isDarkVariant
 										inline
+										style={{ order: 1 }}
+
 									/>
 								);
 							} else {
@@ -227,10 +230,10 @@ const CoordinatorProcedure: FC<CoordinatorProcedureProps> = ({ ls, isEditing, is
 								explanation={explanation}
 								disabled={!isEditing || isNotEditable}
 								onChange={(value) =>
-									(ls.entity.manual_coordinator_procedure = {
-										...manualProcedure,
-										[prop]: value
-									})
+								(ls.entity.manual_coordinator_procedure = {
+									...manualProcedure,
+									[prop]: value
+								})
 								}
 								isRequired
 								isDarkVariant
@@ -281,10 +284,10 @@ const CoordinatorProcedure: FC<CoordinatorProcedureProps> = ({ ls, isEditing, is
 									explanation={explanation}
 									disabled={!isEditing || isNotEditable}
 									onChange={(value) =>
-										(ls.entity.automatic_coordinator_procedure = {
-											...automaticProcedure,
-											[prop]: value
-										})
+									(ls.entity.automatic_coordinator_procedure = {
+										...automaticProcedure,
+										[prop]: value
+									})
 									}
 									isRequired
 									isDarkVariant
@@ -303,10 +306,10 @@ const CoordinatorProcedure: FC<CoordinatorProcedureProps> = ({ ls, isEditing, is
 									explanation={explanation}
 									disabled={!isEditing || isNotEditable}
 									onChange={(value) =>
-										(ls.entity.automatic_coordinator_procedure = {
-											...automaticProcedure,
-											[prop]: value
-										})
+									(ls.entity.automatic_coordinator_procedure = {
+										...automaticProcedure,
+										[prop]: value
+									})
 									}
 									isRequired
 									isDarkVariant
@@ -372,20 +375,20 @@ const ViewAndEditCoordinator: FC<ViewAndEditCoordinatorProps> = ({
 		<div className={styles.twobytwo} style={style}>
 			<div className={styles.content}>
 				<aside className={styles.summary}>
-					<h2>{t('Information')}</h2>
+					<h2>{t('Coordination zone')}</h2>
 				</aside>
-				<section className={styles.details}>
+				<section className={styles.details} style={{ display: 'flex', flexDirection: 'column' }}>
 					<BaseCoordinatorDetails isEditing={isEditing} isCreating={isCreating} ls={ls} />
 				</section>
 			</div>
-			<div className={styles.content}>
+			{/* <div className={styles.content}>
 				<aside className={styles.summary}>
 					<h2>{t('Procedures')}</h2>
 				</aside>
 				<section className={styles.details}>
 					<CoordinatorProcedure ls={ls} isEditing={isEditing} isCreating={isCreating} />
 				</section>
-			</div>
+			</div> */}
 		</div>
 	);
 };
