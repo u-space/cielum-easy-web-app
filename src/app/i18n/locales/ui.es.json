@@ -159,7 +159,7 @@
 	"Okay": "Ok",
 	"Saving": "Guardando",
 	"The uvr has been updated": "El volumen de vuelo reservado (NOTAM) ha sido actualizado",
-	"Error while fetching entity": "El servidor ha enviado una respuesta incorrecta. Por favor, contacta un administrador del sistema.",
+	"Error while fetching entity": "Ingrese nuevamente al sistema. Si persiste el error, por favor contacta un administrador del sistema.",
 	"The server has not responded correctly": "Respuesta invalida del servidor",
 	"Create new uvr": "Crear nuevo volumen reservado (NOTAM)",
 	"Only showing the UVRs that match the search query": "Mostrando solamente los vólumenes de reserva (NOTAMs) que coinciden con los filtros",
