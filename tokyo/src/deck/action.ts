@@ -75,7 +75,8 @@ function getTooltip(info: PickingInfo) {
 		info.object?.properties?.tooltip && {
 			html: info.object.properties.tooltip,
 			style: {
-				background: 'balck'
+				background: 'balck',
+				"text-align": 'center'
 			}
 		}
 	);

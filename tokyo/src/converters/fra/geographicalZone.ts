@@ -30,6 +30,15 @@ function getIdFromGeographicalZone(geographicalZone: GeographicalZone) {
 
 // class PolygonTextLayer extends CompositeLayer {
 
+const formatAltitude = (altitude: number) => {
+	if (altitude === 0) {
+		return 'GND'
+	}
+	else {
+		return `${altitude} m AGL`
+	}
+};
+
 function getConverterFromGeographicalZone(
 	_geographicalZone: GeographicalZone,
 	options?: GeographicalZoneDrawingProps
@@ -39,7 +48,7 @@ function getConverterFromGeographicalZone(
 	const fillAlpha = options?.fillAlpha ?? 50;
 	const threeDimensional = options?.threeDimensional ?? true;
 
-	const tooltipConent = `${geographicalZone.min_altitude}/${geographicalZone.max_altitude}`;
+	const tooltipConent = `${formatAltitude(geographicalZone.max_altitude)}<hr />${formatAltitude(geographicalZone.min_altitude)}`;
 	// geographicalZone.tooltip = tooltipConent;
 
 	let fillColor: RGBA = [GZ_FILL_COLOR[0], GZ_FILL_COLOR[1], GZ_FILL_COLOR[2], fillAlpha];
