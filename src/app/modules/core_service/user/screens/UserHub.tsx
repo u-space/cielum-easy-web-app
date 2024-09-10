@@ -36,10 +36,10 @@ interface ExtraUserActionsProps {
 
 const getExtraActions =
 	(setOverlay: (overlay: ReactNode) => void) =>
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	({ data }: { data: Record<string, any> }) => {
-		return <ExtraActions userData={data} setOverlay={setOverlay} />;
-	};
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		({ data }: { data: Record<string, any> }) => {
+			return <ExtraActions userData={data} setOverlay={setOverlay} />;
+		};
 
 const getStateInformation = (userData: Record<string, any>): { text: string; color: string } => {
 	// const someInvalidRequiredDocument = userData.extra_fields?.documents?.some(
@@ -149,7 +149,7 @@ const ExtraActions: FC<ExtraUserActionsProps> = ({ userData: userData, setOverla
 						: t('No puede crear operaciones')
 				}
 			>
-				<StateCircle style={{ backgroundColor: userData.canOperate ? 'green' : 'red' }} />
+				<StateCircle style={{ backgroundColor: (userData.canOperate && userData.verified) ? 'green' : 'red' }} />
 			</PTooltip>
 		</>
 	);
