@@ -4,8 +4,9 @@ import PInput from '@pcomponents/PInput';
 import PModal, { PModalType } from '@pcomponents/PModal';
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { useUpdateUserPassword, useUpdateUserPasswordByToken } from '../hooks';
+import { useUpdateUserPasswordByToken } from '../hooks';
 
 interface PasswordChangerProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,13 +24,13 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 	forceShow = false,
 	onFinish = null
 }) => {
+	const history = useHistory();
 	const { t } = useTranslation();
 	const [showFields, setShowFields] = useState(isCreating || forceShow);
 	const [error, setError] = useState<string | null>(null);
 
 	const PASSWORD_CHANGE_EXPIRED_ERROR = t('The password change link has expired');
 
-	const updateUserPassword = useUpdateUserPassword();
 	const updateUserPasswordByToken = useUpdateUserPasswordByToken();
 
 	const savePasswordUpdate = () => {
@@ -45,36 +46,31 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 			return;
 		}
 		setShowFields(forceShow || false);
-		if (!token) {
-			updateUserPassword.mutate({
-				username: ls.entity.username,
-				password: ls.entity.password
-			});
-		} else {
-			updateUserPasswordByToken.mutate({
-				email: ls.entity.email,
-				token,
-				password: ls.entity.password
-			});
-		}
+
+		updateUserPasswordByToken.mutate({
+			email: ls.entity.email,
+			token,
+			password: ls.entity.password
+		});
+		// }
 	};
 
 	const resetError = () => {
 		setError(null);
-		updateUserPassword.reset();
+		updateUserPasswordByToken.reset();
 	};
 
 	useEffect(() => {
-		if (updateUserPassword.isError) {
+		if (updateUserPasswordByToken.isError) {
 			setError(PASSWORD_CHANGE_EXPIRED_ERROR);
 		}
-	}, [updateUserPassword.isError, PASSWORD_CHANGE_EXPIRED_ERROR]);
+	}, [updateUserPasswordByToken.isError, PASSWORD_CHANGE_EXPIRED_ERROR]);
 
 	useEffect(() => {
-		if (updateUserPassword.isSuccess) {
+		if (updateUserPasswordByToken.isSuccess) {
 			if (onFinish) onFinish();
 		}
-	}, [updateUserPassword.isSuccess, onFinish]);
+	}, [updateUserPasswordByToken.isSuccess, onFinish]);
 
 	const OneLine = styled.div`
 		display: flex;
@@ -98,8 +94,8 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 
 	return (
 		<>
-			{updateUserPassword.isLoading && <Spinner />}
-			{!updateUserPassword.isLoading && showFields && (
+			{updateUserPasswordByToken.isLoading && <Spinner />}
+			{!updateUserPasswordByToken.isLoading && showFields && (
 				<OneLine>
 					{!error && (
 						<>
@@ -141,20 +137,25 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 					)}
 				</OneLine>
 			)}
-			{!updateUserPassword.isLoading && !showFields && (
+			{!updateUserPasswordByToken.isLoading && !showFields && (
 				<CenteredLine>
-					{updateUserPassword.isLoading && <Spinner />}
-					{updateUserPassword.isSuccess && (
+					{updateUserPasswordByToken.isLoading && <Spinner />}
+					{updateUserPasswordByToken.isSuccess && (
 						<PModal
 							type={PModalType.SUCCESS}
 							title={t('Password change successful')}
 							content={t(
 								'The password has been successful and the new password can now be used to log-in'
 							)}
-							primary={{ onClick: resetError }}
+							primary={{
+								onClick: () => {
+									resetError()
+									history.push('/');
+								}
+							}}
 						/>
 					)}
-					{!updateUserPassword.isLoading && !updateUserPassword.isSuccess && (
+					{!updateUserPasswordByToken.isLoading && !updateUserPasswordByToken.isSuccess && (
 						<PButton onClick={() => setShowFields(true)}>
 							{t('Change password')}
 						</PButton>

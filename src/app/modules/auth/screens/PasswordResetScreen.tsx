@@ -1,7 +1,7 @@
 import PModal, { PModalType } from '@pcomponents/PModal';
 import { UserEntity } from '@utm-entities/user';
 import { useLocalStore } from 'mobx-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { useQueryString } from '../../../utils';
@@ -30,6 +30,15 @@ const PasswordResetScreen = () => {
 
 	const [secondsLeft, setSecondsLeft] = useState(SECONDS_TO_REDIRECT);
 	const interval = useRef<NodeJS.Timer | null>(null);
+
+	useEffect(() => {
+		if (secondsLeft <= 0) {
+			if (interval.current) {
+				clearInterval(interval.current);
+			}
+			history.push('/');
+		}
+	}, [secondsLeft]);
 
 	if (!token || !email) {
 		return (
@@ -61,9 +70,10 @@ const PasswordResetScreen = () => {
 										}
 										return curr - 1;
 									});
-									if (shouldKill) {
-										if (interval.current) clearInterval(interval.current);
-										history.push('/');
+									if (secondsLeft <= 0) {
+										if (interval.current) {
+											clearInterval(interval.current);
+										}
 									}
 								}, 1000);
 							}}
