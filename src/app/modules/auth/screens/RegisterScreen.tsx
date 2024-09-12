@@ -106,10 +106,6 @@ const RegisterScreen = () => {
 		if (event) event.preventDefault();
 		if (step === RegisterScreenStep.FORM_SCREEN) {
 			const errors = ls.entity.validate();
-			if (!ls.entity.lastName.includes(' ')) {
-				alert('Por favor, escribe tus dos apellidos');
-				return;
-			} // Temporal, due to a broken trigger
 
 			if (errors.length > 0) {
 				setError(translateErrors(errors, 'user')[0]);
@@ -159,7 +155,7 @@ const RegisterScreen = () => {
 							<p>
 								{t(
 									registerUser.error.response?.data?.message?.split(':')[0] ||
-										registerUser.error.message
+									registerUser.error.message
 								)}
 								<PButton
 									style={{ margin: '8px auto' }}
@@ -184,16 +180,16 @@ const RegisterScreen = () => {
 				{(step === RegisterScreenStep.ERROR_SCREEN ||
 					step === RegisterScreenStep.CONSENT_SCREEN ||
 					(step === RegisterScreenStep.SUBMITTING_SCREEN && registerUser.isError)) && (
-					<PButton
-						onClick={() => {
-							setStep(RegisterScreenStep.FORM_SCREEN);
-						}}
-					>
-						{step === RegisterScreenStep.ERROR_SCREEN && t('Back')}
-						{step === RegisterScreenStep.CONSENT_SCREEN && t('Back')}
-						{step === RegisterScreenStep.SUBMITTING_SCREEN && t('Back')}
-					</PButton>
-				)}
+						<PButton
+							onClick={() => {
+								setStep(RegisterScreenStep.FORM_SCREEN);
+							}}
+						>
+							{step === RegisterScreenStep.ERROR_SCREEN && t('Back')}
+							{step === RegisterScreenStep.CONSENT_SCREEN && t('Back')}
+							{step === RegisterScreenStep.SUBMITTING_SCREEN && t('Back')}
+						</PButton>
+					)}
 				{step >= RegisterScreenStep.FORM_SCREEN &&
 					step <= RegisterScreenStep.CONSENT_SCREEN && (
 						<PButton style={{ marginLeft: 'auto' }} onClick={() => nextStep()}>
