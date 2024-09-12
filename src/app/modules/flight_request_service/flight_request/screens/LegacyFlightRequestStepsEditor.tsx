@@ -53,7 +53,7 @@ const LegacyFlightRequestStepsEditor = () => {
 			volParam.set('ordinal', 0);
 			volParam.set('operation_geography', polygon);
 			volParam.set('effective_time_begin', new Date(volumeData?.effective_time_begin || ''));
-			volParam.set('effective_time_begin', new Date(volumeData?.effective_time_end || ''));
+			volParam.set('effective_time_end', new Date(volumeData?.effective_time_end || ''));
 			vol.set('max_altitude', defaultAltitude);
 			flightRequest.volumes.push(volParam);
 			flightRequest.vlos = volumeData.beyond_visual_line_of_sight || false;
