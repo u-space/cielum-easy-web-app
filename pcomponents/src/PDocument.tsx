@@ -177,7 +177,7 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 					label={t('Valid until')}
 					onChange={(value) => {
 						document['valid_until'] = value;
-						// setValidUntil(value);
+						setValidUntil(value);
 					}}
 					disabled={!isEditing}
 					isRequired
@@ -208,8 +208,9 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 						id: key,
 						label: t(key),
 						defaultValue: document.extra_fields[key],
-						onChange: (value: string | number | Date | boolean) =>
-							(document.extra_fields[key] = value),
+						onChange: (value: string | number | Date | boolean) => {
+							document.extra_fields[key] = value
+						},
 						isRequired: required,
 						isDarkVariant: true,
 						disabled: !isEditing,
@@ -417,7 +418,7 @@ const ViewingModal = (props: ViewingModalProps) => {
 						{...{ id, label, explanation: '' }}
 						defaultValue={document.downloadFileUrl}
 						disabled
-						onChange={() => {}}
+						onChange={() => { }}
 						isDarkVariant
 						isRequired={true}
 						API={'changeme'}
@@ -648,7 +649,7 @@ const PDocument = (props: PDocumentProps) => {
 							</PButton>
 							{canValidate && onSaveValidation && (
 								<PButton
-									disabled={new Date(document.valid_until) < new Date()}
+									disabled={(!document.valid && new Date(document.valid_until) < new Date())}
 									variant={PButtonType.SECONDARY}
 									size={PButtonSize.SMALL}
 									onClick={() => {
