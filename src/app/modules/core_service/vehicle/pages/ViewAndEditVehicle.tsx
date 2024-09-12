@@ -8,7 +8,6 @@ import { VehicleEntity } from '@utm-entities/vehicle';
 import { observer, useObserver } from 'mobx-react';
 import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
 import env from '../../../../../vendor/environment/env';
 import styles from '../../../../commons/Pages.module.scss';
 import ExtraField from '../../../../commons/components/ExtraField';

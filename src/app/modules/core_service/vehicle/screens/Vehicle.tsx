@@ -1,17 +1,17 @@
-import { useHistory, useParams } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import PButton from '@pcomponents/PButton';
+import CLoadingSvelte from '@tokyo/gui/CLoading.svelte';
+import { CModalVariant } from '@tokyo/gui/CModal';
+import CModalSvelte from '@tokyo/gui/CModal.svelte';
 import { VehicleEntity } from '@utm-entities/vehicle';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useHistory, useParams } from 'react-router-dom';
+import { reactify } from 'svelte-preprocess-react';
+import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
+import PageLayout from '../../../../commons/layouts/PageLayout';
 import { useLs } from '../../../../commons/utils';
 import { useQueryVehicle, useUpdateVehicle } from '../hooks';
 import ViewAndEditVehicle from '../pages/ViewAndEditVehicle';
-import DashboardLayout from '../../../../commons/layouts/DashboardLayout';
-import { reactify } from 'svelte-preprocess-react';
-import CLoadingSvelte from '@tokyo/gui/CLoading.svelte';
-import PageLayout from '../../../../commons/layouts/PageLayout';
-import PButton from '@pcomponents/PButton';
-import CModalSvelte from '@tokyo/gui/CModal.svelte';
-import { useTranslation } from 'react-i18next';
-import { CModalVariant } from '@tokyo/gui/CModal';
 
 const CLoading = reactify(CLoadingSvelte);
 const CModal = reactify(CModalSvelte);

@@ -173,15 +173,11 @@ export class UserEntity implements EntityHasDisplayName {
 			allowUnknown: true
 		});
 		if (validation.error) {
-			//TODO: Hacer que esto ande bien, y cada error aparezca en la lista y no solamente el privado, con su buena traduccion
-			//if (validation.error?.details) {
-			//errors.push(validation.error.details.map((err) => err.message));
-			//} else {
+
 			if (validation.error.details) {
 				validation.error.details.forEach((element) => errors.push(element.message));
 			}
 			errors.push(validation.error);
-			//}
 		}
 		return errors;
 	}
@@ -204,9 +200,8 @@ export class UserEntity implements EntityHasDisplayName {
 	get asNiceString() {
 		if (this.lastName && this.firstName && this.email) {
 			// Normal string for real, complete users
-			return `${this.lastName.toUpperCase()}, ${this.firstName} (${this.username}) [${
-				this.email
-			}]`;
+			return `${this.lastName.toUpperCase()}, ${this.firstName} (${this.username}) [${this.email
+				}]`;
 		} else {
 			// Short nicefi'd string for incomplete, users not from backend
 			return this.username;

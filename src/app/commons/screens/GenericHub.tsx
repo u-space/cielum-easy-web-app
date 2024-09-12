@@ -198,20 +198,6 @@ function GenericHub<T extends GenericHubEntityType>(props: GenericHubProps<T>) {
 
 	const ExtraMenuButtons = extraMenuButtons;
 
-	/*
-
-	title: string;
-  content: string | string[] | ReactNode;
-  primary?: {
-	  onClick: () => void;
-	  text?: string;
-  };
-  secondary?: {
-	  onClick: () => void;
-	  text: string;
-  };
-	 */
-
 	const overlays = [overlay] ?? ([] as ReactNode[]);
 	if (isAskingToDelete) {
 		overlays.push(
