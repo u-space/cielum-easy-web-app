@@ -77,6 +77,8 @@ const PUserSelectForPilots = (props: PUserSelectForPilotsProps) => {
 	useEffect(() => {
 		if (props.preselected) {
 			setSelected(props.preselected);
+		} else {
+			setSelected([]);
 		}
 	}, [props.preselected]);
 
