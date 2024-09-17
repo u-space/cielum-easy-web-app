@@ -4,6 +4,19 @@
 	"affected": {
 		"defaultBase": "master"
 	},
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "@nrwl/nx-cloud",
+			"options": {
+				"cacheableOperations": [
+					"lint",
+					"test",
+					"e2e"
+				],
+				"accessToken": "ZWVlZDg2NjktOTQwNS00ZjViLTk3N2YtODczMzc2ZDI1NzVjfHJlYWQtd3JpdGU="
+			}
+		}
+	},
 	"targetDefaults": {
 		"build": {
 			"dependsOn": [
