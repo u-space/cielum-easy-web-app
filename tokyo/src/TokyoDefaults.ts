@@ -27,9 +27,13 @@ export const SELECTED_OPERATION_VOLUME_LINE_COLOR: RGBA = [175, 0, 0, 255];
 export const SELECTED_OPERATION_LINE_COLOR: RGBA = [0, 0, 0, 255];
 
 // Geographical Zone
-export const GZ_FILL_COLOR: RGBA = [216, 32, 32, 50];
+// export const GZ_FILL_COLOR: RGBA = [216, 32, 32, 50];
+// export const SELECTED_GZ_FILL_COLOR: RGBA = [216, 32, 32, 100];
+// export const GZ_LINE_COLOR: RGBA = [130, 43, 43, 255];
+export const GZ_FILL_COLOR: RGBA = [255, 153, 51, 100]
+export const GZ_LINE_COLOR: RGBA = [255, 153, 51, 250];
 export const SELECTED_GZ_FILL_COLOR: RGBA = [216, 32, 32, 100];
-export const GZ_LINE_COLOR: RGBA = [130, 43, 43, 255];
+
 
 // Restricted Flight Volume
 export const RFV_FILL_COLOR: RGBA = [249, 0, 0, 100];
