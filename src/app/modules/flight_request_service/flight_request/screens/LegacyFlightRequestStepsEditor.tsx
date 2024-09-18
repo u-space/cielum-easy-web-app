@@ -37,6 +37,7 @@ const LegacyFlightRequestStepsEditor = () => {
 	const [isOnNight, setIsOnNight] = useState<boolean>(false);
 	const [polygon, setPolygon] = useState<Polygon | undefined>(existingPolygon);
 	const [modalProps, setModalProps] = useState<PFullModalProps | undefined>();
+
 	const flightRequest = useMemo(() => {
 		const flightRequest = new FlightRequestEntity();
 		const vol = new OperationVolume();
@@ -80,6 +81,16 @@ const LegacyFlightRequestStepsEditor = () => {
 		setStep(FlightRequestEditorStep.COORDINATIONS);
 	};
 
+	const _volumeAndInfoStep = () => {
+		const vol = new OperationVolume();
+		vol.set('ordinal', -1);
+		vol.set('effective_time_begin', null);
+		vol.set('effective_time_end', null);
+		vol.set('operation_geography', polygon);
+		vol.set('max_altitude', defaultAltitude);
+		flightRequest.volumes = [vol, ...flightRequest.volumes]
+	}
+
 	/* -- */
 	const nextStep = () => {
 		if (step === FlightRequestEditorStep.VOLUME_AND_INFO) {
@@ -109,10 +120,11 @@ const LegacyFlightRequestStepsEditor = () => {
 				return;
 			}
 			_coordinationsStep();
-		} else if (step === FlightRequestEditorStep.COORDINATIONS) {
-			flightRequest.setGeographicalZones(zonesChecked);
-			setStep(FlightRequestEditorStep.INSURANCE_AND_PAYMENT);
 		}
+		// else if (step === FlightRequestEditorStep.COORDINATIONS) {
+		// 	flightRequest.setGeographicalZones(zonesChecked);
+		// 	setStep(FlightRequestEditorStep.INSURANCE_AND_PAYMENT);
+		// }
 	};
 
 	const previousStep = () => {
@@ -122,12 +134,14 @@ const LegacyFlightRequestStepsEditor = () => {
 				confirm(t('Are you sure you want to go back? All the information will be lost'))
 			) {
 				// window.location.href = '/editor/flightrequest';
+				_volumeAndInfoStep();
 				setStep(FlightRequestEditorStep.VOLUME_AND_INFO);
 			}
 			//setStep(FlightRequestEditorStep.VOLUME_AND_INFO);
-		} else if (step === FlightRequestEditorStep.INSURANCE_AND_PAYMENT) {
-			setStep(FlightRequestEditorStep.COORDINATIONS);
 		}
+		// else if (step === FlightRequestEditorStep.INSURANCE_AND_PAYMENT) {
+		// 	setStep(FlightRequestEditorStep.COORDINATIONS);
+		// }
 	};
 
 	useEffect(() => {

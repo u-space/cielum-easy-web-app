@@ -199,9 +199,6 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 				`Difference in days: ${days} - ${minimun_coordination_days} - ${now} - ${startTime}`
 			);
 			return days >= minimun_coordination_days;
-			// if (days <= minimun_coordination_days) {
-			// 	return false;
-			// }
 		}
 	}
 
@@ -251,47 +248,6 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 						</aside>
 						<section className={styles.details}>
 							{isLoading && <Spinner />}
-							{/* {geographicalZonesIntersectingVolume?.map(
-								(zone: GeographicalZone, index: number) => (
-									<>
-										<Checkbox
-											id={`coordination-${index}`}
-											key={zone.id}
-											label={`${zone.name} (${zone.id}) - ${zone.coordinator?.email}`}
-											checked={true}
-											onChange={(value) => {}}
-										></Checkbox>
-										{!checkTimeInterval(
-											zone.coordinator?.minimun_coordination_days || 0,
-											flightRequest
-										) &&
-											getStartTime !== undefined && (
-												<div className={styles.alert}>
-													La coordinación requiere{' '}
-													<strong>
-														{
-															zone.coordinator
-																?.minimun_coordination_days
-														}
-													</strong>{' '}
-													días para realizarse y la coordinación
-													solicitada comienza el{' '}
-													{(
-														getStartTime(flightRequest) as Date
-													).toLocaleString()}{' '}
-													en{' '}
-													<strong>
-														{daysBetween(
-															new Date(),
-															getStartTime(flightRequest) as Date
-														)}
-													</strong>{' '}
-													días.
-												</div>
-											)}
-									</>
-								)
-							)} */}
 							{coordinators &&
 								coordinators.map((coordinationZone, index) => (
 									<>
@@ -300,7 +256,6 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 											key={coordinationZone.id}
 											label={`${coordinationZone.infrastructure} (${coordinationZone.id}) - ${coordinationZone.email}`}
 											checked={true}
-											// onChange={(value) => {}}
 										></Checkbox>
 										{!checkTimeInterval(
 											coordinationZone?.minimun_coordination_days || 0,
