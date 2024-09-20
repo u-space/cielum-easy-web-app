@@ -111,7 +111,6 @@ const FlightRequestHub: FC = () => {
 	const queryString = useQueryString();
 
 	// State
-	const isAdmin = useAuthIsAdmin();
 	const role = useAuthGetRole();
 
 	// Props
@@ -153,16 +152,16 @@ const FlightRequestHub: FC = () => {
 				data =
 					flightRequest.volumes[0] && flightRequest.volumes[0].effective_time_begin
 						? new Date(flightRequest.volumes[0].effective_time_begin).toLocaleString(
-								[],
-								OPERATION_LOCALES_OPTIONS
-						  )
+							[],
+							OPERATION_LOCALES_OPTIONS
+						)
 						: '';
 			} else if (col === 6) {
 				data = flightRequest.createdAt
 					? new Date(flightRequest.createdAt).toLocaleString(
-							[],
-							OPERATION_LOCALES_OPTIONS
-					  )
+						[],
+						OPERATION_LOCALES_OPTIONS
+					)
 					: '';
 			} else if (col === 7) {
 				data = String(flightRequest.vlos);
