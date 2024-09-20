@@ -303,7 +303,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 							{isOnNight && (
 								<Checkbox
 									id={`coordination-night`}
-									label={`is ngith fly`}
+									label={t(`It's a night flight`)}
 									checked={true}
 								/>
 							)}
