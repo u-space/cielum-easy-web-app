@@ -38,6 +38,7 @@ export class UvrEntity implements EntityHasDisplayName {
 		this.cause = 'SECURITY';
 		this.effective_time_begin = new Date();
 		this.effective_time_end = new Date();
+		this.effective_time_end.setHours(23, 59)
 		this.geography = null;
 		this.max_altitude = 50;
 		this.min_altitude = 0;
@@ -112,8 +113,8 @@ export class UvrEntity implements EntityHasDisplayName {
 			);
 		}
 		/*if (this.effective_time_begin < new Date()) {
-      errors.push(i18n.t('An UVR MUST NOT start before the current time'));
-    }*/
+	  errors.push(i18n.t('An UVR MUST NOT start before the current time'));
+	}*/
 		if (this.effective_time_begin >= this.effective_time_end) {
 			errors.push(i18n.t('An UVR MUST NOT start after its ending time'));
 		}
