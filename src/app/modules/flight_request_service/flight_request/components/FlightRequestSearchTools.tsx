@@ -10,21 +10,15 @@ import { FlightRequestState } from '@flight-request-entities/flightRequest';
 import { useAuthIsAdmin } from 'src/app/modules/auth/store';
 
 function dateToYYYYMMDD(date: Date) {
-	return [
-		date.getFullYear(),
-		('0' + (date.getMonth() + 1)).slice(-2),
-		('0' + date.getDate()).slice(-2)
-	].join('-');
+	const aux = new Date(date)
+	return aux.toISOString().split('T')[0]
 }
 
 const FlightRequestSearchTools: FC = () => {
 	const { t } = useTranslation(['ui', 'glossary']);
 	const isAdmin = useAuthIsAdmin();
+
 	const store = useFlightRequestStore((state) => ({
-		// filterShowPaid: state.filterShowPaid,
-		// setFilterShowPaid: state.setFilterShowPaid,
-		// filterShowNotPaid: state.filterShowNotPaid,
-		// setFilterShowNotPaid: state.setFilterShowNotPaid,
 		filterProperty: state.filterProperty,
 		filterMatchingText: state.filterMatchingText,
 		setFilterProperty: state.setFilterProperty,
@@ -33,21 +27,17 @@ const FlightRequestSearchTools: FC = () => {
 		setFilterState: state.setFilterState
 	}));
 	const gridItems = [
-		// {
-		// 	checked: store.filterShowPaid,
-		// 	onChange: (check: boolean) => store.setFilterShowPaid(check),
-		// 	label: 'Show paid flight requests'
-		// },
-		// {
-		// 	checked: store.filterShowNotPaid,
-		// 	onChange: (check: boolean) => store.setFilterShowNotPaid(check),
-		// 	label: 'Show pending payment flight requests'
-		// },
 		{
 			checked: store.filterState === FlightRequestState.PENDING,
 			onChange: (check: boolean) =>
 				store.setFilterState(check ? FlightRequestState.PENDING : undefined),
 			label: 'Show pending flight requests'
+		},
+		{
+			checked: store.filterState == `${FlightRequestState.PENDING},${FlightRequestState.REQUIRE_APPROVAL}`,
+			onChange: (check: boolean) =>
+				store.setFilterState(check ? `${FlightRequestState.PENDING},${FlightRequestState.REQUIRE_APPROVAL}` : undefined),
+			label: 'Necesita aprobación administrativa'
 		}
 	];
 
@@ -56,34 +46,18 @@ const FlightRequestSearchTools: FC = () => {
 			<FilterAndOrderSearchTools
 				useStore={useFlightRequestStore}
 				entityName={'flight-request'}
-				searchableProps={['id', 'name', 'starting_time', 'createdAt']}
-				orderableProps={['createdAt', 'name', 'starting_time']}
+				searchableProps={['name', 'createdAt']}
+				orderableProps={['createdAt', 'name']}
 			/>
-			{/* <CardGroup header="Filter by date">
-				{store.filterProperty === 'starting_time' && (
-					<PDateInput
-						id="starting_time"
-						label={t('glossary:flightRequest.starting_time')}
-						defaultValue={new Date(store.filterMatchingText || new Date().getTime())}
-						onChange={(date) => store.setFilterByText(dateToYYYYMMDD(date))}
-					/>
-				)}
-				{store.filterProperty !== 'starting_time' && (
-					<PButton
-						onClick={() => {
-							store.setFilterProperty('starting_time');
-							store.setFilterByText(dateToYYYYMMDD(new Date()));
-						}}
-					>
-						{t('Filter by starting time')}
-					</PButton>
-				)}
+			<CardGroup header="Filter by date">
 				{store.filterProperty === 'createdAt' && (
 					<PDateInput
 						id="createdAt"
 						label={t('glossary:flightRequest.createdAt')}
 						defaultValue={new Date(store.filterMatchingText || new Date().getTime())}
-						onChange={(date) => store.setFilterByText(dateToYYYYMMDD(date))}
+						onChange={(date) => {
+							store.setFilterByText(dateToYYYYMMDD(date))
+						}}
 					/>
 				)}
 				{store.filterProperty !== 'createdAt' && (
@@ -96,13 +70,11 @@ const FlightRequestSearchTools: FC = () => {
 						{t('Filter by creation date')}
 					</PButton>
 				)}
-			</CardGroup> */}
+			</CardGroup>
 
-			{isAdmin && (
-				<CardGroup header="Filter by state">
-					<GridCheckboxes gridItems={gridItems} />
-				</CardGroup>
-			)}
+			<CardGroup header="Filter by state">
+				<GridCheckboxes gridItems={gridItems} />
+			</CardGroup>
 		</>
 	);
 };

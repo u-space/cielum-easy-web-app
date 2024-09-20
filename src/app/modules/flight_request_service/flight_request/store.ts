@@ -7,12 +7,8 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 export interface FlightRequestStoreSpecificState {
-	filterShowPaid: boolean;
-	filterShowNotPaid: boolean;
-	filterState: FlightRequestState | undefined;
-	setFilterShowPaid: (filterShowPaid: boolean) => void;
-	setFilterShowNotPaid: (filterShowNotPaid: boolean) => void;
-	setFilterState: (filterState: FlightRequestState | undefined) => void;
+	filterState: string | undefined;
+	setFilterState: (filterState: string | undefined) => void;
 }
 
 export type FlightRequestStoreState = FilterableAndPaginableSliceState &
@@ -24,13 +20,9 @@ export const useFlightRequestStore = create<FlightRequestStoreState>()(
 			...createFilterableAndPaginableSlice<FlightRequestStoreSpecificState>(set, get),
 			sortingProperty: 'createdAt',
 			sortingOrder: 'DESC',
-			filterProperty: 'id',
-			filterShowNotPaid: false,
-			filterShowPaid: true,
+			filterProperty: 'name',
 			filterState: FlightRequestState.PENDING,
-			setFilterShowNotPaid: (filterShowNotPaid: boolean) => set({ filterShowNotPaid }),
-			setFilterShowPaid: (filterShowPaid: boolean) => set({ filterShowPaid }),
-			setFilterState: (filterState: FlightRequestState | undefined) =>
+			setFilterState: (filterState: string | undefined) =>
 				set({ filterState: filterState })
 		}),
 		{ name: 'FlightRequestStore' }

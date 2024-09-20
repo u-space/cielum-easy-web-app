@@ -100,8 +100,6 @@ export function useQueryFlightRequests(all = false): IUseQueryFlightRequests & a
 		sortingOrder,
 		filterProperty,
 		filterMatchingText,
-		// filterShowPaid,
-		// filterShowNotPaid,
 		filterState
 	} = useFlightRequestStore(
 		(state) => ({
@@ -111,8 +109,6 @@ export function useQueryFlightRequests(all = false): IUseQueryFlightRequests & a
 			sortingOrder: state.sortingOrder,
 			filterProperty: state.filterProperty,
 			filterMatchingText: state.filterMatchingText,
-			filterShowPaid: state.filterShowPaid,
-			filterShowNotPaid: state.filterShowNotPaid,
 			filterState: state.filterState
 		}),
 		shallow
