@@ -288,7 +288,7 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 			order?: string,
 			filterBy?: string,
 			filter?: string,
-			filterState?: FlightRequestState,
+			filterState?: string,
 			validDate?: boolean
 		) {
 			return axiosInstance.get('flightRequest', {
