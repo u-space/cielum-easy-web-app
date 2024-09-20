@@ -108,7 +108,7 @@ const ExtraActions: FC<ExtraUserActionsProps> = ({ userData: userData, setOverla
 					}
 				/>
 			</PTooltip>
-			<PTooltip content={userData.verified ? t('Operate') : t('Cantoperate')}>
+			<PTooltip content={userData.canOperate ? t('Operate') : t('Cantoperate')}>
 				<PButton
 					size={PButtonSize.SMALL}
 					icon={userData.canOperate ? 'cross' : 'tick'}
