@@ -67,13 +67,15 @@ const FilterAndOrderSearchTools: FC<FilterAndOrderSearchToolsProps> = ({
 			<CardGroup header={`Find a specific ${entityName}`}>
 				<div className={styles.search}>
 					<div className={styles.liner}>
-						<PInput
+
+						{!store.filterProperty.includes('createdAt') && <PInput
 							onChange={setFilterText}
 							defaultValue={filter}
 							id="search"
 							placeholder={t(`Search for a ${entityName}`)}
 						/>
-						{filter && filter.length > 0 && (
+						}
+						{!store.filterProperty.includes('createdAt') && filter && filter.length > 0 && (
 							<PButton
 								style={{
 									position: 'absolute',
