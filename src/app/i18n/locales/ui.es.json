@@ -239,8 +239,8 @@
 	"View past flights": "Ver vuelos historicos",
 	"Find a specific coordination": "Buscar una coordinación específica",
 	"Search for a coordination": "Buscar una coordinación",
-	"Authorize": "Autorizar",
-	"De-authorize": "Desautorizar",
+	"Authorize": "Click para permitir el ingreso al sistema",
+	"De-authorize": "Click para negar el ingreso al sistema",
 	"Position report": "Reporte de posición",
 	"Only showing the users that match the search query": "Sólo se muestran los usuarios que coinciden con la consulta de búsqueda. Borra el filtro para ver el resto.",
 	"Save": "Guardar",
@@ -401,7 +401,7 @@
 	"No file": "No hay archivo subido",
 	"Add file": "Archivo adjunto",
 	"Extra information": "Transcripción",
-	"Valid until": "Válido hasta",
+	"Valid until": "Vencimiento",
 	"Not_expirable": "No expira",
 	"Expirable": "Expira",
 	"document_number": "Nro de cédula",
@@ -567,5 +567,7 @@
 	"Need coordination for night flight.": "Necesita coordinación para vuelo nocturno.",
 	"Need coordination for vlos flight.": "Necesita coordinación por vuelo fuera de línea de vista.",
 	"Need coordination for zone x": "Necesita coodinación para zona {{x}}.",
-	"You will be redirected to the soca creation": "Serás redirigido a la creación de soca"
+	"You will be redirected to the soca creation": "Serás redirigido a la creación de soca",
+	"Operate": "Click para denegar la creación de operaciones",
+	"Cantoperate": "Click para permitir la creación de operaciones"
 }
