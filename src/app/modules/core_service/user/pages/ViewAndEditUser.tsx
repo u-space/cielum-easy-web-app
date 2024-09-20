@@ -329,7 +329,7 @@ const ViewAndEditUser = (props: UserPageProps) => {
 					{t('Your password must have atleast 9 characters')}
 				</aside>
 				<section className={styles.details}>
-					<PasswordChanger ls={ls} isCreating={isCreating} token={token || ''} />
+					<PasswordChanger ls={ls} isCreating={isCreating} token={''} />
 				</section>
 				{!isCreating && vehicles && (
 					<>

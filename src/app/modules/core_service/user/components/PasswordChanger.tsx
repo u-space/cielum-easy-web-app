@@ -6,7 +6,7 @@ import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { useUpdateUserPasswordByToken } from '../hooks';
+import { useUpdateUserPassword, useUpdateUserPasswordByToken } from '../hooks';
 
 interface PasswordChangerProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,7 +31,15 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 
 	const PASSWORD_CHANGE_EXPIRED_ERROR = t('The password change link has expired');
 
-	const updateUserPasswordByToken = useUpdateUserPasswordByToken();
+	// const updateUserPasswordByToken = useUpdateUserPasswordByToken();
+	// const updateUserPasswordByToken = useUpdateUserPassword();
+
+	let updateUserPasswordByToken: any;
+	if (token && token.length > 0) {
+		updateUserPasswordByToken = useUpdateUserPasswordByToken();
+	} else {
+		updateUserPasswordByToken = useUpdateUserPassword();
+	}
 
 	const savePasswordUpdate = () => {
 		if (!ls.entity.email) {
@@ -47,11 +55,19 @@ const PasswordChanger: FC<PasswordChangerProps> = ({
 		}
 		setShowFields(forceShow || false);
 
-		updateUserPasswordByToken.mutate({
+		let toUpdate: any = {
 			email: ls.entity.email,
-			token,
 			password: ls.entity.password
-		});
+		};
+		if (token && token.length > 0) {
+			toUpdate = {
+				email: ls.entity.email,
+				token,
+				password: ls.entity.password
+			};
+		}
+
+		updateUserPasswordByToken.mutate(toUpdate);
 		// }
 	};
 

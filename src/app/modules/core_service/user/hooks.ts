@@ -38,7 +38,7 @@ export function useUpdateUser() {
 }
 
 export interface UseUpdateUserPasswordMutationParams {
-	username: string;
+	email: string;
 	password: string;
 }
 
@@ -52,8 +52,9 @@ export function useUpdateUserPassword() {
 	const {
 		user: { updateUserPassword }
 	} = useCoreServiceAPI();
+	console.log('updateUserPassword', updateUserPassword);
 	return useMutation<AxiosResponse<void>, AxiosError, UseUpdateUserPasswordMutationParams>(
-		(params) => updateUserPassword(params.username, params.password)
+		(params) => updateUserPassword(params.email, params.password)
 	);
 }
 
