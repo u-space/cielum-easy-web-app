@@ -18,6 +18,7 @@ import env from '../../../../vendor/environment/env';
 import { Spinner } from '@blueprintjs/core';
 import styled from 'styled-components';
 import { useLs } from '../../../commons/utils';
+import { useHistory } from 'react-router-dom';
 
 const Centered = styled.div`
 	margin: 4rem;
@@ -84,6 +85,7 @@ enum RegisterScreenStep {
 
 const RegisterScreen = () => {
 	const { t } = useTranslation();
+	const history = useHistory();
 	const [step, setStep] = useState<RegisterScreenStep>(RegisterScreenStep.FORM_SCREEN);
 	const [error, setError] = useState<string | null>(null);
 
@@ -177,6 +179,9 @@ const RegisterScreen = () => {
 				</StatusLayout>
 			)}
 			<section className={styles.actions}>
+				<PButton onClick={() => history.push('/')}>
+					{t('HOME')}
+				</PButton>
 				{(step === RegisterScreenStep.ERROR_SCREEN ||
 					step === RegisterScreenStep.CONSENT_SCREEN ||
 					(step === RegisterScreenStep.SUBMITTING_SCREEN && registerUser.isError)) && (
