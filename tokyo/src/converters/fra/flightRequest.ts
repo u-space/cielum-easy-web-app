@@ -18,7 +18,7 @@ export const flightRequestTokyoConverter: ConvertToLayer<
 };
 
 function getIdFromFlightRequest(flightRequest: FlightRequestEntity) {
-	return getPickableId(PickableType.GeographicalZone, flightRequest.id || '', flightRequest.name);
+	return getPickableId(PickableType.FlightRequest, flightRequest.id || '', flightRequest.name);
 }
 
 function getConverterFromFlightRequest(
