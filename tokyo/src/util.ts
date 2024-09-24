@@ -20,7 +20,8 @@ export enum PickableType {
 	Operation = 'operation',
 	Vehicle = 'vehicle',
 	Rfv = 'rfv',
-	Uvr = 'uvr'
+	Uvr = 'uvr',
+	FlightRequest = 'flight-request'
 }
 export function getPickableId(type: PickableType, id: string, name: string) {
 	return `${type}|${id}|${name}`;
