@@ -10,7 +10,8 @@ export enum LiveMapSelectableType {
 	OPERATION = 'operation',
 	GEOGRAPHICAL_ZONE = 'geographical_zone',
 	RFV = 'rfv',
-	UVR = 'uvr'
+	UVR = 'uvr',
+	FLIGHT_REQUEST = 'flight_request'
 }
 export interface LiveMapOperationSelected {
 	type: LiveMapSelectableType.OPERATION;
@@ -22,6 +23,12 @@ export interface LiveMapGeographicalZoneSelected {
 	type: LiveMapSelectableType.GEOGRAPHICAL_ZONE;
 	id: string;
 }
+
+export interface LiveMapFlightRequestZoneSelected {
+	type: LiveMapSelectableType.FLIGHT_REQUEST;
+	id: string;
+}
+
 
 export interface LiveMapRfvSelected {
 	type: LiveMapSelectableType.RFV;
@@ -37,6 +44,7 @@ export interface LiveMapUvrSelected {
 export type LiveMapSelected =
 	| LiveMapOperationSelected
 	| LiveMapGeographicalZoneSelected
+	| LiveMapFlightRequestZoneSelected
 	| LiveMapRfvSelected
 	| LiveMapUvrSelected
 	| null;

@@ -25,7 +25,8 @@ import { getCSSVariable } from '@pcomponents/utils';
 import { TokyoPick } from '@tokyo/types';
 import { Polygon } from 'geojson';
 import {
-	useOwnedFlightRequests
+	useOwnedFlightRequests,
+	useSelectedFlightRequest
 } from 'src/app/modules/flight_request_service/flight_request/hooks';
 import styled from 'styled-components';
 import env from '../../../../../vendor/environment/env';
@@ -33,6 +34,8 @@ import { setCSSVariable, useQueryString } from '../../../../utils';
 import { usePositionStore } from '../../../core_service/position/store';
 import LiveMapViewSvelte from './LiveMapView.svelte';
 import {
+	LiveMapFlightRequestZoneSelected,
+	LiveMapGeographicalZoneSelected,
 	LiveMapOperationSelected,
 	LiveMapRfvSelected,
 	LiveMapSelectableType,
@@ -72,6 +75,8 @@ const LiveMap = () => {
 	const { gz, selected: gzSelection } = useSelectedGeographicalZone();
 	const { rfv, selected: rfvSelection } = useSelectedRfv();
 	const { uvr, selected: uvrSelection } = useSelectedUvr();
+	const { flightRequest, selected: frSelection } = useSelectedFlightRequest();
+
 	const frQuery = useOwnedFlightRequests();
 	const flightRequests: FlightRequestEntity[] = frQuery.flightRequests;
 	const queryString = useQueryString();
@@ -85,12 +90,18 @@ const LiveMap = () => {
 				volume: Number(operationSelection.volume)
 			} as LiveMapOperationSelected;
 		}
-		// else if (gz) {
-		// 	return {
-		// 		type: LiveMapSelectableType.GEOGRAPHICAL_ZONE,
-		// 		id: gz.id
-		// 	} as LiveMapGeographicalZoneSelected;
-		// }
+		else if (gz) {
+			return {
+				type: LiveMapSelectableType.GEOGRAPHICAL_ZONE,
+				id: gz.id
+			} as LiveMapGeographicalZoneSelected;
+		}
+		else if (flightRequest) {
+			return {
+				type: LiveMapSelectableType.FLIGHT_REQUEST,
+				id: flightRequest.id
+			} as LiveMapFlightRequestZoneSelected;
+		}
 		else if (rfv) {
 			return {
 				type: LiveMapSelectableType.RFV,
@@ -105,7 +116,7 @@ const LiveMap = () => {
 		} else {
 			return null;
 		}
-	}, [gz, operationSelection, operation, rfv, uvr]);
+	}, [gz, operationSelection, operation, rfv, uvr, flightRequest]);
 	const positions = usePositionStore((state) => state.positions);
 	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
 	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
@@ -133,6 +144,12 @@ const LiveMap = () => {
 			tokyo.flyToCenterOfGeometry(gz.geography);
 		}
 	}, [gz]);
+
+	useEffect(() => {
+		if (flightRequest && flightRequest.volumes && flightRequest.volumes[0].operation_geography) {
+			tokyo.flyToCenterOfGeometry(flightRequest.volumes[0].operation_geography);
+		}
+	}, [flightRequest]);
 
 	useEffect(() => {
 		if (uvr) {
