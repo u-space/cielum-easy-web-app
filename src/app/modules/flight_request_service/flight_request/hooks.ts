@@ -1,15 +1,16 @@
-import { useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useFlightRequestServiceAPI } from '../../../utils';
-import { useEffect } from 'react';
-import { shallow } from 'zustand/shallow';
-import { useFlightRequestStore } from './store';
 import { FlightRequestEntity, FlightRequestState } from '@flight-request-entities/flightRequest';
 import { AxiosError, AxiosResponse } from 'axios';
+import { useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { shallow } from 'zustand/shallow';
+import { useFlightRequestServiceAPI, useQueryString } from '../../../utils';
 import { useAuthStore } from '../../auth/store';
+import { useFlightRequestStore } from './store';
 
 export function useSelectedFlightRequest() {
-	const { id } = useParams() as { id: string | undefined };
+	const queryString = useQueryString();
+	const id = queryString.get('flight-request');
+
 	const {
 		flightRequest: { getFlightRequest }
 	} = useFlightRequestServiceAPI();
@@ -18,18 +19,15 @@ export function useSelectedFlightRequest() {
 		['flightRequest', id],
 		() => getFlightRequest(id ?? ''),
 		{
-			enabled: false
+			enabled: false,
 		}
 	);
-	const { refetch } = querySelectedFlightRequest;
 
 	useEffect(() => {
 		if (id) {
-			refetch().then(() => {
-				return;
-			});
+			querySelectedFlightRequest.refetch();
 		}
-	}, [id, refetch]);
+	}, [id]);
 
 	const flightRequest = querySelectedFlightRequest?.data?.data;
 
@@ -69,8 +67,6 @@ export function useOwnedFlightRequests(): IUseQueryFlightRequests & any {
 			undefined,
 			'operator',
 			email,
-			// false,
-			// false,
 			FlightRequestState.COMPLETED,
 			true,
 		)
