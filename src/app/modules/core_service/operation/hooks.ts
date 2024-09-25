@@ -1,14 +1,14 @@
-import { useAuthIsPilot, useAuthStore } from '../../auth/store';
-import { useOperationStore } from './store';
-import { shallow } from 'zustand/shallow';
-import { QueryOptions, useMutation, useQuery, useQueryClient } from 'react-query';
-import { useCoreServiceAPI, useQueryString } from '../../../utils';
-import { useEffect, useMemo } from 'react';
-import _ from 'lodash';
-import { AxiosError, AxiosResponse } from 'axios';
 import { UpdateEntityParams } from '@utm-entities/types';
 import { GetOperationsResponse } from '@utm-entities/v2/api/operation';
 import { BaseOperation, Operation } from '@utm-entities/v2/model/operation';
+import { AxiosError } from 'axios';
+import _ from 'lodash';
+import { useEffect, useMemo } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { shallow } from 'zustand/shallow';
+import { useCoreServiceAPI, useQueryString } from '../../../utils';
+import { useAuthIsPilot, useAuthStore } from '../../auth/store';
+import { useOperationStore } from './store';
 
 export function useQueryOperation(gufi: string, enabled: boolean) {
 	const {
@@ -266,11 +266,14 @@ export function useQueryOperationsCounts() {
 }
 
 export function useSaveOperation(onSuccess?: () => void, onError?: (error: Error) => void) {
+
 	const queryClient = useQueryClient();
 	const {
 		operation: { saveOperation }
 	} = useCoreServiceAPI();
+
 	const isPilot = useAuthIsPilot();
+
 	return useMutation<Operation, AxiosError<{ message?: string }>, UpdateEntityParams<Operation>>(
 		({ entity }) => saveOperation(entity, isPilot),
 		{
@@ -280,8 +283,8 @@ export function useSaveOperation(onSuccess?: () => void, onError?: (error: Error
 					onSuccess
 						? onSuccess
 						: () => {
-								return;
-						  }
+							return;
+						}
 				);
 			},
 			onError: (error) => {

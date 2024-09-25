@@ -107,7 +107,6 @@ const InfoOperation: FC<InfoOperationProps> = ({
 	}, [operation.owner]);
 
 	useEffect(() => {
-		console.log(`Effect executed: ${JSON.stringify(operation, null, 2)}`);
 		const owner = ownerList && ownerList.length > 0 ? ownerList[0] : undefined;
 		const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
 		const userCanOperate = owner?.canOperate || false;
@@ -146,14 +145,6 @@ const InfoOperation: FC<InfoOperationProps> = ({
 			enabled: !!operation.owner
 		}
 	);
-
-	// const canCreateOperation = (owner?: UserEntity): boolean => {
-	// 	console.log('canCreateOp?', JSON.stringify(owner, null, 2));
-	// 	console.log('canCreateOp?', JSON.stringify(operation, null, 2));
-	// 	const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
-	// 	const userCanOperate = owner?.canOperate || false;
-	// 	return hasVehicle && userCanOperate;
-	// };
 
 	const canOperateCauseMsj = () => {
 		const hasVehicle = operation.uas_registrations && operation.uas_registrations.length > 0;
@@ -250,9 +241,6 @@ const InfoOperation: FC<InfoOperationProps> = ({
 				<PButton
 					onClick={save}
 					disabled={
-						// !canCreateOperation(
-						// 	ownerList && ownerList.length > 0 ? ownerList[0] : undefined
-						// )
 						!canCreateOperation
 					}
 				>

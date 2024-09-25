@@ -141,7 +141,8 @@ const OperationEditor = () => {
 
 	const queryClient = useQueryClient();
 	const saveOperationMutation = useSaveOperation(
-		() =>
+		() => {
+			console.log('saveOperationMutation.mutate: ', operation);
 			setModalProps({
 				isVisible: true,
 				type: PModalType.SUCCESS,
@@ -153,56 +154,47 @@ const OperationEditor = () => {
 						history.push('/map');
 					}
 				}
-			}),
+			});
+		},
 		(error: any) => {
-			const msg = error.response?.data.message as string;
-			const aux: string[] = error.response?.data.message
-				.split(',')
-				.map((errorTextSplited: string) => {
-					const [errorText, zone] = transformOperationCheckError(errorTextSplited);
-					console.log('erors: ', errorText, '|', zone);
-					if (zone === '') {
-						return t(errorText);
-					} else {
-						return t(errorText, { x: zone });
-					}
-				});
-			let needCoordination = false;
-			if (msg.search('Need coordination') !== -1) {
-				needCoordination = true;
-				aux.push(t('You will be redirected to the soca creation'));
+			console.log('Error occurred:', error);
+			const errorMessages = [];
+
+			if (typeof error !== 'string' && error.response?.data) {
+				try {
+					errorMessages.push(...error.response.data.message.split(',').map((errorText: string) => {
+						const [transformedError, zone] = transformOperationCheckError(errorText.trim());
+						return zone ? t(transformedError, { x: zone }) : t(transformedError);
+					}));
+				} catch (e) {
+					console.error('Error parsing error messages:', e);
+				}
 			}
+
+			const needCoordination = error.response?.data.message.includes('Need coordination');
+			if (needCoordination) {
+				errorMessages.push(t('You will be redirected to the soca creation'));
+			}
+
 			setModalProps({
 				isVisible: true,
 				type: PModalType.ERROR,
-				title: t('An error ocurred while saving'),
-				content: needCoordination ? aux : translateErrors(error, 'operation'),
+				title: t('An error occurred while saving'),
+				content: needCoordination ? errorMessages : translateErrors(error, 'operation'),
 				primary: {
 					onClick: () => {
 						resetError();
-						const msg = error.response?.data.message as string;
-						if (msg.search('Need coordination') !== -1) {
-							const vol: OperationVolume = operation.operation_volumes[0];
-							const geo =
-								operation.operation_volumes.length === 1
-									? vol.operation_geography
-									: '';
-							const volumeData =
-								operation.operation_volumes.length === 1
-									? {
-											effective_time_begin: vol.effective_time_begin,
-											effective_time_end: vol.effective_time_end,
-											min_altitude: vol.min_altitude,
-											max_altitude: vol.max_altitude,
-											beyond_visual_line_of_sight:
-												vol.beyond_visual_line_of_sight
-									  }
-									: undefined;
-							history.push(
-								`/editor/flightRequest/${JSON.stringify({ ...geo })}${
-									volumeData ? `/${JSON.stringify(volumeData)}` : ''
-								}`
-							);
+						if (needCoordination) {
+							const vol = operation.operation_volumes[0];
+							const geo = operation.operation_volumes.length === 1 ? vol.operation_geography : '';
+							const volumeData = operation.operation_volumes.length === 1 ? {
+								effective_time_begin: vol.effective_time_begin,
+								effective_time_end: vol.effective_time_end,
+								min_altitude: vol.min_altitude,
+								max_altitude: vol.max_altitude,
+								beyond_visual_line_of_sight: vol.beyond_visual_line_of_sight
+							} : undefined;
+							history.push(`/editor/flightRequest/${JSON.stringify({ ...geo })}${volumeData ? `/${JSON.stringify(volumeData)}` : ''}`);
 						}
 					}
 				}
@@ -230,13 +222,14 @@ const OperationEditor = () => {
 			mode: EditMode.MULTI
 		},
 		geographicalZones: queryGeographicalZones.items,
-		flightRequests:flightRequests
+		flightRequests: flightRequests
 	};
 
 	return (
 		<MapLayout
 			isLoading={{
-				menu: saveOperationMutation.isLoading || saveOperationMutation.isSuccess,
+				// menu: saveOperationMutation.isLoading || saveOperationMutation.isSuccess,
+				menu: saveOperationMutation.isLoading,
 				main: saveOperationMutation.isLoading
 			}}
 			menu={

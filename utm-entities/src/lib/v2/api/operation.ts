@@ -132,11 +132,20 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 
 			if (!operation.state) operation.state = OperationStateEnum.PROPOSED;
 
-			return axiosInstance
-				.post('operation', operation.asBackendFormat({ omitOwner: isPilot }), {
-					headers: { auth: token }
-				})
-				.then(extractDataFromResponse);
+			try {
+				const operationToSave = operation.asBackendFormat({ omitOwner: isPilot });
+
+				return axiosInstance
+					.post('operation', operationToSave, {
+						headers: { auth: token }
+					})
+					.then(extractDataFromResponse).
+					catch(e => { return Promise.reject(e) })
+			}
+			catch (e) {
+				console.log('Esto se ejecuta?')
+				return Promise.reject(e)
+			}
 		},
 		getOperations,
 		getOperation(gufi: string) {
