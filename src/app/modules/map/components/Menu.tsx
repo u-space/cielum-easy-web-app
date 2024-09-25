@@ -1,24 +1,24 @@
+import { Checkbox } from '@blueprintjs/core';
+import { CoordinationEntity } from '@flight-request-entities/coordination';
+import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
+import CardGroup from '../../../commons/layouts/dashboard/menu/CardGroup';
+import { getFeatureOption } from '../../../utils';
+import { useAuthIsAdmin, useAuthStore } from '../../auth/store';
 import {
 	useQueryOperations,
 	useSelectedOperationAndVolume
 } from '../../core_service/operation/hooks';
-import _ from 'lodash';
-import { useAuthIsAdmin, useAuthStore } from '../../auth/store';
-import { useHistory } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useSelectedGeographicalZone } from '../../flight_request_service/geographical_zone/hooks';
 import { useSelectedRfv } from '../../core_service/rfv/hooks';
 import { useSelectedUvr } from '../../core_service/uvr/hooks';
 import { useSelectedVehicle } from '../../core_service/vehicle/hooks';
-import OperationDetails from './OperationDetails';
+import { useSelectedFlightRequest } from '../../flight_request_service/flight_request/hooks';
+import { useSelectedGeographicalZone } from '../../flight_request_service/geographical_zone/hooks';
 import GenericEntityDetails from './GenericEntityDetails';
-import PButton from '@pcomponents/PButton';
-import VehicleDetails from './VehicleDetails';
+import OperationDetails from './OperationDetails';
 import OperationListAndStateFilters from './OperationListAndStateFilters';
-import CardGroup from '../../../commons/layouts/dashboard/menu/CardGroup';
-import { Checkbox, IconName } from '@blueprintjs/core';
-import { getFeatureOption } from '../../../utils';
-import env from '../../../../vendor/environment/env';
+import VehicleDetails from './VehicleDetails';
 
 const Menu = ({
 	isShowingGeographicalZones,
@@ -35,6 +35,7 @@ const Menu = ({
 	const history = useHistory();
 	const isAdmin = useAuthIsAdmin();
 	const username = useAuthStore((state) => state.username);
+
 	const queryOperations = useQueryOperations();
 	const { operation, selected: operationSelection } = useSelectedOperationAndVolume();
 	const { gz, selected: gzSelection, query: querySelectedGz } = useSelectedGeographicalZone();
@@ -46,6 +47,7 @@ const Menu = ({
 	} = useSelectedVehicle();
 	const { rfv, selected: rfvSelection, query: querySelectedRfv } = useSelectedRfv();
 	const { uvr, selected: uvrSelection, query: querySelectedUvr } = useSelectedUvr();
+	const { flightRequest, selected: frSelection, query: querySelectedFr } = useSelectedFlightRequest();
 
 	if (operationSelection.gufi && operation) {
 		// Show details of selected operation
@@ -61,7 +63,7 @@ const Menu = ({
 				}
 			/>
 		);
-	} else if (gzSelection.geographicalZone) {
+	} else if (gzSelection.geographicalZone && gz) {
 		// Show details of selected geographical zone
 		return (
 			<GenericEntityDetails
@@ -69,47 +71,9 @@ const Menu = ({
 				isLoading={querySelectedGz.isLoading}
 				isSuccess={querySelectedGz.isSuccess}
 				isError={querySelectedGz.isError}
-				entity={
-					gz
-						? isAdmin
-							? {
-									name: gz.name,
-									coordinator_email: gz.coordinator?.email,
-									coordinator_phone: gz.coordinator?.telephone
-							  }
-							: { name: gz.name }
-						: null
-				}
+				entity={{ ...gz, minimun_coordination_days: gz.coordinator.minimun_coordination_days }}
 				baseLabelKey={'gz'}
-				label={t('Geographical Zone')}
-				extra={
-					<>
-						{!!gz?.coordinator && (
-							<p>
-								{t(
-									'Coordination required for operations in this geographical zone'
-								)}
-							</p>
-						)}
-						{!gz?.coordinator && (
-							<>
-								<h2>{t('This zone does not have an associated coordinator')}</h2>
-								{isAdmin && (
-									<PButton
-										icon="add"
-										onClick={() => {
-											history.push(
-												`/editor/coordinator?geographical-zone=${gz?.id}`
-											);
-										}}
-									>
-										{t('Create coordinator')}
-									</PButton>
-								)}
-							</>
-						)}
-					</>
-				}
+				label={t('Prohibited and restricted zone')}
 				canEdit={false}
 			/>
 		);
@@ -152,6 +116,38 @@ const Menu = ({
 				isError={querySelectedVehicle.isError}
 			/>
 		);
+
+	} else if (frSelection.flightRequest && flightRequest) {
+		// Show details of selected flight request
+		const visibleFields: any = {}
+		visibleFields.id = flightRequest.id;
+		visibleFields.name = flightRequest.name;
+		visibleFields.time_begin = flightRequest.volumes[0].effective_time_begin
+		visibleFields.effective_time_end = flightRequest.volumes[0].effective_time_end
+		visibleFields.vehicles = flightRequest.uavs;
+
+		visibleFields.coordinator = flightRequest.coordination.map((coordination: CoordinationEntity) => {
+			return {
+				name: coordination.coordinator?.infrastructure,
+				telephone: coordination.coordinator?.telephone,
+				reference: coordination.reference,
+				test: 'lalala'
+			}
+		})
+		return (
+			<GenericEntityDetails
+				route={'/map'}
+				isLoading={querySelectedFr.isLoading}
+				isSuccess={querySelectedFr.isSuccess}
+				isError={querySelectedFr.isError}
+				entity={visibleFields}
+				baseLabelKey={'flight-request'}
+				label={t('Flight Request')}
+				canEdit={false}
+				extra={null}
+			/>
+		);
+
 	} else {
 		// Main screen
 		return (
