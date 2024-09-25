@@ -27,6 +27,7 @@ import ViewAndEditUser from '../pages/ViewAndEditUser';
 import { UserEntity } from '@utm-entities/user';
 import { StateCircle } from '../../../../commons/components/hubs/StateCircle';
 import i18n from 'src/app/i18n';
+import { Spinner } from '@blueprintjs/core';
 
 interface ExtraUserActionsProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,11 +75,14 @@ const ExtraActions: FC<ExtraUserActionsProps> = ({ userData: userData, setOverla
 	const { t } = useTranslation();
 	const updateUserStatus = useUpdateUserStatus();
 	const updateCanOperate = useUpdateCanOperate();
+	// const queryUsers = useQueryUsers();
+
 
 	return (
 		<>
 			<PTooltip content={userData.verified ? t('De-authorize') : t('Authorize')}>
-				<PButton
+				{updateUserStatus.isLoading && <Spinner size={16} />}
+				{!updateUserStatus.isLoading && <PButton
 					size={PButtonSize.SMALL}
 					icon={userData.verified ? 'lock' : 'unlock'}
 					variant={PButtonType.SECONDARY}
@@ -106,10 +110,13 @@ const ExtraActions: FC<ExtraUserActionsProps> = ({ userData: userData, setOverla
 							}
 						)
 					}
-				/>
+				/>}
 			</PTooltip>
 			<PTooltip content={userData.canOperate ? t('Operate') : t('Cantoperate')}>
-				<PButton
+				{updateCanOperate.isLoading &&
+					<Spinner size={16} />
+				}
+				{!updateCanOperate.isLoading && <PButton
 					size={PButtonSize.SMALL}
 					icon={userData.canOperate ? 'cross' : 'tick'}
 					variant={PButtonType.SECONDARY}
@@ -138,6 +145,7 @@ const ExtraActions: FC<ExtraUserActionsProps> = ({ userData: userData, setOverla
 						)
 					}
 				/>
+				}
 			</PTooltip>
 			{/* <PTooltip content={getStateInformation(userData).text}>
 				<StateCircle style={{ backgroundColor: getStateInformation(userData).color }} />
@@ -193,6 +201,7 @@ const UserHub = () => {
 
 	const updateUser = useUpdateUser();
 	const updateUserStatus = useUpdateUserStatus();
+	const updateCanOperate = useUpdateCanOperate();
 	const updateDocumentValidation = useUpdateDocumentValidation();
 	const deleteUser = useDeleteUser();
 	const queryVehicles = useGetVehiclesByOperator(idSelected || '');
@@ -280,7 +289,7 @@ const UserHub = () => {
 			idSelected={idSelected}
 			updateQuery={updateUser as UseMutationResult}
 			deleteQuery={deleteUser as UseMutationResult}
-			extraIsLoading={updateUserStatus.isLoading || updateDocumentValidation.isLoading}
+			extraIsLoading={updateUserStatus.isLoading || updateDocumentValidation.isLoading || updateCanOperate.isLoading}
 			query={{ ...queryUsers, count }}
 			overlay={overlay}
 			canEdit={() => isAdmin}
