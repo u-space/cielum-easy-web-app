@@ -377,11 +377,12 @@
 	"gz": {
 		"id": "Id",
 		"name": "Nombre",
-		"min_altitude": "Altura minima aplicable (m)",
-		"max_altitude": "Altura máxima aplicable (m)",
+		"min_altitude": "Altura inferior (m AGL)",
+		"max_altitude": "Altura superior (m AGL)",
 		"actions": "Acciones a ejecutar",
 		"arg": "Recipientes de la acción",
-		"on": "Cuando el estado es"
+		"on": "Cuando el estado es",
+		"minimun_coordination_days": "Mínimo de días de coordinación"
 	},
 	"quickflies": {
 		"save_error": "El siguiente error ocurrió mientras se guardaba: {{error}}",
