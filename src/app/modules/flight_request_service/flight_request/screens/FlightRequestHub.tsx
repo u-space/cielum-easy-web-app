@@ -1,25 +1,25 @@
-import { useTranslation } from 'react-i18next';
+import { FlightRequestEntity, FlightRequestState } from '@flight-request-entities/flightRequest';
+import { CustomCell, GridCell, GridCellKind, TextCell } from '@glideapps/glide-data-grid';
+import PButton, { PButtonType } from '@pcomponents/PButton';
+import PTooltip from '@pcomponents/PTooltip';
+import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
+import { observer } from 'mobx-react';
 import { CSSProperties, FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { UseMutationResult } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { useQueryString } from '../../../../utils';
+import styled from 'styled-components';
 import GenericHub, { rowHeight } from '../../../../commons/screens/GenericHub';
+import { useQueryString } from '../../../../utils';
+import { AuthRole, useAuthGetRole } from '../../../auth/store';
+import FlightRequestSearchTools from '../components/FlightRequestSearchTools';
 import {
 	useQueryFlightRequests,
 	useUpdateFlightRequest,
 	useUpdateFlightRequestState
 } from '../hooks';
-import { CustomCell, GridCell, GridCellKind, TextCell } from '@glideapps/glide-data-grid';
 import ViewAndEditFlightRequest from '../pages/ViewAndEditFlightRequest';
 import { useFlightRequestStore } from '../store';
-import { UseMutationResult } from 'react-query';
-import { AuthRole, useAuthGetRole, useAuthIsAdmin } from '../../../auth/store';
-import { FlightRequestEntity, FlightRequestState } from '@flight-request-entities/flightRequest';
-import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
-import { observer } from 'mobx-react';
-import FlightRequestSearchTools from '../components/FlightRequestSearchTools';
-import styled from 'styled-components';
-import PTooltip from '@pcomponents/PTooltip';
-import { OPERATION_LOCALES_OPTIONS } from '@utm-entities/v2/model/operation';
 
 interface MenuButtonsProps {
 	entity: FlightRequestEntity;
@@ -88,12 +88,6 @@ const ExtraActions: FC<{ data: FlightRequestEntity }> = ({ data }) => {
 	};
 	return (
 		<>
-			<PButton
-				icon={'eye-open'}
-				size={PButtonSize.SMALL}
-				variant={PButtonType.SECONDARY}
-				onClick={() => history.push(`/flight-requests/${data.id}`)}
-			/>
 			<PTooltip content={t(data.state ? data.state.toString() : '')}>
 				<PaidStateCircle
 					style={{
