@@ -66,12 +66,12 @@ const GenericEntityDetails: FC<GenericEntityDetailsProps> = ({
 										prop={`glossary:${baseLabelKey}.${prop}`}
 										value={value.map((item, index) => (
 											<>
-												{value.length > 1 && (
+												{/* {value.length > 1 && (
 													<p>
 														{t('item')} {index + 1}
 													</p>
-												)}
-												<ul key={item}>
+												)} */}
+												<ul key={item} style={{ margin: '0.1rem', backgroundColor: '#f5f5f522', borderRadius: '0.5rem' }}>
 													{Object.entries(item).map((subitem) => {
 														if (typeof subitem[1] !== 'object') {
 															return (

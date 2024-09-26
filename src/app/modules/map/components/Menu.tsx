@@ -122,16 +122,18 @@ const Menu = ({
 		const visibleFields: any = {}
 		visibleFields.id = flightRequest.id;
 		visibleFields.name = flightRequest.name;
-		visibleFields.time_begin = flightRequest.volumes[0].effective_time_begin
+		visibleFields.effective_time_begin = flightRequest.volumes[0].effective_time_begin
 		visibleFields.effective_time_end = flightRequest.volumes[0].effective_time_end
-		visibleFields.vehicles = flightRequest.uavs;
+		const vehicles: string[] = flightRequest.uavs.map((v: any) => {
+			return `${v.vehicleName}/${v.extra_fields.plate}`
+		});
+		visibleFields.vehicles = vehicles.join('\n');
 
-		visibleFields.coordinator = flightRequest.coordination.map((coordination: CoordinationEntity) => {
+		visibleFields.coordinations = flightRequest.coordination.map((coordination: CoordinationEntity) => {
 			return {
-				name: coordination.coordinator?.infrastructure,
-				telephone: coordination.coordinator?.telephone,
-				reference: coordination.reference,
-				test: 'lalala'
+				reference: coordination.reference === "" ? 'GeographicalZone' : coordination.reference,
+				coordinatorName: coordination.coordinator?.infrastructure ? coordination.coordinator?.infrastructure : null,
+				telephone: coordination.coordinator?.telephone ? coordination.coordinator?.telephone : null,
 			}
 		})
 		return (
