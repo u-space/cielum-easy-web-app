@@ -131,7 +131,7 @@ const Menu = ({
 
 		visibleFields.coordinations = flightRequest.coordination.map((coordination: CoordinationEntity) => {
 			return {
-				reference: coordination.reference === "" ? 'GeographicalZone' : coordination.reference,
+				reference: coordination.reference === "" ? t('Geographical zone') : coordination.reference,
 				coordinatorName: coordination.coordinator?.infrastructure ? coordination.coordinator?.infrastructure : null,
 				telephone: coordination.coordinator?.telephone ? coordination.coordinator?.telephone : null,
 			}
