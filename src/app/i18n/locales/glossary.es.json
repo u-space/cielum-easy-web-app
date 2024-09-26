@@ -506,6 +506,13 @@
 	},
 	"flight-request": {
 		"name": "Nombre de la solicitud",
+		"reference": "Tipo",
+		"telephone": "Teléfono",
+		"vehicles": "Vehículos",
+		"effective_time_begin": "Hora de inicio",
+		"effective_time_end": "Hora de finalización",
+		"coordinations": "Coordinaciones",
+		"coordinatorName": "Nombre del coordinador",
 		"isDefaultOperator": "¿Desea utilizar el operador por defecto?",
 		"uas_registrations": "Aeronaves a utilizar",
 		"flight_comments": "Comentarios de vuelo",
