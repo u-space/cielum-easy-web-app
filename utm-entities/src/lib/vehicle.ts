@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import Axios, { AxiosResponseTransformer } from 'axios';
+import Axios, { AxiosResponse, AxiosResponseTransformer } from 'axios';
 import Joi, { ValidationError } from 'joi';
 import _ from 'lodash';
 import { makeAutoObservable, observable } from 'mobx';
@@ -9,6 +9,7 @@ import { buildParametersObject, saveExtraFields } from './_util';
 import { ExtraFieldSchema, ExtraFields } from './extraFields';
 import { EntityHasDisplayName } from './types';
 import { UserEntity } from './user';
+import { DocumentEntity } from './document';
 
 export enum VehicleAuthorizationStatus {
 	NOT_AUTHORIZED = 'NOT_AUTHORIZED',
@@ -193,7 +194,24 @@ export class VehicleEntity implements EntityHasDisplayName {
 	}
 }
 
-export const transformVehicles = (schema: ExtraFieldSchema) => (data: any) => {
+
+
+export const vehicleFullAuthorized = (vehicle: VehicleEntity) => {
+	const a = vehicle.authorized === VehicleAuthorizationStatus.AUTHORIZED;
+	const doucments = vehicle.extra_fields.documents as DocumentEntity[];
+	const filterDocuments = doucments.filter((doc, i) => {
+		return doc.tag === 'remote_sensor_id' && doc.valid;
+	});
+	const a2 = filterDocuments.length > 0;
+	return a && a2;
+};
+
+interface PaginatedVehicles {
+	vehicles: VehicleEntity[];
+	count: number;
+}
+
+export const transformVehicles = (schema: ExtraFieldSchema) => (data: any): PaginatedVehicles => {
 	return {
 		vehicles: data.vehicles.map((vehicle: any) => new VehicleEntity(vehicle, schema)),
 		count: data.count
@@ -251,7 +269,7 @@ export function getVehicleAPIClient(api: string, token: string | null, schema: E
 			skip: number,
 			filterBy?: string,
 			filter?: string
-		) => {
+		): Promise<AxiosResponse<PaginatedVehicles>> => {
 			return axiosInstance.get('vehicle/operator', {
 				params: {
 					username,
