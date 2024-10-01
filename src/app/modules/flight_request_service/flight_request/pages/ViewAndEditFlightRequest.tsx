@@ -31,6 +31,7 @@ import { UseLocalStoreEntity } from '../../../../commons/utils';
 import { useQueryVehicle } from '../../../core_service/vehicle/hooks';
 import { useUpdateCoordination } from '../../coordination/hooks';
 import { useUpdateFlightRequestState } from '../hooks';
+import { getAsDMS } from '@utm-entities/v2/model/operation_volume';
 
 const specialProps = ['volumes', 'uavs', 'operator', 'paid', 'id'];
 
@@ -413,7 +414,7 @@ const UavsDetails: FC<UavsDetailsProps> = ({ ls }) => {
 
 interface VolumeDetailsProps {
 	ls: UseLocalStoreEntity<FlightRequestEntity>;
-	volume: number;
+	volumeIndex: number;
 	isEditing: boolean;
 }
 
@@ -426,7 +427,7 @@ const MapContainer = styled.div`
 	flex-direction: column;
 	align-items: flex-end;
 `;
-const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
+const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volumeIndex, isEditing }) => {
 	const { t } = useTranslation(['ui', 'glossary']);
 	const tokyo = useTokyo();
 	const tokyoOptions: TokyoProps = {
@@ -453,14 +454,28 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 		t
 	};
 
-	if (ls.entity.volumes.length >= volume + 1) {
+	const defaultBegin = ls.entity.volumes[volumeIndex].effective_time_begin != null ? new Date(ls.entity.volumes[volumeIndex].effective_time_begin as Date) : new Date();
+	const defaultEnd = ls.entity.volumes[volumeIndex].effective_time_end != null ? new Date(ls.entity.volumes[volumeIndex].effective_time_end as Date) : new Date();
+
+	if (ls.entity.volumes.length >= volumeIndex + 1) {
 		return (
 			<div style={{ padding: '0.5rem', backgroundColor: 'var(--mirai-150)' }}>
 				<h2>
-					{t('Volume')} {volume + 1}
+					{t('Volume')} {volumeIndex + 1}
 				</h2>
 				<h3>{t('Coordinates')}</h3>
-				{ls.entity.volumes[volume].asDMS?.map((coord) => {
+				{/* {ls.entity.volumes[volumeIndex].asDMS?.map((coord) => {
+					return (
+						<div
+							key={coord}
+							className={styles.leftbalancedline}
+							style={{ padding: '0.25rem' }}
+						>
+							{coord}
+						</div>
+					);
+				})} */}
+				{ls.entity.volumes[volumeIndex].operation_geography !== null && getAsDMS(ls.entity.volumes[volumeIndex].operation_geography as Polygon)?.map((coord) => {
 					return (
 						<div
 							key={coord}
@@ -471,37 +486,41 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 						</div>
 					);
 				})}
+				{/* <div>
+					{ls.entity.volumes[volumeIndex].operation_geography !== null && <pre>{getAsDMS(ls.entity.volumes[volumeIndex].operation_geography as Polygon)}</pre>}
+					<pre>{JSON.stringify(ls.entity.volumes[volumeIndex].operation_geography, null, 2)}</pre>
+				</div> */}
 				<PNumberInput
-					id={`editor-flight-request-volume-${volume}-max_altitude`}
-					defaultValue={ls.entity.volumes[volume].max_altitude}
+					id={`editor-flight-request-volume-${volumeIndex}-max_altitude`}
+					defaultValue={ls.entity.volumes[volumeIndex].max_altitude}
 					label={t(`glossary:volume.max_altitude`)}
-					onChange={(value) => ls.entity.volumes[volume].set('max_altitude', value)}
+					onChange={(value) => ls.entity.volumes[volumeIndex].set('max_altitude', value)}
 					disabled={!isEditing}
 					isDarkVariant
 					inline={false}
 					isRequired={isEditing}
 				/>
 				<PDateInput
-					id={`editor-flight-request-volume-${volume}-effective_time_begin`}
+					id={`editor-flight-request-volume-${volumeIndex}-effective_time_begin`}
 					label={t('glossary:volume.effective_time_begin')}
 					disabled={!isEditing}
 					isDarkVariant
 					isTime
 					isRequired={isEditing}
-					defaultValue={ls.entity.volumes[volume].effective_time_begin || undefined}
+					defaultValue={defaultBegin}
 					onChange={(value) =>
-						ls.entity.volumes[volume].set('effective_time_begin', value)
+						ls.entity.volumes[volumeIndex].set('effective_time_begin', value)
 					}
 				/>
 				<PDateInput
-					id={`editor-flight-request-volume-${volume}-effective_time_end`}
+					id={`editor-flight-request-volume-${volumeIndex}-effective_time_end`}
 					label={t('glossary:volume.effective_time_end')}
 					disabled={!isEditing}
 					isDarkVariant
 					isTime
 					isRequired={isEditing}
-					defaultValue={ls.entity.volumes[volume].effective_time_end || undefined}
-					onChange={(value) => ls.entity.volumes[volume].set('effective_time_end', value)}
+					defaultValue={defaultEnd}
+					onChange={(value) => ls.entity.volumes[volumeIndex].set('effective_time_end', value)}
 				/>
 				<MapContainer>
 					<TokyoSvelte {...tokyoOptions}>
@@ -510,7 +529,7 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volume, isEditing }) => {
 							getLayer={flightRequestTokyoConverter.getConverter(ls.entity)}
 							onLoad={() =>
 								tokyo.flyToCenterOfGeometry(
-									ls.entity.volumes[volume].operation_geography as Polygon
+									ls.entity.volumes[volumeIndex].operation_geography as Polygon
 								)
 							}
 						/>
@@ -614,7 +633,7 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 										key={volume.ordinal}
 										isEditing={isEditing}
 										ls={ls}
-										volume={index}
+										volumeIndex={index}
 									/>
 								);
 							})}

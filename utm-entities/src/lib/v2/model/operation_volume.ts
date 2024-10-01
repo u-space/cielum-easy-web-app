@@ -64,7 +64,7 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 			// this.effective_time_end = null;
 			this.effective_time_begin = new Date();
 			this.effective_time_end = new Date();
-			this.effective_time_end.setHours(this.effective_time_begin.getHours()+DEFAULT_DIFF_HOURS);
+			this.effective_time_end.setHours(this.effective_time_begin.getHours() + DEFAULT_DIFF_HOURS);
 			this.min_altitude = DEFAULT_MIN_ALTITUDE;
 			this.max_altitude = DEFAULT_MAX_ALTITUDE;
 			this.beyond_visual_line_of_sight = false;
@@ -101,9 +101,8 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 	}
 
 	get displayName() {
-		return `${
-			this.ordinal
-		} (${this.effective_time_begin?.toLocaleTimeString()} - ${this.effective_time_end?.toLocaleTimeString()})`;
+		return `${this.ordinal
+			} (${this.effective_time_begin?.toLocaleTimeString()} - ${this.effective_time_end?.toLocaleTimeString()})`;
 	}
 
 	set(prop: string, value: OperationVolume[keyof OperationVolume]) {
@@ -115,17 +114,28 @@ export class OperationVolume implements UtmEntity<RequestOperationVolume> {
 	}
 
 	get asDMS() {
+		console.log('asDMS')
 		return this.operation_geography?.coordinates[0].map((coord: any) => {
 			const lat = coord[1];
 			const long = coord[0];
 			const latDMS = getDMSFromDecimal(lat);
 			const longDMS = getDMSFromDecimal(long);
-			return `${latDMS.isPositive ? `${latDMS.text} N` : `${latDMS.text} S`} ${
-				longDMS.isPositive ? `${longDMS.text} E` : `${longDMS.text} W`
-			}`;
+			return `${latDMS.isPositive ? `${latDMS.text} N` : `${latDMS.text} S`} ${longDMS.isPositive ? `${longDMS.text} E` : `${longDMS.text} W`
+				}`;
 		});
 	}
 }
+
+export const getAsDMS = (operation_geography: Polygon) => {
+	return operation_geography?.coordinates[0].map((coord: any) => {
+		const lat = coord[1];
+		const long = coord[0];
+		const latDMS = getDMSFromDecimal(lat);
+		const longDMS = getDMSFromDecimal(long);
+		return `${latDMS.isPositive ? `${latDMS.text} N` : `${latDMS.text} S`} ${longDMS.isPositive ? `${longDMS.text} E` : `${longDMS.text} W`
+			}`;
+	});
+};
 
 function getDMSFromDecimal(decimal: number) {
 	const fractionalDegrees = Math.abs(decimal);
