@@ -122,8 +122,8 @@ const Menu = ({
 		const visibleFields: any = {}
 		visibleFields.id = flightRequest.id;
 		visibleFields.name = flightRequest.name;
-		visibleFields.effective_time_begin = flightRequest.volumes[0].effective_time_begin
-		visibleFields.effective_time_end = flightRequest.volumes[0].effective_time_end
+		visibleFields.effective_time_begin = (new Date(flightRequest.volumes[0].effective_time_begin)).toLocaleString()
+		visibleFields.effective_time_end = (new Date(flightRequest.volumes[0].effective_time_end)).toLocaleString()
 		const vehicles: string[] = flightRequest.uavs.map((v: any) => {
 			return `${v.vehicleName}/${v.extra_fields.plate}`
 		});
