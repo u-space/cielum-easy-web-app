@@ -15,6 +15,11 @@ import { UserDocument } from './UserDocument';
 import { ExtraUserFilesProps, DocumentContainer, DocumentStatusLabel } from './ViewAndEditUser';
 import { AuthRole, useAuthGetRole } from 'src/app/modules/auth/store';
 
+
+const documentKey = (doc: DocumentEntity) => {
+	return `${doc.tag}-${doc.id}-${String(doc.valid)}`;
+}
+
 export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 	const { ls, isEditing } = props;
 	const { t } = useTranslation(['glossary', 'ui']);
@@ -23,19 +28,20 @@ export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
 	const userDocumentAvailableTagsQuery = useDocumentAvailableTags('user');
 	const role = useAuthGetRole();
+	// const [fireRender, setFireRender] = useState(false);
 
 	// TODO: Improve this after generic hub fetches entity by entity
-	useEffect(() => {
-		if (
-			updateDocumentValidationMutation.isSuccess ||
-			updateDocumentObservationMutation.isSuccess
-		) {
-			// window.location.href = `${window.location.href}`;
-		}
-	}, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
+	// useEffect(() => {
+	// 	if (
+	// 		updateDocumentValidationMutation.isSuccess ||
+	// 		updateDocumentObservationMutation.isSuccess
+	// 	) {
+	// 		// setFireRender(!fireRender);
+	// 		alert('alerta alerta')
+	// 		window.location.href = `${window.location.href}`;
+	// 	}
+	// }, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
 
-	// TODO: Emprolijar esto que basicamente
-	//  hace lo mismo dos veces pero para tener todos los requeridos al principio
 	const isLoading =
 		updateDocumentValidationMutation.isLoading || updateDocumentObservationMutation.isLoading;
 
@@ -92,11 +98,11 @@ export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 							return (
 								<>
 									<DocumentContainer
-										key={document.id}
+										key={documentKey(document)}
 										style={{ order: document.valid ? 1 : 2 }}
 									>
 										<UserDocument
-											key={document.id}
+											key={documentKey(document)}
 											ls={ls}
 											document={document}
 											isEditing={isEditing}
@@ -126,10 +132,10 @@ export const UserExtraFields = observer((props: ExtraUserFilesProps) => {
 						if (document.id.indexOf('TEMP_') === 0) {
 							return (
 								<>
-									<DocumentContainer key={document.id}>
+									<DocumentContainer key={documentKey(document)}>
 										<DocumentStatusLabel>({t('ui:NEW')})</DocumentStatusLabel>
 										<UserDocument
-											key={document.id}
+											key={documentKey(document)}
 											ls={ls}
 											document={document}
 											isEditing={isEditing}
