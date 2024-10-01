@@ -5,7 +5,9 @@ import {
 	Icon,
 	InputGroup,
 	Intent,
-	MultistepDialog
+	MultistepDialog,
+	Spinner,
+	SpinnerSize
 } from '@blueprintjs/core';
 import { DocumentEntity } from '@utm-entities/document';
 import classNames from 'classnames';
@@ -41,6 +43,7 @@ export interface PDocumentProps {
 	onSaveValidation?: (isValid: boolean) => void;
 	canValidate?: boolean;
 	isAdmin?: boolean;
+	isLoading?: boolean;
 }
 
 export interface ExtraInfoPanelProps {
@@ -518,8 +521,10 @@ const PDocument = (props: PDocumentProps) => {
 		onSaveObservation,
 		onSaveValidation,
 		canValidate,
-		isAdmin = false
+		isAdmin = false,
+		isLoading = false,
 	} = props;
+	// const [fireRendering, setFireRendering] = useState(false);
 	const [isShowingEditingModal, setShowingEditingModalFlag] = useState(
 		document.isBeingAdded || false
 	);
@@ -528,6 +533,10 @@ const PDocument = (props: PDocumentProps) => {
 	const iconColor = document.hasSomethingToShow ? (document.valid ? 'green' : 'red') : 'black';
 	const icon = document.hasSomethingToShow ? (document.valid ? 'tick' : 'cross') : null;
 	const validateText = document.valid ? t('Devalidate') : t('Validate');
+
+	// useEffect(() => {
+	// 	setFireRendering(true);
+	// }, [document.valid, isLoading]);
 
 	const formGroupProps = {
 		className: classNames(styles.form, {
@@ -637,7 +646,9 @@ const PDocument = (props: PDocumentProps) => {
 		} else {
 			return (
 				<Line>
-					{document.hasSomethingToShow && (
+					{isLoading && <Spinner size={SpinnerSize.STANDARD} />}
+					{/* <Spinner size={SpinnerSize.STANDARD} /> */}
+					{!isLoading && document.hasSomethingToShow && (
 						<>
 							<PButton
 								variant={PButtonType.SECONDARY}
