@@ -29,9 +29,8 @@ export const UserDocument = (props: UserDocumentProps) => {
 	const schemaQuery = useDocumentTagSchema('user', tag);
 
 	const title = `${t(`user.${tag}`)}`;
-	const label = `${t('ui:Type')}: ${t(`user.${tag}`)}, ${t(labelDate(schemaQuery.data))}${
-		showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''
-	}`;
+	const label = `${t('ui:Type')}: ${t(`user.${tag}`)}, ${t(labelDate(schemaQuery.data))}${showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''
+		}`;
 	const explanation = t([`user.${tag}_desc`, '']);
 	const id = `input-${tag}-${index}`;
 
@@ -89,6 +88,7 @@ export const UserDocument = (props: UserDocumentProps) => {
 					onSaveValidation={onSaveValidation}
 					isAdmin={isAdmin}
 					canValidate={canValidate}
+					isLoading={updateDocumentValidationMutation.isLoading || updateDocumentObservationMutation.isLoading}
 				/>
 			</div>
 		);
