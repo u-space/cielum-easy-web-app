@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useFlightRequestStore } from '../store';
 import FilterAndOrderSearchTools from '../../../../commons/components/hubs/FilterAndOrderSearchTools';
 import GridCheckboxes from '../../../../commons/layouts/dashboard/menu/GridCheckboxes';
@@ -26,20 +26,28 @@ const FlightRequestSearchTools: FC = () => {
 		filterState: state.filterState,
 		setFilterState: state.setFilterState
 	}));
+
+	useEffect(() => {
+		if (!isAdmin) {
+			store.setFilterState(undefined);
+		} else {
+			store.setFilterState(`${FlightRequestState.PENDING},${FlightRequestState.REQUIRE_APPROVAL}`);
+		}
+	}, []);
+
+
+
 	const gridItems = [
-		{
-			checked: store.filterState === FlightRequestState.PENDING,
-			onChange: (check: boolean) =>
-				store.setFilterState(check ? FlightRequestState.PENDING : undefined),
-			label: 'Show pending flight requests'
-		},
+
 		{
 			checked: store.filterState == `${FlightRequestState.PENDING},${FlightRequestState.REQUIRE_APPROVAL}`,
 			onChange: (check: boolean) =>
 				store.setFilterState(check ? `${FlightRequestState.PENDING},${FlightRequestState.REQUIRE_APPROVAL}` : undefined),
-			label: 'Necesita aprobación administrativa'
+			label: t('Pending administrative management'),
 		}
 	];
+
+
 
 	return (
 		<>

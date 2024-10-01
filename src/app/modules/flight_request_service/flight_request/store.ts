@@ -21,7 +21,7 @@ export const useFlightRequestStore = create<FlightRequestStoreState>()(
 			sortingProperty: 'createdAt',
 			sortingOrder: 'DESC',
 			filterProperty: 'name',
-			filterState: FlightRequestState.PENDING,
+			filterState: `${FlightRequestState.PENDING},${FlightRequestState.REQUIRE_APPROVAL}`,
 			setFilterState: (filterState: string | undefined) =>
 				set({ filterState: filterState })
 		}),
