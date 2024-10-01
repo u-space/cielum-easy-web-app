@@ -23,9 +23,14 @@ export const useUpdateDocumentValidation = () => {
 		UseUpdateDocumentValidationParams
 	>((params) => updateDocumentValidation(params.docId, params.valid), {
 		onSuccess: () => {
-			queryClient.invalidateQueries(['users', 'vehicles']).then(() => {
-				return;
-			});
+			window.location.href = `${window.location.href}`;
+
+			// queryClient.invalidateQueries(['users']).then(() => {
+			// 	return;
+			// });
+			// queryClient.invalidateQueries(['vehicles']).then(() => {
+			// 	return;
+			// });
 		},
 		onError: (error) => {
 			getWebConsoleLogger().getBackendError(error);
