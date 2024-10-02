@@ -66,6 +66,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 
 	const onPolygonsUpdated = useCallback((polygons: Polygon[]) => {
 		setPolygon(polygons[0]);
+		setModalProps(getUserSelectIntervalModalProps());
 	}, []);
 
 	useEffect(() => {
