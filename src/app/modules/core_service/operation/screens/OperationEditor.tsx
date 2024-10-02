@@ -106,6 +106,12 @@ const OperationEditor = () => {
 		);
 	}, [operation]);
 
+	const delayedSelection = (index: number | null) => {
+		setTimeout(() => {
+			setSelectedVolume(index);
+		}, 500);
+	};
+
 	useEffect(() => {
 		const geography = queryOperation.data?.operation_volumes[0].operation_geography;
 		if (queryOperation.isSuccess && geography) {
@@ -114,29 +120,28 @@ const OperationEditor = () => {
 	}, [queryOperation.data?.operation_volumes, queryOperation.isSuccess]);
 
 	const onPolygonsUpdated = (polygons: Polygon[]) => {
+		let globalIndex = 0;
 		setOperation((prev) => {
-			const operation = new Operation();
+			const newOperation = new Operation();
 			for (const prop in prev) {
-				operation.set(prop as keyof Operation, prev[prop as keyof Operation]);
+				newOperation.set(prop as keyof Operation, prev[prop as keyof Operation]);
 			}
-			operation.operation_volumes = polygons.map((polygon, index) => {
+			newOperation.operation_volumes = polygons.map((polygon, index) => {
 				const volume = new OperationVolume();
 				volume.set('ordinal', index);
-				// changed so it takes a deffault time window
-				// default values defined in operation_volume.ts
-				// volume.set('effective_time_begin', new Date());
-				// volume.set('effective_time_end', new Date());
-				if (index < operation.operation_volumes.length) {
-					const existingVolume = operation.operation_volumes[index];
+				if (index < newOperation.operation_volumes.length) {
+					const existingVolume = newOperation.operation_volumes[index];
 					for (const prop in existingVolume) {
 						volume.set(prop, existingVolume.get(prop));
 					}
 				}
 				volume.set('operation_geography', polygon);
+				globalIndex = index;
 				return volume;
 			});
-			return operation;
+			return newOperation;
 		});
+		delayedSelection(globalIndex);
 	};
 
 	const queryClient = useQueryClient();
@@ -263,6 +268,7 @@ const OperationEditor = () => {
 									<select>
 										{operation.operation_volumes.map((volume, index) => (
 											<option
+												key={`${operation.name}-${index}`}
 												selected={index === selectedVolume}
 												value={index}
 												onClick={() => setSelectedVolume(index)}
@@ -285,7 +291,7 @@ const OperationEditor = () => {
 				</>
 			}
 			statusOverlay={{
-				text: `### ${t('You are in EDITOR MODE')} `
+				text: polygons.length > 0 ? `### ${t('You are in EDITOR MODE')} ` : `### ${t('Please draw a polygon to continue')}`
 			}}
 			modal={modalProps}
 		>
