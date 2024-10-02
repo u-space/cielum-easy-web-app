@@ -570,5 +570,7 @@
 	"Need coordination for zone x": "Necesita coodinación para zona {{x}}.",
 	"You will be redirected to the soca creation": "Serás redirigido a la creación de soca",
 	"Operate": "Click para denegar la creación de operaciones",
-	"Cantoperate": "Click para permitir la creación de operaciones"
+	"Cantoperate": "Click para permitir la creación de operaciones",
+	"Pending administrative management": "Pendiente de gestión administrativa",
+	"You do not have any authorized vehicles": "Ud. no tiene aeronaves autorizadas"
 }
