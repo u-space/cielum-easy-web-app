@@ -4,7 +4,7 @@ import { UtmEntity } from '@utm-entities/v2/utm-entity';
 import { Polygon } from 'geojson';
 
 const DEFAULT_MAX_ALTITUDE = 120;
-const DEFAULT_MIN_ALTITUDE = 20;
+const DEFAULT_MIN_ALTITUDE = 0;
 const DEFAULT_DIFF_HOURS = 2;
 
 export const RequestOperationVolume = Type.Object({
