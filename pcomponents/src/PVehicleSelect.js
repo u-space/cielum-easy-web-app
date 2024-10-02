@@ -37,7 +37,7 @@ const PVehicleSelect = ({
 		refetch
 	} = useQuery(
 		[`short_vehicles_op_${username}`, value],
-		() => getVehiclesByOperator(username, 3, 0, 'vehicleName', value),
+		() => getVehiclesByOperator(username, 50, 0, 'vehicleName', value),
 		{
 			retry: false,
 			enabled: !!username
