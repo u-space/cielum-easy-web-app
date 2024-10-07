@@ -141,6 +141,7 @@
 	"You are editing the operation. Press the floppy disk to save the changes.": "Estás editando la operación. Presiona el disquete para guardar los cambios",
 	"Operation information": "Información de la operación",
 	"Operation information explanation": "Los siguientes campos son necesarios para cumplir con los requisitos legales para aprobar su operación",
+	"You cannot create operations that end before the current date": "No puedes crear operaciones que terminen antes de la fecha actual",
 	"Coordination information": "Información de coordinación",
 	"Coordinator information": "Información del coordinador",
 	"Volume": "Volumen",
@@ -569,8 +570,13 @@
 	"Need coordination for vlos flight.": "Necesita coordinación por vuelo fuera de línea de vista.",
 	"Need coordination for zone x": "Necesita coodinación para zona {{x}}.",
 	"You will be redirected to the soca creation": "Serás redirigido a la creación de soca",
+	"The start date must be greater than today": "La fecha de comienzo no puede ser menor a la fecha actual",
+	"The end date must be greater than today": "La fecha de finalización no puede ser menor a la fecha actual",
+	"The start date must be less than the end date": "La fecha de comienzo no puede ser mayor a la fecha de finalización",
+	"The time interval must be outside others time interval": "El intervalo de tiempo debe estar fuera de otros intervalos de tiempo",
 	"Operate": "Click para denegar la creación de operaciones",
 	"Cantoperate": "Click para permitir la creación de operaciones",
 	"Pending administrative management": "Pendiente de gestión administrativa",
-	"You do not have any authorized vehicles": "Ud. no tiene aeronaves autorizadas"
+	"You do not have any authorized vehicles": "Ud. no tiene aeronaves autorizadas",
+	"Required documents": "Documentos obligatorios"
 }
