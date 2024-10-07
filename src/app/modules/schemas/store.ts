@@ -29,6 +29,7 @@ export const useSchemaStore = create<SchemaState>()(
 			users: {},
 			vehicles: {},
 			documents: {},
+			vehicleDocument: {},
 			status: SchemaStatus.NOT_YET_STARTED_FETCHING,
 			fetch: async () => {
 				// TODO: Create entity schema, probably not in utm-entities
@@ -39,6 +40,7 @@ export const useSchemaStore = create<SchemaState>()(
 					users: schemas.userExtraFields,
 					vehicles: schemas.vehicleExtraFields,
 					documents: schemas.documentExtraFields,
+					vehicleDocument: schemas.vehicleDocumentExtraFields,
 					status: SchemaStatus.FETCHED
 				});
 			}

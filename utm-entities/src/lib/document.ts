@@ -148,6 +148,17 @@ export const getDocumentAPIClient = (api: string, token: string | null) => {
 			});
 			return response.data;
 		},
+
+		async getDocumentSchemas(entityType: string) {
+			const headers = {
+				'Content-Type': 'application/json',
+				auth: `${token}`
+			};
+			const response = await axiosInstance.get(`/${entityType}/document/schema`, {
+				headers
+			});
+			return response.data;
+		},
 		async getDocumentTagSchema(entityType: string, tag: string) {
 			const headers = {
 				'Content-Type': 'application/json',

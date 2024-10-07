@@ -4,6 +4,7 @@ export interface ExtraFieldSchemas {
 	users: ExtraFieldSchema;
 	vehicles: ExtraFieldSchema;
 	documents: ExtraFieldSchema;
+	vehicleDocument: ExtraFieldSchema;
 }
 export interface SchemaItem {
 	// TODO: Move this type to the entity schema when its created

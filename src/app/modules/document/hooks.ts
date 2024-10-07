@@ -73,6 +73,13 @@ export const useDocumentAvailableTags = (entityType: string) => {
 	return useQuery(['tags'], () => getDocumentAvailableTags(entityType));
 };
 
+export const useDocumentSchemas = (entityType: string) => {
+	const {
+		document: { getDocumentSchemas }
+	} = useCoreServiceAPI();
+	return useQuery([`${entityType}-schemas`], () => getDocumentSchemas(entityType));
+};
+
 export const useDocumentTagSchema = (entityType: string, tag: string) => {
 	const {
 		document: { getDocumentTagSchema }

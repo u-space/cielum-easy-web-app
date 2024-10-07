@@ -35,7 +35,8 @@ export const CoreAPIContext = createContext(
 		{
 			users: {},
 			vehicles: {},
-			documents: {}
+			documents: {},
+			vehicleDocument: {}
 		},
 		null
 	)

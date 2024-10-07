@@ -5,6 +5,7 @@ import { DocumentEntity } from './document';
 export function translateErrors(errors: any, entity: any): string[] {
 	if (errors instanceof Array) {
 		return errors.map((_error) => {
+			console.log(_error);
 			let error = _error;
 			if (_error instanceof Error) error = _error.message;
 			const wholeString = i18n.t(error);
@@ -47,7 +48,7 @@ export function translateErrors(errors: any, entity: any): string[] {
 				});
 			} else if (extraFieldIsRequiredIndex > -1) {
 				const prop = error.slice(
-					'"value" failed custom validation because '.length,
+					0,
 					extraFieldIsRequiredIndex
 				);
 				return i18n.t('The field x must not be left empty', {
