@@ -9,6 +9,7 @@ import { getWebConsoleLogger } from '../../../../../utils';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import {
 	useDocumentAvailableTags,
+	useDocumentSchemas,
 	useUpdateDocumentObservation,
 	useUpdateDocumentValidation
 } from '../../../document/hooks';
@@ -16,19 +17,24 @@ import { VehicleDocument } from './VehicleDocument';
 import { AuthRole, useAuthGetRole } from 'src/app/modules/auth/store';
 import { useVehicleStore } from '../store';
 import { useQueryClient } from 'react-query';
+import { useSchemaStore } from 'src/app/modules/schemas/store';
+import { ExtraFieldSchema } from '@utm-entities/extraFields';
 
 interface _ExtraVehicleFilesProps {
 	ls: UseLocalStoreEntity<VehicleEntity>;
 	isEditing: boolean;
 }
 const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
-	const { t } = useTranslation('glossary');
+	// const { t } = useTranslation('glossary');
+	const { t } = useTranslation(['ui', 'glossary']);
+
 
 	const [fireRender, setFireRender] = useState(false);
 
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
 	const vehicleDocumentAvailableTagsQuery = useDocumentAvailableTags('vehicle');
+	const documentSchemaQuery = useDocumentSchemas('vehicle');
 
 	const queryClient = useQueryClient();
 	const {
@@ -46,6 +52,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 		filterProperty: state.filterProperty,
 		filterMatchingText: state.filterMatchingText
 	}));
+
 
 	const role = useAuthGetRole();
 	const filterRemoteSensor = (tag: string) => {
@@ -133,9 +140,15 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 		}
 	}, [updateDocumentValidationMutation.isSuccess, updateDocumentObservationMutation.isSuccess]);
 
+	const requiredDocumentTags = (documentSchemaQuery.data && Object.keys(documentSchemaQuery.data).filter((tag: string) => documentSchemaQuery.data[tag]['__metadata']['required'])) || [];
+	const isRequiredDocumentTag = (tag: string) => {
+		return requiredDocumentTags.includes(tag);
+	}
+
 	return (
 		ls.entity && (
 			<>
+				{documentSchemaQuery.data && <p> {t('Required documents')}: {requiredDocumentTags.map((t: string) => `glossary:vehicle.${t}`).map(t).join(', ')}</p>}
 				{isEditing && (
 					<>
 						{vehicleDocumentAvailableTagsQuery.isLoading && <Spinner />}
@@ -166,7 +179,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 									.map((tag: string) => {
 										console.log('map:', tag);
 										return {
-											label: t(`vehicle.${tag}`),
+											label: `${t(`glossary:vehicle.${tag}`)}${isRequiredDocumentTag(tag) ? ' *' : ''}`,
 											value: tag
 										};
 									})}
