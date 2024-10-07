@@ -216,7 +216,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 	const role = useAuthGetRole();
 
 	const token = useAuthStore((state) => state.token);
-	const schema = useSchemaStore((state) => state.users);
+	const userSchema = useSchemaStore((state) => state.users);
 
 	const [operators, setOperators] = useState<UserEntity[]>([]);
 
@@ -276,7 +276,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								isDarkVariant
 								api={env.core_api}
 								token={token}
-								schema={schema}
+								schema={userSchema}
 							/>
 						)}
 						{isAdmin && (
@@ -284,7 +284,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								label={' '}
 								api={env.core_api}
 								token={token}
-								schema={schema}
+								schema={userSchema}
 								id="owner"
 								onSelect={(selected) => {
 									if (selected.length > 0) {
@@ -316,7 +316,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								id="operators"
 								// schema={schema}
 								onSelect={(selected) => {
-									ls.entity.operators = userNameAsUsers(selected, schema);
+									ls.entity.operators = userNameAsUsers(selected, userSchema);
 								}}
 								preselected={ls.entity.operators.map((o) => o.username)}
 								fill
@@ -325,7 +325,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								isDarkVariant
 								api={env.core_api}
 								token={token}
-								schema={schema}
+								schema={userSchema}
 							/>
 						)}
 						{isAdmin && (
@@ -333,7 +333,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 								label={' '}
 								api={env.core_api}
 								token={token}
-								schema={schema}
+								schema={userSchema}
 								single={false}
 								id="operators"
 								onSelect={(selected) => {
