@@ -61,6 +61,21 @@ export function getUTMClient(api: string, schemas: ExtraFieldSchemas, token: str
 				isPilot: boolean,
 				isCreating = false
 			) {
+				const documentList = Array.from(documents.values());
+				const documentsSchemas = schemas.vehicleDocument
+				const documentsSchemaKeys = Object.keys(documentsSchemas);
+				const reuiredSchemnaDocuments = documentsSchemaKeys.filter(key => (documentsSchemas[key] as any)["__metadata"]["required"])
+				const requieredAusentDocuments = reuiredSchemnaDocuments.filter(key => documentList.findIndex(d => d.tag === key) === -1)
+
+				// console.log(`documentsSchemas: ${JSON.stringify(reuiredSchemnaDocuments, null, 2)}`);
+				// console.log(`Documents: ${JSON.stringify(documentList, null, 2)}`);
+				// console.log(`++Ausent documents++ ${JSON.stringify(requieredAusentDocuments, null, 2)}`);
+
+				if (requieredAusentDocuments.length > 0) {
+					throw requieredAusentDocuments.map(key => `${key} is required, but no value was supplied`)
+					// throw new Error(`The following documents are required: ${requieredAusentDocuments.join(', ')}`)
+				}
+
 				let result = vehicleAPIClient.saveVehicle(vehicle, isPilot, isCreating);
 				if (documents) {
 					result = result.then(async (response) => {

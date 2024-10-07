@@ -109,7 +109,7 @@ export class VehicleEntity implements EntityHasDisplayName {
 	}
 
 	validate() {
-		console.log('Validating vehicle', this);
+		// console.log('Validating vehicle', this);
 		const errors = [];
 		const validation = this._vehicleSchema.validate(this, {
 			abortEarly: false,
