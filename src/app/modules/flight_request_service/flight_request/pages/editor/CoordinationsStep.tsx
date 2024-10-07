@@ -44,7 +44,6 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		flightRequest,
 		zonesChecked,
 		setZonesChecked,
-		// total,
 		setModalProps,
 		modalProps,
 		isOnNight
@@ -63,10 +62,6 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 			flightRequest.volumes[0]?.min_altitude || 0,
 			flightRequest.volumes[0]?.max_altitude || 0
 		);
-
-	// const totalNumber = useMemo(() => {
-	// 	return total.reduce((acc, obj) => acc + obj.amount, 0);
-	// }, [total]);
 
 	useEffect(() => {
 		if (geographicalZonesIntersectingVolume) {
@@ -98,7 +93,6 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		},
 		{
 			onSuccess: (data) => {
-				// window.location.href = data.paymentLink;
 				setModalProps({
 					isVisible: true,
 					type: PModalType.SUCCESS,
@@ -147,7 +141,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 			flightRequest.operator &&
 			flightRequest.operator instanceof UserEntity &&
 			flightRequest.operator.canOperate;
-		return hasGeographicalZoneIntersections && operatorCanOPerate && specialCoordinations;
+		return (hasGeographicalZoneIntersections || specialCoordinations) && operatorCanOPerate;
 	};
 
 	const getCauseMessage = () => {
@@ -213,7 +207,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 				onArrowBack={previousStep}
 				footer={
 					<PTooltip content={getCauseMessage()}>
-						<PButton disabled={!canCreateFlightRequest} onClick={finishAndPay}>
+						<PButton disabled={!canCreateFlightRequest()} onClick={finishAndPay}>
 							{t('Create')}
 						</PButton>
 					</PTooltip>
