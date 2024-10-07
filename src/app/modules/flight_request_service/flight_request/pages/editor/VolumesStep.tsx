@@ -177,20 +177,27 @@ const VolumesStep = (props: VolumesStepProps) => {
 						newVolume.set('effective_time_begin', startDate);
 						newVolume.set('effective_time_end', endDate);
 						flightRequest.volumes.push(newVolume);
+						setModalProps(undefined);
+
 					});
 				} else {
-					validateDatesTimeVolumes(flightRequest, start.current, end.current);
-					const newVolume = new OperationVolume();
-					newVolume.set('ordinal', flightRequest.volumes.length - 1);
-					const startDate = new Date(start.current);
-					const endDate = new Date(end.current);
-					newVolume.set('max_altitude', maxAltitude);
-					newVolume.set('effective_time_begin', startDate);
-					newVolume.set('effective_time_end', endDate);
-					flightRequest.volumes.push(newVolume);
+					const errors = validateDatesTimeVolumes(flightRequest, start.current, end.current);
+					if (errors.length === 0) {
+						const newVolume = new OperationVolume();
+						newVolume.set('ordinal', flightRequest.volumes.length - 1);
+						const startDate = new Date(start.current);
+						const endDate = new Date(end.current);
+						newVolume.set('max_altitude', maxAltitude);
+						newVolume.set('effective_time_begin', startDate);
+						newVolume.set('effective_time_end', endDate);
+						flightRequest.volumes.push(newVolume);
+						setModalProps(undefined);
+
+					} else {
+						alert(errors.map(t).join('\n'));
+					}
 				}
 				setDateTimeChange(!dateTimeChange);
-				setModalProps(undefined);
 			}
 		},
 		secondary: {
@@ -382,21 +389,31 @@ function validateDatesTimeVolumes(
 	flightRequest: FlightRequestEntity,
 	start: Date,
 	end: Date
-): boolean {
+): string[] {
+	const errors: string[] = [];
+	const today = new Date();
+	// if (start < today) {
+	// 	errors.push(('The start date must be greater than today'));
+	// }
+	if (end < today) {
+		errors.push(('The end date must be greater than today'));
+	}
+	if (start > end) {
+		errors.push(('The start date must be less than the end date'));
+	}
+
+
 	flightRequest.volumes.forEach((volume) => {
 		if (volume.effective_time_begin !== null && volume.effective_time_end !== null) {
 			if (
-				volume.effective_time_begin > volume.effective_time_end ||
-				volume.effective_time_begin < start ||
-				volume.effective_time_end > end
+				!((volume.effective_time_begin > end) || (volume.effective_time_end < start))
 			) {
-				return false;
+				return errors.push(('The time interval must be outside others time interval'));
 			}
-			return true;
+
 		}
-		return false;
 	});
-	return true;
+	return errors;
 }
 
 const setDateTime = (d: Date, timeStr: string) => {
