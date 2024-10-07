@@ -13,7 +13,7 @@ const IsolatedReactContainer = (props: { children: ReactNode }) => {
 	const queryClient = new QueryClient();
 	const token = useAuthStore((state) => state.token);
 	const schemas = useSchemaStore(
-		(state) => ({ vehicles: state.vehicles, users: state.users, documents: state.documents }),
+		(state) => ({ vehicles: state.vehicles, users: state.users, documents: state.documents, vehicleDocument: state.vehicleDocument }),
 		shallow
 	);
 	return (

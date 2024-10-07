@@ -52,7 +52,7 @@ export function App() {
 
 	const queryClient = new QueryClient();
 	const schemas = useSchemaStore(
-		(state) => ({ vehicles: state.vehicles, users: state.users, documents: state.documents }),
+		(state) => ({ vehicles: state.vehicles, users: state.users, documents: state.documents, vehicleDocument: state.vehicleDocument }),
 		shallow
 	);
 	const fetchSchemas = useSchemaStore((state) => state.fetch);
