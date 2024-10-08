@@ -243,7 +243,6 @@ const OperationEditor = () => {
 					{...{
 						schemaUsers,
 						schemaVehicles,
-
 						isEditingExisting: queryOperation.isSuccess,
 						props,
 						volumeProps: [],

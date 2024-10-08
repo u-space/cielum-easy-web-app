@@ -12,7 +12,7 @@ import { UserEntity } from '@utm-entities/user';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
 import { Operation, OperationState } from '@utm-entities/v2/model/operation';
 import { NestedUser } from '@utm-entities/v2/model/user';
-import { VehicleEntity } from '@utm-entities/vehicle';
+import { VehicleEntity, vehicleFullAuthorized } from '@utm-entities/vehicle';
 import { reactify } from 'svelte-preprocess-react';
 import CVehicleSelectorSvelte from '@tokyo/gui/CVehicleSelector.svelte';
 import { UtmBaseVehicle } from '@utm-entities/v2/model/vehicle';
@@ -200,20 +200,23 @@ const InfoOperation: FC<InfoOperationProps> = ({
 					/>
 				)}
 				{isPilot && (
-					<CVehicleSelector
-						vehicles={queryVehicles.isSuccess ? queryVehicles.data.data.vehicles : []}
-						onSelect={(event) => {
-							operation.set(
-								'uas_registrations',
-								(event as CustomEvent<VehicleEntity[]>).detail.map((vehicle) =>
-									UtmBaseVehicle.fromVehicleEntity(vehicle)
-								)
-							);
-							setReScanVehicles(!reScanVehicles);
-						}}
-					>
-						{t('Vehicles')}
-					</CVehicleSelector>
+					<>
+						{queryVehicles.isSuccess && (queryVehicles.data.data.vehicles.filter(v => vehicleFullAuthorized(v)).length == 0) && <h3>{t('You do not have any authorized vehicles')}</h3>}
+						<CVehicleSelector
+							vehicles={queryVehicles.isSuccess ? queryVehicles.data.data.vehicles : []}
+							onSelect={(event) => {
+								operation.set(
+									'uas_registrations',
+									(event as CustomEvent<VehicleEntity[]>).detail.map((vehicle) =>
+										UtmBaseVehicle.fromVehicleEntity(vehicle)
+									)
+								);
+								setReScanVehicles(!reScanVehicles);
+							}}
+						>
+							{t('Vehicles')}
+						</CVehicleSelector>
+					</>
 				)}
 				{isAdmin && isEditingExisting && (
 					<POperationStateSelect
