@@ -328,6 +328,16 @@ const EditingModal = (props: EditingModalProps) => {
 				);
 			}
 		}
+		if (file) {
+			const fileType = file.type;
+			const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+
+			if (validTypes.includes(fileType)) {
+				setFile(file);
+			} else {
+				alert(`File type ${fileType} is not supported`);
+			}
+		}
 	};
 
 	return (

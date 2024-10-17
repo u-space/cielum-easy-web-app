@@ -106,8 +106,8 @@ const PFileInput = ({
 							value === null
 								? label
 								: value instanceof File
-								? value.name
-								: value.split('/').pop()
+									? value.name
+									: value.split('/').pop()
 						}
 						onInputChange={(evt) => {
 							if (
