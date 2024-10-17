@@ -36,9 +36,11 @@ export class DocumentEntity {
 
 		if (document) {
 			for (const prop in document) {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				this[prop] = document[prop];
+				if (this.hasOwnProperty(prop)) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					this[prop] = document[prop];
+				}
 			}
 		}
 
