@@ -39,6 +39,7 @@ const RequestOperation = Type.Object(
 		contact_phone: Type.String(),
 		owner: Type.Optional(Type.String()), // Undefined when creating operation as pilot
 		//creator: Type.String(),
+		flight_comments: Type.Optional(Type.String()),
 		operation_volumes: Type.Array(RequestOperationVolume),
 		state: OperationState,
 		submit_time: Type.Optional(Type.String()), // Undefined when creating a new operation, defined when updating an existing operation
@@ -131,11 +132,11 @@ export class BaseOperation {
 
 		entries.push({ property: 'name', value: this.name, translatableValue: false });
 		entries.push({ property: 'state', value: this.state, translatableValue: true });
-		entries.push({ property: 'contact', value: this.contact, translatableValue: false });
+		entries.push({ property: 'contact', value: this.contact, translatableValue: true });
 		entries.push({
 			property: 'contact_phone',
 			value: this.contact_phone,
-			translatableValue: false
+			translatableValue: true
 		});
 		for (const vehicle of this.uas_registrations) {
 			entries.push({
@@ -182,8 +183,7 @@ export class BaseOperation {
 
 export class Operation
 	extends BaseOperation
-	implements UtmEntity<RequestOperation, { omitOwner: boolean }>
-{
+	implements UtmEntity<RequestOperation, { omitOwner: boolean }> {
 	creator: NestedUser | null;
 	owner: NestedUser | null;
 	submit_time: Date | null;
@@ -263,6 +263,7 @@ export class Operation
 
 		if (this.gufi) requestOperation.gufi = this.gufi;
 		if (this.owner) requestOperation.owner = this.owner.username;
+		if (this.flight_comments) requestOperation.flight_comments = this.flight_comments;
 
 		requestOperation.uas_registrations = this.uas_registrations.map((vehicle) => {
 			return {

@@ -23,7 +23,7 @@ export interface GetOperationsResponse<ResponseType> {
 	count: number;
 }
 
-export const transformBaseOperations = (
+export const transformBaseOperationsForPublic = (
 	data: GetOperationsResponse<ResponseBaseOperation>
 ): GetOperationsResponse<BaseOperation> => {
 	return {
@@ -119,7 +119,7 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 					params: parameters,
 					transformResponse: (
 						Axios.defaults.transformResponse as AxiosResponseTransformer[]
-					).concat(transformBaseOperations)
+					).concat(transformBaseOperationsForPublic)
 				})
 				.then(extractDataFromResponse);
 		}
