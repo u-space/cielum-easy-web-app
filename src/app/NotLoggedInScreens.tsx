@@ -4,10 +4,10 @@ import PasswordResetScreen from './modules/auth/screens/PasswordResetScreen';
 import RegisterScreen from './modules/auth/screens/RegisterScreen';
 import LoginScreen from './modules/auth/screens/LoginScreen';
 import { reactify } from 'svelte-preprocess-react';
-import LiveMapSvelte from './modules/map/screens/live/LiveMapV2App.svelte';
+import LivePublicMapSvelte from './modules/map/screens/live/LivePublicMapV2App.svelte';
 import PasswordResetRequest from './modules/auth/screens/PasswordResetRequest';
 
-const LiveMap = reactify(LiveMapSvelte);
+const LiveMap = reactify(LivePublicMapSvelte);
 
 const NotLoggedInScreens = () => {
 	const history = useHistory();
