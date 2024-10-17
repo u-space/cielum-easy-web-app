@@ -198,7 +198,7 @@ export class VehicleEntity implements EntityHasDisplayName {
 
 export const vehicleFullAuthorized = (vehicle: VehicleEntity) => {
 	const a = vehicle.authorized === VehicleAuthorizationStatus.AUTHORIZED;
-	const doucments = vehicle.extra_fields.documents as DocumentEntity[];
+	const doucments = vehicle.extra_fields ? vehicle.extra_fields.documents as DocumentEntity[] : [];
 	const filterDocuments = doucments.filter((doc, i) => {
 		return doc.tag === 'remote_sensor_id' && doc.valid;
 	});
