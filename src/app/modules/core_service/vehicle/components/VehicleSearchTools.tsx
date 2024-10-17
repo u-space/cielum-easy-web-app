@@ -16,7 +16,8 @@ const VehicleSearchToolsExtras = () => {
 			filterMatchingText: state.filterMatchingText,
 			filterProperty: state.filterProperty,
 			setFilterByText: state.setFilterByText,
-			setFilterProperty: state.setFilterProperty
+			setFilterProperty: state.setFilterProperty,
+			// showOnlyPending: state.
 		}),
 		shallow
 	);
@@ -53,7 +54,7 @@ const VehicleSearchToolsExtras = () => {
 					}
 				}}
 			/>
-			<Checkbox
+			{/* <Checkbox
 				style={{
 					display: 'flex',
 					justifyContent: 'flex-start',
@@ -69,7 +70,7 @@ const VehicleSearchToolsExtras = () => {
 						resetFilterAuthorization();
 					}
 				}}
-			/>
+			/> */}
 		</CardGroup>
 	);
 };

@@ -247,8 +247,13 @@ export function getVehicleAPIClient(api: string, token: string | null, schema: E
 			filterBy: string,
 			filter?: string
 		) => {
+			//TODO add show only pending on state
+			let showOnlyPending = 'false';
+			if (filterBy === 'authorized' && filter === 'PENDING') {
+				showOnlyPending = 'true';
+			}
 			return axiosInstance.get('vehicle', {
-				params: buildParametersObject(take, skip, orderBy, order, filterBy, filter),
+				params: { ...buildParametersObject(take, skip, orderBy, order, filterBy, filter), showOnlyPending },
 				headers: { auth: token },
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]

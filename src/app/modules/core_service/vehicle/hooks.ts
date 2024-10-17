@@ -35,34 +35,34 @@ export function useQueryVehicle(uvin: VehicleEntity['uvin']) {
 	};
 }
 
-export function useQueryPendingVehiclesCount() {
-	const {
-		vehicle: { getVehicles }
-	} = useCoreServiceAPI();
+// export function useQueryPendingVehiclesCount() {
+// 	const {
+// 		vehicle: { getVehicles }
+// 	} = useCoreServiceAPI();
 
-	const { sortingProperty, sortingOrder } = useVehicleStore(
-		(state) => ({ sortingProperty: state.sortingProperty, sortingOrder: state.sortingOrder }),
-		shallow
-	);
+// 	const { sortingProperty, sortingOrder } = useVehicleStore(
+// 		(state) => ({ sortingProperty: state.sortingProperty, sortingOrder: state.sortingOrder }),
+// 		shallow
+// 	);
 
-	const query = useQuery(
-		['vehicles_pending_vehicles_count', sortingProperty, sortingOrder],
-		() =>
-			getVehicles(
-				1,
-				0,
-				sortingProperty,
-				sortingOrder,
-				'authorized',
-				VehicleAuthorizationStatus.PENDING
-			),
-		{ keepPreviousData: true }
-	);
+// 	const query = useQuery(
+// 		['vehicles_pending_vehicles_count', sortingProperty, sortingOrder],
+// 		() =>
+// 			getVehicles(
+// 				1,
+// 				0,
+// 				sortingProperty,
+// 				sortingOrder,
+// 				'authorized',
+// 				VehicleAuthorizationStatus.PENDING
+// 			),
+// 		{ keepPreviousData: true }
+// 	);
 
-	const { isSuccess: isSuccessVehicles, data: response } = query;
+// 	const { isSuccess: isSuccessVehicles, data: response } = query;
 
-	return isSuccessVehicles ? response.data.count : -1;
-}
+// 	return isSuccessVehicles ? response.data.count : -1;
+// }
 
 export function useGetVehiclesByOperator(username: string) {
 	const {
