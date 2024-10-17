@@ -61,12 +61,12 @@ const getStateInformation = (data: Record<string, any>): { text: string; color: 
 	}
 };
 
-export function getValidRemoteSensor(data: VehicleEntity) {
-	const doucments = data.extra_fields.documents as DocumentEntity[];
+export function getValidRemoteSensor(vehicle: VehicleEntity) {
+	const doucments = vehicle.extra_fields ? vehicle.extra_fields.documents as DocumentEntity[] : [];
 	const filterDocuments = doucments.filter((doc, i) => {
 		return doc.tag === 'remote_sensor_id' && doc.valid;
 	});
-	console.log('filterDocuments:', filterDocuments);
+	// console.log('filterDocuments:', filterDocuments);
 	return filterDocuments.length > 0;
 }
 
