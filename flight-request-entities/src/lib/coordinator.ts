@@ -236,7 +236,7 @@ export const getCoordinatorAPIClient = (api: string, token: string | null) => {
 			} else {
 				return axiosInstance.put(
 					`coordinator/${aux.id}`,
-					{ ...aux, geographical_zone: { id: aux.geographical_zone } },
+					{ ...aux, geographical_zone: aux.geographical_zone },
 					{
 						headers: { auth: token }
 					}
