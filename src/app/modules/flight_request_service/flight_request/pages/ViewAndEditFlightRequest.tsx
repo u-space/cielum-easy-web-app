@@ -80,13 +80,14 @@ const canEdit = (prop: string, isEditing: boolean) => {
 
 const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 	({ ls, isEditing }) => {
-		const { t } = useTranslation('glossary');
+		const { t } = useTranslation();
 		const updateFlightRequestState = useUpdateFlightRequestState();
 		if (!ls.entity) {
 			return null;
 		}
 		const initialState = ls.entity.state;
 
+		const coordinationsWithComments = ls.entity.coordination?.filter((coordination) => coordination.comments !== undefined && coordination.comments !== '') || [];
 		return (
 			<>
 				{Object.keys(ls.entity)
@@ -111,7 +112,7 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 									disabled={!isEditing}
 									onChange={(value) => ls.setInfo(prop, value)}
 									isDarkVariant
-									inline
+								// inline
 								/>
 							);
 						}
@@ -199,6 +200,21 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 							return null;
 						}
 					})}
+				<h3>{t('Comments')}</h3>
+				{coordinationsWithComments.length === 0 && <p>{t('No comments')}</p>}
+				{coordinationsWithComments.map((coordination) => (
+					<PTextArea
+						style={{ width: '100%' }}
+						key={coordination.id}
+						id={`editor-flight-request-coordinations-${coordination.id}`}
+						defaultValue={coordination.comments}
+						label={`${t('role_manager')}: ${t(coordination.role_manager)} por ${t(coordination.reference) || t('Geographical Zone')}`}
+						disabled={true}
+						onChange={(value) => console.log('dummy dont change ')}
+						isDarkVariant
+					// inline
+					/>
+				))}
 			</>
 		);
 	}
@@ -235,9 +251,11 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 	if (!entity.coordination || entity.coordination?.length === 0) {
 		return <h2>{t('flightRequest.noCoordination')}</h2>;
 	}
+
 	return (
 		<div>
 			{entity.coordination.map((coordination, index) => {
+				const isEditing = edit.some((e) => e === coordination.id) || false
 				return (
 					<Coordination key={coordination.id}>
 						<div className={styles.info_table}>
@@ -309,6 +327,16 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 								isDarkVariant
 							/>
 						</div>
+						<PTextArea
+							key={coordination.id}
+							defaultValue={coordination.comments || ''}
+							onChange={(value) => (coordination.comments = value)}
+							label={t('Comments')}
+							id='comments'
+							disabled={!isEditing}
+							isDarkVariant
+
+						/>
 					</Coordination>
 				);
 			})}
@@ -619,6 +647,7 @@ const ViewAndEditFlightRequest: FC<ViewAndEditFlightRequestProps> = ({
 					/>
 
 					<BaseFlightRequestDetails isEditing={isEditing} ls={ls} />
+
 				</section>
 				<div className={styles.separator} />
 				{ls.entity.volumes.length > 0 && (

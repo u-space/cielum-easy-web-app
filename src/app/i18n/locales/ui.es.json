@@ -578,5 +578,7 @@
 	"Cantoperate": "Click para permitir la creación de operaciones",
 	"Pending administrative management": "Pendiente de gestión administrativa",
 	"You do not have any authorized vehicles": "Ud. no tiene aeronaves autorizadas",
-	"Required documents": "Documentos obligatorios"
+	"Required documents": "Documentos obligatorios",
+	"Comments": "Comentarios",
+	"No comments": "No hay comentarios"
 }

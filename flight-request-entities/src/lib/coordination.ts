@@ -33,6 +33,7 @@ export class CoordinationEntity implements EntityHasDisplayName {
 	geographical_zone: GeographicalZone;
 	flightRequest: FlightRequestEntity;
 	role_manager: string;
+	comments: string;
 	//flightRequest: string;
 
 	constructor(
@@ -44,14 +45,15 @@ export class CoordinationEntity implements EntityHasDisplayName {
 		flightRequest: FlightRequestEntity,
 		geographical_zone: GeographicalZone,
 		role_manager: string,
+		comments: string,
 		id?: string
 	) {
 		this.id = id;
 		this.reference = reference
 			? reference
 			: coordinator
-			? `${coordinator.infrastructure} (${coordinator.liaison})`
-			: 'Sin coordinador?';
+				? `${coordinator.infrastructure} (${coordinator.liaison})`
+				: 'Sin coordinador?';
 		this.state = state;
 		this.limit_date = limit_date;
 		this.last_state_change_reason = last_state_change_reason;
@@ -59,6 +61,7 @@ export class CoordinationEntity implements EntityHasDisplayName {
 		this.flightRequest = flightRequest;
 		this.geographical_zone = geographical_zone;
 		this.role_manager = role_manager;
+		this.comments = comments;
 		makeAutoObservable(this);
 	}
 
@@ -94,6 +97,7 @@ const transformCoordination = (data: any) => {
 					coordination.flightRequest,
 					coordination.coordinator?.geographical_zone,
 					coordination.role_manager,
+					coordination.comments,
 					coordination.id
 				)
 		),
