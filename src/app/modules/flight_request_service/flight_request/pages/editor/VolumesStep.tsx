@@ -46,7 +46,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 		setIsOnNight,
 		defaultAltitude
 	} = props;
-	const { sunrise: sunriseList, fetchSunrise, isFetchingSunrise } = useSunrise();
+	// const { sunrise: sunriseList, fetchSunrise, isFetchingSunrise } = useSunrise();
 	const [dateTimeChange, setDateTimeChange] = useState<boolean>(false);
 
 	const start = useRef(setHoursAndReturnDate(addDays(new Date(), 10), 9, 0));
@@ -81,36 +81,42 @@ const VolumesStep = (props: VolumesStepProps) => {
 					dateStartList.push(startString);
 				}
 			}
-			if (position) {
-				fetchSunrise(dateStartList, position[0][0], position[0][1]);
-			}
+			// if (position) {
+			// 	fetchSunrise(dateStartList, position[0][0], position[0][1]);
+			// }
 		} else {
 			setIsOnNight(false);
 		}
 	}, [dateTimeChange]);
 
 	useEffect(() => {
-		if (sunriseList && sunriseList.length > 0) {
-			const volumenes = flightRequest.volumes.filter((f) => f.ordinal >= 0);
-			const someOnNight = volumenes.some((v: OperationVolume, i: number) => {
-				const sunrise = sunriseList[i];
-				if (v.effective_time_begin && v.effective_time_end && sunrise) {
-					const start = new Date(v.effective_time_begin);
-					const end = new Date(v.effective_time_end);
-					const sunriseDate = new Date(start);
-					setDateTime(sunriseDate, sunrise.sunrise);
-					const sunsetDate = new Date(start);
-					setDateTime(sunsetDate, sunrise.sunset);
-					if (sunriseDate < start && end < sunsetDate) {
-						return false;
-					} else {
-						return true;
-					}
-				}
-			});
-			setIsOnNight(someOnNight);
-		}
-	}, [sunriseList]);
+		flightRequest.volumes.forEach((volume) => {
+			volume.set('max_altitude', defaultAltitude);
+		});
+	}, [])
+
+	// useEffect(() => {
+	// 	if (sunriseList && sunriseList.length > 0) {
+	// 		const volumenes = flightRequest.volumes.filter((f) => f.ordinal >= 0);
+	// 		const someOnNight = volumenes.some((v: OperationVolume, i: number) => {
+	// 			const sunrise = sunriseList[i];
+	// 			if (v.effective_time_begin && v.effective_time_end && sunrise) {
+	// 				const start = new Date(v.effective_time_begin);
+	// 				const end = new Date(v.effective_time_end);
+	// 				const sunriseDate = new Date(start);
+	// 				setDateTime(sunriseDate, sunrise.sunrise);
+	// 				const sunsetDate = new Date(start);
+	// 				setDateTime(sunsetDate, sunrise.sunset);
+	// 				if (sunriseDate < start && end < sunsetDate) {
+	// 					return false;
+	// 				} else {
+	// 					return true;
+	// 				}
+	// 			}
+	// 		});
+	// 		setIsOnNight(someOnNight);
+	// 	}
+	// }, [sunriseList]);
 
 	const getUserSelectIntervalModalProps = (): PFullModalProps => ({
 		isVisible: true,
