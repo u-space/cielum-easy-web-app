@@ -128,39 +128,45 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		saveFlightRequestMutation.mutate();
 	};
 
-	const canCreateFlightRequest = () => {
+	const canCreateFlightRequest = (): boolean => {
 		const hasGeographicalZoneIntersections =
 			geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
 
 		const specialCoordinations =
-			needVlosCoordination(flightRequest) &&
-			needAltitudeCoordination(flightRequest) &&
-			isOnNight;
+			needVlosCoordination(flightRequest) ||
+			needAltitudeCoordination(flightRequest)
+		// &&
+		// isOnNight;
 
 		const operatorCanOPerate =
-			flightRequest.operator &&
+			flightRequest.operator != undefined &&
 			flightRequest.operator instanceof UserEntity &&
-			flightRequest.operator.canOperate;
+			flightRequest.operator.canOperate === true;
+
 		return (hasGeographicalZoneIntersections || specialCoordinations) && operatorCanOPerate;
 	};
+
+	const createButtonDisable: boolean = !canCreateFlightRequest();
 
 	const getCauseMessage = () => {
 		const hasGeographicalZoneIntersections =
 			geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
 		const specialCoordinations =
-			needVlosCoordination(flightRequest) &&
-			needAltitudeCoordination(flightRequest) &&
-			isOnNight;
+			needVlosCoordination(flightRequest) ||
+			needAltitudeCoordination(flightRequest)
+		//  &&
+		// isOnNight;
 		const operatorCanOPerate =
 			flightRequest.operator &&
 			flightRequest.operator instanceof UserEntity &&
 			flightRequest.operator.canOperate;
-		if (!(hasGeographicalZoneIntersections && specialCoordinations)) {
+
+		if (!(hasGeographicalZoneIntersections || specialCoordinations)) {
 			return t('glossary:flightRequest:noCoordination');
 		} else if (!operatorCanOPerate) {
 			return t('ui:user_cant_create_operation');
 		} else {
-			return t('Create');
+			return t('Save');
 		}
 	};
 
@@ -186,12 +192,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		const startTime = getStartTime(flightRequest);
 		if (startTime) {
 			const now = new Date();
-			// const difference = now.getTime() - startTime.getTime();
-			// const days = Math.ceil(difference / (1000 * 3600 * 24));
 			const days = daysBetween(now, startTime);
-			console.log(
-				`Difference in days: ${days} - ${minimun_coordination_days} - ${now} - ${startTime}`
-			);
 			return days >= minimun_coordination_days;
 		}
 	}
@@ -207,7 +208,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 				onArrowBack={previousStep}
 				footer={
 					<PTooltip content={getCauseMessage()}>
-						<PButton disabled={!canCreateFlightRequest()} onClick={finishAndPay}>
+						<PButton disabled={createButtonDisable} onClick={finishAndPay}>
 							{t('Create')}
 						</PButton>
 					</PTooltip>
@@ -294,13 +295,13 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 									checked={true}
 								/>
 							)}
-							{isOnNight && (
+							{/* {isOnNight && (
 								<Checkbox
 									id={`coordination-night`}
 									label={t(`It's a night flight`)}
 									checked={true}
 								/>
-							)}
+							)} */}
 						</section>
 					</div>
 				</div>
@@ -314,10 +315,6 @@ const needAltitudeCoordination = (flightRequest: FlightRequestEntity) => {
 		.filter((vol) => vol.effective_time_begin)
 		.some((vol) => vol.max_altitude > 120);
 };
-
-// const needNightFlyCoordination = (isOnNight) => {
-// 	return isOnNight;
-// };
 
 const needVlosCoordination = (flightRequest: FlightRequestEntity) => {
 	return flightRequest.vlos;
