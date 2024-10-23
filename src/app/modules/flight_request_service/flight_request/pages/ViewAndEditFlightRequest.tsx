@@ -241,9 +241,10 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 	const role = useAuthGetRole();
 
 	function canEditCoordination(coordination: CoordinationEntity): boolean {
-		if (role === AuthRole.ADMIN) {
-			return true;
-		} else return coordination.role_manager.toLowerCase() === role.toLowerCase();
+		// if (role === AuthRole.ADMIN) {
+		// 	return true;
+		// } else 
+		return coordination.role_manager.toLowerCase() === role.toLowerCase();
 	}
 	if (!entity) {
 		return null;
