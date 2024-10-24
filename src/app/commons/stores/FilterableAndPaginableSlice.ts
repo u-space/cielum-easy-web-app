@@ -28,7 +28,7 @@ export const createFilterableAndPaginableSlice = <T>(
 	filterMatchingText: undefined,
 	filterProperty: '',
 	sortingProperty: '',
-	sortingOrder: 'ASC',
+	sortingOrder: 'DESC',
 	pageTake: 10,
 	pageSkip: 0,
 	setFilterByText: (text) => set({ filterMatchingText: text !== '' ? text : undefined }),
