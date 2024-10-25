@@ -48,7 +48,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 	createdAt: Date;
 	flight_category: FlightCategory;
 	geographicalZones?: GeographicalZone[] = [];
-	vlos: boolean;
+	bvlos: boolean;
 
 	[key: string]: FlightRequestEntity[keyof FlightRequestEntity];
 
@@ -73,7 +73,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 			id,
 			paid,
 			createdAt,
-			vlos
+			bvlos
 		} = existing;
 
 		this.name = name;
@@ -97,7 +97,7 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		this.creator = creator;
 		this.paid = paid;
 		this.createdAt = createdAt;
-		this.vlos = vlos || false;
+		this.bvlos = bvlos || false;
 
 		makeAutoObservable(this);
 	}
@@ -146,8 +146,8 @@ export class FlightRequestEntity implements EntityHasDisplayName {
 		this.urban_flight = urban_flight;
 	}
 
-	setVlos(vlos: boolean) {
-		this.vlos = vlos;
+	setBvlos(bvlos: boolean) {
+		this.bvlos = bvlos;
 	}
 
 	setParachuteModel(parachute_model: string) {

@@ -295,7 +295,7 @@
 		"min_altitude": "Altura mínima AGL (m)",
 		"max_altitude": "Altura máxima AGL (m)",
 		"near_structure": "Zona Urbana",
-		"beyond_visual_line_of_sight": "Fuera de VLOS"
+		"beyond_visual_line_of_sight": "Fuera de línea de visión"
 	},
 	"actions": "Acciones",
 	"edit": "Editar",
@@ -452,7 +452,7 @@
 			"SELF_MANAGED": "Auto gestionado"
 		},
 		"role_manager": "Rol gestor",
-		"VLOS": "Fuera de línea de vuelo",
+		"BVLOS": "Fuera de línea de visión",
 		"IS_ON_NIGHT": "Vuelo nocturno",
 		"ALTITUDE": "Vuelo de altura"
 	},
@@ -501,7 +501,7 @@
 		"noUavs": "Sin aeronaves",
 		"noCreator": "Sin creador",
 		"starting_time": "Comienzo",
-		"vlos": "Fuera de línea de visión",
+		"bvlos": "Fuera de línea de visión",
 		"role_manager": "Rol gestor"
 	},
 	"flight-request": {

@@ -233,10 +233,10 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				setInfo={(prop, value) => flightRequest.setFlightComments(value as string)}
 			/>
 			<FlightRequestInfo
-				key={'vlos'}
-				prop={'vlos'}
+				key={'bvlos'}
+				prop={'bvlos'}
 				entity={flightRequest}
-				setInfo={(prop, value) => flightRequest.setVlos(value as boolean)}
+				setInfo={(prop, value) => flightRequest.setBvlos(value as boolean)}
 			/>
 		</CardGroup>
 	);

@@ -20,7 +20,7 @@ export enum CoordinationState {
 export enum CoordinationReference {
 	ALTITUDE = 'ALTITUDE',
 	IS_ON_NIGHT = 'IS_ON_NIGHT',
-	VLOS = 'VLOS'
+	BVLOS = 'BVLOS'
 }
 
 export class CoordinationEntity implements EntityHasDisplayName {

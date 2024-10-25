@@ -49,7 +49,7 @@ const StateExplanationText = styled.div`
 	padding: var(--padding-s);
 `;
 
-const showProp = ['id', 'name', 'state', 'flight_comments', 'createdAt', 'vlos'];
+const showProp = ['id', 'name', 'state', 'flight_comments', 'createdAt', 'bvlos'];
 // const editable = ['name', 'state', 'flight_comments'];
 const editable = ['state'];
 const possibleStates = (initialState?: FlightRequestState) => {
@@ -241,6 +241,7 @@ const FlightRequestCoordinations: FC<FlightRequestCoordinationsProps> = ({ ls, i
 	const role = useAuthGetRole();
 
 	function canEditCoordination(coordination: CoordinationEntity): boolean {
+		// emicito
 		// if (role === AuthRole.ADMIN) {
 		// 	return true;
 		// } else 

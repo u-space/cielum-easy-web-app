@@ -117,7 +117,7 @@ const FlightRequestHub: FC = () => {
 		{ title: t('glossary:flightRequest.state'), width: 2 },
 		{ title: t('glossary:flightRequest.starting_time'), width: 2 },
 		{ title: t('glossary:flightRequest.createdAt'), width: 2 },
-		{ title: t('glossary:flightRequest.vlos'), width: 2 }
+		{ title: t('glossary:flightRequest.bvlos'), width: 2 }
 	];
 
 	// Backend
@@ -158,7 +158,7 @@ const FlightRequestHub: FC = () => {
 					)
 					: '';
 			} else if (col === 7) {
-				data = String(flightRequest.vlos);
+				data = String(flightRequest.bvlos);
 				// kind = GridCellKind.Boolean;
 			} else if (col === 0) {
 				data = '';

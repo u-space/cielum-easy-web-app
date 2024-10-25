@@ -133,7 +133,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 			geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
 
 		const specialCoordinations =
-			needVlosCoordination(flightRequest) ||
+			needBvlosCoordination(flightRequest) ||
 			needAltitudeCoordination(flightRequest)
 		// &&
 		// isOnNight;
@@ -152,7 +152,7 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 		const hasGeographicalZoneIntersections =
 			geographicalZonesIntersectingVolume && geographicalZonesIntersectingVolume.length > 0;
 		const specialCoordinations =
-			needVlosCoordination(flightRequest) ||
+			needBvlosCoordination(flightRequest) ||
 			needAltitudeCoordination(flightRequest)
 		//  &&
 		// isOnNight;
@@ -281,10 +281,10 @@ const CoordinationsStep = (props: FlightRequestCoordinationsStepProps) => {
 											)}
 									</>
 								))}
-							{needVlosCoordination(flightRequest) && (
+							{needBvlosCoordination(flightRequest) && (
 								<Checkbox
-									id={`coordination-vlos`}
-									label={`VLOS - ${flightRequest.vlos}`}
+									id={`coordination-bvlos`}
+									label={`BVLOS`}
 									checked={true}
 								/>
 							)}
@@ -316,8 +316,8 @@ const needAltitudeCoordination = (flightRequest: FlightRequestEntity) => {
 		.some((vol) => vol.max_altitude > 120);
 };
 
-const needVlosCoordination = (flightRequest: FlightRequestEntity) => {
-	return flightRequest.vlos;
+const needBvlosCoordination = (flightRequest: FlightRequestEntity) => {
+	return flightRequest.bvlos;
 };
 
 export default observer(CoordinationsStep);
