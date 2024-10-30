@@ -109,9 +109,10 @@ const BaseFlightRequestDetails: FC<BaseFlightRequestDetailsProps> = observer(
 									id={`editor-flight-request-${prop}`}
 									defaultValue={entity[prop]}
 									label={t(`glossary:flightRequest.${prop}`)}
-									disabled={!isEditing}
+									disabled={true}
 									onChange={(value) => ls.setInfo(prop, value)}
 									isDarkVariant
+
 								// inline
 								/>
 							);
@@ -494,17 +495,6 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volumeIndex, isEditing }) =
 					{t('Volume')} {volumeIndex + 1}
 				</h2>
 				<h3>{t('Coordinates')}</h3>
-				{/* {ls.entity.volumes[volumeIndex].asDMS?.map((coord) => {
-					return (
-						<div
-							key={coord}
-							className={styles.leftbalancedline}
-							style={{ padding: '0.25rem' }}
-						>
-							{coord}
-						</div>
-					);
-				})} */}
 				{ls.entity.volumes[volumeIndex].operation_geography !== null && getAsDMS(ls.entity.volumes[volumeIndex].operation_geography as Polygon)?.map((coord) => {
 					return (
 						<div
@@ -516,10 +506,6 @@ const VolumeDetails: FC<VolumeDetailsProps> = ({ ls, volumeIndex, isEditing }) =
 						</div>
 					);
 				})}
-				{/* <div>
-					{ls.entity.volumes[volumeIndex].operation_geography !== null && <pre>{getAsDMS(ls.entity.volumes[volumeIndex].operation_geography as Polygon)}</pre>}
-					<pre>{JSON.stringify(ls.entity.volumes[volumeIndex].operation_geography, null, 2)}</pre>
-				</div> */}
 				<PNumberInput
 					id={`editor-flight-request-volume-${volumeIndex}-max_altitude`}
 					defaultValue={ls.entity.volumes[volumeIndex].max_altitude}
