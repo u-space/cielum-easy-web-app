@@ -259,8 +259,23 @@ export const getFlightRequestAPIClient = (api: string, token: string | null) => 
 		async updateFlightRequest(flightRequest: FlightRequestEntity) {
 			// Api ask us to delete the state bacause state change has separated endpoint
 			const body = flightRequest.asBackendFormat;
-			delete body.state;
-			const { data } = await axiosInstance.post(`/flightRequest/${body.id}`, body, {
+			//check date integrity, if not return error
+			for (const volume of body.volumes) {
+				if (volume.effective_time_begin != undefined && volume.effective_time_end != undefined) {
+					if (new Date() > volume.effective_time_begin) {
+						throw new Error('The start date must be greater than today');
+					}
+					if (volume.effective_time_begin > volume.effective_time_end) {
+						throw new Error('The start date must be less than the end date');
+					}
+				}
+				else {
+					throw new Error('Invalid data entered');
+				}
+
+			}
+			// delete body.state;
+			const { data } = await axiosInstance.put(`/flightRequest/${body.id}`, body, {
 				headers: { auth: token }
 			});
 			return data;
