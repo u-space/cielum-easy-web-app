@@ -92,22 +92,17 @@ const expirable = (document: DocumentEntity) => {
 	return new Date(document['valid_until']) < MAX_DATE;
 };
 
+const isExpirable = (schema: any) => {
+	return schema && schema.__metadata && schema.__metadata.expirable === true;
+};
+
 const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 	const { t } = useTranslation();
 	const { document, id, schema, isEditing = false } = props;
 
 	//FIXME this is for fire re render
-	const [validUntil, setValidUntil] = useState<Date>(new Date(document['valid_until']));
+	const [validUntil, setValidUntil] = useState<Date>(isExpirable(schema) ? new Date(MAX_DATE) : new Date(document['valid_until']));
 
-	useEffect(() => {
-		if (schema && schema.__metadata && schema.__metadata.expirable === true) {
-			document['valid_until'] = new Date(MAX_DATE);
-		}
-	}, [schema, schema.__metadata]);
-
-	const showDateInput =
-		(schema && !schema.__metadata) ||
-		(schema && schema.__metadata && !(schema.__metadata.expirable === true));
 
 	const PredefinedExpirations = ({
 		predefinedExpirations,
@@ -153,7 +148,7 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 
 	return (
 		<div className={classNames(styles.addFile)}>
-			{(isEditing || (!isEditing && !expirable(document))) && (
+			{(isEditing && (isExpirable(schema))) && (
 				<PBooleanInput
 					key={'expirable'}
 					id={'expirable'}
@@ -172,7 +167,7 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 					isDarkVariant
 				/>
 			)}
-			{showDateInput && expirable(document) && (
+			{isExpirable(schema) && expirable(document) && (
 				<PDateInput
 					key={'valid_until'}
 					id={id}
@@ -191,7 +186,7 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 			)}
 
 			{isEditing &&
-				showDateInput &&
+				isExpirable(schema) &&
 				expirable(document) &&
 				schema &&
 				schema.__metadata &&
@@ -245,7 +240,6 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 				onChange={() => {
 					alert('Observations are not editable from this area');
 				}}
-				inline
 			/>
 		</div>
 	);
@@ -534,7 +528,6 @@ const PDocument = (props: PDocumentProps) => {
 		isAdmin = false,
 		isLoading = false,
 	} = props;
-	// const [fireRendering, setFireRendering] = useState(false);
 	const [isShowingEditingModal, setShowingEditingModalFlag] = useState(
 		document.isBeingAdded || false
 	);
@@ -544,9 +537,6 @@ const PDocument = (props: PDocumentProps) => {
 	const icon = document.hasSomethingToShow ? (document.valid ? 'tick' : 'cross') : null;
 	const validateText = document.valid ? t('Devalidate') : t('Validate');
 
-	// useEffect(() => {
-	// 	setFireRendering(true);
-	// }, [document.valid, isLoading]);
 
 	const formGroupProps = {
 		className: classNames(styles.form, {

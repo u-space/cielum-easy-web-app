@@ -42,6 +42,11 @@ export class DocumentEntity {
 					this[prop] = document[prop];
 				}
 			}
+			try {
+				if (document.extra_fields && typeof document.extra_fields === 'string') this.extra_fields = JSON.parse(document.extra_fields);
+			} catch (e) {
+				console.log(e)
+			}
 		}
 
 		makeAutoObservable(this);
@@ -166,7 +171,7 @@ export const getDocumentAPIClient = (api: string, token: string | null) => {
 				'Content-Type': 'application/json',
 				auth: `${token}`
 			};
-			const response = await axiosInstance.get<Record<string, string>>(
+			const response = await axiosInstance.get(
 				`${entityType}/document/schema/${tag}`,
 				{
 					headers

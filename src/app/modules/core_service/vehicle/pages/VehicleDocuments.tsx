@@ -120,7 +120,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 			updateDocumentValidationMutation.isSuccess ||
 			updateDocumentObservationMutation.isSuccess
 		) {
-			console.log('Update validation or observation success ');
+			// console.log('Update validation or observation success ');
 			queryClient
 				.invalidateQueries([
 					'vehicles',
@@ -132,7 +132,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 					filterMatchingText
 				])
 				.then((a: any) => {
-					console.log('Invalidate queries', JSON.stringify(a, null, 2));
+					// console.log('Invalidate queries', JSON.stringify(a, null, 2));
 					setFireRender(!fireRender);
 				});
 			//document.valid = updateDocumentValidationMutation.data.data.valid;
@@ -177,7 +177,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 									.filter(filterRemoteSensor)
 									.filter(filterPilot)
 									.map((tag: string) => {
-										console.log('map:', tag);
+										// console.log('map:', tag);
 										return {
 											label: `${t(`glossary:vehicle.${tag}`)}${isRequiredDocumentTag(tag) ? ' *' : ''}`,
 											value: tag
@@ -197,6 +197,9 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 					<>
 						{(ls.entity.extra_fields.documents as DocumentEntity[]).map(
 							(document: DocumentEntity, index: number) => {
+								if (typeof document.valid_until === 'string') {
+									document.valid_until = new Date(document.valid_until);
+								}
 								return (
 									<div
 										key={`${document.id}-${String(document.valid)}`}

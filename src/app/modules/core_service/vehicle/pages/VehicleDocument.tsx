@@ -133,6 +133,12 @@ export const VehicleDocument: FC<VehicleDocumentProps> = ({
 		) {
 			return <Spinner size={8} />;
 		}
+		if (schemaQuery.data.__metadata && schemaQuery.data.__metadata.expirable === false) {
+			if (document.valid_until < new Date(MAX_DATE)) {
+				const d = new DocumentEntity({ ...document, valid_until: new Date(MAX_DATE) })
+				ls.documents.set(document.id, d);
+			}
+		}
 		return (
 			<PDocument
 				title={title}
@@ -166,14 +172,14 @@ export const VehicleDocument: FC<VehicleDocumentProps> = ({
 				onDelete={
 					document.id.indexOf('TEMP_') === 0
 						? () => {
-								if (!ls.documents) {
-									getWebConsoleLogger().getErrorForDeveloperToFix(
-										'ls.documents is undefined in VehiclesViewAndEdit PDocumentWithSchema'
-									);
-								} else {
-									ls.documents.delete(document.id);
-								}
-						  }
+							if (!ls.documents) {
+								getWebConsoleLogger().getErrorForDeveloperToFix(
+									'ls.documents is undefined in VehiclesViewAndEdit PDocumentWithSchema'
+								);
+							} else {
+								ls.documents.delete(document.id);
+							}
+						}
 						: undefined
 				}
 				onSaveObservation={onSaveObservation}
