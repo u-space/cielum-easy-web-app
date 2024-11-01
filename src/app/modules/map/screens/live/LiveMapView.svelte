@@ -73,7 +73,7 @@
 	};
 
 	$: visibleVehiclePositionsEntries = visible.vehicles ? vehiclePositionsEntries : [];
-	$: console.log('visibleVehiclePositionsEntries', visibleVehiclePositionsEntries);
+	// $: console.log('visibleVehiclePositionsEntries', visibleVehiclePositionsEntries);
 	$: visibleOperations = visible.operations ? operations : [];
 	$: visibleRfvs = visible.rfvs ? rfvs : [];
 	$: visibleUvrs = visible.uvrs ? uvrs : [];
@@ -236,13 +236,13 @@
 							checked={visible.operations}
 							on:check={onLayerChecked}
 						/>
-						<CCheckbox
+						<!-- <CCheckbox
 							fill
 							id="toggle-rfvs"
 							label={t('RFVS')}
 							checked={visible.rfvs}
 							on:check={onLayerChecked}
-						/>
+						/> -->
 						<CCheckbox
 							fill
 							id="toggle-geographical_zones"
@@ -264,6 +264,16 @@
 							checked={visible.flightRequests}
 							on:check={onLayerChecked}
 						/>
+						<CCheckbox
+							fill
+							id="toggle-uvrs"
+							label={t('UVR')}
+							checked={visible.uvrs}
+							on:check={onLayerChecked}
+						/>
+						{#each visibleUvrs as uvr (uvr.message_id)}
+							<p>{uvr.message_id}</p>
+						{/each}
 					</div>
 				</CPanel>
 			{/if}
