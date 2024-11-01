@@ -119,7 +119,7 @@ const LiveMap = () => {
 	}, [gz, operationSelection, operation, rfv, uvr, flightRequest]);
 	const positions = usePositionStore((state) => state.positions);
 	const [isShowingGeographicalZones, setShowingGeographicalZonesFlag] = useState(true);
-	const [isShowingUvrs, setShowingUvrsFlag] = useState(false);
+	const [isShowingUvrs, setShowingUvrsFlag] = useState(true);
 
 	const redirectToPicked = useCallback(
 		(pick: TokyoPick) => {
