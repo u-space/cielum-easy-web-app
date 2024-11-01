@@ -167,7 +167,7 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 					isDarkVariant
 				/>
 			)}
-			{isExpirable(schema) && expirable(document) && (
+			{isExpirable(schema) && (
 				<PDateInput
 					key={'valid_until'}
 					id={id}
@@ -647,7 +647,6 @@ const PDocument = (props: PDocumentProps) => {
 			return (
 				<Line>
 					{isLoading && <Spinner size={SpinnerSize.STANDARD} />}
-					{/* <Spinner size={SpinnerSize.STANDARD} /> */}
 					{!isLoading && document.hasSomethingToShow && (
 						<>
 							<PButton
