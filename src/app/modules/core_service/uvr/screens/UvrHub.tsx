@@ -9,7 +9,7 @@ import { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import { useQueryString } from '../../../../utils';
 import { UseMutationResult, useQueryClient } from 'react-query';
 import useQueryUvrs, { useDeleteUvr, useUpdateUvr } from '../hooks';
-import { CustomCell, GridCell, GridCellKind, TextCell } from '@glideapps/glide-data-grid';
+import { CustomCell, GridCell, GridCellKind, NumberCell, TextCell } from '@glideapps/glide-data-grid';
 import UvrSearchTools from '../components/UvrSearchTools';
 import ViewAndEditUvr from '../pages/ViewAndEditUvr';
 import { useUvrStore } from '../store';
@@ -75,10 +75,10 @@ const UvrHub = () => {
 				kind = GridCellKind.Number;
 				data = uvr.max_altitude + '';
 			} else if (col === 4) {
-				kind = GridCellKind.Number;
+				kind = GridCellKind.Text;
 				data = uvr.effective_time_begin.toLocaleString();
 			} else if (col === 5) {
-				kind = GridCellKind.Number;
+				kind = GridCellKind.Text;
 				data = uvr.effective_time_end.toLocaleString();
 			} else if (col === 0) {
 				data = '';
@@ -92,7 +92,16 @@ const UvrHub = () => {
 					displayData: data,
 					allowOverlay: false
 				} as TextCell;
-			} else if (kind === GridCellKind.Custom) {
+			}
+			else if (kind === GridCellKind.Number) {
+				return {
+					kind: GridCellKind.Number,
+					data: data,
+					displayData: data,
+					allowOverlay: false
+				} as NumberCell;
+			}
+			else if (kind === GridCellKind.Custom) {
 				return {
 					kind: GridCellKind.Custom,
 					data: data,
