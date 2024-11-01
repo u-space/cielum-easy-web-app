@@ -119,7 +119,7 @@ const UvrEditor = () => {
 			mode: EditMode.SINGLE,
 			polygons
 		},
-		flightRequests:[]
+		flightRequests: []
 	};
 	return (
 		<MapLayout
@@ -139,19 +139,19 @@ const UvrEditor = () => {
 				text: `### ${t('You are in EDITOR MODE')} `
 			}}
 			modal={modalProps}
-			contextual={
-				<>
-					{selectedVolume !== null && (
-						<CardGroup header={t('Editar uvr')}>
-							<ContextualInfo
-								entity={uvr}
-								entityName={'uvr'}
-								hiddenProps={['ordinal', 'id']}
-							/>
-						</CardGroup>
-					)}
-				</>
-			}
+		// contextual={
+		// 	<>
+		// 		{selectedVolume !== null && (
+		// 			<CardGroup header={t('Editar uvr')}>
+		// <ContextualInfo
+		// 					entity={uvr}
+		// 					entityName={'uvr'}
+		// 					hiddenProps={['ordinal', 'id']}
+		// 				/>
+		// 			</CardGroup>
+		// 		)}
+		// 	</>
+		// }
 		>
 			<EditorMapView
 				{...editorMapViewProps}
