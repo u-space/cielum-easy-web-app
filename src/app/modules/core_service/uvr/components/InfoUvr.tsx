@@ -6,6 +6,7 @@ import { FC } from 'react';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
 import { UvrEntity } from '@utm-entities/uvr';
 import PNumberInput from '@pcomponents/PNumberInput';
+import PDateInput from '@pcomponents/PDateInput';
 
 interface InfoProps {
 	prop: keyof UvrEntity;
@@ -40,7 +41,22 @@ const Info: FC<InfoProps> = observer(({ prop, entity, setInfo }) => {
 				disabled={prop === 'id'}
 			/>
 		);
-	} else {
+	} else if (value instanceof Date) {
+		return <PDateInput
+			key={prop}
+			id={`editor-uvr-${prop}`}
+			label={t(`glossary:uvr.${prop}`)}
+			labelInfo={undefined}
+			explanation={undefined}
+			placeholder={undefined}
+			defaultValue={entity[prop]}
+			onChange={(value: Date) => (entity[prop] = value)}
+			isRequired
+			isTime
+		// disabled={!editable}
+		/>
+	}
+	else {
 		return null;
 	}
 });
