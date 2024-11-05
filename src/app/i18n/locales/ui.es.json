@@ -580,5 +580,7 @@
 	"You do not have any authorized vehicles": "Ud. no tiene aeronaves autorizadas",
 	"Required documents": "Documentos obligatorios",
 	"Comments": "Comentarios",
-	"No comments": "No hay comentarios"
+	"No comments": "No hay comentarios",
+	"DYNAMIC_RESTRICTION": "Restricción Temporal",
+	"STATIC_ADVISORY": "NOTAM"
 }

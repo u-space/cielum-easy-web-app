@@ -52,7 +52,7 @@ function getConverterFromOperation(_uvr: UvrEntity, options?: OperationDrawingPr
 			lineWidthUnits: 'pixels',
 			getLineWidth: 1,
 			filled: true,
-			extruded: true,
+			extruded: false,
 			parameters: {
 				depthMask: false
 			},

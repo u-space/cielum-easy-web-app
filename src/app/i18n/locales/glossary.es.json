@@ -318,7 +318,9 @@
 		"cause_desc": "",
 		"type": "Tipo",
 		"type_desc": "DYNAMIC_RESTRICTION, STATIC_ADVISORY",
-		"zero_uvrs": "No existen UVRs registradas en el sistema, o usted no tiene la autorización para verlas."
+		"zero_uvrs": "No existen UVRs registradas en el sistema, o usted no tiene la autorización para verlas.",
+		"DYNAMIC_RESTRICTION": "Restricción Temporal",
+		"STATIC_ADVISORY": "NOTAM"
 	},
 	"add_vehicle": "Crear nuevo drone",
 	"approve": "Aceptar",
