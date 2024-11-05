@@ -271,9 +271,6 @@
 							checked={visible.uvrs}
 							on:check={onLayerChecked}
 						/>
-						{#each visibleUvrs as uvr (uvr.message_id)}
-							<p>{uvr.message_id}</p>
-						{/each}
 					</div>
 				</CPanel>
 			{/if}

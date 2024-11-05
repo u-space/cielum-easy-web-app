@@ -2,8 +2,10 @@ import { PolygonLayer } from '@deck.gl/layers/typed';
 import _ from 'lodash';
 import type { ConvertToLayer, RGBA, RGBnumber } from '../../types';
 import { getPickableId, PickableType } from '../../util';
+import i18n from 'i18next';
 
-import type { UvrEntity } from '@utm-entities/uvr';
+
+import { UvrType, type UvrEntity } from '@utm-entities/uvr';
 import { ELEVATION_MULTIPLIER } from '../util';
 
 export interface OperationDrawingProps {
@@ -26,6 +28,10 @@ function getIdFromUvr(uvr: UvrEntity) {
 	);
 }
 
+function getTooltipContent(uvr: UvrEntity) {
+	return `${uvr.effective_time_begin.toLocaleString()} </br > ${uvr.effective_time_end.toLocaleString()} </br > ${uvr.reason} </br > ${i18n.t(uvr.type)}`;
+}
+
 function getConverterFromOperation(_uvr: UvrEntity, options?: OperationDrawingProps) {
 	const uvr: UvrEntity = _.cloneDeep(_uvr);
 
@@ -41,14 +47,20 @@ function getConverterFromOperation(_uvr: UvrEntity, options?: OperationDrawingPr
 	const fillColor: RGBA = [213, 82, 213, fillAlpha];
 	const lineColor: RGBA = [137, 58, 136, lineAlpha];
 
+
+	const fillColorRed: RGBA = [255, 77, 77, fillAlpha];
+	const lineColorRed: RGBA = [255, 77, 77, lineAlpha];
+
+
+
 	return () =>
 		new PolygonLayer({
 			pickable: true,
 			id,
-			data: [{ ...uvr.geography, properties: uvr }],
+			data: [{ ...uvr.geography, properties: { ...uvr, tooltip: getTooltipContent(uvr) } }],
 			getPolygon: (d) => d.coordinates,
-			getFillColor: fillColor,
-			getLineColor: lineColor,
+			getFillColor: uvr.type == UvrType.DYNAMIC_RESTRICTION ? fillColorRed : fillColor,
+			getLineColor: uvr.type == UvrType.DYNAMIC_RESTRICTION ? lineColorRed : lineColor,
 			lineWidthUnits: 'pixels',
 			getLineWidth: 1,
 			filled: true,
