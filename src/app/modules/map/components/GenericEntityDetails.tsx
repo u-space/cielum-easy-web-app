@@ -19,6 +19,7 @@ interface GenericEntityDetailsProps {
 	onEdit?: () => void;
 	canEdit?: boolean;
 	extra?: any;
+	translatableProps?: string[];
 }
 
 const GenericEntityDetails: FC<GenericEntityDetailsProps> = ({
@@ -31,7 +32,8 @@ const GenericEntityDetails: FC<GenericEntityDetailsProps> = ({
 	baseLabelKey,
 	onEdit = null,
 	canEdit = false,
-	extra
+	extra,
+	translatableProps = []
 }) => {
 	const { t } = useTranslation();
 	return (
@@ -43,7 +45,16 @@ const GenericEntityDetails: FC<GenericEntityDetailsProps> = ({
 					<CardGroup header={label}>
 						{_.keys(entity).map((prop) => {
 							const value = entity[prop];
-							if (typeof value === 'string' || typeof value === 'number') {
+							if (typeof value === 'string') {
+								return (
+									<CardGroupDetailLine
+										key={prop}
+										prop={`glossary:${baseLabelKey}.${prop}`}
+										value={translatableProps.includes(prop) ? t(value) : value}
+									/>
+								);
+							}
+							if (typeof value === 'number') {
 								return (
 									<CardGroupDetailLine
 										key={prop}
@@ -51,7 +62,8 @@ const GenericEntityDetails: FC<GenericEntityDetailsProps> = ({
 										value={value}
 									/>
 								);
-							} else if (typeof value === 'object' && value instanceof Date) {
+							}
+							else if (typeof value === 'object' && value instanceof Date) {
 								return (
 									<CardGroupDetailLine
 										key={prop}

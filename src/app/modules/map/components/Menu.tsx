@@ -98,11 +98,13 @@ const Menu = ({
 				isLoading={querySelectedUvr.isLoading}
 				isSuccess={querySelectedUvr.isSuccess}
 				isError={querySelectedUvr.isError}
-				entity={_.omit(uvr, ['cause', 'permitted_uas', 'required_support', 'type'])}
+				entity={_.omit(uvr, ['permitted_uas', 'required_support', 'id', 'cause'])}
+				translatableProps={['type']}
 				baseLabelKey={'uvr'}
 				label={t('UAS Volume Reservation')}
 				canEdit={false}
 				extra={null}
+
 			/>
 		);
 	} else if (vehicleSelection.gufi) {

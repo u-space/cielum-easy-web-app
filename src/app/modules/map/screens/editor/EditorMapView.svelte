@@ -10,12 +10,13 @@
 	import { flightRequestTokyoConverter } from '@tokyo/converters/fra/flightRequest';
 
 	import { EditorMapViewProps } from './EditorMapViewProps';
+	import { uvrTokyoConverter } from '@tokyo/converters/core/uvrDrawer';
 
 	export let editOptions: EditorMapViewProps['editOptions'];
 	export let geographicalZones: EditorMapViewProps['geographicalZones'];
 	export let flightRequests: EditorMapViewProps['flightRequests'];
+	export let uvrs: EditorMapViewProps['uvrs'];
 
-	
 	const alphas: GeographicalZoneDrawingProps = {
 		lineAlpha: 255,
 		fillAlpha: 15,
@@ -32,9 +33,18 @@
 	{/each}
 
 	{#each flightRequests as flightRequest (flightRequest.id)}
+		<TokyoGenericMapElement
+			id={flightRequestTokyoConverter.getId(flightRequest)}
+			getLayer={flightRequestTokyoConverter.getConverter(flightRequest)}
+		/>
+	{/each}
+
+	{#if uvrs}
+		{#each uvrs as uvr (uvr.message_id)}
 			<TokyoGenericMapElement
-				id={flightRequestTokyoConverter.getId(flightRequest)}
-				getLayer={flightRequestTokyoConverter.getConverter(flightRequest)}
+				id={uvrTokyoConverter.getId(uvr)}
+				getLayer={uvrTokyoConverter.getConverter(uvr)}
 			/>
 		{/each}
+	{/if}
 </Tokyo>

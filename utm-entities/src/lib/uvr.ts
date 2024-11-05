@@ -10,6 +10,11 @@ import env from '../../../src/vendor/environment/env';
 import { buildParametersObject } from './_util';
 import { EntityHasDisplayName } from './types';
 
+export enum UvrType {
+	DYNAMIC_RESTRICTION = "DYNAMIC_RESTRICTION",
+	STATIC_ADVISORY = "STATIC_ADVISORY",
+}
+
 export class UvrEntity implements EntityHasDisplayName {
 	id: string | null;
 	message_id: string | null;
@@ -40,10 +45,10 @@ export class UvrEntity implements EntityHasDisplayName {
 		this.effective_time_end = new Date();
 		this.effective_time_end.setHours(23, 59)
 		this.geography = null;
-		this.max_altitude = 50;
+		this.max_altitude = 120;
 		this.min_altitude = 0;
 		this.permitted_uas = [];
-		this.reason = i18n.t('Unknown');
+		this.reason = '';
 		this.required_support = ['ENHANCED_SAFE_LANDING'];
 		this.type = 'DYNAMIC_RESTRICTION';
 		this.uss_name = null;

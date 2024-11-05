@@ -4,9 +4,10 @@ import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import { FC } from 'react';
 import CardGroup from '../../../../commons/layouts/dashboard/menu/CardGroup';
-import { UvrEntity } from '@utm-entities/uvr';
+import { UvrEntity, UvrType } from '@utm-entities/uvr';
 import PNumberInput from '@pcomponents/PNumberInput';
 import PDateInput from '@pcomponents/PDateInput';
+import PSelect from '@pcomponents/PSelect';
 
 interface InfoProps {
 	prop: keyof UvrEntity;
@@ -18,17 +19,30 @@ const Info: FC<InfoProps> = observer(({ prop, entity, setInfo }) => {
 	const { t } = useTranslation('glossary');
 	const value = entity[prop];
 	if (typeof value === 'string') {
-		return (
-			<PInput
+		if (prop === 'type') {
+			console.log('value', value);
+			return <PSelect
 				key={prop}
 				id={`editor-uvr-${prop}`}
 				defaultValue={value}
 				label={t(`glossary:uvr.${prop}`)}
 				onChange={(value) => setInfo(prop, value)}
 				isRequired
-				disabled={prop === 'id'}
+				values={[UvrType.DYNAMIC_RESTRICTION, UvrType.STATIC_ADVISORY]}
 			/>
-		);
+		} else {
+			return (
+				<PInput
+					key={prop}
+					id={`editor-uvr-${prop}`}
+					defaultValue={value}
+					label={t(`glossary:uvr.${prop}`)}
+					onChange={(value) => setInfo(prop, value)}
+					isRequired
+					disabled={prop === 'id'}
+				/>
+			);
+		}
 	} else if (typeof value === 'number') {
 		return (
 			<PNumberInput

@@ -111,7 +111,7 @@ const UvrEditor = () => {
 		console.log('uvr', uvr);
 	}, [queryUvr.data?.data.geography, queryUvr.isSuccess, tokyo]);
 
-	const props = _.filter(_.keys(uvr), (key) => key !== 'message_id');
+	const props = _.filter(_.keys(uvr), (key) => key !== 'message_id' && key !== 'cause');
 
 	const editorMapViewProps: EditorMapViewProps = {
 		geographicalZones: queryGeographicalZones.items,
