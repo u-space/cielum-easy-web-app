@@ -32,6 +32,7 @@ import { EditorMapViewProps } from '../../../map/screens/editor/EditorMapViewPro
 import { useQueryUser } from '../../user/hooks';
 import { useOwnedFlightRequests } from 'src/app/modules/flight_request_service/flight_request/hooks';
 import { FlightRequestEntity } from '@flight-request-entities/flightRequest';
+import useQueryUvrs from '../../uvr/hooks';
 
 const EditorMapView = reactify(EditorMapViewSvelte);
 
@@ -63,6 +64,8 @@ const OperationEditor = () => {
 	const schemaUsers = useSchemaStore((state) => state.users);
 
 	const queryGeographicalZones = useQueryGeographicalZones(true);
+	const queryUvrs = useQueryUvrs(true);
+	const uvrs = queryUvrs.uvrs;
 	const frQuery = useOwnedFlightRequests();
 	const flightRequests: FlightRequestEntity[] = frQuery.flightRequests;
 
@@ -227,7 +230,8 @@ const OperationEditor = () => {
 			mode: EditMode.MULTI
 		},
 		geographicalZones: queryGeographicalZones.items,
-		flightRequests: flightRequests
+		flightRequests: flightRequests,
+		uvrs: uvrs,
 	};
 
 	return (
