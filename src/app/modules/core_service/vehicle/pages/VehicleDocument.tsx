@@ -1,13 +1,16 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Spinner } from '@blueprintjs/core';
+import { MAX_DATE } from '@pcomponents/PDateInput';
 import PDocument from '@pcomponents/PDocument';
 import { DocumentEntity } from '@utm-entities/document';
 import { VehicleEntity } from '@utm-entities/vehicle';
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { showDate } from 'src/app/commons/displayUtils';
 import { getWebConsoleLogger } from '../../../../../utils';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
-import { useAuthGetRole, useAuthIsAdmin } from '../../../auth/store';
+import { useAuthIsAdmin } from '../../../auth/store';
 import {
 	UseUpdateDocumentObservationParams,
 	UseUpdateDocumentValidationParams,
@@ -15,9 +18,6 @@ import {
 	useUpdateDocumentObservation,
 	useUpdateDocumentValidation
 } from '../../../document/hooks';
-import { showDate } from 'src/app/commons/displayUtils';
-import { MAX_DATE } from '@pcomponents/PDateInput';
-import { useQueryClient } from 'react-query';
 import { useVehicleStore } from '../store';
 
 export interface VehicleDocumentProps {
@@ -75,17 +75,24 @@ export const VehicleDocument: FC<VehicleDocumentProps> = ({
 	const isAdmin = useAuthIsAdmin();
 	const { tag } = document;
 	const schemaQuery = useDocumentTagSchema('vehicle', tag);
-	const role = useAuthGetRole();
 
 	const title = `${t(`vehicle.${tag}`)}`;
-	const label = `${t('ui:Type')}: ${t(`vehicle.${tag}`)}, ${t(
-		labelDate(schemaQuery.data, document)
-	)}${showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''}`;
+	const label = `${t('ui:Type')}: ${t(`vehicle.${tag}`)}, ${t(labelDate(schemaQuery.data, document))}${showExpiredDate(schemaQuery.data) ? `: ${showDate(document.valid_until)}` : ''}`;
 	const explanation = t([`vehicle.${tag}_desc`, '']);
 	const id = `input-${document.name || 'new'}`;
 
 	const updateDocumentObservationMutation = useUpdateDocumentObservation();
 	const updateDocumentValidationMutation = useUpdateDocumentValidation();
+
+	useEffect(() => {
+		if (schemaQuery.data && schemaQuery.data.__metadata && schemaQuery.data.__metadata.expirable === false) {
+			if (document.valid_until < new Date(MAX_DATE)) {
+				console.log(`Document: ${document.id}, valid_until: ${document.valid_until}`);
+				const d = new DocumentEntity({ ...document, valid_until: new Date(MAX_DATE) })
+				ls.documents.set(document.id, d);
+			}
+		}
+	}, [schemaQuery.data]);
 
 	const onSaveObservation = (
 		observation: UseUpdateDocumentObservationParams['body']['observation']
@@ -133,12 +140,7 @@ export const VehicleDocument: FC<VehicleDocumentProps> = ({
 		) {
 			return <Spinner size={8} />;
 		}
-		if (schemaQuery.data.__metadata && schemaQuery.data.__metadata.expirable === false) {
-			if (document.valid_until < new Date(MAX_DATE)) {
-				const d = new DocumentEntity({ ...document, valid_until: new Date(MAX_DATE) })
-				ls.documents.set(document.id, d);
-			}
-		}
+
 		return (
 			<PDocument
 				title={title}
