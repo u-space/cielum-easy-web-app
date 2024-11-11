@@ -12,6 +12,8 @@ import PageLayout from '../../../../commons/layouts/PageLayout';
 import { useLs } from '../../../../commons/utils';
 import { useQueryVehicle, useUpdateVehicle } from '../hooks';
 import ViewAndEditVehicle from '../pages/ViewAndEditVehicle';
+import FullParentOverlayBlock, { FullBlockType } from 'src/app/commons/components/FullParentOverlayBlock';
+import { translateErrors } from '@utm-entities/_util';
 
 const CLoading = reactify(CLoadingSvelte);
 const CModal = reactify(CModalSvelte);
@@ -60,6 +62,41 @@ const LoadedVehicle = (props: { vehicle: VehicleEntity }) => {
 				}
 			>
 				<ViewAndEditVehicle ls={ls} isEditing={isEditing} />
+				<footer
+					style={{
+						height: '50px'
+					}}
+				>
+					{!updateVehicle.isLoading && (
+						<>
+							{!isEditing && ls.entity && (
+								<PButton
+									icon={'edit'}
+									onClick={() => {
+										setEditingFlag(true);
+									}}
+								>
+									{t('Edit')}
+								</PButton>
+							)}
+							{isEditing && (
+								<PButton
+									icon={'floppy-disk'}
+									onClick={() => {
+										// resetError();
+										updateVehicle.mutate({
+											entity: ls.entity,
+											documents: ls.documents,
+											isCreating: false
+										});
+									}}
+								>
+									{t('Save')}
+								</PButton>
+							)}
+						</>
+					)}
+				</footer>
 				{updateVehicle.isLoading && (
 					<CModal disabled variant={CModalVariant.INFORMATION} title={t('Saving')}>
 						{t('Please wait while your changes are being saved')}.
@@ -79,6 +116,22 @@ const LoadedVehicle = (props: { vehicle: VehicleEntity }) => {
 						.
 					</CModal>
 				)}
+				<FullParentOverlayBlock
+					type={FullBlockType.ERROR}
+					isVisible={updateVehicle.isError}
+					buttons={<PButton onClick={() => updateVehicle.reset()}>{t('Okay')}</PButton>}
+				>
+					<>
+						<h1>{t('An error ocurred while saving')}</h1>
+						<p>
+							{translateErrors(updateVehicle.error, 'vehicle').map(
+								(error) => (
+									<li key={error}>{t(error)}</li>
+								)
+							)}
+						</p>
+					</>
+				</FullParentOverlayBlock>
 			</PageLayout>
 		</DashboardLayout>
 	);
