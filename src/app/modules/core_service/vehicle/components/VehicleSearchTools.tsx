@@ -36,7 +36,7 @@ const VehicleSearchToolsExtras = () => {
 	return (
 		<CardGroup header="Filter by type">
 			{/* TODO: Replace by generic PCheckbox */}
-			<Checkbox
+			{/* <Checkbox
 				style={{
 					display: 'flex',
 					justifyContent: 'flex-start',
@@ -53,7 +53,7 @@ const VehicleSearchToolsExtras = () => {
 						resetFilterAuthorization();
 					}
 				}}
-			/>
+			/> */}
 			{/* <Checkbox
 				style={{
 					display: 'flex',
