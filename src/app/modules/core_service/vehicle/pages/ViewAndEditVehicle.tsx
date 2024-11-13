@@ -306,7 +306,7 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 
 					<div className={styles.separator} />
 					<aside className={styles.summary}>
-						<h2>{t('Operators')}</h2>
+						<h2>{t('Aditional operators')}</h2>
 						{t('Operators explanation')}
 					</aside>
 					<section className={styles.details}>
@@ -351,8 +351,8 @@ const ViewAndEditVehicle: FC<ViewAndEditVehicleProps> = ({
 
 					<div className={styles.separator} />
 					<aside className={styles.summary}>
-						<h2>{t('Images')}</h2>
-						{t('Images explanation')}
+						<h2>{t('Documentation')}</h2>
+						{t('Documentation explanation')}
 					</aside>
 					<section
 						className={styles.details}

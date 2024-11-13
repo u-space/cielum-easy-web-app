@@ -145,6 +145,7 @@ const CoordinationHub = () => {
 			updateQuery={updateCoordination as UseMutationResult}
 			query={{ ...query, count: count as number }}
 			canEdit={() => canEdit}
+			canAddNew={false}
 		/>
 	);
 };
