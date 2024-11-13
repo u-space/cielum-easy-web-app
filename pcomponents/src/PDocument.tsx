@@ -167,7 +167,7 @@ const ExtraInfoPanel = (props: ExtraInfoPanelProps) => {
 					isDarkVariant
 				/>
 			)}
-			{isExpirable(schema) && (
+			{isExpirable(schema) && document['valid_until'] < new Date(MAX_DATE) && (
 				<PDateInput
 					key={'valid_until'}
 					id={id}
