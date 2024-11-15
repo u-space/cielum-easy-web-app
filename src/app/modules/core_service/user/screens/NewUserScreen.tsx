@@ -24,8 +24,8 @@ const NewUserScreen = () => {
 	const onClickFinished = data
 		? () => history.push(`/users?id=${data.username}`)
 		: () => {
-				return;
-		  };
+			history.push(`/users`)
+		};
 	const finishedText = data ? data.username : '';
 
 	return (
