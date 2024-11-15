@@ -161,7 +161,8 @@ const VehicleHub = () => {
 		{ title: t('glossary:vehicle.model'), width: 100 },
 		{ title: t('glossary:vehicle.owner'), width: 100 },
 		{ title: t('glossary:vehicle.date'), width: 100 },
-		{ title: t('ui:Obs.'), width: 100 }
+		{ title: t('ui:Obs.'), width: 100 },
+		{ title: t('glossary:vehicle.plate'), width: 100 }
 	];
 
 	// Backend
@@ -196,6 +197,8 @@ const VehicleHub = () => {
 				)
 					? t('Yes')
 					: t('No');
+			} else if (col === 7) {
+				data = vehicle.extra_fields?.plate;
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;
