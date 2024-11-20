@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '@pcomponents/Kanpur.module.scss';
 import LabelInfo from '@pcomponents/form/LabelInfo';
+import { UserEntity } from '@utm-entities/user';
+import { AuthRole } from 'src/app/modules/auth/store';
 
 const PUserRoleSelect = ({
 	id,
@@ -16,7 +18,8 @@ const PUserRoleSelect = ({
 	isDarkVariant,
 	disabled = false,
 	onChange,
-	style
+	style,
+	disabledPilot = false,
 }) => {
 	const { t } = useTranslation();
 	const [value, setValue] = useState(
@@ -56,7 +59,7 @@ const PUserRoleSelect = ({
 				disabled={disabled}
 				onChange={(event) => onValueChange(event.currentTarget.value)}
 			>
-				<option value="pilot">{t('PILOT')}</option>
+				<option disabled={disabledPilot} value="pilot">{t('PILOT')}</option>
 				<option value="monitor">{t('MONITOR')} </option>
 				<option value="admin">{t('ADMIN')}</option>
 				<option value="coa">{t('COA')}</option>
