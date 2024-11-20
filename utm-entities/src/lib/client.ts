@@ -70,8 +70,10 @@ export function getUTMClient(api: string, schemas: ExtraFieldSchemas, token: str
 				const reuiredSchemnaDocuments = documentsSchemaKeys.filter(key => (documentsSchemas[key] as any)["__metadata"]["required"])
 				const requieredAusentDocuments = reuiredSchemnaDocuments.filter(key => documentList.findIndex(d => d.tag === key) === -1)
 
-				if (requieredAusentDocuments.length > 0) {
-					throw requieredAusentDocuments.map(key => `${key} is required, but no value was supplied`)
+				if (isCreating) {
+					if (requieredAusentDocuments.length > 0) {
+						throw requieredAusentDocuments.map(key => `${key} is required, but no value was supplied`)
+					}
 				}
 
 				let result = vehicleAPIClient.saveVehicle(vehicle, isPilot, isCreating);
