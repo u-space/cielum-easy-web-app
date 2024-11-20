@@ -128,6 +128,7 @@ const BaseCoordinatorDetails: FC<BaseCoordinatorDetailsProps> = ({ ls, isEditing
 									isRequired
 									disabled={!isEditing}
 									style={{ order: 1 }}
+									disabledPilot={true}
 								/>
 							);
 						}
