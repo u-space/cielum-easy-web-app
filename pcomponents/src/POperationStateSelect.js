@@ -15,7 +15,8 @@ const POperationStateSelect = ({
 	fill,
 	isDarkVariant,
 	disabled = false,
-	onChange
+	onChange,
+	onlyCanClose = false,
 }) => {
 	const { t } = useTranslation();
 	const [value, setValue] = useState(
@@ -54,14 +55,17 @@ const POperationStateSelect = ({
 				disabled={disabled}
 				onChange={(event) => onValueChange(event.currentTarget.value)}
 			>
-				<option value="PROPOSED">{t('PROPOSED')}</option>
-				<option value="PENDING">{t('PENDING')} </option>
-				<option value="ACCEPTED">{t('ACCEPTED')}</option>
-				<option value="NOT_ACCEPTED">{t('NOT_ACCEPTED')}</option>
-				<option value="ACTIVATED">{t('ACTIVATED')}</option>
+				{/* {onlyCanClose && <option value="CLOSED">{t('CLOSED')}</option>}
+				{!onlyCanClose && <> */}
+				<option disabled={onlyCanClose} value="PROPOSED">{t('PROPOSED')}</option>
+				<option disabled={onlyCanClose} value="PENDING">{t('PENDING')} </option>
+				<option disabled={onlyCanClose} value="ACCEPTED">{t('ACCEPTED')}</option>
+				<option disabled={onlyCanClose} value="NOT_ACCEPTED">{t('NOT_ACCEPTED')}</option>
+				<option disabled={onlyCanClose} value="ACTIVATED">{t('ACTIVATED')}</option>
 				<option value="CLOSED">{t('CLOSED')}</option>
-				{/*<option value="NONCONFORMING">{t('NONCONFORMING')}</option>*/}
-				<option value="ROGUE">{t('ROGUE')}</option>
+				<option disabled={onlyCanClose} value="ROGUE">{t('ROGUE')}</option>
+				{/* </>
+				} */}
 			</HTMLSelect>
 		</FormGroup>
 	);

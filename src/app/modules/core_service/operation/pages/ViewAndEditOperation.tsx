@@ -10,7 +10,7 @@ import styles from '../../../../commons/Pages.module.scss';
 import { UseLocalStoreEntity } from '../../../../commons/utils';
 import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
 import { VehicleEntity } from '@utm-entities/vehicle';
-import { useAuthStore } from '../../../auth/store';
+import { AuthRole, useAuthGetRole, useAuthStore } from '../../../auth/store';
 import { useSchemaStore } from '../../../schemas/store';
 import { CSSProperties, FC } from 'react';
 import PNumberInput from '@pcomponents/PNumberInput';
@@ -61,6 +61,7 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 			/>
 			{Object.keys(ls.entity).map((_prop) => {
 				const prop = _prop as keyof Operation;
+				const op = ls.entity;
 				const value = ls.entity[prop] as string | null;
 				if (
 					prop !== 'gufi' &&
@@ -79,23 +80,44 @@ const BaseOperationDetails = (props: BaseOperationDetailsProps) => {
 					const id = `input-${prop}`;
 					const label = t(`operation.${prop}`);
 					const explanation = t(`operation.${prop}_desc`);
-					return (
-						<PInput
-							key={prop}
-							id={id}
-							defaultValue={value}
-							label={label}
-							explanation={explanation}
-							disabled={!isEditing}
-							onChange={(value) => {
-								// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-								// @ts-ignore
-								ls.entity[prop] = value;
-							}}
-							{...flags}
-							inline
-						/>
-					);
+					if (prop === 'submit_time' || prop === 'update_time') {
+						return (
+							<PDateInput
+								key={prop}
+								id={id}
+								// defaultValue={value}
+								label={label}
+								// explanation={explanation}
+								disabled={true}
+								onChange={(value) => {
+									// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+									// @ts-ignore
+									ls.entity[prop] = value;
+								}}
+								{...flags}
+								isTime
+								inline
+							/>
+						);
+					} else {
+						return (
+							<PInput
+								key={prop}
+								id={id}
+								defaultValue={value}
+								label={label}
+								explanation={explanation}
+								disabled={(!isEditing)}
+								onChange={(value) => {
+									// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+									// @ts-ignore
+									ls.entity[prop] = value;
+								}}
+								{...flags}
+								inline
+							/>
+						);
+					}
 				} else {
 					return null;
 				}
@@ -115,6 +137,7 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 	const { ls, isEditing, isAdmin = false } = props;
 
 	const token = useAuthStore((state) => state.token);
+	const role = useAuthGetRole();
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
 	const schemaUsers = useSchemaStore((state) => state.users);
 
@@ -145,9 +168,10 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 				defaultValue={ls.entity.state}
 				onChange={(value: string) => ls.setInfo('state', value)}
 				isDarkVariant
-				disabled={!isEditing || !isAdmin}
+				disabled={!(isEditing && (role === AuthRole.PILOT || role === AuthRole.ADMIN))}
 				inline={false}
 				fill={false}
+				onlyCanClose={role === AuthRole.PILOT}
 			/>
 
 			<PVehicleSelect
