@@ -28,7 +28,8 @@ export const ResponseVehicle = Type.Composite([
 		operators: Type.Array(ResponseNestedUser),
 		extra_fields: Type.Any(),
 		deletedAt: Type.Optional(Type.String()),
-		payload: Type.Array(Type.String())
+		payload: Type.Array(Type.String()),
+		remoteSensorValid: Type.Boolean()
 	})
 ]);
 
@@ -101,6 +102,7 @@ export class UtmVehicle extends UtmBaseVehicle implements UtmResponseEntity {
 	extra_fields: ExtraFields;
 	deletedAt: Date | null;
 	owner: NestedUser;
+	remoteSensorValid: boolean;
 
 	constructor(backendVehicle: ResponseVehicle) {
 		super(backendVehicle);
@@ -119,6 +121,7 @@ export class UtmVehicle extends UtmBaseVehicle implements UtmResponseEntity {
 		this.extra_fields = backendVehicle.extra_fields;
 		this.deletedAt = backendVehicle.deletedAt ? new Date(backendVehicle.deletedAt) : null;
 		this.owner = new NestedUser(backendVehicle.owner);
+		this.remoteSensorValid = backendVehicle.remoteSensorValid;
 	}
 
 	asPrintableEntries(): { property: string; value: string }[] {

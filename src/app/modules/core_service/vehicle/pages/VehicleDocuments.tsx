@@ -56,9 +56,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 
 	const role = useAuthGetRole();
 	const filterRemoteSensor = (tag: string) => {
-		// return true;
 		if (role === AuthRole.REMOTE_SENSOR) {
-			// console.log('filterRemoteSensor', tag, tag === 'remote_sensor_id');
 			return tag === 'remote_sensor_id';
 		} else {
 			return true;
@@ -66,9 +64,7 @@ const _VehicleDocuments: FC<_ExtraVehicleFilesProps> = ({ ls, isEditing }) => {
 	};
 
 	const filterPilot = (tag: string) => {
-		// return true;
 		if (role === AuthRole.PILOT) {
-			// console.log('filterRemoteSensor', tag, tag !== 'remote_sensor_id');
 			return tag !== 'remote_sensor_id';
 		} else {
 			return true;

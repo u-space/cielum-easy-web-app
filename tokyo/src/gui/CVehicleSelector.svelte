@@ -17,11 +17,12 @@
 	};
 
 	const hasValidRemoteSensor = (data: VehicleEntity) => {
-		const doucments = data.extra_fields.documents as DocumentEntity[];
-		const filterDocuments = doucments.filter((doc, i) => {
-			return doc.tag === 'remote_sensor_id' && doc.valid;
-		});
-		return filterDocuments.length > 0;
+		// const doucments = data.extra_fields.documents as DocumentEntity[];
+		// const filterDocuments = doucments.filter((doc, i) => {
+		// 	return doc.tag === 'remote_sensor_id' && doc.valid;
+		// });
+		// return filterDocuments.length > 0;
+		return data.remoteSensorValid;
 	};
 
 	function onSelectHandler(vehicle: VehicleEntity) {

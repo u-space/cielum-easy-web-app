@@ -205,6 +205,7 @@
 		"caa_registration_desc": "Si no tienes una, deja este campo vacio: esta será generada automáticamente",
 		"ceiling": "Techo operacional",
 		"ceiling_desc": "en metros",
+		"remoteSensorValid": "Válidado por Sensor Remoto",
 		"communication_control_system_command_navigation_vigilance": "Sistema de comunicaciones",
 		"communication_control_system_command_navigation_vigilance_desc": "Por ejemplo, DJI LightBridge en productos DJI",
 		"construction_material": "Material de construcción",

@@ -62,12 +62,13 @@ const getStateInformation = (data: Record<string, any>): { text: string; color: 
 };
 
 export function getValidRemoteSensor(vehicle: VehicleEntity) {
-	const doucments = vehicle.extra_fields ? vehicle.extra_fields.documents as DocumentEntity[] : [];
-	const filterDocuments = doucments.filter((doc, i) => {
-		return doc.tag === 'remote_sensor_id' && doc.valid;
-	});
-	// console.log('filterDocuments:', filterDocuments);
-	return filterDocuments.length > 0;
+	// const doucments = vehicle.extra_fields ? vehicle.extra_fields.documents as DocumentEntity[] : [];
+	// const filterDocuments = doucments.filter((doc, i) => {
+	// 	return doc.tag === 'remote_sensor_id' && doc.valid;
+	// });
+	// // console.log('filterDocuments:', filterDocuments);
+	// return filterDocuments.length > 0;
+	return vehicle.remoteSensorValid;
 }
 
 const ExtraActions: FC<{ data: VehicleEntity }> = ({ data }) => {
@@ -162,7 +163,8 @@ const VehicleHub = () => {
 		{ title: t('glossary:vehicle.owner'), width: 100 },
 		{ title: t('glossary:vehicle.date'), width: 100 },
 		{ title: t('ui:Obs.'), width: 100 },
-		{ title: t('glossary:vehicle.plate'), width: 100 }
+		{ title: t('glossary:vehicle.plate'), width: 100 },
+		{ title: t('glossary:vehicle.remoteSensorValid'), width: 100 },
 	];
 
 	// Backend
@@ -199,6 +201,8 @@ const VehicleHub = () => {
 					: t('No');
 			} else if (col === 7) {
 				data = vehicle.extra_fields?.plate;
+			} else if (col === 8) {
+				data = vehicle.remoteSensorValid ? t('Yes') : t('No');
 			} else if (col === 0) {
 				data = '';
 				kind = GridCellKind.Custom;

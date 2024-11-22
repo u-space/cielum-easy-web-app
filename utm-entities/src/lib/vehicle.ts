@@ -33,6 +33,8 @@ export class VehicleEntity implements EntityHasDisplayName {
 	deletedAt: Date | null;
 	owner_id: string;
 	owner: UserEntity | null;
+	remoteSensorValid: boolean;
+
 
 	[key: string]: VehicleEntity[keyof VehicleEntity];
 
@@ -62,6 +64,7 @@ export class VehicleEntity implements EntityHasDisplayName {
 			documents: vehicle?.extra_fields?.documents ?? [],
 			insurance: vehicle?.extra_fields?.insurance ?? undefined
 		});
+		this.remoteSensorValid = vehicle?.remoteSensorValid ?? false;
 		this._vehicleSchema = Joi.object({
 			uvin: Joi.string(),
 			//date
@@ -75,7 +78,8 @@ export class VehicleEntity implements EntityHasDisplayName {
 			payload: Joi.array(),
 			operators: Joi.array().items(Joi.any()),
 			extra_fields: Joi.object(),
-			_vehicleSchema: Joi.object()
+			_vehicleSchema: Joi.object(),
+			// remoteSensorValid: Joi.boolean()
 		}).custom((obj) => {
 			for (const [key, value] of Object.entries(schema)) {
 				const { type, required } = value;
@@ -203,6 +207,7 @@ export const vehicleFullAuthorized = (vehicle: VehicleEntity) => {
 		return doc.tag === 'remote_sensor_id' && doc.valid;
 	});
 	const a2 = filterDocuments.length > 0;
+
 	return a && a2;
 };
 

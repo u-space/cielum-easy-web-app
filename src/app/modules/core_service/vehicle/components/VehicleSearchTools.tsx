@@ -36,24 +36,43 @@ const VehicleSearchToolsExtras = () => {
 	return (
 		<CardGroup header="Filter by type">
 			{/* TODO: Replace by generic PCheckbox */}
-			{/* <Checkbox
+			<Checkbox
 				style={{
 					display: 'flex',
 					justifyContent: 'flex-start',
 					alignItems: 'center'
 				}}
-				label={t('Show only vehicles pending authorization')}
+				label={t('Show only not authorized vehicles')}
 				checked={isFilteringPending}
 				onChange={(evt) => {
 					if (evt.currentTarget.checked) {
-						store.setFilterProperty('authorized');
-						store.setFilterByText('PENDING');
+						// store.setFilterProperty('authorized');
+						// store.setFilterByText('PENDING');
 						history.replace('/vehicles?pending=true');
 					} else {
 						resetFilterAuthorization();
 					}
 				}}
-			/> */}
+			/>
+
+			<Checkbox
+				style={{
+					display: 'flex',
+					justifyContent: 'flex-start',
+					alignItems: 'center'
+				}}
+				label={t('Show only remote sensor')}
+				checked={store.filterProperty === 'remotesensorvalid' && store.filterMatchingText === 'false'}
+				onChange={(evt) => {
+					if (evt.currentTarget.checked) {
+						store.setFilterProperty('remotesensorvalid');
+						store.setFilterByText('false');
+						// history.replace('/vehicles?pending=true');
+					} else {
+						resetFilterAuthorization();
+					}
+				}}
+			/>
 			{/* <Checkbox
 				style={{
 					display: 'flex',
