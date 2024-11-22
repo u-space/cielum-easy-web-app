@@ -127,8 +127,8 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 
 	return {
 		saveOperation(operation: Operation, isPilot = false) {
-			if (isPilot && operation.state === OperationStateEnum.CLOSED)
-				throw new Error("You can't edit a closed operation");
+			// if (isPilot && operation.state === OperationStateEnum.CLOSED)
+			// 	throw new Error("You can't edit a closed operation");
 
 			if (!operation.state) operation.state = OperationStateEnum.PROPOSED;
 
