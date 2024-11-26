@@ -205,6 +205,12 @@ const OperationEditor = () => {
 							history.push(`/editor/flightRequest/${JSON.stringify({ ...geo })}${volumeData ? `/${JSON.stringify(volumeData)}` : ''}`);
 						}
 					}
+				},
+				secondary: {
+					onClick: () => {
+						resetError();
+					},
+					text: t('Modificar plan de vuelo')
 				}
 			});
 		}
