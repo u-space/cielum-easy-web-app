@@ -38,7 +38,7 @@ export function useDeleteUvr() {
 	);
 }
 
-export function useQueryUvrs(all = false) {
+export function useQueryUvrs(all = false, showPast: boolean = false) {
 	const {
 		uvr: { getUvrs }
 	} = useCoreServiceAPI();
@@ -78,7 +78,8 @@ export function useQueryUvrs(all = false) {
 				sortingProperty,
 				sortingOrder,
 				filterProperty,
-				filterMatchingText
+				filterMatchingText,
+				showPast
 			),
 		{ keepPreviousData: true }
 	);

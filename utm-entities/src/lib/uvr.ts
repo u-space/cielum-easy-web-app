@@ -160,10 +160,11 @@ export const getUvrAPIClient = (api: string, token: string | null) => {
 			orderBy: string,
 			order: string,
 			filterBy: string,
-			filter?: string
+			filter?: string,
+			showPast?: boolean
 		) {
 			return axiosInstance.get('uasvolume', {
-				params: buildParametersObject(take, skip, orderBy, order, filterBy, filter),
+				params: { ...buildParametersObject(take, skip, orderBy, order, filterBy, filter), showPast: showPast ? true : false },
 				headers: { auth: token },
 				transformResponse: (
 					Axios.defaults.transformResponse as AxiosResponseTransformer[]

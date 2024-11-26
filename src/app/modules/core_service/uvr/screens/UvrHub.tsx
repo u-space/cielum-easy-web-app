@@ -52,7 +52,7 @@ const UvrHub = () => {
 	];
 
 	// Backend
-	const query = useQueryUvrs();
+	const query = useQueryUvrs(false, true);
 	const { uvrs, count } = query;
 
 	const updateUvr = useUpdateUvr();
