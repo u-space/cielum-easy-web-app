@@ -1,4 +1,5 @@
 import { FormGroup, HTMLSelect } from '@blueprintjs/core';
+import { OperationStateEnum } from '@utm-entities/v2/model/operation';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +17,7 @@ const POperationStateSelect = ({
 	isDarkVariant,
 	disabled = false,
 	onChange,
-	onlyCanClose = false,
+	validAllTransitions = false,
 }) => {
 	const { t } = useTranslation();
 	const [value, setValue] = useState(
@@ -34,6 +35,26 @@ const POperationStateSelect = ({
 		}
 	}, [defaultValue]);
 
+
+	const validTransitions = (currentState) => {
+		if (validAllTransitions) {
+			return Object.values(OperationStateEnum);
+		} else {
+			const validTransitions = [currentState];
+			if (currentState === OperationStateEnum.PENDING) {
+				validTransitions.push(OperationStateEnum.CLOSED);
+				validTransitions.push(OperationStateEnum.PROPOSED);
+			} else if (currentState === OperationStateEnum.ACTIVATED) {
+				validTransitions.push(OperationStateEnum.CLOSED);
+			} else if (currentState === OperationStateEnum.ACCEPTED) {
+				validTransitions.push(OperationStateEnum.CLOSED);
+			} else {
+				console.log('invalid state', currentState);
+			}
+			return validTransitions;
+		}
+
+	}
 	return (
 		<FormGroup
 			className={classnames(styles.form, {
@@ -55,17 +76,12 @@ const POperationStateSelect = ({
 				disabled={disabled}
 				onChange={(event) => onValueChange(event.currentTarget.value)}
 			>
-				{/* {onlyCanClose && <option value="CLOSED">{t('CLOSED')}</option>}
-				{!onlyCanClose && <> */}
-				<option disabled={onlyCanClose} value="PROPOSED">{t('PROPOSED')}</option>
-				<option disabled={onlyCanClose} value="PENDING">{t('PENDING')} </option>
-				<option disabled={onlyCanClose} value="ACCEPTED">{t('ACCEPTED')}</option>
-				<option disabled={onlyCanClose} value="NOT_ACCEPTED">{t('NOT_ACCEPTED')}</option>
-				<option disabled={onlyCanClose} value="ACTIVATED">{t('ACTIVATED')}</option>
-				<option value="CLOSED">{t('CLOSED')}</option>
-				<option disabled={onlyCanClose} value="ROGUE">{t('ROGUE')}</option>
-				{/* </>
-				} */}
+				{Object.values(OperationStateEnum).map((operationState) => (
+					<option disabled={!validTransitions(value).includes(operationState)} key={operationState} value={operationState}>
+						{t(operationState)}
+					</option>
+				))}
+
 			</HTMLSelect>
 		</FormGroup>
 	);

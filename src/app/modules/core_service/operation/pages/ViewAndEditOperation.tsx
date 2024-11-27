@@ -1,32 +1,31 @@
-import { observer } from 'mobx-react';
-import { useTranslation } from 'react-i18next';
 import PBooleanInput from '@pcomponents/PBooleanInput';
+import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
 import PDateInput from '@pcomponents/PDateInput';
 import PInput from '@pcomponents/PInput';
+import PNumberInput from '@pcomponents/PNumberInput';
 import POperationStateSelect from '@pcomponents/POperationStateSelect';
 import PTextArea from '@pcomponents/PTextArea';
-import PVehicleSelect from '@pcomponents/PVehicleSelect';
-import styles from '../../../../commons/Pages.module.scss';
-import { UseLocalStoreEntity } from '../../../../commons/utils';
 import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
-import { VehicleEntity } from '@utm-entities/vehicle';
-import { AuthRole, useAuthGetRole, useAuthStore } from '../../../auth/store';
-import { useSchemaStore } from '../../../schemas/store';
-import { CSSProperties, FC } from 'react';
-import PNumberInput from '@pcomponents/PNumberInput';
-import env from '../../../../../vendor/environment/env';
-import { reactify } from 'svelte-preprocess-react';
+import PVehicleSelect from '@pcomponents/PVehicleSelect';
+import { operationTokyoConverter } from '@tokyo/converters/core/operation';
+import { useTokyo } from '@tokyo/store';
 import Tokyo from '@tokyo/Tokyo.svelte';
 import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
 import { EditMode, TokyoProps } from '@tokyo/types';
-import { operationTokyoConverter } from '@tokyo/converters/core/operation';
-import { useTokyo } from '@tokyo/store';
+import { Operation } from '@utm-entities/v2/model/operation';
+import { UtmBaseVehicle } from '@utm-entities/v2/model/vehicle';
 import { Polygon } from 'geojson';
-import PButton, { PButtonSize, PButtonType } from '@pcomponents/PButton';
+import { observer } from 'mobx-react';
+import { CSSProperties, FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Operation } from '@utm-entities/v2/model/operation';
-import { UtmBaseVehicle, Vehicle } from '@utm-entities/v2/model/vehicle';
+import { reactify } from 'svelte-preprocess-react';
+import env from '../../../../../vendor/environment/env';
+import styles from '../../../../commons/Pages.module.scss';
+import { UseLocalStoreEntity } from '../../../../commons/utils';
+import { AuthRole, useAuthGetRole, useAuthStore } from '../../../auth/store';
+import { useSchemaStore } from '../../../schemas/store';
 
 interface BaseOperationDetailsProps {
 	ls: UseLocalStoreEntity<Operation>;
@@ -171,7 +170,7 @@ const DetailedOperationDetails = (props: DetailedOperationDetailsProps) => {
 				disabled={!(isEditing && (role === AuthRole.PILOT || role === AuthRole.ADMIN))}
 				inline={false}
 				fill={false}
-				onlyCanClose={role === AuthRole.PILOT}
+				validAllTransitions={role === AuthRole.ADMIN}
 			/>
 
 			<PVehicleSelect
