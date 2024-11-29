@@ -112,7 +112,7 @@ const InfoOperation: FC<InfoOperationProps> = ({
 		const userCanOperate = owner?.canOperate || false;
 		setCanCreateOperation(hasVehicle && userCanOperate);
 		// }, [operation.uas_registrations, ownerList]);
-	}, [reScanVehicles]);
+	}, [reScanVehicles, operation.owner, operation.uas_registrations]);
 	const onSelectUser = (_value: UserEntity[]) => {
 		operation.contact = '';
 		operation.contact_phone = '';

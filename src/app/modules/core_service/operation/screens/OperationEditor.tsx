@@ -50,29 +50,28 @@ const transformOperationCheckError = (input: string): [string, string] => {
 const OperationEditor = () => {
 	const { t } = useTranslation(['ui', 'glossary']);
 	const history = useHistory();
-	const queryString = useQueryString();
-
-	const id = queryString.get('id');
-	const queryOperation = useQueryOperation(id || '', false);
 	const tokyo = useTokyo();
 
+	const queryString = useQueryString();
+	const id = queryString.get('id');
+	const queryOperation = useQueryOperation(id || '', id != undefined);
+	const queryClient = useQueryClient();
+
 	const username = useAuthStore((state) => state.username);
-
-	const queryUser = useQueryUser(username, true);
-
 	const schemaVehicles = useSchemaStore((state) => state.vehicles);
 	const schemaUsers = useSchemaStore((state) => state.users);
 
+	const queryUser = useQueryUser(username, true);
 	const queryGeographicalZones = useQueryGeographicalZones(true);
 	const queryUvrs = useQueryUvrs(true);
-	const uvrs = queryUvrs.uvrs;
 	const frQuery = useOwnedFlightRequests();
-	const flightRequests: FlightRequestEntity[] = frQuery.flightRequests;
 
 	const [modalProps, setModalProps] = useState<PFullModalProps>(undefinedModal);
 	const [selectedVolume, setSelectedVolume] = useState<number | null>(null);
-
 	const [operation, setOperation] = useState<Operation>(new Operation());
+
+	const uvrs = queryUvrs.uvrs;
+	const flightRequests: FlightRequestEntity[] = frQuery.flightRequests;
 
 	useEffect(() => {
 		if (queryUser.isSuccess) {
@@ -94,9 +93,18 @@ const OperationEditor = () => {
 	}, [queryUser, operation]);
 
 	useEffect(() => {
+		if (queryOperation.isSuccess && queryOperation.data) {
+			setOperation(queryOperation.data);
+		}
+	}, [queryOperation.isSuccess]);
+
+	useEffect(() => {
 		if (!!id && !queryOperation.isSuccess && !queryOperation.isError) {
 			queryOperation.refetch().then((response) => {
-				if (response.data) setOperation(response.data);
+				if (response.data) {
+					console.log('operation: ', JSON.stringify(response.data, null, 2));
+					setOperation(response.data);
+				}
 			});
 		}
 	}, [id, queryOperation.isSuccess, queryOperation.isError, queryOperation.refetch]);
@@ -109,18 +117,18 @@ const OperationEditor = () => {
 		);
 	}, [operation]);
 
-	const delayedSelection = (index: number | null) => {
-		setTimeout(() => {
-			setSelectedVolume(index);
-		}, 500);
-	};
-
 	useEffect(() => {
 		const geography = queryOperation.data?.operation_volumes[0].operation_geography;
 		if (queryOperation.isSuccess && geography) {
 			tokyo.flyToCenterOfGeometry(geography);
 		}
 	}, [queryOperation.data?.operation_volumes, queryOperation.isSuccess]);
+
+	const delayedSelection = (index: number | null) => {
+		setTimeout(() => {
+			setSelectedVolume(index);
+		}, 500);
+	};
 
 	const onPolygonsUpdated = (polygons: Polygon[]) => {
 		let globalIndex = 0;
@@ -147,7 +155,6 @@ const OperationEditor = () => {
 		delayedSelection(globalIndex);
 	};
 
-	const queryClient = useQueryClient();
 	const saveOperationMutation = useSaveOperation(
 		() => {
 			console.log('saveOperationMutation.mutate: ', operation);
