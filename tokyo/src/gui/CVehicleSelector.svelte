@@ -49,7 +49,7 @@
 
 		<CButton
 			fill
-			disabled={isAuthorized(vehicle) || hasValidRemoteSensor(vehicle)}
+			disabled={!isAuthorized(vehicle) || !hasValidRemoteSensor(vehicle)}
 			variant={selected.indexOf(vehicle) !== -1
 				? CButtonVariant.PRIMARY
 				: CButtonVariant.SECONDARY}
