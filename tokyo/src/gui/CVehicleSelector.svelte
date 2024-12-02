@@ -5,10 +5,6 @@
 	import { VehicleAuthorizationStatus } from '@utm-entities/vehicle';
 	import { CButtonVariant } from '@tokyo/gui/CButton';
 	import { createEventDispatcher } from 'svelte';
-	import { DocumentEntity } from '@utm-entities/document';
-	import { CTooltipPosition } from './CTooltip';
-	import Tooltip from './Tooltip.svelte';
-	import { title } from 'process';
 
 	const dispatch = createEventDispatcher<{ select: VehicleEntity[] }>(); // Temporal until parents are all Svelte (for prop binding)
 
