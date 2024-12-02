@@ -11,6 +11,7 @@
 
 	export let tooltip: CButtonProps['tooltip'] = undefined;
 	export let disabled: CButtonProps['disabled'] = false;
+	export let justifyContent: string = 'center'; // Optional prop for justify-content
 
 	let open = false;
 </script>
@@ -38,7 +39,7 @@
 			<CTooltip {...{ text: '', position: 'bottom', ...tooltip, open }} />
 		{/if}
 		{#if $$slots.default}
-			<p>
+			<p style="justify-content: {justifyContent}">
 				<slot></slot>
 			</p>
 		{/if}

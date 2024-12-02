@@ -6,6 +6,9 @@
 	import { CButtonVariant } from '@tokyo/gui/CButton';
 	import { createEventDispatcher } from 'svelte';
 	import { DocumentEntity } from '@utm-entities/document';
+	import { CTooltipPosition } from './CTooltip';
+	import Tooltip from './Tooltip.svelte';
+	import { title } from 'process';
 
 	const dispatch = createEventDispatcher<{ select: VehicleEntity[] }>(); // Temporal until parents are all Svelte (for prop binding)
 
@@ -42,9 +45,11 @@
 	{#each vehicles as vehicle (vehicle.uvin)}
 		<!-- this display name is temporal as we are not using v2 vehicle -->
 		{@const manufacturerModel = `${vehicle.manufacturer} ${vehicle.model}`}
+		{@const fullName = `${vehicle.vehicleName}: ${manufacturerModel}`}
+
 		<CButton
 			fill
-			disabled={!isAuthorized(vehicle) || !hasValidRemoteSensor(vehicle)}
+			disabled={isAuthorized(vehicle) || hasValidRemoteSensor(vehicle)}
 			variant={selected.indexOf(vehicle) !== -1
 				? CButtonVariant.PRIMARY
 				: CButtonVariant.SECONDARY}
@@ -53,9 +58,9 @@
 				: `Select vehicle ${vehicle.vehicleName}`}
 			size={CSize.SMALL}
 			on:click={onSelectHandler(vehicle)}
+			justifyContent="flex-start"
 		>
-			{vehicle.vehicleName}<br />
-			<em>{manufacturerModel}</em>
+			<span title={fullName}>{fullName}</span>
 		</CButton>
 	{/each}
 </div>
