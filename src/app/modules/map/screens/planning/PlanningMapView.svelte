@@ -3,8 +3,7 @@
 <script lang="ts">
 	import Tokyo from '@tokyo/Tokyo.svelte';
 	import _ from 'lodash';
-	import { TokyoFlightRequest } from '@tokyo/utm_entities/TokyoFlightRequest';
-	import { renderFlightRequests, renderGeographicalZones } from '../../render';
+	import { renderFlightRequests } from '../../render';
 	import { PlanningMapViewProps } from './PlanningMapViewProps';
 	import { geographicalZoneTokyoConverter } from '@tokyo/converters/fra/geographicalZone';
 	import TokyoGenericMapElement from '@tokyo/TokyoGenericMapElement.svelte';
@@ -15,8 +14,7 @@
 
 	export let flightRequests: $$Props['flightRequests'] = [];
 	export let geographicalZones: $$Props['geographicalZones'] = [];
-	export let selected: $$Props['selected'] = {};
-	export let handlers: $$Props['handlers'] = {};
+	export let selected: $$Props['selected'] = { flightRequest: null };
 
 	$: flightRequestsLayers = renderFlightRequests(flightRequests, selected?.flightRequest || '');
 </script>
