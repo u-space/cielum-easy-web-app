@@ -15,7 +15,7 @@
 	export let editOptions: EditorMapViewProps['editOptions'];
 	export let geographicalZones: EditorMapViewProps['geographicalZones'];
 	export let flightRequests: EditorMapViewProps['flightRequests'];
-	export let uvrs: EditorMapViewProps['uvrs'];
+	export let uvrs: EditorMapViewProps['uvrs'] = [];
 
 	const alphas: GeographicalZoneDrawingProps = {
 		lineAlpha: 255,

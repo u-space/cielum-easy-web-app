@@ -9,14 +9,13 @@ import { EditMode, EditOptions } from '@tokyo/types';
 import { OperationVolume } from '@utm-entities/v2/model/operation_volume';
 import { Polygon } from 'geojson';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { reactify } from 'svelte-preprocess-react';
 import MapLayout from '../../../../../commons/layouts/MapLayout';
 import EditorMapViewSvelte from '../../../../map/screens/editor/EditorMapView.svelte';
 import { useQueryGeographicalZones } from '../../../geographical_zone/hooks';
 import InfoFlightRequest from '../../components/InfoFlightRequest';
-import { useSunrise } from './SunriseSunsetHook';
 import { useOwnedFlightRequests } from '../../hooks';
 
 const ONE_VOLUME_PER_DAY = false;
@@ -46,13 +45,13 @@ const VolumesStep = (props: VolumesStepProps) => {
 		setIsOnNight,
 		defaultAltitude
 	} = props;
-	// const { sunrise: sunriseList, fetchSunrise, isFetchingSunrise } = useSunrise();
-	const [dateTimeChange, setDateTimeChange] = useState<boolean>(false);
 
-	const start = useRef(setHoursAndReturnDate(addDays(new Date(), 10), 9, 0));
-	const end = useRef(
-		setHoursAndReturnDate(addDays(new Date(new Date().getTime() + 60 * 60 * 1000), 10), 14, 0)
-	);
+	const date = new Date();
+	const tenDaysFromNow = setHoursAndReturnDate(addDays(date, 10), 9, 0);
+
+	const [startDate, setStartDate] = useState<Date>(tenDaysFromNow);
+
+	const [endDate, setEndDate] = useState<Date>(addHours(tenDaysFromNow, 4));
 
 	const { t } = useTranslation();
 
@@ -64,12 +63,101 @@ const VolumesStep = (props: VolumesStepProps) => {
 	const frQuery = useOwnedFlightRequests();
 	const flightRequests: FlightRequestEntity[] = frQuery.flightRequests;
 
-	const onPolygonsUpdated = useCallback((polygons: Polygon[]) => {
-		setPolygon(polygons[0]);
-		setModalProps(getUserSelectIntervalModalProps());
-	}, []);
+	const getUserSelectIntervalModalProps = useCallback(
+		(): PFullModalProps => ({
+			isVisible: true,
+			type: PModalType.INFORMATION,
+			title: t('Select the time interval'),
+			content: (
+				<>
+					{t('Start and end dates')}
+					<PDateRangeInput
+						value={[startDate, endDate]}
+						onChange={(value) => {
+							if (value[0]) {
+								const newDate = new Date(value[0]);
+								setStartDate(newDate);
+							}
+							if (value[1]) {
+								const newDate = new Date(value[1]);
+								setEndDate(newDate);
+							}
+						}}
+					/>
+					<PTimeInput
+						defaultValue={startDate}
+						onChange={(value: Date) => {
+							if (value) {
+								setStartDate(value);
+								setEndDate(addHours(value, 4));
+							}
+						}}
+						explanation={''}
+						id={'Start_Time'}
+						labelInfo={''}
+						label={t('Start Time')}
+						isDarkVariant
+					/>
+					<PTimeInput
+						defaultValue={endDate}
+						onChange={(value: Date) => {
+							if (value) {
+								setEndDate(value);
+							}
+						}}
+						explanation={''}
+						id={'End_Time'}
+						labelInfo={''}
+						label={t('End Time')}
+						isDarkVariant
+					/>
+				</>
+			),
+			primary: {
+				text: t('Add'),
+				onClick: () => {
+					if (ONE_VOLUME_PER_DAY) {
+						// For each day in the range, create a new volume
+						// with the start and end time
+						getDatesBetween(startDate, endDate).forEach((date) => {
+							const newVolume = new OperationVolume();
+							newVolume.set('ordinal', flightRequest.volumes.length - 1);
+							const startDateAux = setHoursMinutesSeconds(startDate, new Date(date));
+							const endDateAux = setHoursMinutesSeconds(endDate, new Date(date));
+							newVolume.set('max_altitude', maxAltitude);
+							newVolume.set('effective_time_begin', startDateAux);
+							newVolume.set('effective_time_end', endDateAux);
+							flightRequest.volumes.push(newVolume);
+							setModalProps(undefined);
+						});
+					} else {
+						const errors = validateDatesTimeVolumes(flightRequest, startDate, endDate);
+						if (errors.length === 0) {
+							const newVolume = new OperationVolume();
+							newVolume.set('ordinal', flightRequest.volumes.length - 1);
+							newVolume.set('max_altitude', maxAltitude);
+							newVolume.set('effective_time_begin', startDate);
+							newVolume.set('effective_time_end', endDate);
+							flightRequest.volumes.push(newVolume);
+							setModalProps(undefined);
+						} else {
+							alert(errors.map(t).join('\n'));
+						}
+					}
+				}
+			},
+			secondary: {
+				text: 'Cancelar',
+				onClick: () => {
+					setModalProps(undefined);
+				}
+			}
+		}),
+		[t, startDate, endDate, maxAltitude, flightRequest, setModalProps]
+	);
 
 	useEffect(() => {
+		setModalProps(getUserSelectIntervalModalProps());
 		if (polygon && flightRequest.volumes.length > 1) {
 			//FIXME Bydefault thre are a dummy volume in the list
 			const position = polygon.coordinates[0]; //flightRequest.volumes[0].operation_geography?.coordinates[0];
@@ -87,132 +175,29 @@ const VolumesStep = (props: VolumesStepProps) => {
 		} else {
 			setIsOnNight(false);
 		}
-	}, [dateTimeChange]);
+	}, [
+		startDate,
+		endDate,
+		polygon,
+		flightRequest.volumes,
+		setIsOnNight,
+		setModalProps,
+		getUserSelectIntervalModalProps
+	]);
 
 	useEffect(() => {
 		flightRequest.volumes.forEach((volume) => {
 			volume.set('max_altitude', defaultAltitude);
 		});
-	}, [])
+	}, []);
 
-	// useEffect(() => {
-	// 	if (sunriseList && sunriseList.length > 0) {
-	// 		const volumenes = flightRequest.volumes.filter((f) => f.ordinal >= 0);
-	// 		const someOnNight = volumenes.some((v: OperationVolume, i: number) => {
-	// 			const sunrise = sunriseList[i];
-	// 			if (v.effective_time_begin && v.effective_time_end && sunrise) {
-	// 				const start = new Date(v.effective_time_begin);
-	// 				const end = new Date(v.effective_time_end);
-	// 				const sunriseDate = new Date(start);
-	// 				setDateTime(sunriseDate, sunrise.sunrise);
-	// 				const sunsetDate = new Date(start);
-	// 				setDateTime(sunsetDate, sunrise.sunset);
-	// 				if (sunriseDate < start && end < sunsetDate) {
-	// 					return false;
-	// 				} else {
-	// 					return true;
-	// 				}
-	// 			}
-	// 		});
-	// 		setIsOnNight(someOnNight);
-	// 	}
-	// }, [sunriseList]);
-
-	const getUserSelectIntervalModalProps = (): PFullModalProps => ({
-		isVisible: true,
-		type: PModalType.INFORMATION,
-		title: t('Select the time interval'),
-		content: (
-			<>
-				{t('Start and end dates')}
-				<PDateRangeInput
-					value={[start.current, end.current]}
-					onChange={(value) => {
-						if (value[0]) {
-							start.current.setFullYear(value[0].getFullYear());
-							start.current.setMonth(value[0].getMonth());
-							start.current.setDate(value[0].getDate());
-						}
-						if (value[1]) {
-							end.current.setFullYear(value[1].getFullYear());
-							end.current.setMonth(value[1].getMonth());
-							end.current.setDate(value[1].getDate());
-						}
-					}}
-				/>
-				<PTimeInput
-					defaultValue={start.current}
-					onChange={(value: any) => {
-						if (value) {
-							start.current = setHoursMinutesSeconds(value, start.current);
-						}
-					}}
-					explanation={''}
-					id={'Start_Time'}
-					labelInfo={''}
-					label={t('Start Time')}
-					isDarkVariant
-				/>
-				<PTimeInput
-					defaultValue={end.current}
-					onChange={(value: Date) => {
-						if (value) {
-							end.current = setHoursMinutesSeconds(value, end.current);
-						}
-					}}
-					explanation={''}
-					id={'End_Time'}
-					labelInfo={''}
-					label={t('End Time')}
-					isDarkVariant
-				/>
-			</>
-		),
-		primary: {
-			text: t('Add'),
-			onClick: () => {
-				if (ONE_VOLUME_PER_DAY) {
-					// For each day in the range, create a new volume
-					// with the start and end time
-					getDatesBetween(start.current, end.current).forEach((date) => {
-						const newVolume = new OperationVolume();
-						newVolume.set('ordinal', flightRequest.volumes.length - 1);
-						const startDate = setHoursMinutesSeconds(start.current, new Date(date));
-						const endDate = setHoursMinutesSeconds(end.current, new Date(date));
-						newVolume.set('max_altitude', maxAltitude);
-						newVolume.set('effective_time_begin', startDate);
-						newVolume.set('effective_time_end', endDate);
-						flightRequest.volumes.push(newVolume);
-						setModalProps(undefined);
-
-					});
-				} else {
-					const errors = validateDatesTimeVolumes(flightRequest, start.current, end.current);
-					if (errors.length === 0) {
-						const newVolume = new OperationVolume();
-						newVolume.set('ordinal', flightRequest.volumes.length - 1);
-						const startDate = new Date(start.current);
-						const endDate = new Date(end.current);
-						newVolume.set('max_altitude', maxAltitude);
-						newVolume.set('effective_time_begin', startDate);
-						newVolume.set('effective_time_end', endDate);
-						flightRequest.volumes.push(newVolume);
-						setModalProps(undefined);
-
-					} else {
-						alert(errors.map(t).join('\n'));
-					}
-				}
-				setDateTimeChange(!dateTimeChange);
-			}
+	const onPolygonsUpdated = useCallback(
+		(polygons: Polygon[]) => {
+			setPolygon(polygons[0]);
+			setModalProps(getUserSelectIntervalModalProps());
 		},
-		secondary: {
-			text: 'Cancelar',
-			onClick: () => {
-				setModalProps(undefined);
-			}
-		}
-	});
+		[getUserSelectIntervalModalProps, setPolygon, setModalProps]
+	);
 
 	const editOptions: EditOptions = {
 		mode: EditMode.SINGLE,
@@ -291,7 +276,6 @@ const VolumesStep = (props: VolumesStepProps) => {
 													} else {
 														flightRequest.volumes.splice(index, 1);
 													}
-													setDateTimeChange(!dateTimeChange);
 												}}
 											/>
 										</div>
@@ -334,13 +318,11 @@ const VolumesStep = (props: VolumesStepProps) => {
 			}
 			modal={modalProps}
 		>
-			{/* eslint-disable @typescript-eslint/no-explicit-any */}
 			<EditorMapView
 				editOptions={editOptions}
 				geographicalZones={queryGeographicalZones.items}
-				onEdit={(event: any) => onPolygonsUpdated(event.detail)}
+				onEdit={(event) => onPolygonsUpdated(event.detail)}
 				flightRequests={flightRequests}
-
 			/>
 			<PButton
 				style={{
@@ -389,6 +371,12 @@ const setHoursAndReturnDate = (date: Date, hours: number, minutes: number) => {
 	return date;
 };
 
+const addHours = (date: Date, hours: number) => {
+	const result = new Date(date);
+	result.setHours(result.getHours() + hours);
+	return result;
+};
+
 export default observer(VolumesStep);
 
 function validateDatesTimeVolumes(
@@ -402,34 +390,18 @@ function validateDatesTimeVolumes(
 	// 	errors.push(('The start date must be greater than today'));
 	// }
 	if (end < today) {
-		errors.push(('The end date must be greater than today'));
+		errors.push('The end date must be greater than today');
 	}
 	if (start > end) {
-		errors.push(('The start date must be less than the end date'));
+		errors.push('The start date must be less than the end date');
 	}
-
 
 	flightRequest.volumes.forEach((volume) => {
 		if (volume.effective_time_begin !== null && volume.effective_time_end !== null) {
-			if (
-				!((volume.effective_time_begin > end) || (volume.effective_time_end < start))
-			) {
-				return errors.push(('The time interval must be outside others time interval'));
+			if (!(volume.effective_time_begin > end || volume.effective_time_end < start)) {
+				return errors.push('The time interval must be outside others time interval');
 			}
-
 		}
 	});
 	return errors;
 }
-
-const setDateTime = (d: Date, timeStr: string) => {
-	const [time, period] = timeStr.split(' ');
-	// eslint-disable-next-line prefer-const
-	let [hours, minutes, seconds] = time.split(':').map(Number);
-	if (period.toLowerCase() === 'pm' && hours !== 12) {
-		hours += 12;
-	} else if (period.toLowerCase() === 'am' && hours === 12) {
-		hours = 0;
-	}
-	d.setHours(hours, minutes, seconds, 0);
-};
