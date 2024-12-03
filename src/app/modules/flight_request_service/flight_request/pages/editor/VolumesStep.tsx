@@ -321,7 +321,7 @@ const VolumesStep = (props: VolumesStepProps) => {
 			<EditorMapView
 				editOptions={editOptions}
 				geographicalZones={queryGeographicalZones.items}
-				onEdit={(event) => onPolygonsUpdated(event.detail)}
+				onEdit={(event: any) => onPolygonsUpdated(event.detail)}
 				flightRequests={flightRequests}
 			/>
 			<PButton
