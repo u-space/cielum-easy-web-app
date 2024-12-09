@@ -129,7 +129,6 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 		saveOperation(operation: Operation, isPilot = false) {
 			// if (isPilot && operation.state === OperationStateEnum.CLOSED)
 			// 	throw new Error("You can't edit a closed operation");
-
 			if (!operation.state) operation.state = OperationStateEnum.PROPOSED;
 
 			try {
@@ -139,12 +138,13 @@ export function getOperationAPIClient(api: string, token: string | null): Operat
 					.post('operation', operationToSave, {
 						headers: { auth: token }
 					})
-					.then(extractDataFromResponse).
-					catch(e => { return Promise.reject(e) })
-			}
-			catch (e) {
-				console.log('Esto se ejecuta?')
-				return Promise.reject(e)
+					.then(extractDataFromResponse)
+					.catch((e) => {
+						return Promise.reject(e);
+					});
+			} catch (e) {
+				console.log('Esto se ejecuta?');
+				return Promise.reject(e);
 			}
 		},
 		getOperations,

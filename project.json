@@ -51,8 +51,8 @@
 				"buildTarget": "easy-webapp:build",
 				"hmr": true,
 				"ssl": true,
-				"sslKey": "./localhost-key.pem",
-				"sslCert": "./localhost.pem",
+				"sslKey": "../certs/clave_privada.key",
+				"sslCert": "../certs/certificado.crt",
 				"allowedHosts": "all"
 			},
 			"configurations": {

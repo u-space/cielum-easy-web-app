@@ -54,7 +54,38 @@ const OperationEditor = () => {
 
 	const queryString = useQueryString();
 	const id = queryString.get('id');
-	const queryOperation = useQueryOperation(id || '', id != undefined);
+
+	const duplicate = queryString.get('duplicate');
+	const oldQueryOperation = useQueryOperation(id || '', id !== undefined);
+
+	const queryOperation = useMemo(() => {
+		if (duplicate === 'true' && oldQueryOperation.data) {
+			const newOperation = new Operation();
+			const oldOperation = oldQueryOperation.data;
+			Object.assign(newOperation, oldOperation);
+			newOperation.set('gufi', undefined);
+			newOperation.set('state', 'PROPOSED');
+
+			const newVolumes: OperationVolume[] = oldOperation.operation_volumes.map(
+				(existingVolume) => {
+					const newVolume = new OperationVolume();
+					for (const prop in existingVolume) {
+						if (prop !== 'id') {
+							newVolume.set(prop, existingVolume.get(prop));
+						}
+					}
+
+					return newVolume;
+				}
+			);
+
+			newOperation.set('operation_volumes', newVolumes);
+
+			return { ...oldQueryOperation, data: newOperation };
+		}
+		return oldQueryOperation;
+	}, [duplicate, oldQueryOperation]);
+
 	const queryClient = useQueryClient();
 
 	const username = useAuthStore((state) => state.username);
@@ -119,7 +150,7 @@ const OperationEditor = () => {
 
 	useEffect(() => {
 		const geography = queryOperation.data?.operation_volumes[0].operation_geography;
-		if (queryOperation.isSuccess && geography) {
+		if (queryOperation.isSuccess && geography && queryOperation.data.gufi) {
 			tokyo.flyToCenterOfGeometry(geography);
 		}
 	}, [queryOperation.data?.operation_volumes, queryOperation.isSuccess]);
@@ -177,10 +208,14 @@ const OperationEditor = () => {
 
 			if (typeof error !== 'string' && error.response?.data) {
 				try {
-					errorMessages.push(...error.response.data.message.split(',').map((errorText: string) => {
-						const [transformedError, zone] = transformOperationCheckError(errorText.trim());
-						return zone ? t(transformedError, { x: zone }) : t(transformedError);
-					}));
+					errorMessages.push(
+						...error.response.data.message.split(',').map((errorText: string) => {
+							const [transformedError, zone] = transformOperationCheckError(
+								errorText.trim()
+							);
+							return zone ? t(transformedError, { x: zone }) : t(transformedError);
+						})
+					);
 				} catch (e) {
 					console.error('Error parsing error messages:', e);
 				}
@@ -201,15 +236,26 @@ const OperationEditor = () => {
 						resetError();
 						if (needCoordination) {
 							const vol = operation.operation_volumes[0];
-							const geo = operation.operation_volumes.length === 1 ? vol.operation_geography : '';
-							const volumeData = operation.operation_volumes.length === 1 ? {
-								effective_time_begin: vol.effective_time_begin,
-								effective_time_end: vol.effective_time_end,
-								min_altitude: vol.min_altitude,
-								max_altitude: vol.max_altitude,
-								beyond_visual_line_of_sight: vol.beyond_visual_line_of_sight
-							} : undefined;
-							history.push(`/editor/flightRequest/${JSON.stringify({ ...geo })}${volumeData ? `/${JSON.stringify(volumeData)}` : ''}`);
+							const geo =
+								operation.operation_volumes.length === 1
+									? vol.operation_geography
+									: '';
+							const volumeData =
+								operation.operation_volumes.length === 1
+									? {
+											effective_time_begin: vol.effective_time_begin,
+											effective_time_end: vol.effective_time_end,
+											min_altitude: vol.min_altitude,
+											max_altitude: vol.max_altitude,
+											beyond_visual_line_of_sight:
+												vol.beyond_visual_line_of_sight
+									  }
+									: undefined;
+							history.push(
+								`/editor/flightRequest/${JSON.stringify({ ...geo })}${
+									volumeData ? `/${JSON.stringify(volumeData)}` : ''
+								}`
+							);
 						}
 					}
 				},
@@ -225,7 +271,11 @@ const OperationEditor = () => {
 
 	const save: PButtonProps['onClick'] = (evt) => {
 		evt.preventDefault();
-		saveOperationMutation.mutate({ entity: operation, documents: new Map(), isCreating: !id });
+		saveOperationMutation.mutate({
+			entity: operation,
+			documents: new Map(),
+			isCreating: !id || duplicate === 'true'
+		});
 	};
 
 	const resetError = () => {
@@ -244,7 +294,7 @@ const OperationEditor = () => {
 		},
 		geographicalZones: queryGeographicalZones.items,
 		flightRequests: flightRequests,
-		uvrs: uvrs,
+		uvrs: uvrs
 	};
 
 	return (
@@ -307,7 +357,10 @@ const OperationEditor = () => {
 				</>
 			}
 			statusOverlay={{
-				text: polygons.length > 0 ? `### ${t('You are in EDITOR MODE')} ` : `### ${t('Please draw a polygon to continue')}`
+				text:
+					polygons.length > 0
+						? `### ${t('You are in EDITOR MODE')} `
+						: `### ${t('Please draw a polygon to continue')}`
 			}}
 			modal={modalProps}
 		>

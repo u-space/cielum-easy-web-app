@@ -1,10 +1,9 @@
 import LabelInfo from './form/LabelInfo';
-import { TimePicker, TimePrecision } from '@blueprintjs/datetime';
+import { TimePicker } from '@blueprintjs/datetime';
 import { Classes, FormGroup } from '@blueprintjs/core';
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import styles from './Kanpur.module.scss';
-import PropTypes from 'prop-types';
 
 const maxDate = new Date();
 maxDate.setFullYear(maxDate.getFullYear() + 1);

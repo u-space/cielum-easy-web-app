@@ -7,7 +7,11 @@ import PUserSelectForAdmins from '@pcomponents/PUserSelectForAdmins';
 import PUserSelectForPilots from '@pcomponents/PUserSelectForPilots';
 import CVehicleSelectorSvelte from '@tokyo/gui/CVehicleSelector.svelte';
 import { UserEntity } from '@utm-entities/user';
-import { VehicleEntity, vehicleFullAuthorized } from '@utm-entities/vehicle';
+import {
+	VehicleAuthorizationStatus,
+	VehicleEntity,
+	vehicleFullAuthorized
+} from '@utm-entities/vehicle';
 import { observer } from 'mobx-react';
 import { FC, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -212,13 +216,22 @@ const InfoFlightRequest: FC<InfoFlightRequestProps> = ({
 				)}
 			</div>
 			<div>
-				{queryVehicles.isSuccess && (queryVehicles.data.data.vehicles.filter(v => vehicleFullAuthorized(v)).length == 0) && <h3>{t('You do not have any authorized vehicles')}</h3>}
+				{queryVehicles.isSuccess &&
+					queryVehicles.data.data.vehicles.filter(
+						(v) => v.authorized === VehicleAuthorizationStatus.AUTHORIZED
+					).length === 0 && <h3>{t('You do not have any authorized vehicles')}</h3>}
 				<CVehicleSelector
-					vehicles={queryVehicles.isSuccess ? queryVehicles.data.data.vehicles.sort((v1, v2) => {
-						if (vehicleFullAuthorized(v1) && !vehicleFullAuthorized(v2)) return -1;
-						if (!vehicleFullAuthorized(v1) && vehicleFullAuthorized(v2)) return 1;
-						return 0;
-					}) : []}
+					vehicles={
+						queryVehicles.isSuccess
+							? queryVehicles.data.data.vehicles.sort((v1, v2) => {
+									if (vehicleFullAuthorized(v1) && !vehicleFullAuthorized(v2))
+										return -1;
+									if (!vehicleFullAuthorized(v1) && vehicleFullAuthorized(v2))
+										return 1;
+									return 0;
+							  })
+							: []
+					}
 					onSelect={(event) =>
 						flightRequest.setUavs((event as CustomEvent<VehicleEntity[]>).detail)
 					}

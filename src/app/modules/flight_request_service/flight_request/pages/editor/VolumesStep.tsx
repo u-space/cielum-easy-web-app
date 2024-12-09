@@ -88,8 +88,20 @@ const VolumesStep = (props: VolumesStepProps) => {
 						defaultValue={startDate}
 						onChange={(value: Date) => {
 							if (value) {
-								setStartDate(value);
-								setEndDate(addHours(value, 4));
+								// If the start date is changed, the end date is set to 4 hours later
+
+								const hours = value.getHours();
+								const minutes = value.getMinutes();
+
+								const newDate = new Date(startDate);
+								newDate.setHours(hours);
+								newDate.setMinutes(minutes);
+								setStartDate(newDate);
+
+								const newEndDate = new Date(endDate);
+								newEndDate.setHours(hours + 4);
+								newEndDate.setMinutes(minutes);
+								setEndDate(newEndDate);
 							}
 						}}
 						explanation={''}

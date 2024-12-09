@@ -12,7 +12,7 @@ import { UserEntity } from '@utm-entities/user';
 import { useAuthIsAdmin, useAuthIsPilot, useAuthStore } from '../../../auth/store';
 import { Operation, OperationState } from '@utm-entities/v2/model/operation';
 import { NestedUser } from '@utm-entities/v2/model/user';
-import { VehicleEntity, vehicleFullAuthorized } from '@utm-entities/vehicle';
+import { VehicleAuthorizationStatus, VehicleEntity } from '@utm-entities/vehicle';
 import { reactify } from 'svelte-preprocess-react';
 import CVehicleSelectorSvelte from '@tokyo/gui/CVehicleSelector.svelte';
 import { UtmBaseVehicle } from '@utm-entities/v2/model/vehicle';
@@ -201,9 +201,16 @@ const InfoOperation: FC<InfoOperationProps> = ({
 				)}
 				{isPilot && (
 					<>
-						{queryVehicles.isSuccess && (queryVehicles.data.data.vehicles.filter(v => vehicleFullAuthorized(v)).length == 0) && <h3>{t('You do not have any authorized vehicles')}</h3>}
+						{queryVehicles.isSuccess &&
+							queryVehicles.data.data.vehicles.filter(
+								(v) => v.authorized === VehicleAuthorizationStatus.AUTHORIZED
+							).length === 0 && (
+								<h3>{t('You do not have any authorized vehicles')}</h3>
+							)}
 						<CVehicleSelector
-							vehicles={queryVehicles.isSuccess ? queryVehicles.data.data.vehicles : []}
+							vehicles={
+								queryVehicles.isSuccess ? queryVehicles.data.data.vehicles : []
+							}
 							onSelect={(event) => {
 								operation.set(
 									'uas_registrations',
@@ -241,12 +248,7 @@ const InfoOperation: FC<InfoOperationProps> = ({
 				))}
 			</CardGroup>
 			<PTooltip content={canOperateCauseMsj()} placement="right">
-				<PButton
-					onClick={save}
-					disabled={
-						!canCreateOperation
-					}
-				>
+				<PButton onClick={save} disabled={!canCreateOperation}>
 					{isEditingExisting ? t('Save the operation') : t('Create the operation')}
 				</PButton>
 			</PTooltip>

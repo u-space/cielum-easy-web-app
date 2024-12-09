@@ -41,6 +41,14 @@ const ExtraActions: FC<ExtraActionsProps> = ({ data }) => {
 					onClick={() => history.push(`/historical?operation=${data.gufi}`)}
 				/>
 			</PTooltip>
+			<PTooltip content={t('Duplicate')}>
+				<PButton
+					size={PButtonSize.SMALL}
+					icon="duplicate"
+					variant={PButtonType.SECONDARY}
+					onClick={() => history.push(`/editor/operation?id=${data.gufi}&duplicate=true`)}
+				/>
+			</PTooltip>
 			<PTooltip content={t(data.state)}>
 				<StateCircle
 					style={{
@@ -71,7 +79,7 @@ const OperationHub = () => {
 
 	const idSelected = queryString.get('id');
 	const columns = [
-		{ title: ' ', width: rowHeight * 3 }, // Fixed width
+		{ title: ' ', width: 200 }, // Fixed width
 		{ title: t('glossary:operation.name'), width: 3 }, // Ratios
 		{ title: t('glossary:operation.contact'), width: 2 },
 		{ title: t('glossary:operation.contact_phone'), width: 1 },
