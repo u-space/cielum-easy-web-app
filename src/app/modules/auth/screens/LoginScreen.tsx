@@ -52,7 +52,7 @@ const LoginScreen = () => {
 	return (
 		<UnloggedLayout extraClassnames={[styles.login]} onSubmit={onSubmit}>
 			<div className={styles.line}>
-				<PInput onChange={ls.setUser} label={t('User')} id={'user'} />
+				<PInput onChange={ls.setUser} label={t('Email')} id={'user'} />
 			</div>
 			<div className={styles.line}>
 				<PInput
@@ -75,11 +75,27 @@ const LoginScreen = () => {
 					{t('Log-in')}
 				</PButton>
 			</section>
-			<section className={styles.actions}>
+			<section
+				className={styles.actions}
+				style={{ display: 'flex', justifyContent: 'center' }}
+			>
 				<PButton onClick={() => history.push('/reset-password/request')}>
 					{t('Recover password')}
 				</PButton>
 			</section>
+			<div style={{ display: 'flex', justifyContent: 'center' }}>
+				<PButton
+					icon="help"
+					onClick={() =>
+						window.open(
+							'https://www.youtube.com/playlist?list=PLn8uLplTYSbuGny6WerWmWCHh8-nkGj3f',
+							'_blank'
+						)
+					}
+				>
+					Ver Tutoriales
+				</PButton>
+			</div>
 			{!hasTriedToRelogin && <StatusLayout isLogin>{t('Please wait')}...</StatusLayout>}
 			{isLoading && <StatusLayout isLogin>{t('Loading')}...</StatusLayout>}
 			{isError && (
