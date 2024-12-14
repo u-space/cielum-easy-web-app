@@ -1,5 +1,6 @@
 {
 	"User": "Usuario",
+	"Email": "Correo Electrónico",
 	"Password": "Contraseña",
 	"Register": "Registro",
 	"Log-in": "Iniciar sesión",
